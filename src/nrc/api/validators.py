@@ -72,5 +72,5 @@ class CallbackURLAuthValidator:
             },
         )
 
-        if response.status_code != 403:
+        if response.status_code != 403 and response.status_code != 401:
             raise serializers.ValidationError(self.message, code=self.code)
