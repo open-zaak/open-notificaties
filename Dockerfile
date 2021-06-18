@@ -50,6 +50,13 @@ RUN mkdir /app/log
 
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
 COPY ./src /app/src
+
+RUN useradd -M -u 1000 opennotificaties
+RUN chown -R opennotificaties /app
+
+# drop privileges
+USER opennotificaties
+
 ARG COMMIT_HASH
 ARG RELEASE
 ENV GIT_SHA=${COMMIT_HASH}
