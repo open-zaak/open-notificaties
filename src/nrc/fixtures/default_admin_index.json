@@ -81,6 +81,10 @@
                 "adfsconfig"
             ],
             [
+                "mozilla_django_oidc_db",
+                "openidconnectconfig"
+            ],
+            [
                 "notifications",
                 "notificationsconfig"
             ],
