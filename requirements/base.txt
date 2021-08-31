@@ -34,6 +34,8 @@ cryptography==3.4.8
     #   josepy
     #   mozilla-django-oidc
     #   pyopenssl
+dataclasses==0.6
+    # via -r requirements/base.in
 django-admin-index==1.2.2
     # via -r requirements/base.in
 django-appconf==1.0.3
@@ -127,9 +129,7 @@ markupsafe==1.1.1
 mozilla-django-oidc-db==0.4.0
     # via -r requirements/base.in
 mozilla-django-oidc==1.2.4
-    # via
-    #   -r requirements/base.in
-    #   mozilla-django-oidc-db
+    # via mozilla-django-oidc-db
 oyaml==0.7
     # via vng-api-common
 packaging==19.0

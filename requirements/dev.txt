@@ -73,7 +73,7 @@ cryptography==3.4.8
     #   josepy
     #   mozilla-django-oidc
     #   pyopenssl
-dataclasses==0.8
+dataclasses==0.6
     # via
     #   -r requirements/ci.txt
     #   black
