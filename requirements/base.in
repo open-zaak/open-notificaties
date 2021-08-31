@@ -21,6 +21,7 @@ django-redis
 
 # Admin and UI libraries
 django-admin-index
+mozilla-django-oidc-db
 
 # API libraries
 djangorestframework
