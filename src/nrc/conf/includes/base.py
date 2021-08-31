@@ -81,6 +81,14 @@ CACHES = {
             "IGNORE_EXCEPTIONS": True,
         },
     },
+    "oidc": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f"redis://{config('CACHE_DEFAULT', 'localhost:6379/0')}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "IGNORE_EXCEPTIONS": True,
+        },
+    },
 }
 
 #
@@ -104,6 +112,7 @@ INSTALLED_APPS = [
     # External applications.
     "axes",
     "django_filters",
+    "django_better_admin_arrayfield",
     "corsheaders",
     "vng_api_common",  # before drf_yasg to override the management command
     "vng_api_common.authorizations",
@@ -114,6 +123,8 @@ INSTALLED_APPS = [
     "solo",
     "django_auth_adfs",
     "django_auth_adfs_db",
+    "mozilla_django_oidc",
+    "mozilla_django_oidc_db",
     # Project applications.
     "nrc.accounts",
     "nrc.api",
@@ -130,6 +141,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "vng_api_common.middleware.AuthMiddleware",
+    "mozilla_django_oidc_db.middleware.SessionRefresh",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "vng_api_common.middleware.APIVersionHeaderMiddleware",
@@ -280,6 +292,10 @@ LOGGING = {
             "level": "INFO",
             "propagate": True,
         },
+        "mozilla_django_oidc": {
+            "handlers": ["project"],
+            "level": "DEBUG",
+        },
     },
 }
 
@@ -304,12 +320,14 @@ AUTHENTICATION_BACKENDS = [
     "django_auth_adfs_db.backends.AdfsAuthCodeBackend",
     "nrc.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
+    "mozilla_django_oidc_db.backends.OIDCAuthenticationBackend",
 ]
 
 SESSION_COOKIE_NAME = "opennotificaties_sessionid"
 
 LOGIN_URL = reverse_lazy("admin:login")
 LOGIN_REDIRECT_URL = reverse_lazy("admin:index")
+LOGOUT_REDIRECT_URL = reverse_lazy("admin:index")
 
 #
 # SECURITY settings
@@ -434,3 +452,10 @@ AUTH_ADFS = {"SETTINGS_CLASS": "django_auth_adfs_db.settings.Settings"}
 
 OPENNOTIFICATIES_API_CONTACT_EMAIL = "support@maykinmedia.nl"
 OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
+
+#
+# Mozilla Django OIDC DB settings
+#
+OIDC_AUTHENTICATE_CLASS = "mozilla_django_oidc_db.views.OIDCAuthenticationRequestView"
+MOZILLA_DJANGO_OIDC_DB_CACHE = "oidc"
+MOZILLA_DJANGO_OIDC_DB_CACHE_TIMEOUT = 5 * 60

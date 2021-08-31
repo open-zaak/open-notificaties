@@ -12,6 +12,7 @@ handler500 = "nrc.utils.views.server_error"
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("adfs/", include("django_auth_adfs.urls")),
+    path("oidc/", include("mozilla_django_oidc.urls")),
     path("api/", include("nrc.api.urls")),
     # Simply show the master template.
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
