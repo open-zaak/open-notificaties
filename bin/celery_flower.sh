@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
-celery --app nrc --workdir src flower
+exec celery --app nrc --workdir src flower
