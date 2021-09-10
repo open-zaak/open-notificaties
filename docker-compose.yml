@@ -44,7 +44,7 @@ services:
     ports:
       - 5555:5555
     depends_on:
-      - celery
+      - rabbitmq
 
   web:
     build: .
