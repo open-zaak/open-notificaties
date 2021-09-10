@@ -46,6 +46,7 @@ COPY ./bin/wait_for_db.sh /wait_for_db.sh
 COPY ./bin/wait_for_rabbitmq.sh /wait_for_rabbitmq.sh
 COPY ./bin/docker_start.sh /start.sh
 COPY ./bin/celery_worker.sh /celery_worker.sh
+COPY ./bin/celery_flower.sh /celery_flower.sh
 RUN mkdir /app/log
 
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
