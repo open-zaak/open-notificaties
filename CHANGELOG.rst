@@ -2,16 +2,18 @@
 Changes
 =======
 
-1.1.6 (2021-??-??)
+1.2.0 (2021-09-14)
 ==================
 
-.. warning::
+**Fixes**
 
-   Manual intervention required
-   
-   k8s the correct pod securityGroupContext needs to be specified and on plain Docker 
-   deploys the permissions of the volumes will probably have to be fixed. 
+* Fixed the webserver and background worker processes not having PID 1
+* Containers now run as un-privileged user rather than the root user (open-zaak/open-zaak#869)
+* Added Celery Flower to the container images for background worker task monitoring
 
+**New features**
+
+* Added support for generic OpenID Connect admin authentication (open-zaak/open-zaak#1034)
 
 1.1.5 (2021-04-15)
 ==================
