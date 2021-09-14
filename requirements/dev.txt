@@ -12,10 +12,6 @@ amqp==5.0.6
     # via
     #   -r requirements/ci.txt
     #   kombu
-appdirs==1.4.4
-    # via
-    #   -r requirements/ci.txt
-    #   black
 babel==2.7.0
     # via
     #   -r requirements/ci.txt
@@ -28,7 +24,7 @@ billiard==3.6.4.0
     # via
     #   -r requirements/ci.txt
     #   celery
-black==20.8b1
+black==21.9b0
     # via -r requirements/ci.txt
 bumpversion==0.5.3
     # via -r requirements/dev.in
@@ -92,8 +88,6 @@ cryptography==3.4.8
     #   josepy
     #   mozilla-django-oidc
     #   pyopenssl
-dataclasses==0.6
-    # via -r requirements/ci.txt
 django-admin-index==1.2.2
     # via -r requirements/ci.txt
 django-appconf==1.0.3
@@ -221,6 +215,7 @@ importlib-metadata==4.8.1
     #   -r requirements/ci.txt
     #   flake8
     #   kombu
+    #   pep517
 inflection==0.3.1
     # via
     #   -r requirements/ci.txt
@@ -233,7 +228,7 @@ isodate==0.6.0
     # via
     #   -r requirements/ci.txt
     #   vng-api-common
-isort==5.6.4
+isort==5.9.3
     # via -r requirements/ci.txt
 itypes==1.1.0
     # via
@@ -280,7 +275,7 @@ packaging==19.0
     # via
     #   -r requirements/ci.txt
     #   sphinx
-pathspec==0.8.0
+pathspec==0.9.0
     # via
     #   -r requirements/ci.txt
     #   black
@@ -290,6 +285,10 @@ pika==0.13.1
     # via -r requirements/ci.txt
 pip-tools==6.0.1
     # via -r requirements/dev.in
+platformdirs==2.3.0
+    # via
+    #   -r requirements/ci.txt
+    #   black
 prometheus-client==0.11.0
     # via
     #   -r requirements/ci.txt
@@ -450,6 +449,8 @@ text-unidecode==1.2
     #   -r requirements/ci.txt
     #   faker
 toml==0.10.2
+    # via pep517
+tomli==1.2.1
     # via
     #   -r requirements/ci.txt
     #   black
@@ -457,7 +458,7 @@ tornado==6.1
     # via
     #   -r requirements/ci.txt
     #   flower
-typed-ast==1.4.1
+typed-ast==1.4.3
     # via
     #   -r requirements/ci.txt
     #   black
@@ -509,6 +510,7 @@ zipp==3.5.0
     # via
     #   -r requirements/ci.txt
     #   importlib-metadata
+    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
