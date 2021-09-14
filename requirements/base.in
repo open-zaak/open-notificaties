@@ -21,6 +21,7 @@ django-redis
 
 # Admin and UI libraries
 django-admin-index
+mozilla-django-oidc-db
 
 # API libraries
 djangorestframework
@@ -29,3 +30,5 @@ vng-api-common<1.1.0
 # WSGI servers & monitoring - production oriented
 uwsgi
 raven  # error monitoring sentry
+
+dataclasses==0.6

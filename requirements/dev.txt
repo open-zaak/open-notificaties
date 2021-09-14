@@ -66,10 +66,17 @@ coreschema==0.0.4
     #   drf-yasg
 coverage==4.5.4
     # via -r requirements/ci.txt
-cryptography==2.8
+cryptography==3.4.8
     # via
     #   -r requirements/ci.txt
     #   django-auth-adfs
+    #   josepy
+    #   mozilla-django-oidc
+    #   pyopenssl
+dataclasses==0.6
+    # via
+    #   -r requirements/ci.txt
+    #   black
 django-admin-index==1.2.2
     # via -r requirements/ci.txt
 django-appconf==1.0.3
@@ -84,6 +91,10 @@ django-auth-adfs==1.6.1
     #   django-auth-adfs-db
 django-axes==4.5.4
     # via -r requirements/ci.txt
+django-better-admin-arrayfield==1.4.2
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc-db
 django-choices==1.6.2
     # via
     #   -r requirements/ci.txt
@@ -114,6 +125,7 @@ django-solo==1.1.3
     # via
     #   -r requirements/ci.txt
     #   django-auth-adfs-db
+    #   mozilla-django-oidc-db
     #   vng-api-common
 django-webtest==1.9.7
     # via -r requirements/ci.txt
@@ -132,6 +144,8 @@ django==2.2.20
     #   django-redis
     #   drf-nested-routers
     #   drf-yasg
+    #   mozilla-django-oidc
+    #   mozilla-django-oidc-db
     #   vng-api-common
 djangorestframework-camel-case==1.0.3
     # via
@@ -206,6 +220,10 @@ jinja2==2.11.3
     #   -r requirements/ci.txt
     #   coreschema
     #   sphinx
+josepy==1.8.0
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc
 kombu==4.5.0
     # via
     #   -r requirements/ci.txt
@@ -220,6 +238,12 @@ mccabe==0.6.1
     # via
     #   -r requirements/ci.txt
     #   flake8
+mozilla-django-oidc-db==0.4.0
+    # via -r requirements/ci.txt
+mozilla-django-oidc==1.2.4
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc-db
 mypy-extensions==0.4.3
     # via
     #   -r requirements/ci.txt
@@ -243,7 +267,9 @@ pika==0.13.1
 pip-tools==6.0.1
     # via -r requirements/dev.in
 psycopg2==2.8.2
-    # via -r requirements/ci.txt
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc-db
 pycodestyle==2.6.0
     # via
     #   -r requirements/ci.txt
@@ -266,6 +292,10 @@ pyjwt==1.7.1
     #   django-auth-adfs
     #   gemma-zds-client
     #   vng-api-common
+pyopenssl==20.0.1
+    # via
+    #   -r requirements/ci.txt
+    #   josepy
 pyparsing==2.4.1.1
     # via
     #   -r requirements/ci.txt
@@ -311,6 +341,7 @@ requests==2.21.0
     #   coreapi
     #   django-auth-adfs
     #   gemma-zds-client
+    #   mozilla-django-oidc
     #   requests-mock
     #   sphinx
     #   vng-api-common
@@ -323,7 +354,6 @@ self-certifi==1.0.0
 six==1.12.0
     # via
     #   -r requirements/ci.txt
-    #   cryptography
     #   django-appconf
     #   django-extensions
     #   django-markup
@@ -331,7 +361,9 @@ six==1.12.0
     #   faker
     #   freezegun
     #   isodate
+    #   mozilla-django-oidc
     #   packaging
+    #   pyopenssl
     #   python-dateutil
     #   requests-mock
     #   webtest

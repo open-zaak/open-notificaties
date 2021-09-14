@@ -6,7 +6,7 @@ Manual
 .. note::
     The manual is currently only available in the Dutch language!
 
-Once Open Notificaties is :ref:`installed<installation_index>`, it can be 
+Once Open Notificaties is :ref:`installed<installation_index>`, it can be
 further configured via the management interface.
 
 .. toctree::
@@ -14,3 +14,4 @@ further configured via the management interface.
    :caption: Further reading
 
    adfs
+   oidc
