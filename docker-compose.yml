@@ -37,6 +37,15 @@ services:
       - rabbitmq
       - redis
 
+  celery-flower:
+    build: .
+    environment: *app-env
+    command: /celery_flower.sh
+    ports:
+      - 5555:5555
+    depends_on:
+      - rabbitmq
+
   web:
     build: .
     environment: *app-env
