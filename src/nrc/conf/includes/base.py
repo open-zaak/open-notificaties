@@ -5,8 +5,6 @@ from django.urls import reverse_lazy
 import raven
 from corsheaders.defaults import default_headers as default_cors_headers
 
-from nrc.api.channels import QueueChannel
-
 from .api import *  # noqa
 from .environ import config
 
@@ -429,7 +427,6 @@ if SENTRY_DSN:
 
 # RabbitMQ
 BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F")
-CHANNEL = QueueChannel(params=BROKER_URL)
 
 # Celery
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
