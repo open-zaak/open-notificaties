@@ -1,8 +1,5 @@
-import json
-from unittest import skip
 from unittest.mock import patch
 
-from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 from django.utils.timezone import now
 
