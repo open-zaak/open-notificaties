@@ -154,8 +154,6 @@ oyaml==0.7
     # via vng-api-common
 packaging==19.0
     # via sphinx
-pika==0.13.1
-    # via -r requirements/base.in
 prometheus-client==0.11.0
     # via flower
 prompt-toolkit==3.0.20
