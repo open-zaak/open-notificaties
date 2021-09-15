@@ -258,8 +258,6 @@ packaging==19.0
     #   sphinx
 pathspec==0.9.0
     # via black
-pika==0.13.1
-    # via -r requirements/base.txt
 platformdirs==2.3.0
     # via black
 prometheus-client==0.11.0

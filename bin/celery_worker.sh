@@ -13,7 +13,4 @@ ${SCRIPTPATH}/wait_for_db.sh
 ${SCRIPTPATH}/wait_for_rabbitmq.sh
 
 echo "Starting celery worker"
-exec celery worker \
-    --app nrc \
-    -l $LOGLEVEL \
-    --workdir src
+exec celery --app nrc --workdir src worker -l $LOGLEVEL

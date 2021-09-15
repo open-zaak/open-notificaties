@@ -1,8 +1,5 @@
-import json
-from unittest import skip
 from unittest.mock import patch
 
-from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
 from django.utils.timezone import now
 
@@ -20,8 +17,6 @@ from nrc.datamodel.tests.factories import (
     KanaalFactory,
 )
 
-from ..channels import QueueChannel
-
 
 @patch("nrc.api.serializers.deliver_message.delay")
 @override_settings(
@@ -32,39 +27,6 @@ from ..channels import QueueChannel
 class NotificatieTests(JWTAuthMixin, APITestCase):
 
     heeft_alle_autorisaties = True
-
-    @skip("Sending to RabbitMQ is not currently supported")
-    @patch.object(QueueChannel, "send")
-    def test_notificatie_send_queue(self, mock_queue, mock_task):
-        """
-        test /notificatie POST:
-        check if message was send to RabbitMQ
-
-        """
-        KanaalFactory.create(naam="zaken")
-        notificatie_url = reverse(
-            "notificaties-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
-        )
-        request_data = {
-            "kanaal": "zaken",
-            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
-            "resource": "status",
-            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
-            "actie": "create",
-            "aanmaakdatum": "2018-01-01T17:00:00Z",
-            "kenmerken": {
-                "bron": "082096752011",
-                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar",
-            },
-        }
-
-        response = self.client.post(notificatie_url, request_data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-
-        mock_queue.assert_called_with(json.dumps(response.data, cls=DjangoJSONEncoder))
 
     def test_notificatie_send_success(self, mock_task):
         """
