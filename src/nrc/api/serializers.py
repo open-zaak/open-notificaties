@@ -1,9 +1,7 @@
-import json
 import logging
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
@@ -196,15 +194,7 @@ class MessageSerializer(NotificatieSerializer):
         for sub in list(subs):
             deliver_message.delay(sub.id, msg, **task_kwargs)
 
-    def _send_to_queue(self, msg):
-        settings.CHANNEL.set_exchange(msg["kanaal"])
-        topics = Kanaal.objects.get(naam=msg["kanaal"]).filters
-        settings.CHANNEL.set_routing_key_encoded(topics)
-        settings.CHANNEL.send(json.dumps(msg, cls=DjangoJSONEncoder))
-
     def create(self, validated_data: dict) -> dict:
-        # remove sending to queue because of connection issues
-        # self._send_to_queue(validated_data)
         logger.info("Handling notification %r", validated_data)
 
         # send to subs
