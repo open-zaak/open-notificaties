@@ -1,7 +1,8 @@
 # Stage 1 - Compile needed python dependencies
-FROM python:3.7-stretch AS build
+FROM python:3.7-slim-bullseye AS build
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
         libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -28,7 +29,7 @@ RUN npm run build
 
 
 # Stage 3 - Build docker image suitable for execution and deployment
-FROM python:3.7-stretch AS production
+FROM python:3.7-slim-bullseye AS production
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         postgresql-client \
