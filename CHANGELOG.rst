@@ -2,6 +2,20 @@
 Changes
 =======
 
+1.2.1 (2021-09-20)
+==================
+
+Open Notificaties 1.2.1 fixes a resource leak. See the below info box for more details.
+
+.. note::
+
+  Notifications are delivered to subscriptions via asynchronous background workers.
+  These background tasks were incorrectly storing the execution metadata and result in
+  the backend without consuming/ pruning them from  the result store. The symptoms
+  should have been fixed with the 1.2.0 release where the default backend is switched
+  to Redis instead of RabbitMQ (which normally does evict keys after a certain timeout)
+  - but this release fixes the root cause. Result and metadata are now no longer stored.
+
 1.2.0 (2021-09-15)
 ==================
 
