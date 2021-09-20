@@ -32,6 +32,8 @@ RUN npm run build
 FROM python:3.7-slim-bullseye AS production
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        procps \
+        vim \
         postgresql-client \
         netcat \
     && rm -rf /var/lib/apt/lists/*
