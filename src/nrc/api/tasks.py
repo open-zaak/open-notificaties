@@ -11,7 +11,7 @@ from nrc.datamodel.models import Abonnement, NotificatieResponse
 logger = logging.getLogger(__name__)
 
 
-@app.task
+@app.task(ignore_result=True)
 def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     """
     send msg to subscriber
