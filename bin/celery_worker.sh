@@ -1,16 +1,35 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
+set -euo pipefail
+
+LOGLEVEL=${CELERY_LOGLEVEL:-INFO}
+
+QUEUE=${1:-${CELERY_WORKER_QUEUE:=celery}}
+WORKER_NAME=${2:-${CELERY_WORKER_NAME:="${QUEUE}"@%n}}
 
 # Figure out abspath of this script
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 
-LOGLEVEL=${CELERY_LOGLEVEL:-INFO}
-
 # wait for required services
 ${SCRIPTPATH}/wait_for_db.sh
 ${SCRIPTPATH}/wait_for_rabbitmq.sh
 
-echo "Starting celery worker"
-exec celery --app nrc --workdir src worker -l $LOGLEVEL
+# build up worker options array
+worker_options=(
+    "-Q$QUEUE"
+    "-n$WORKER_NAME"
+    "-l$LOGLEVEL"
+    "-Ofair"
+)
+
+if [[ -v CELERY_WORKER_CONCURRENCY ]]; then
+    echo "Using concurrency ${CELERY_WORKER_CONCURRENCY}"
+    worker_options+=( "-c${CELERY_WORKER_CONCURRENCY}" )
+fi
+
+echo "Starting celery worker $WORKER_NAME with queue $QUEUE"
+exec celery \
+    --app nrc \
+    --workdir src \
+    worker "${worker_options[@]}"
