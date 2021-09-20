@@ -478,7 +478,7 @@ urllib3==1.24.3
     # via
     #   -r requirements/ci.txt
     #   requests
-uwsgi==2.0.18
+uwsgi==2.0.19.1
     # via -r requirements/ci.txt
 vine==5.0.0
     # via
