@@ -13,5 +13,6 @@ further configured via the management interface.
    :maxdepth: 1
    :caption: Further reading
 
+   subscriptions
    adfs
    oidc
