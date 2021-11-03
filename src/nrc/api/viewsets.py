@@ -117,7 +117,7 @@ class NotificatieAPIView(views.APIView):
         return self.post(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        serializer = MessageSerializer(data=request.data)
+        serializer = MessageSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
             data = serializer.validated_data
 
