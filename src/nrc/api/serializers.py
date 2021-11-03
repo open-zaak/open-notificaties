@@ -1,7 +1,7 @@
 import json
 import logging
+from furl import furl
 
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
@@ -16,6 +16,7 @@ from nrc.api.tasks import deliver_message
 from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
+from ..config.models import CloudEventConfig
 
 logger = logging.getLogger(__name__)
 
@@ -185,16 +186,15 @@ class MessageSerializer(NotificatieSerializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
-        task_kwargs = {}
-        if settings.LOG_NOTIFICATIONS_IN_DB:
-            # creation of the notification
-            kanaal = Kanaal.objects.get(naam=msg["kanaal"])
-            notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
-            task_kwargs.update({"notificatie_id": notificatie.id})
+        # creation of the notification
+        kanaal = Kanaal.objects.get(naam=msg["kanaal"])
+        notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
+
+        notification_content = self.convert_notification_to_cloudevent(notification_id=notificatie.id)
 
         # send to subs
         for sub in list(subs):
-            deliver_message.delay(sub.id, msg, **task_kwargs)
+            deliver_message.delay(sub.id, notification_content)
 
     def _send_to_queue(self, msg):
         settings.CHANNEL.set_exchange(msg["kanaal"])
@@ -210,3 +210,24 @@ class MessageSerializer(NotificatieSerializer):
         # send to subs
         self._send_to_subs(validated_data)
         return validated_data
+
+    def convert_notification_to_cloudevent(self, notification_id):
+        config = CloudEventConfig.get_solo()
+        notification_content = self.validated_data
+        base_url = furl(self.context['request'].build_absolute_uri())
+
+        converted_content = {
+            "id": notification_id,
+            "type": f"nl.vng.zgw.{notification_content['kanaal']}.{notification_content['resource']}.{notification_content['actie']}",
+            "time": notification_content['aanmaakdatum'].strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            "source": f"urn:nld:oin:{config.oin}:systeem:{base_url.host}",
+            "data": json.dumps(self.initial_data),
+            "specversion": "1.0",
+            "datacontenttype": "application/json"
+        }
+        kenmerken = notification_content.get("kenmerken")
+        if kenmerken:
+            for key, value in kenmerken.items():
+                converted_content[f"nl.vng.zgw.{key}"] = value
+
+        return converted_content
