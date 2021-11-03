@@ -87,6 +87,10 @@
             [
                 "notifications",
                 "subscription"
+            ],
+            [
+                "config",
+                "cloudeventconfig"
             ]
         ]
     }
