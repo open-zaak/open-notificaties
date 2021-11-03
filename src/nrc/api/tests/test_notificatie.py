@@ -1,11 +1,9 @@
 import json
 from unittest import skip
 from unittest.mock import patch
-import json
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import override_settings
-from django.utils.timezone import now
 
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -35,7 +33,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
     heeft_alle_autorisaties = True
 
-<<<<<<< HEAD
     @skip("Sending to RabbitMQ is not currently supported")
     @patch.object(QueueChannel, "send")
     def test_notificatie_send_queue(self, mock_queue, mock_task):
@@ -80,7 +77,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         cloud_event_config.save()
 
         kanaal = KanaalFactory.create(
-            naam="zaken", filters=["bronorganisatie", "zaaktype", "vertrouwelijkheidaanduiding"]
+            naam="zaken",
+            filters=["bronorganisatie", "zaaktype", "vertrouwelijkheidaanduiding"],
         )
         abon = AbonnementFactory.create(callback_url="https://example.com/callback")
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
@@ -117,19 +115,21 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "type": "nl.vng.zgw.zaken.status.create",
             "time": "2021-08-16T15:29:30.833664Z",
             "source": "urn:nld:oin:00000001823288444000:systeem:testserver",
-            "data": json.dumps({
-                "actie": "create",
-                "kanaal": "zaken",
-                "resource": "zaakinformatieobject",
-                "kenmerken": {
-                    "bronorganisatie": "082096752011",
-                    "zaaktype": "https://testserver/api/v1/zaaktypen/5aa5c",
-                    "vertrouwelijkheidaanduiding": "openbaar"
-                },
-                "hoofdObject": "https://testserver/zaken/v1/zaken/{UUID}",
-                "resourceUrl": "https://testserver/zaken/v1/statussen/{UUID}",
-                "aanmaakdatum": "2021-08-16T15:29:30.833664Z"
-            }),
+            "data": json.dumps(
+                {
+                    "actie": "create",
+                    "kanaal": "zaken",
+                    "resource": "zaakinformatieobject",
+                    "kenmerken": {
+                        "bronorganisatie": "082096752011",
+                        "zaaktype": "https://testserver/api/v1/zaaktypen/5aa5c",
+                        "vertrouwelijkheidaanduiding": "openbaar",
+                    },
+                    "hoofdObject": "https://testserver/zaken/v1/zaken/{UUID}",
+                    "resourceUrl": "https://testserver/zaken/v1/statussen/{UUID}",
+                    "aanmaakdatum": "2021-08-16T15:29:30.833664Z",
+                }
+            ),
             "specversion": "1.0",
             "datacontenttype": "application/json",
             "nl.vng.zgw.bronorganisatie": "082096752011",
