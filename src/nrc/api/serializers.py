@@ -1,4 +1,3 @@
-import json
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,15 +5,14 @@ from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
-from furl import furl
 from rest_framework import fields, serializers
 from vng_api_common.notifications.api.serializers import NotificatieSerializer
 from vng_api_common.validators import URLValidator
 
 from nrc.api.tasks import deliver_message
+from nrc.cloudevents.formatters import notification_to_cloudevent
 from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 
-from ..config.models import CloudEventConfig
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
 logger = logging.getLogger(__name__)
@@ -153,6 +151,11 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         return abonnement
 
 
+notification_formatters = {
+    "cloudevents": notification_to_cloudevent,
+}
+
+
 class MessageSerializer(NotificatieSerializer):
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
@@ -189,8 +192,8 @@ class MessageSerializer(NotificatieSerializer):
         kanaal = Kanaal.objects.get(naam=msg["kanaal"])
         notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
 
-        notification_content = self.convert_notification_to_cloudevent(
-            notification_id=notificatie.id
+        notification_content = notification_formatters["cloudevents"](
+            notificatie, self.context["request"]
         )
 
         # send to subs
@@ -203,28 +206,3 @@ class MessageSerializer(NotificatieSerializer):
         # send to subs
         self._send_to_subs(validated_data)
         return validated_data
-
-    def convert_notification_to_cloudevent(self, notification_id):
-        config = CloudEventConfig.get_solo()
-        notification_content = self.validated_data
-        base_url = furl(self.context["request"].build_absolute_uri())
-
-        converted_content = {
-            "id": notification_id,
-            "type": f"nl.vng.zgw.{notification_content['kanaal']}."
-            f"{notification_content['resource']}."
-            f"{notification_content['actie']}",
-            "time": notification_content["aanmaakdatum"].strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ"
-            ),
-            "source": f"urn:nld:oin:{config.oin}:systeem:{base_url.host}",
-            "data": json.dumps(self.initial_data),
-            "specversion": "1.0",
-            "datacontenttype": "application/json",
-        }
-        kenmerken = notification_content.get("kenmerken")
-        if kenmerken:
-            for key, value in kenmerken.items():
-                converted_content[f"nl.vng.zgw.{key}"] = value
-
-        return converted_content
