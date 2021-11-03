@@ -196,9 +196,14 @@ class MessageSerializer(NotificatieSerializer):
             notificatie, self.context["request"]
         )
 
+        notificatie.forwarded_msg = notification_content
+        notificatie.save()
+
         # send to subs
         for sub in list(subs):
-            deliver_message.delay(sub.id, notification_content)
+            deliver_message.delay(
+                sub.id, notification_content, notificatie_id=notificatie.id
+            )
 
     # def _send_to_queue(self, msg):
     #     settings.CHANNEL.set_exchange(msg["kanaal"])
