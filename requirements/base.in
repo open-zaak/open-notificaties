@@ -9,6 +9,7 @@ celery
 self-certifi
 Sphinx
 sphinx-rtd-theme
+furl
 
 # Framework libraries
 Django<3.0
