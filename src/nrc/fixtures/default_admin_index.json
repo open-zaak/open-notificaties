@@ -89,7 +89,7 @@
                 "subscription"
             ],
             [
-                "config",
+                "cloudevents",
                 "cloudeventconfig"
             ]
         ]

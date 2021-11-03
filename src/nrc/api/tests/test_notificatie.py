@@ -11,7 +11,7 @@ from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
-from nrc.config.models import CloudEventConfig
+from nrc.cloudevents.models import CloudEventConfig
 from nrc.datamodel.models import Notificatie
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
