@@ -7,19 +7,33 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='CloudEventConfig',
+            name="CloudEventConfig",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('oin', models.CharField(help_text='The OIN that will be used in the source field of the cloudevent.', max_length=20, verbose_name='OIN')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "oin",
+                    models.CharField(
+                        help_text="The OIN that will be used in the source field of the cloudevent.",
+                        max_length=20,
+                        verbose_name="OIN",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'CloudEvents configuration',
-                'verbose_name_plural': 'CloudEvents configurations',
+                "verbose_name": "CloudEvents configuration",
+                "verbose_name_plural": "CloudEvents configurations",
             },
         ),
     ]
