@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     "nrc.api",
     "nrc.datamodel",
     "nrc.utils",
+    "nrc.config",
 ]
 
 MIDDLEWARE = [
