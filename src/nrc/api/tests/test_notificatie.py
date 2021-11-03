@@ -1,4 +1,5 @@
 from unittest.mock import patch
+import json
 
 from django.test import override_settings
 from django.utils.timezone import now
@@ -9,6 +10,7 @@ from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
+from nrc.config.models import CloudEventConfig
 from nrc.datamodel.models import Notificatie
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -28,14 +30,18 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
     heeft_alle_autorisaties = True
 
-    def test_notificatie_send_success(self, mock_task):
+    def test_notificatie_cloudevent_send_success(self, mock_task):
         """
         test /notificatie POST:
         check if message was send to subscribers callbackUrls
 
         """
+        cloud_event_config = CloudEventConfig.get_solo()
+        cloud_event_config.oin = "00000001823288444000"
+        cloud_event_config.save()
+
         kanaal = KanaalFactory.create(
-            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+            naam="zaken", filters=["bronorganisatie", "zaaktype", "vertrouwelijkheidaanduiding"]
         )
         abon = AbonnementFactory.create(callback_url="https://example.com/callback")
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
@@ -52,21 +58,55 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "resource": "status",
             "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
             "actie": "create",
-            "aanmaakdatum": now(),
+            "aanmaakdatum": "2021-08-16T15:29:30.833664Z",
             "kenmerken": {
-                "bron": "082096752011",
-                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "bronorganisatie": "082096752011",
+                "zaaktype": "https://testserver/api/v1/zaaktypen/5aa5c",
                 "vertrouwelijkheidaanduiding": "openbaar",
             },
         }
 
         response = self.client.post(notificatie_url, msg)
 
+        notifications = Notificatie.objects.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertEqual(Notificatie.objects.count(), 1)
-        mock_task.assert_called_once_with(
-            abon.id, msg, notificatie_id=Notificatie.objects.get().id
-        )
+        self.assertEqual(notifications.count(), 1)
+        notification = notifications.get()
+
+        expected_cloud_event = {
+            "id": notification.id,
+            "type": "nl.vng.zgw.zaken.status.create",
+            "time": "2021-08-16T15:29:30.833664Z",
+            "source": "urn:nld:oin:00000001823288444000:systeem:testserver",
+            "data": json.dumps({
+                "actie": "create",
+                "kanaal": "zaken",
+                "resource": "zaakinformatieobject",
+                "kenmerken": {
+                    "bronorganisatie": "082096752011",
+                    "zaaktype": "https://testserver/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "openbaar"
+                },
+                "hoofdObject": "https://testserver/zaken/v1/zaken/{UUID}",
+                "resourceUrl": "https://testserver/zaken/v1/statussen/{UUID}",
+                "aanmaakdatum": "2021-08-16T15:29:30.833664Z"
+            }),
+            "specversion": "1.0",
+            "datacontenttype": "application/json",
+            "nl.vng.zgw.bronorganisatie": "082096752011",
+            "nl.vng.zgw.zaaktype": "https://testserver/api/v1/zaaktypen/5aa5c",
+            "nl.vng.zgw.vertrouwelijkheidaanduiding": "openbaar",
+        }
+
+        mock_task.assert_called_once()
+        self.assertEqual(mock_task.call_args[0][0], abon.id)
+
+        content_args = mock_task.call_args[0][1]
+        for key, value in expected_cloud_event.items():
+            if key == "data":
+                continue
+
+            self.assertEqual(content_args[key], value)
 
     def test_notificatie_send_inconsistent_kenmerken(self, mock_task):
         """
