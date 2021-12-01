@@ -105,3 +105,43 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         validation_error = response.data["kenmerken"][0]
         self.assertEqual(validation_error.code, "kenmerken_inconsistent")
         mock_task.assert_not_called()
+
+    def test_notificatie_send_empty_kenmerk_value(self, mock_task):
+        """
+        test /notificatie POST:
+        check if message was send to subscribers callbackUrls
+
+        """
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
+        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value=""
+        )
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "bron": "",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        response = self.client.post(notificatie_url, msg)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+        mock_task.assert_called_once_with(
+            abon.id, msg, notificatie_id=Notificatie.objects.get().id
+        )
