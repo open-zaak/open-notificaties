@@ -117,9 +117,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         abon = AbonnementFactory.create(callback_url="https://example.com/callback")
         filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
-        FilterFactory.create(
-            filter_group=filter_group, key="bron", value=""
-        )
+        FilterFactory.create(filter_group=filter_group, key="bron", value="")
         notificatie_url = reverse(
             "notificaties-list",
             kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
