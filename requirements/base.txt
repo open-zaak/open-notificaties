@@ -95,6 +95,7 @@ django==2.2.20
     #   django-filter
     #   django-markup
     #   django-redis
+    #   djangorestframework
     #   drf-nested-routers
     #   drf-yasg
     #   mozilla-django-oidc
@@ -102,7 +103,7 @@ django==2.2.20
     #   vng-api-common
 djangorestframework-camel-case==1.0.3
     # via vng-api-common
-djangorestframework==3.9.4
+djangorestframework==3.12.4
     # via
     #   -r requirements/base.in
     #   drf-nested-routers
@@ -110,9 +111,9 @@ djangorestframework==3.9.4
     #   vng-api-common
 docutils==0.15
     # via sphinx
-drf-nested-routers==0.91
+drf-nested-routers==0.93.4
     # via vng-api-common
-drf-yasg==1.16.0
+drf-yasg==1.20.0
     # via vng-api-common
 flower==1.0.0
     # via -r requirements/base.in
@@ -153,7 +154,9 @@ mozilla-django-oidc==1.2.4
 oyaml==0.7
     # via vng-api-common
 packaging==19.0
-    # via sphinx
+    # via
+    #   drf-yasg
+    #   sphinx
 prometheus-client==0.11.0
     # via flower
 prompt-toolkit==3.0.20
@@ -213,7 +216,6 @@ six==1.12.0
     #   click-repl
     #   django-appconf
     #   django-markup
-    #   drf-yasg
     #   isodate
     #   mozilla-django-oidc
     #   packaging
@@ -259,7 +261,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.0.34
+vng-api-common==1.0.67
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit
