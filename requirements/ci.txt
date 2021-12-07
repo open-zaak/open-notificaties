@@ -151,7 +151,7 @@ django==2.2.20
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
     #   vng-api-common
-djangorestframework-camel-case==1.0.3
+djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common

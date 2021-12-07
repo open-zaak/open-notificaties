@@ -18,6 +18,7 @@ django-choices
 django-cors-headers
 django-markup
 django-redis
+djangorestframework-camel-case
 
 # Admin and UI libraries
 django-admin-index
