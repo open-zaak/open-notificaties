@@ -2,6 +2,19 @@
 Changes
 =======
 
+1.2.3 (2021-12-17)
+==================
+
+Fixed a container image bug
+
+MIME-types of static assets (CSS, JS, SVG...) were not properly returned because of
+the container base image not having the ``/etc/mime.types`` file.
+
+1.2.2 (2021-12-07)
+==================
+
+Fixed a bug allowing for empty kenmerk values in notifications.
+
 1.2.1 (2021-09-20)
 ==================
 
