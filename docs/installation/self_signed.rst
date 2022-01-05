@@ -18,7 +18,7 @@ Open Notificaties supports self-signed certificates in two ways:
    of course any notification subscribers. It does this using ``https`` - using http is
    insecure.
 
-   When Open Notificaties makes these requests, the SSL certificates are varified for their
+   When Open Notificaties makes these requests, the SSL certificates are verified for their
    validity - e.g. expired certificates or certificates signed by an unkonwn Certificate
    Authority (CA) will throw errors (as they should!).
 
