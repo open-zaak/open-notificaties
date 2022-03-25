@@ -56,6 +56,10 @@ on Docker, since `localhost` is contained within the container:
 
 * `DB_PORT`: port number of the database, defaults to `5432`.
 
+* `NUM_PROXIES`: the number of reverse proxies in front of Open Notificaties, as an
+  integer. This is used to determine the actual client IP adres. Defaults to 1, which
+  should be okay on Kubernetes when using an Ingress.
+
 * `CACHE_DEFAULT`: redis cache address for the default cache. Defaults to
   `localhost:6379/0`.
 

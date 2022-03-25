@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.urls import reverse_lazy
@@ -146,6 +147,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "vng_api_common.middleware.APIVersionHeaderMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "nrc.urls"
@@ -318,6 +320,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
     "django_auth_adfs_db.backends.AdfsAuthCodeBackend",
     "nrc.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -343,7 +346,10 @@ X_FRAME_OPTIONS = "DENY"
 #
 # Silenced checks
 #
-SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
+SILENCED_SYSTEM_CHECKS = [
+    "rest_framework.W001",
+    "debug_toolbar.W006",
+]
 
 #
 # Custom settings
@@ -373,6 +379,12 @@ else:
 
 RELEASE = config("RELEASE", GIT_SHA)
 
+NUM_PROXIES = config(  # TODO: this also is relevant for DRF settings if/when we have rate-limited endpoints
+    "NUM_PROXIES",
+    default=1,
+    cast=lambda val: int(val) if val is not None else None,
+)
+
 ##############################
 #                            #
 # 3RD PARTY LIBRARY SETTINGS #
@@ -381,16 +393,35 @@ RELEASE = config("RELEASE", GIT_SHA)
 
 # Django-axes
 AXES_CACHE = "axes"  # refers to CACHES setting
-AXES_LOGIN_FAILURE_LIMIT = 30  # Default: 3
+AXES_FAILURE_LIMIT = 5  # Default: 3
 AXES_LOCK_OUT_AT_FAILURE = True  # Default: True
 AXES_USE_USER_AGENT = False  # Default: False
-AXES_COOLOFF_TIME = 1  # One hour
-AXES_BEHIND_REVERSE_PROXY = IS_HTTPS  # We have either Ingress or Nginx
+AXES_COOLOFF_TIME = datetime.timedelta(minutes=5)
+# after testing, the REMOTE_ADDR does not appear to be included with nginx (so single
+# reverse proxy) and the ipware detection didn't properly work. On K8s you typically have
+# ingress (load balancer) and then an additional nginx container for private file serving,
+# bringing the total of reverse proxies to 2 - meaning HTTP_X_FORWARDED_FOR basically
+# looks like ``$realIp,$ingressIp``. -> to get to $realIp, there is only 1 extra reverse
+# proxy included.
+AXES_PROXY_COUNT = NUM_PROXIES - 1 if NUM_PROXIES else None
 AXES_ONLY_USER_FAILURES = (
     False  # Default: False (you might want to block on username rather than IP)
 )
 AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = (
     False  # Default: False (you might want to block on username and IP)
+)
+# The default meta precedence order
+IPWARE_META_PRECEDENCE_ORDER = (
+    "HTTP_X_FORWARDED_FOR",
+    "X_FORWARDED_FOR",  # <client>, <proxy1>, <proxy2>
+    "HTTP_CLIENT_IP",
+    "HTTP_X_REAL_IP",
+    "HTTP_X_FORWARDED",
+    "HTTP_X_CLUSTER_CLIENT_IP",
+    "HTTP_FORWARDED_FOR",
+    "HTTP_FORWARDED",
+    "HTTP_VIA",
+    "REMOTE_ADDR",
 )
 
 #

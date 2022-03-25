@@ -2,6 +2,36 @@
 Changes
 =======
 
+1.3.0 (2022-03-??)
+==================
+
+**New features**
+
+* Upgraded to Django 3.2 LTS version (#1124)
+
+**Project maintenance**
+
+* Upgraded a number of dependencies to be compatible with Django 3.2 (#1124)
+
+.. warning::
+
+   Manual intervention required!
+
+   **Admin panel brute-force protection**
+
+   Due to the ugprade of a number of dependencies, there is a new environment variable
+   ``NUM_PROXIES`` which defaults to ``1`` which covers a typical scenario of deploying
+   Open Notificaties behind a single (nginx) reverse proxy. On Kubernetes this is
+   typically the case when using an ingress. Other deployment layouts/network topologies
+   may require tweaks if there are additional load balancers/reverse proxies in play.
+
+   Failing to specify the correct number may result in:
+
+   * login failures/brute-force attempts locking out your entire organization because one
+     of the reverse proxies is now IP-banned - this happens if the number is too low.
+   * brute-force protection may not be operational because the brute-forcer can spoof
+     their IP address, this happens if the number is too high.
+
 1.2.3 (2021-12-17)
 ==================
 
