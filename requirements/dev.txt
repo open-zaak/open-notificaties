@@ -34,7 +34,7 @@ billiard==3.6.4.0
     #   celery
 black==21.9b0
     # via -r requirements/ci.txt
-bumpversion==0.5.3
+bump2version==1.0.1
     # via -r requirements/dev.in
 cached-property==1.5.2
     # via
@@ -111,6 +111,7 @@ django==3.2.12
     #   django-choices
     #   django-cors-headers
     #   django-debug-toolbar
+    #   django-extensions
     #   django-filter
     #   django-markup
     #   django-redis
@@ -143,7 +144,7 @@ django-cors-headers==3.11.0
     # via -r requirements/ci.txt
 django-debug-toolbar==3.2.4
     # via -r requirements/dev.in
-django-extensions==2.2.1
+django-extensions==3.1.5
     # via -r requirements/dev.in
 django-filter==21.1
     # via
@@ -410,7 +411,6 @@ six==1.16.0
     #   -r requirements/ci.txt
     #   click-repl
     #   django-choices
-    #   django-extensions
     #   faker
     #   freezegun
     #   isodate
