@@ -1,6 +1,6 @@
 import uuid as _uuid
 
-from django.contrib.postgres.fields import ArrayField, JSONField
+from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -138,7 +138,7 @@ class Filter(models.Model):
 
 
 class Notificatie(models.Model):
-    forwarded_msg = JSONField(encoder=DjangoJSONEncoder)
+    forwarded_msg = models.JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
