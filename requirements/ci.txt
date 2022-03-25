@@ -83,7 +83,7 @@ coreschema==0.0.4
     #   -r requirements/base.txt
     #   coreapi
     #   drf-yasg
-coverage==4.5.4
+coverage==6.3.2
     # via -r requirements/test-tools.in
 cryptography==3.4.8
     # via
@@ -157,7 +157,7 @@ django-solo==2.0.0
     #   django-auth-adfs-db
     #   mozilla-django-oidc-db
     #   vng-api-common
-django-webtest==1.9.7
+django-webtest==1.9.10
     # via -r requirements/test-tools.in
 djangorestframework==3.12.4
     # via
@@ -182,7 +182,7 @@ drf-yasg==1.20.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
-factory-boy==2.12.0
+factory-boy==3.2.1
     # via -r requirements/test-tools.in
 faker==2.0.1
     # via factory-boy
@@ -190,7 +190,7 @@ flake8==3.8.4
     # via -r requirements/test-tools.in
 flower==1.0.0
     # via -r requirements/base.txt
-freezegun==0.3.12
+freezegun==1.2.1
     # via -r requirements/test-tools.in
 gemma-zds-client==0.15.0
     # via
@@ -353,7 +353,7 @@ requests==2.27.1
     #   requests-mock
     #   sphinx
     #   vng-api-common
-requests-mock==1.6.0
+requests-mock==1.9.3
     # via -r requirements/test-tools.in
 ruamel-yaml==0.17.21
     # via
@@ -373,13 +373,11 @@ six==1.16.0
     #   click-repl
     #   django-choices
     #   faker
-    #   freezegun
     #   isodate
     #   mozilla-django-oidc
     #   pyopenssl
     #   python-dateutil
     #   requests-mock
-    #   webtest
 snowballstemmer==1.9.0
     # via
     #   -r requirements/base.txt
@@ -420,7 +418,7 @@ sqlparse==0.4.2
     # via
     #   -r requirements/base.txt
     #   django
-tblib==1.4.0
+tblib==1.7.0
     # via -r requirements/test-tools.in
 text-unidecode==1.2
     # via faker
@@ -464,15 +462,15 @@ vine==5.0.0
     #   kombu
 vng-api-common==1.0.69
     # via -r requirements/base.txt
-waitress==1.3.1
+waitress==2.1.1
     # via webtest
 wcwidth==0.2.5
     # via
     #   -r requirements/base.txt
     #   prompt-toolkit
-webob==1.8.5
+webob==1.8.7
     # via webtest
-webtest==2.0.33
+webtest==3.0.0
     # via django-webtest
 wrapt==1.14.0
     # via
