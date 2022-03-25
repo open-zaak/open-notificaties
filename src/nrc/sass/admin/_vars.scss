@@ -13,3 +13,16 @@ $color_link_hover: #124078;
 $color_darkest: #000;
 $color_dark: #333;
 $color_lightest: #fff;
+
+$color-error: #ba2121; // default django admin color
+
+$color-tooltip-background: #fffeaa;
+$color-tooltip-border: #f7f071;
+$color-tooltip-text: #000;
+
+/* Dimensions */
+$input-field-size: 20em; // django-original: 20em;
+
+/* Responsive breakpoints used int the Django admin */
+$breakpoint-tablet: 768px;
+$breakpoint-laptop: 1025px;
