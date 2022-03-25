@@ -8,7 +8,7 @@ alabaster==0.7.12
     # via
     #   -r requirements/ci.txt
     #   sphinx
-amqp==5.0.6
+amqp==5.1.0
     # via
     #   -r requirements/ci.txt
     #   kombu
@@ -40,7 +40,7 @@ cached-property==1.5.2
     # via
     #   -r requirements/ci.txt
     #   kombu
-celery==5.1.2
+celery==5.2.3
     # via
     #   -r requirements/ci.txt
     #   flower
@@ -58,7 +58,7 @@ charset-normalizer==2.0.12
     # via
     #   -r requirements/ci.txt
     #   requests
-click==7.1.2
+click==8.0.4
     # via
     #   -r requirements/ci.txt
     #   black
@@ -228,6 +228,7 @@ imagesize==1.1.0
 importlib-metadata==4.8.1
     # via
     #   -r requirements/ci.txt
+    #   click
     #   flake8
     #   humanize
     #   kombu
@@ -262,7 +263,7 @@ josepy==1.13.0
     # via
     #   -r requirements/ci.txt
     #   mozilla-django-oidc
-kombu==5.1.0
+kombu==5.2.4
     # via
     #   -r requirements/ci.txt
     #   celery

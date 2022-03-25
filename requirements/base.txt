@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
     # via sphinx
-amqp==5.0.6
+amqp==5.1.0
     # via kombu
 asgiref==3.5.0
     # via django
@@ -18,7 +18,7 @@ billiard==3.6.4.0
     # via celery
 cached-property==1.5.2
     # via kombu
-celery==5.1.2
+celery==5.2.3
     # via
     #   -r requirements/base.in
     #   flower
@@ -31,7 +31,7 @@ cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
     # via requests
-click==7.1.2
+click==8.0.4
     # via
     #   celery
     #   click-didyoumean
@@ -137,6 +137,7 @@ imagesize==1.1.0
     # via sphinx
 importlib-metadata==4.8.1
     # via
+    #   click
     #   humanize
     #   kombu
     #   markdown
@@ -156,7 +157,7 @@ jinja2==3.1.0
     #   sphinx
 josepy==1.13.0
     # via mozilla-django-oidc
-kombu==5.1.0
+kombu==5.2.4
     # via celery
 markdown==3.3.6
     # via -r requirements/base.in
