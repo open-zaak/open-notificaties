@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from vng_api_common import routers
 from vng_api_common.schema import SchemaView
@@ -13,30 +12,30 @@ router.register("kanaal", KanaalViewSet)
 
 
 urlpatterns = [
-    url(
+    re_path(
         r"^v(?P<version>\d+)/",
         include(
             [
                 # API documentation
-                url(
+                re_path(
                     r"^schema/openapi(?P<format>\.json|\.yaml)$",
                     SchemaView.without_ui(cache_timeout=settings.SPEC_CACHE_TIMEOUT),
                     name="schema-json",
                 ),
-                url(
-                    r"^schema/$",
+                path(
+                    "schema/",
                     SchemaView.with_ui(
                         "redoc", cache_timeout=settings.SPEC_CACHE_TIMEOUT
                     ),
                     name="schema-redoc",
                 ),
                 # actual API
-                url(
-                    r"^notificaties",
+                path(
+                    "notificaties",
                     NotificatieAPIView.as_view(),
                     name="notificaties-list",
                 ),
-                url(r"^", include(router.urls)),
+                path("", include(router.urls)),
                 # should not be picked up by drf-yasg
                 path("", include("vng_api_common.api.urls")),
                 path("", include("vng_api_common.notifications.api.urls")),
