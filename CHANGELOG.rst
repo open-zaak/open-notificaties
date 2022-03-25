@@ -8,6 +8,7 @@ Changes
 **New features**
 
 * Upgraded to Django 3.2 LTS version (#1124)
+* Confirmed support for PostgreSQL 13 and 14
 
 **Project maintenance**
 
