@@ -182,6 +182,7 @@ docutils==0.15
     # via
     #   -r requirements/ci.txt
     #   sphinx
+    #   sphinx-rtd-theme
 drf-nested-routers==0.93.4
     # via
     #   -r requirements/ci.txt
@@ -229,6 +230,7 @@ importlib-metadata==4.8.1
     #   markdown
     #   pep517
     #   redis
+    #   sphinx
 inflection==0.5.1
     # via
     #   -r requirements/ci.txt
@@ -420,11 +422,11 @@ soupsieve==1.9.5
     # via
     #   -r requirements/ci.txt
     #   beautifulsoup4
-sphinx==2.1.2
+sphinx==4.4.0
     # via
     #   -r requirements/ci.txt
     #   sphinx-rtd-theme
-sphinx-rtd-theme==0.4.3
+sphinx-rtd-theme==1.0.0
     # via -r requirements/ci.txt
 sphinxcontrib-applehelp==1.0.1
     # via
@@ -434,7 +436,7 @@ sphinxcontrib-devhelp==1.0.1
     # via
     #   -r requirements/ci.txt
     #   sphinx
-sphinxcontrib-htmlhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.0
     # via
     #   -r requirements/ci.txt
     #   sphinx
@@ -446,7 +448,7 @@ sphinxcontrib-qthelp==1.0.2
     # via
     #   -r requirements/ci.txt
     #   sphinx
-sphinxcontrib-serializinghtml==1.1.3
+sphinxcontrib-serializinghtml==1.1.5
     # via
     #   -r requirements/ci.txt
     #   sphinx
