@@ -45,6 +45,7 @@ certifi==2021.10.8
     #   -r requirements/base.txt
     #   requests
     #   self-certifi
+    #   sentry-sdk
 cffi==1.15.0
     # via
     #   -r requirements/base.txt
@@ -336,8 +337,6 @@ pyyaml==6.0
     #   gemma-zds-client
     #   oyaml
     #   vng-api-common
-raven==6.10.0
-    # via -r requirements/base.txt
 redis==4.2.0
     # via
     #   -r requirements/base.txt
@@ -365,6 +364,8 @@ ruamel-yaml-clib==0.2.6
     #   -r requirements/base.txt
     #   ruamel-yaml
 self-certifi==1.0.0
+    # via -r requirements/base.txt
+sentry-sdk==1.5.8
     # via -r requirements/base.txt
 six==1.16.0
     # via
@@ -452,6 +453,7 @@ urllib3==1.26.9
     # via
     #   -r requirements/base.txt
     #   requests
+    #   sentry-sdk
 uwsgi==2.0.20
     # via -r requirements/base.txt
 vine==5.0.0

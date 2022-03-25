@@ -26,6 +26,7 @@ certifi==2021.10.8
     # via
     #   requests
     #   self-certifi
+    #   sentry-sdk
 cffi==1.15.0
     # via cryptography
 charset-normalizer==2.0.12
@@ -209,8 +210,6 @@ pyyaml==6.0
     #   gemma-zds-client
     #   oyaml
     #   vng-api-common
-raven==6.10.0
-    # via -r requirements/base.in
 redis==4.2.0
     # via django-redis
 requests==2.27.1
@@ -226,6 +225,8 @@ ruamel-yaml==0.17.21
 ruamel-yaml-clib==0.2.6
     # via ruamel-yaml
 self-certifi==1.0.0
+    # via -r requirements/base.in
+sentry-sdk==1.5.8
     # via -r requirements/base.in
 six==1.16.0
     # via
@@ -271,7 +272,9 @@ uritemplate==3.0.0
     #   coreapi
     #   drf-yasg
 urllib3==1.26.9
-    # via requests
+    # via
+    #   requests
+    #   sentry-sdk
 uwsgi==2.0.20
     # via -r requirements/base.in
 vine==5.0.0

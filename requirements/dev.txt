@@ -49,6 +49,7 @@ certifi==2021.10.8
     #   -r requirements/ci.txt
     #   requests
     #   self-certifi
+    #   sentry-sdk
 cffi==1.15.0
     # via
     #   -r requirements/ci.txt
@@ -209,6 +210,10 @@ gemma-zds-client==0.15.0
     # via
     #   -r requirements/ci.txt
     #   vng-api-common
+gitdb==4.0.9
+    # via gitpython
+gitpython==3.1.27
+    # via -r requirements/dev.in
 humanize==4.0.0
     # via
     #   -r requirements/ci.txt
@@ -368,8 +373,6 @@ pyyaml==6.0
     #   gemma-zds-client
     #   oyaml
     #   vng-api-common
-raven==6.10.0
-    # via -r requirements/ci.txt
 redis==4.2.0
     # via
     #   -r requirements/ci.txt
@@ -400,6 +403,8 @@ ruamel-yaml-clib==0.2.6
     #   ruamel-yaml
 self-certifi==1.0.0
     # via -r requirements/ci.txt
+sentry-sdk==1.5.8
+    # via -r requirements/ci.txt
 six==1.16.0
     # via
     #   -r requirements/ci.txt
@@ -414,6 +419,8 @@ six==1.16.0
     #   python-dateutil
     #   requests-mock
     #   webtest
+smmap==5.0.0
+    # via gitdb
 snowballstemmer==1.9.0
     # via
     #   -r requirements/ci.txt
@@ -483,6 +490,7 @@ typing-extensions==4.1.1
     #   asgiref
     #   async-timeout
     #   black
+    #   gitpython
     #   importlib-metadata
     #   redis
 unidecode==1.0.23
@@ -498,6 +506,7 @@ urllib3==1.26.9
     # via
     #   -r requirements/ci.txt
     #   requests
+    #   sentry-sdk
 uwsgi==2.0.20
     # via -r requirements/ci.txt
 vine==5.0.0

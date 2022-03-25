@@ -3,11 +3,11 @@ import os
 
 from django.urls import reverse_lazy
 
-import raven
+import sentry_sdk
 from corsheaders.defaults import default_headers as default_cors_headers
 
 from .api import *  # noqa
-from .environ import config
+from .environ import config, get_sentry_integrations
 
 # Build paths inside the project, so further paths can be defined relative to
 # the code root.
@@ -372,7 +372,13 @@ if "GIT_SHA" in os.environ:
     GIT_SHA = config("GIT_SHA", "")
 # in docker (build) context, there is no .git directory
 elif os.path.exists(os.path.join(BASE_DIR, ".git")):
-    GIT_SHA = raven.fetch_git_sha(BASE_DIR)
+    try:
+        import git
+    except ImportError:
+        GIT_SHA = None
+    else:
+        repo = git.Repo(search_parent_directories=True)
+        GIT_SHA = repo.head.object.hexsha
 else:
     GIT_SHA = None
 
@@ -440,22 +446,21 @@ CORS_ALLOW_HEADERS = list(default_cors_headers) + config(
 # uses Bearer Authentication.
 
 #
-# RAVEN/SENTRY - error monitoring
+# SENTRY - error monitoring
 #
 SENTRY_DSN = config("SENTRY_DSN", None)
 
 if SENTRY_DSN:
-    INSTALLED_APPS = INSTALLED_APPS + ["raven.contrib.django.raven_compat"]
+    SENTRY_CONFIG = {
+        "dsn": SENTRY_DSN,
+        "release": RELEASE or "RELEASE not set",
+        "environment": ENVIRONMENT or "",
+    }
 
-    RAVEN_CONFIG = {"dsn": SENTRY_DSN, "release": GIT_SHA}
-    LOGGING["handlers"].update(
-        {
-            "sentry": {
-                "level": "WARNING",
-                "class": "raven.handlers.logging.SentryHandler",
-                "dsn": RAVEN_CONFIG["dsn"],
-            }
-        }
+    sentry_sdk.init(
+        **SENTRY_CONFIG,
+        integrations=get_sentry_integrations(),
+        send_default_pii=True,
     )
 
 # RabbitMQ

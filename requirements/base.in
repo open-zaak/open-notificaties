@@ -30,4 +30,4 @@ vng-api-common<1.1.0
 
 # WSGI servers & monitoring - production oriented
 uwsgi
-raven  # error monitoring sentry
+sentry-sdk
