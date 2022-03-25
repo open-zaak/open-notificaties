@@ -9,6 +9,7 @@
   "scripts": {
     "convert": "swagger2openapi src/swagger2.0.json -o src/openapi.yaml",
     "build": "gulp build",
+    "watch": "gulp watch",
     "appliance:serve-config": "http-server deployment/appliance/debian-config"
   },
   "repository": {
@@ -28,7 +29,6 @@
     "gulp-hub": "^4.2.0",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^8.0.0",
-    "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
     "http-server": "^0.12.0",
     "postcss-loader": "^3.0.0",
