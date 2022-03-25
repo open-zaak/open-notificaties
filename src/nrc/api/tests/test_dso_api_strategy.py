@@ -1,5 +1,5 @@
 from django.test import override_settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 import yaml
 from rest_framework.test import APIRequestFactory, APITestCase
