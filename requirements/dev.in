@@ -1,8 +1,8 @@
 # Helpers
-bumpversion
+bump2version
 pip-tools~=6.0
+gitpython
 
 # Debug tooling
 django-debug-toolbar
 django-extensions
-flower

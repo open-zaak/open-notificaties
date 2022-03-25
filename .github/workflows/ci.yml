@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: ['10', '11', '12']
+        postgres: ['10', '11', '12', '13', '14']
 
     name: Tests (PG ${{ matrix.postgres }})
 
@@ -43,7 +43,7 @@ jobs:
           python-version: '3.7'
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '12'
+          node-version: '16'
 
       - name: Start CI docker-compose
         run: docker-compose -f docker-compose.ssl.yml up -d mock

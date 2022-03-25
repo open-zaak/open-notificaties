@@ -1,12 +1,13 @@
+import datetime
 import os
 
 from django.urls import reverse_lazy
 
-import raven
+import sentry_sdk
 from corsheaders.defaults import default_headers as default_cors_headers
 
 from .api import *  # noqa
-from .environ import config
+from .environ import config, get_sentry_integrations
 
 # Build paths inside the project, so further paths can be defined relative to
 # the code root.
@@ -61,6 +62,9 @@ DATABASES = {
         "PORT": config("DB_PORT", 5432),
     }
 }
+
+# TODO: switch to BigAutoField after the Django 3.2 upgrade and generate migrations
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CACHES = {
     "default": {
@@ -143,6 +147,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "vng_api_common.middleware.APIVersionHeaderMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "nrc.urls"
@@ -165,7 +170,6 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "nrc.utils.context_processors.settings",
-                "django_admin_index.context_processors.dashboard",
             ],
             "loaders": TEMPLATE_LOADERS,
         },
@@ -315,6 +319,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Allow logging in with both username+password and email+password
 AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
     "django_auth_adfs_db.backends.AdfsAuthCodeBackend",
     "nrc.accounts.backends.UserModelEmailBackend",
     "django.contrib.auth.backends.ModelBackend",
@@ -340,7 +345,10 @@ X_FRAME_OPTIONS = "DENY"
 #
 # Silenced checks
 #
-SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
+SILENCED_SYSTEM_CHECKS = [
+    "rest_framework.W001",
+    "debug_toolbar.W006",
+]
 
 #
 # Custom settings
@@ -364,11 +372,23 @@ if "GIT_SHA" in os.environ:
     GIT_SHA = config("GIT_SHA", "")
 # in docker (build) context, there is no .git directory
 elif os.path.exists(os.path.join(BASE_DIR, ".git")):
-    GIT_SHA = raven.fetch_git_sha(BASE_DIR)
+    try:
+        import git
+    except ImportError:
+        GIT_SHA = None
+    else:
+        repo = git.Repo(search_parent_directories=True)
+        GIT_SHA = repo.head.object.hexsha
 else:
     GIT_SHA = None
 
 RELEASE = config("RELEASE", GIT_SHA)
+
+NUM_PROXIES = config(  # TODO: this also is relevant for DRF settings if/when we have rate-limited endpoints
+    "NUM_PROXIES",
+    default=1,
+    cast=lambda val: int(val) if val is not None else None,
+)
 
 ##############################
 #                            #
@@ -378,16 +398,35 @@ RELEASE = config("RELEASE", GIT_SHA)
 
 # Django-axes
 AXES_CACHE = "axes"  # refers to CACHES setting
-AXES_LOGIN_FAILURE_LIMIT = 30  # Default: 3
+AXES_FAILURE_LIMIT = 5  # Default: 3
 AXES_LOCK_OUT_AT_FAILURE = True  # Default: True
 AXES_USE_USER_AGENT = False  # Default: False
-AXES_COOLOFF_TIME = 1  # One hour
-AXES_BEHIND_REVERSE_PROXY = IS_HTTPS  # We have either Ingress or Nginx
+AXES_COOLOFF_TIME = datetime.timedelta(minutes=5)
+# after testing, the REMOTE_ADDR does not appear to be included with nginx (so single
+# reverse proxy) and the ipware detection didn't properly work. On K8s you typically have
+# ingress (load balancer) and then an additional nginx container for private file serving,
+# bringing the total of reverse proxies to 2 - meaning HTTP_X_FORWARDED_FOR basically
+# looks like ``$realIp,$ingressIp``. -> to get to $realIp, there is only 1 extra reverse
+# proxy included.
+AXES_PROXY_COUNT = NUM_PROXIES - 1 if NUM_PROXIES else None
 AXES_ONLY_USER_FAILURES = (
     False  # Default: False (you might want to block on username rather than IP)
 )
 AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = (
     False  # Default: False (you might want to block on username and IP)
+)
+# The default meta precedence order
+IPWARE_META_PRECEDENCE_ORDER = (
+    "HTTP_X_FORWARDED_FOR",
+    "X_FORWARDED_FOR",  # <client>, <proxy1>, <proxy2>
+    "HTTP_CLIENT_IP",
+    "HTTP_X_REAL_IP",
+    "HTTP_X_FORWARDED",
+    "HTTP_X_CLUSTER_CLIENT_IP",
+    "HTTP_FORWARDED_FOR",
+    "HTTP_FORWARDED",
+    "HTTP_VIA",
+    "REMOTE_ADDR",
 )
 
 #
@@ -407,22 +446,21 @@ CORS_ALLOW_HEADERS = list(default_cors_headers) + config(
 # uses Bearer Authentication.
 
 #
-# RAVEN/SENTRY - error monitoring
+# SENTRY - error monitoring
 #
 SENTRY_DSN = config("SENTRY_DSN", None)
 
 if SENTRY_DSN:
-    INSTALLED_APPS = INSTALLED_APPS + ["raven.contrib.django.raven_compat"]
+    SENTRY_CONFIG = {
+        "dsn": SENTRY_DSN,
+        "release": RELEASE or "RELEASE not set",
+        "environment": ENVIRONMENT or "",
+    }
 
-    RAVEN_CONFIG = {"dsn": SENTRY_DSN, "release": GIT_SHA}
-    LOGGING["handlers"].update(
-        {
-            "sentry": {
-                "level": "WARNING",
-                "class": "raven.handlers.logging.SentryHandler",
-                "dsn": RAVEN_CONFIG["dsn"],
-            }
-        }
+    sentry_sdk.init(
+        **SENTRY_CONFIG,
+        integrations=get_sentry_integrations(),
+        send_default_pii=True,
     )
 
 # RabbitMQ

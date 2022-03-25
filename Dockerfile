@@ -14,7 +14,7 @@ RUN pip install -r requirements/production.txt
 
 
 # Stage 2 - build frontend
-FROM mhart/alpine-node:10 AS frontend-build
+FROM node:16-bullseye-slim AS frontend-build
 
 WORKDIR /app
 

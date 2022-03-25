@@ -1,13 +1,14 @@
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import requests
 from rest_framework import serializers
 
 
 class CallbackURLValidator:
+    requires_context = True
     code = "invalid-callback-url"
     message = _("De opgegeven callback URL kan geen notificaties ontvangen.")
 
@@ -15,14 +16,11 @@ class CallbackURLValidator:
         self.url_field = url_field
         self.auth_field = auth_field
 
-    def set_context(self, serializer):
-        if serializer.partial:
-            self.url_from_instance = serializer.instance.callback_url
-
-    def __call__(self, attrs):
+    def __call__(self, attrs, serializer):
         url = attrs.get(self.url_field)
-        if not url and hasattr(self, "url_from_instance"):
-            url = self.url_from_instance
+        if not url and serializer.partial:
+            url = serializer.instance.callback_url
+
         auth = attrs.get(self.auth_field)
 
         response = requests.post(

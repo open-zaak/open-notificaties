@@ -11,7 +11,7 @@ Sphinx
 sphinx-rtd-theme
 
 # Framework libraries
-Django<3.0
+Django ~= 3.2.0
 django-auth-adfs-db
 django-axes
 django-choices
@@ -25,8 +25,9 @@ mozilla-django-oidc-db
 
 # API libraries
 djangorestframework
+gemma-zds-client<1.0
 vng-api-common<1.1.0
 
 # WSGI servers & monitoring - production oriented
 uwsgi
-raven  # error monitoring sentry
+sentry-sdk
