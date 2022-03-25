@@ -8,6 +8,8 @@ alabaster==0.7.12
     # via sphinx
 amqp==5.0.6
     # via kombu
+asgiref==3.5.0
+    # via django
 babel==2.7.0
     # via sphinx
 billiard==3.6.4.0
@@ -50,7 +52,7 @@ cryptography==3.4.8
     #   josepy
     #   mozilla-django-oidc
     #   pyopenssl
-django==2.2.20
+django==3.2.12
     # via
     #   -r requirements/base.in
     #   django-appconf
@@ -118,7 +120,9 @@ drf-yasg==1.20.0
 flower==1.0.0
     # via -r requirements/base.in
 gemma-zds-client==0.15.0
-    # via vng-api-common
+    # via
+    #   -r requirements/base.in
+    #   vng-api-common
 humanize==3.11.0
     # via flower
 idna==2.8
@@ -245,7 +249,9 @@ sqlparse==0.3.0
 tornado==6.1
     # via flower
 typing-extensions==3.10.0.2
-    # via importlib-metadata
+    # via
+    #   asgiref
+    #   importlib-metadata
 unidecode==1.0.23
     # via vng-api-common
 uritemplate==3.0.0
@@ -261,7 +267,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.0.67
+vng-api-common==1.0.69
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit
