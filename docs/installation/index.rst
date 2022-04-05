@@ -39,7 +39,7 @@ Guides
    hardware
    deployment/kubernetes
    deployment/single_server
-   configuration
+   configuration/index
    self_signed
 
 Post-install checklist

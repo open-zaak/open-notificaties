@@ -79,6 +79,8 @@ click-repl==0.2.0
     # via
     #   -r requirements/ci.txt
     #   celery
+commonmark==0.9.1
+    # via recommonmark
 coreapi==2.3.3
     # via
     #   -r requirements/ci.txt
@@ -183,6 +185,7 @@ djangorestframework-camel-case==1.2.0
 docutils==0.15
     # via
     #   -r requirements/ci.txt
+    #   recommonmark
     #   sphinx
     #   sphinx-rtd-theme
 drf-nested-routers==0.93.4
@@ -373,6 +376,8 @@ pyyaml==6.0
     #   gemma-zds-client
     #   oyaml
     #   vng-api-common
+recommonmark==0.7.1
+    # via -r requirements/dev.in
 redis==4.2.0
     # via
     #   -r requirements/ci.txt
@@ -429,6 +434,7 @@ soupsieve==1.9.5
 sphinx==4.4.0
     # via
     #   -r requirements/ci.txt
+    #   recommonmark
     #   sphinx-rtd-theme
 sphinx-rtd-theme==1.0.0
     # via -r requirements/ci.txt

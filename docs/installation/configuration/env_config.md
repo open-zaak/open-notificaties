@@ -1,4 +1,4 @@
-# Configuration
+# Environment configuration reference
 
 Open Notificaties can be ran both as a Docker container or directly on a VPS or
 dedicated server. It relies on other services, such as database and cache
@@ -83,6 +83,44 @@ on Docker, since `localhost` is contained within the container:
 
 * `SENTRY_DSN`: URL of the sentry project to send error reports to. Default
   empty, i.e. -> no monitoring set up. Highly recommended to configure this.
+
+* `EXTRA_VERIFY_CERTS`: a comma-separated list of paths to certificates to trust, empty
+  by default. If you're using self-signed certificates for the services that Open Notificaties
+  communicates with, specify the path to those (root) certificates here, rather than
+  disabling SSL certificate verification. Example:
+  `EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt`.
+
+* `LOG_NOTIFICATIONS_IN_DB`: indicates whether or not sent notifications should be saved to the database (default: `False`).
+
+### Celery
+
+* `CELERY_BROKER_URL`: the URL of the broker that will be used to actually send the notifications (default: `amqp://127.0.0.1:5672//`).
+
+* `CELERY_RESULT_BACKEND`: the backend where the results of tasks will be stored (default: `redis://localhost:6379/1`)
+
+* `CELERY_MAX_RETRIES`: the maximum number of retries Celery will do if a sending a notification failed.
+
+* `CELERY_RETRY_BACKOFF`: a boolean, or a number. If this option is set to `True`, autoretries
+  will be delayed following the rules of exponential backoff. If this option is set to a number, it is used as a delay factor.
+
+* `CELERY_RETRY_BACKOFF_MAX`: a number. If retry_backoff is enabled, this option will set a maximum delay in seconds between task autoretries. By default, this option is set to 48 seconds.
+
+### Cross-Origin-Resource-Sharing
+
+The following parameters control the CORS policy.
+
+* `CORS_ALLOW_ALL_ORIGINS`: allow cross-domain access from any client. Defaults to `False`.
+
+* `CORS_ALLOWED_ORIGINS`: explicitly list the allowed origins for cross-domain requests.
+  Defaults to an empty list. Example: `http://localhost:3000,https://some-app.gemeente.nl`.
+
+* `CORS_ALLOWED_ORIGIN_REGEXES`: same as `CORS_ALLOWED_ORIGINS`, but supports regular
+  expressions.
+
+* `CORS_EXTRA_ALLOW_HEADERS`: headers that are allowed to be sent as part of the cross-domain
+  request. By default, `Authorization`, `Accept-Crs` and `Content-Crs` are already
+  included. The value of this variable is added to these already included headers.
+  Defaults to an empty list.
 
 ## Specifying the environment variables
 
