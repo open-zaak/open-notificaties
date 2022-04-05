@@ -470,6 +470,11 @@ BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
 
+# Retry settings for delivering notifications to subscriptions
+CELERY_MAX_RETRIES = config("CELERY_MAX_RETRIES", 5)
+CELERY_RETRY_BACKOFF = config("CELERY_RETRY_BACKOFF", 3)
+CELERY_RETRY_BACKOFF_MAX = config("CELERY_RETRY_BACKOFF", 48)
+
 #
 # DJANGO-ADMIN-INDEX
 #
