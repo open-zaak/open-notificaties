@@ -6,3 +6,6 @@ gitpython
 # Debug tooling
 django-debug-toolbar
 django-extensions
+
+# Documentation
+recommonmark
