@@ -87,4 +87,4 @@ class NotificatieAdmin(admin.ModelAdmin):
     inlines = (NotificatieResponseInline,)
 
     list_filter = ("kanaal",)
-    search_fields = ("kanaal", "forwarded_msg")
+    search_fields = ("kanaal__naam", "forwarded_msg",)
