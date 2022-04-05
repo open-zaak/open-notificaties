@@ -1,8 +1,13 @@
+from datetime import datetime
+
 from django.contrib import admin
+from django.db.models import Q
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
     Filter,
@@ -83,8 +88,50 @@ class NotificatieResponseInline(admin.TabularInline):
 
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
-    list_display = ("kanaal", "forwarded_msg")
+    list_display = (
+        "kanaal",
+        "action",
+        "resource",
+        "result",
+        "created_date",
+        "forwarded_msg",
+    )
     inlines = (NotificatieResponseInline,)
 
-    list_filter = ("kanaal",)
-    search_fields = ("kanaal__naam", "forwarded_msg",)
+    list_filter = (
+        "kanaal",
+        ActionFilter,
+        ResourceFilter,
+        ResultFilter,
+    )
+    search_fields = (
+        "kanaal__naam",
+        "forwarded_msg",
+    )
+
+    def result(self, obj):
+        all_succeeded = not obj.notificatieresponse_set.filter(~Q(response_status=204))
+        return all_succeeded
+
+    result.short_description = _("Result")
+    result.boolean = True
+
+    def action(self, obj):
+        return obj.forwarded_msg.get("actie")
+
+    action.short_description = _("Action")
+
+    def resource(self, obj):
+        return obj.forwarded_msg.get("resource")
+
+    resource.short_description = _("Resource")
+
+    def created_date(self, obj):
+        aanmaakdatum = obj.forwarded_msg.get("aanmaakdatum")
+        if not aanmaakdatum:
+            return None
+
+        naive = datetime.fromisoformat(aanmaakdatum.rstrip("Z"))
+        return timezone.make_aware(naive, timezone=timezone.utc)
+
+    created_date.short_description = _("Created date")
