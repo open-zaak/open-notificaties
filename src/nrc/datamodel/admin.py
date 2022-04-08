@@ -1,10 +1,13 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from djangorestframework_camel_case.util import underscoreize
 from rest_framework.fields import DateTimeField
+
+from nrc.api.serializers import MessageSerializer
 
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
@@ -85,6 +88,18 @@ class NotificatieResponseInline(admin.TabularInline):
     model = NotificatieResponse
 
 
+@admin.action(description=_("Re-send the selected notifications to all subscriptions"))
+def resend_notifications(modeladmin, request, queryset):
+    # Save all the selected notifications via the modeladmin, triggering
+    # the notification mechanism
+    for notification in queryset:
+        modeladmin.save_model(request, notification, None, True)
+
+    messages.add_message(
+        request, messages.SUCCESS, _("Selected notifications have been resent")
+    )
+
+
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
     list_display = (
@@ -96,6 +111,7 @@ class NotificatieAdmin(admin.ModelAdmin):
         "forwarded_msg",
     )
     inlines = (NotificatieResponseInline,)
+    actions = [resend_notifications]
 
     list_filter = (
         "kanaal",
@@ -144,3 +160,23 @@ class NotificatieAdmin(admin.ModelAdmin):
         return DateTimeField().to_internal_value(aanmaakdatum)
 
     created_date.short_description = _("Created date")
+
+    def get_inline_instances(self, request, obj=None):
+        # Hide the NotificatieResponseInline when creating a Notification
+        return obj and super().get_inline_instances(request, obj) or []
+
+    def save_model(self, request, obj, form, change):
+        """
+        Given a model instance save it to the database.
+        """
+        super().save_model(request, obj, form, change)
+
+        # Notification is being resent, delete the existing notificatieresponses
+        if change:
+            obj.notificatieresponse_set.all().delete()
+
+        transformed = underscoreize(obj.forwarded_msg)
+        serializer = MessageSerializer(data={"kanaal": obj.kanaal, **transformed})
+        if serializer.is_valid():
+            # Save the serializer to send the messages to the subscriptions
+            serializer.save(notificatie_id=obj.pk)

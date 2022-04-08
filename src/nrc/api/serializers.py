@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -174,7 +175,7 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _send_to_subs(self, msg: dict):
+    def _send_to_subs(self, msg: dict, notificatie_id: Optional[int]):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
@@ -183,8 +184,10 @@ class MessageSerializer(NotificatieSerializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
-        task_kwargs = {}
-        if settings.LOG_NOTIFICATIONS_IN_DB:
+        task_kwargs = {"notificatie_id": notificatie_id}
+
+        # Do not save a new notification, if an existing notification is being resent
+        if not notificatie_id and settings.LOG_NOTIFICATIONS_IN_DB:
             # creation of the notification
             kanaal = Kanaal.objects.get(naam=msg["kanaal"])
             notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
@@ -197,6 +200,8 @@ class MessageSerializer(NotificatieSerializer):
     def create(self, validated_data: dict) -> dict:
         logger.info("Handling notification %r", validated_data)
 
+        notificatie_id = validated_data.pop("notificatie_id", None)
+
         # send to subs
-        self._send_to_subs(validated_data)
+        self._send_to_subs(validated_data, notificatie_id)
         return validated_data
