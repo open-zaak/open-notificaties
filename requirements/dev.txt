@@ -101,7 +101,7 @@ deprecated==1.2.13
     # via
     #   -r requirements/ci.txt
     #   redis
-django==3.2.12
+django==3.2.13
     # via
     #   -r requirements/ci.txt
     #   django-admin-index
