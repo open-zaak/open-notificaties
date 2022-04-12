@@ -3,6 +3,7 @@ import uuid as _uuid
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
 
 
@@ -141,6 +142,12 @@ class Notificatie(models.Model):
     forwarded_msg = models.JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
 
+    @property
+    def last_attempt(self):
+        return (
+            self.notificatieresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
+        )
+
     def __str__(self) -> str:
         return "Notificatie ({})".format(self.kanaal)
 
@@ -148,6 +155,11 @@ class Notificatie(models.Model):
 class NotificatieResponse(models.Model):
     notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    attempt = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name=_("attempt"),
+        help_text=_("Indicates to which delivery attempt this response belongs."),
+    )
     exception = models.CharField(max_length=1000, blank=True)
     response_status = models.IntegerField(null=True)
 

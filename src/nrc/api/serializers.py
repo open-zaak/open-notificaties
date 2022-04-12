@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from djangorestframework_camel_case.util import camelize
+from djangorestframework_camel_case.util import camelize, underscoreize
 from rest_framework import fields, serializers
 from vng_api_common.notifications.api.serializers import NotificatieSerializer
 from vng_api_common.validators import URLValidator
@@ -175,7 +175,7 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _send_to_subs(self, msg: dict, notificatie_id: Optional[int]):
+    def _send_to_subs(self, msg: dict, notificatie: Optional[Notificatie] = None):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
@@ -184,14 +184,21 @@ class MessageSerializer(NotificatieSerializer):
             if group.match_pattern(msg_filters):
                 subs.add(group.abonnement)
 
-        task_kwargs = {"notificatie_id": notificatie_id}
+        task_kwargs = {}
 
-        # Do not save a new notification, if an existing notification is being resent
-        if not notificatie_id and settings.LOG_NOTIFICATIONS_IN_DB:
+        # Do not save a new notification, if an existing notification is being scheduled
+        if not notificatie and settings.LOG_NOTIFICATIONS_IN_DB:
             # creation of the notification
             kanaal = Kanaal.objects.get(naam=msg["kanaal"])
             notificatie = Notificatie.objects.create(forwarded_msg=msg, kanaal=kanaal)
-            task_kwargs.update({"notificatie_id": notificatie.id})
+
+        if notificatie:
+            task_kwargs.update(
+                {
+                    "notificatie_id": notificatie.id,
+                    "attempt": notificatie.last_attempt + 1,
+                }
+            )
 
         # send to subs
         for sub in list(subs):
@@ -200,8 +207,16 @@ class MessageSerializer(NotificatieSerializer):
     def create(self, validated_data: dict) -> dict:
         logger.info("Handling notification %r", validated_data)
 
-        notificatie_id = validated_data.pop("notificatie_id", None)
+        notificatie = validated_data.pop("notificatie", None)
 
         # send to subs
-        self._send_to_subs(validated_data, notificatie_id)
+        self._send_to_subs(validated_data, notificatie=notificatie)
         return validated_data
+
+    @classmethod
+    def send_notification(cls, obj: Notificatie):
+        transformed = underscoreize(obj.forwarded_msg)
+        serializer = cls(data={"kanaal": obj.kanaal, **transformed})
+        if serializer.is_valid():
+            # Save the serializer to send the messages to the subscriptions
+            serializer.save(notificatie=obj)
