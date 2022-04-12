@@ -20,11 +20,11 @@ class NotificationException(Exception):
 @app.task(
     autoretry_for=(
         NotificationException,
-        requests.exceptions.RequestException,
+        requests.RequestException,
     ),
-    max_retries=settings.CELERY_MAX_RETRIES,
-    retry_backoff=settings.CELERY_RETRY_BACKOFF,
-    retry_backoff_max=settings.CELERY_RETRY_BACKOFF_MAX,
+    max_retries=settings.NOTIFICATION_DELIVERY_MAX_RETRIES,
+    retry_backoff=settings.NOTIFICATION_DELIVERY_RETRY_BACKOFF,
+    retry_backoff_max=settings.NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX,
 )
 def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     """
@@ -49,15 +49,15 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
             headers={"Content-Type": "application/json", "Authorization": sub.auth},
         )
         response_init_kwargs = {"response_status": response.status_code}
-        if response.status_code != 204:
+        if not 200 <= response.status_code < 300:
             exception_message = _(
                 "Could not send notification: status {status_code} - {response}"
             ).format(status_code=response.status_code, response=response.text)
             response_init_kwargs["exception"] = exception_message
             raise NotificationException(exception_message)
-    except requests.exceptions.RequestException as e:
+    except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
-        raise e
+        raise
     finally:
         # log of the response of the call
         logger.debug(
