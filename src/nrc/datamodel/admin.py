@@ -1,11 +1,10 @@
-from datetime import datetime
-
 from django.contrib import admin
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+
+from rest_framework.fields import DateTimeField
 
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
@@ -109,9 +108,20 @@ class NotificatieAdmin(admin.ModelAdmin):
         "forwarded_msg",
     )
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.annotate(
+            failed_responses_count=Count(
+                "notificatieresponse",
+                filter=Q(
+                    Q(notificatieresponse__response_status__lt=200)
+                    | Q(notificatieresponse__response_status__gte=300)
+                ),
+            )
+        )
+
     def result(self, obj):
-        all_succeeded = not obj.notificatieresponse_set.filter(~Q(response_status=204))
-        return all_succeeded
+        return not obj.failed_responses_count > 0
 
     result.short_description = _("Result")
     result.boolean = True
@@ -131,7 +141,6 @@ class NotificatieAdmin(admin.ModelAdmin):
         if not aanmaakdatum:
             return None
 
-        naive = datetime.fromisoformat(aanmaakdatum.rstrip("Z"))
-        return timezone.make_aware(naive, timezone=timezone.utc)
+        return DateTimeField().to_internal_value(aanmaakdatum)
 
     created_date.short_description = _("Created date")
