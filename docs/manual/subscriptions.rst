@@ -37,7 +37,12 @@ In Open Zaak is er een makkelijke manier om kanalen te registreren, zie `Open Za
 Aanmaken abonnement
 ===================
 
-Het abonnement kan aangemaakt worden door in het admininterface van Open Notificaties
+.. warning::
+
+   Het aanmaken van abonnementen via de admininterface is bedoeld voor debug-doeleinden,
+   idealiter worden abonnementen aangemaakt via de API.
+
+Het abonnement kan aangemaakt worden door in de admininterface van Open Notificaties
 te navigeren naar **Configuratie > Webhook subscriptions > Toevoegen**.
 
 Vul vervolgens het formulier in:
@@ -67,7 +72,7 @@ Per abonnement kunnen filteropties ingesteld worden, waarmee gefilterd kan worde
 die meegegeven worden met de notificaties. De kenmerken waarop gefilterd kan worden zijn gedefinieerd per
 kanaal, bijvoorbeeld: `kenmerken <https://github.com/VNG-Realisatie/zaken-api/blob/stable/1.0.x/src/notificaties.md>`_ voor het kanaal ``zaken``.
 
-Filters kunnen toegevoegd worden aan abonnementen door in het admininterface van Open Notificaties
+Filters kunnen toegevoegd worden aan abonnementen door in de admininterface van Open Notificaties
 te navigeren naar **Notificaties > Abonnementen**.
 
 1. Klik op de UUID van het abonnement waarvoor filters toegevoegd moeten worden
