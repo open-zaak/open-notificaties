@@ -37,7 +37,12 @@ In Open Zaak is er een makkelijke manier om kanalen te registreren, zie `Open Za
 Aanmaken abonnement
 ===================
 
-Het abonnement kan aangemaakt worden door in het admininterface van Open Notificaties
+.. warning::
+
+   Het aanmaken van abonnementen via de admininterface is bedoeld voor debug-doeleinden,
+   idealiter worden abonnementen aangemaakt via de API.
+
+Het abonnement kan aangemaakt worden door in de admininterface van Open Notificaties
 te navigeren naar **Configuratie > Webhook subscriptions > Toevoegen**.
 
 Vul vervolgens het formulier in:
@@ -59,6 +64,34 @@ dit gaat als volgt:
 3. Klik op **Uitvoeren**
 
 Vanaf nu zullen alle notificaties voor het gekozen ``Kanaal`` doorgestuurd worden naar de geconfigureerde webhook.
+
+Filters instellen
+=================
+
+Per abonnement kunnen filteropties ingesteld worden, waarmee gefilterd kan worden op waardes van kenmerken
+die meegegeven worden met de notificaties. De kenmerken waarop gefilterd kan worden zijn gedefinieerd per
+kanaal, bijvoorbeeld: `kenmerken <https://github.com/VNG-Realisatie/zaken-api/blob/stable/1.0.x/src/notificaties.md>`_ voor het kanaal ``zaken``.
+
+Filters kunnen toegevoegd worden aan abonnementen door in de admininterface van Open Notificaties
+te navigeren naar **Notificaties > Abonnementen**.
+
+1. Klik op de UUID van het abonnement waarvoor filters toegevoegd moeten worden
+2. Klik onder het kopje **Filters** op **Nog een Filter toevoegen**
+3. Selecteer het kanaal waarvoor dit filter geldt (bijv. ``zaken``) en klik op **Opslaan en opnieuw bewerken**
+4. Klik vervolgens voor het aangemaakte filter onder **Acties** op **Filters instellen**
+5. Klik onder het kopje **Filter-onderdelen** op **Nog een filter-onderdeel toevoegen** en vul in:
+
+   - **Sleutel**: de naam van het kenmerk (bijv. ``bronorganisatie``)
+   - **Waarde**: de waarde waarop gefilterd moet worden (bijv. ``123456789``)
+
+6. Klik op **Opslaan**
+
+Vanaf nu worden notificaties voor het gekozen kanaal alleen verstuurd naar de geabonneerde callback
+als de waarde van het gekozen kenmerk van deze notificaties gelijk is aan de instelde waarde.
+
+.. note::
+   Om voor hetzelfde kenmerk te filteren op meerdere waardes, moeten er een nieuw **Filter**
+   toegevoegd worden per waarde (volgens de bovenstaande stappen)
 
 .. _`Open Zaak documentatie`: https://open-zaak.readthedocs.io/en/stable/installation/config/openzaak_config.html#open-zaak
 .. _`Open Zaak documentatie over kanalen`: https://open-zaak.readthedocs.io/en/stable/installation/config/openzaak_config.html#register-notification-channels
