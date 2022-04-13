@@ -1,8 +1,12 @@
 from django.contrib import admin
+from django.db.models import Count, Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from rest_framework.fields import DateTimeField
+
+from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
     Filter,
@@ -83,8 +87,60 @@ class NotificatieResponseInline(admin.TabularInline):
 
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
-    list_display = ("kanaal", "forwarded_msg")
+    list_display = (
+        "kanaal",
+        "action",
+        "resource",
+        "result",
+        "created_date",
+        "forwarded_msg",
+    )
     inlines = (NotificatieResponseInline,)
 
-    list_filter = ("kanaal",)
-    search_fields = ("kanaal", "forwarded_msg")
+    list_filter = (
+        "kanaal",
+        ActionFilter,
+        ResourceFilter,
+        ResultFilter,
+    )
+    search_fields = (
+        "kanaal__naam",
+        "forwarded_msg",
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.annotate(
+            failed_responses_count=Count(
+                "notificatieresponse",
+                filter=Q(
+                    Q(notificatieresponse__response_status__lt=200)
+                    | Q(notificatieresponse__response_status__gte=300)
+                ),
+            )
+        )
+
+    def result(self, obj):
+        return not obj.failed_responses_count > 0
+
+    result.short_description = _("Result")
+    result.boolean = True
+
+    def action(self, obj):
+        return obj.forwarded_msg.get("actie")
+
+    action.short_description = _("Action")
+
+    def resource(self, obj):
+        return obj.forwarded_msg.get("resource")
+
+    resource.short_description = _("Resource")
+
+    def created_date(self, obj):
+        aanmaakdatum = obj.forwarded_msg.get("aanmaakdatum")
+        if not aanmaakdatum:
+            return None
+
+        return DateTimeField().to_internal_value(aanmaakdatum)
+
+    created_date.short_description = _("Created date")
