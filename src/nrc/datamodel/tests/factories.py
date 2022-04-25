@@ -50,3 +50,12 @@ class NotificatieFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "datamodel.Notificatie"
+
+
+class NotificatieResponseFactory(factory.django.DjangoModelFactory):
+    notificatie = factory.SubFactory(NotificatieFactory)
+    abonnement = factory.SubFactory(AbonnementFactory)
+    response_status = 204
+
+    class Meta:
+        model = "datamodel.NotificatieResponse"

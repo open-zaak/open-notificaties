@@ -67,5 +67,8 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
         # Only log if a top-level object is provided
         if notificatie_id:
             NotificatieResponse.objects.create(
-                notificatie_id=notificatie_id, abonnement=sub, **response_init_kwargs
+                notificatie_id=notificatie_id,
+                abonnement=sub,
+                attempt=kwargs.get("attempt", 1),
+                **response_init_kwargs
             )

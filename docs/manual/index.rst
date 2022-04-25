@@ -14,5 +14,6 @@ further configured via the management interface.
    :caption: Further reading
 
    subscriptions
+   notifications
    adfs
    oidc

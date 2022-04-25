@@ -1,10 +1,12 @@
-from django.contrib import admin
-from django.db.models import Count, Q
+from django.contrib import admin, messages
+from django.db.models import Count, OuterRef, Q, Subquery
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.fields import DateTimeField
+
+from nrc.api.utils import send_notification
 
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
@@ -85,6 +87,18 @@ class NotificatieResponseInline(admin.TabularInline):
     model = NotificatieResponse
 
 
+@admin.action(description=_("Re-send the selected notifications to all subscriptions"))
+def resend_notifications(modeladmin, request, queryset):
+    # Save all the selected notifications via the modeladmin, triggering
+    # the notification mechanism
+    for notification in queryset:
+        send_notification(notification)
+
+    messages.add_message(
+        request, messages.SUCCESS, _("Selected notifications have been scheduled.")
+    )
+
+
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
     list_display = (
@@ -96,6 +110,7 @@ class NotificatieAdmin(admin.ModelAdmin):
         "forwarded_msg",
     )
     inlines = (NotificatieResponseInline,)
+    actions = [resend_notifications]
 
     list_filter = (
         "kanaal",
@@ -110,18 +125,29 @@ class NotificatieAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.annotate(
-            failed_responses_count=Count(
-                "notificatieresponse",
-                filter=Q(
-                    Q(notificatieresponse__response_status__lt=200)
-                    | Q(notificatieresponse__response_status__gte=300)
-                ),
-            )
+        latest_attempts = (
+            NotificatieResponse.objects.filter(notificatie=OuterRef(OuterRef("pk")))
+            .order_by("abonnement", "-attempt")
+            .distinct("abonnement")
+            .values("pk")
         )
 
+        failed_attempts = (
+            NotificatieResponse.objects.filter(pk__in=Subquery(latest_attempts))
+            .filter(Q(response_status__lt=200) | Q(response_status__gte=300))
+            .values("pk")
+        )
+
+        qs = qs.annotate(
+            failed_responses_count=Count(
+                "notificatieresponse",
+                filter=Q(notificatieresponse__pk__in=Subquery(failed_attempts)),
+            ),
+        )
+        return qs
+
     def result(self, obj):
-        return not obj.failed_responses_count > 0
+        return obj.failed_responses_count == 0
 
     result.short_description = _("Result")
     result.boolean = True
@@ -144,3 +170,17 @@ class NotificatieAdmin(admin.ModelAdmin):
         return DateTimeField().to_internal_value(aanmaakdatum)
 
     created_date.short_description = _("Created date")
+
+    def get_inline_instances(self, request, obj=None):
+        # Hide the NotificatieResponseInline when creating a Notification
+        if obj is None:
+            return []
+        return super().get_inline_instances(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Given a model instance save it to the database.
+        """
+        super().save_model(request, obj, form, change)
+
+        send_notification(obj)
