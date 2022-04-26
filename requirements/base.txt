@@ -119,10 +119,11 @@ djangorestframework==3.12.4
     #   vng-api-common
 djangorestframework-camel-case==1.2.0
     # via vng-api-common
-docutils==0.15
+docutils==0.17.1
     # via
     #   sphinx
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 drf-nested-routers==0.93.4
     # via vng-api-common
 drf-yasg==1.20.0
@@ -187,7 +188,9 @@ psycopg2==2.9.3
 pycparser==2.21
     # via cffi
 pygments==2.4.2
-    # via sphinx
+    # via
+    #   sphinx
+    #   sphinx-tabs
 pyjwt==2.3.0
     # via
     #   django-auth-adfs
@@ -243,7 +246,10 @@ sphinx==4.4.0
     # via
     #   -r requirements/base.in
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 sphinx-rtd-theme==1.0.0
+    # via -r requirements/base.in
+sphinx-tabs==3.3.1
     # via -r requirements/base.in
 sphinxcontrib-applehelp==1.0.1
     # via sphinx

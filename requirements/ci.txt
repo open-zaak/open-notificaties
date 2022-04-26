@@ -174,11 +174,12 @@ djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
-docutils==0.15
+docutils==0.17.1
     # via
     #   -r requirements/base.txt
     #   sphinx
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 drf-nested-routers==0.93.4
     # via
     #   -r requirements/base.txt
@@ -309,6 +310,7 @@ pygments==2.4.2
     # via
     #   -r requirements/base.txt
     #   sphinx
+    #   sphinx-tabs
 pyjwt==2.3.0
     # via
     #   -r requirements/base.txt
@@ -394,7 +396,10 @@ sphinx==4.4.0
     # via
     #   -r requirements/base.txt
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 sphinx-rtd-theme==1.0.0
+    # via -r requirements/base.txt
+sphinx-tabs==3.3.1
     # via -r requirements/base.txt
 sphinxcontrib-applehelp==1.0.1
     # via
