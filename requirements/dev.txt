@@ -20,6 +20,10 @@ async-timeout==4.0.2
     # via
     #   -r requirements/ci.txt
     #   redis
+attrs==21.4.0
+    # via
+    #   -r requirements/ci.txt
+    #   glom
 babel==2.7.0
     # via
     #   -r requirements/ci.txt
@@ -34,6 +38,11 @@ billiard==3.6.4.0
     #   celery
 black==21.9b0
     # via -r requirements/ci.txt
+boltons==21.0.0
+    # via
+    #   -r requirements/ci.txt
+    #   face
+    #   glom
 bump2version==1.0.1
     # via -r requirements/dev.in
 celery==5.2.6
@@ -192,6 +201,10 @@ drf-yasg==1.20.0
     # via
     #   -r requirements/ci.txt
     #   vng-api-common
+face==20.1.1
+    # via
+    #   -r requirements/ci.txt
+    #   glom
 factory-boy==3.2.1
     # via -r requirements/ci.txt
 faker==2.0.1
@@ -212,6 +225,10 @@ gitdb==4.0.9
     # via gitpython
 gitpython==3.1.27
     # via -r requirements/dev.in
+glom==22.1.0
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc-db
 humanize==4.0.0
     # via
     #   -r requirements/ci.txt
@@ -270,11 +287,11 @@ mccabe==0.6.1
     # via
     #   -r requirements/ci.txt
     #   flake8
-mozilla-django-oidc==1.2.4
+mozilla-django-oidc==2.0.0
     # via
     #   -r requirements/ci.txt
     #   mozilla-django-oidc-db
-mozilla-django-oidc-db==0.8.0
+mozilla-django-oidc-db==0.10.0
     # via -r requirements/ci.txt
 mypy-extensions==0.4.3
     # via
@@ -311,9 +328,7 @@ prompt-toolkit==3.0.20
     #   -r requirements/ci.txt
     #   click-repl
 psycopg2==2.9.3
-    # via
-    #   -r requirements/ci.txt
-    #   mozilla-django-oidc-db
+    # via -r requirements/ci.txt
 pycodestyle==2.6.0
     # via
     #   -r requirements/ci.txt
@@ -407,7 +422,6 @@ six==1.16.0
     #   django-choices
     #   faker
     #   isodate
-    #   mozilla-django-oidc
     #   pyopenssl
     #   python-dateutil
     #   requests-mock
