@@ -36,5 +36,6 @@ Open Notificaties `is`_ and only uses :ref:`introduction_open-source`.
    installation/index
    manual/index
    support/index
+   delivery_guarantees
    development/index
    changelog
