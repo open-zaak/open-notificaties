@@ -9,7 +9,7 @@ Open Notificaties ondersteunt Single Sign On (SSO) via het OpenID Connect protoc
 Gebruikers kunnen op die manier inloggen op Open Notificaties met hun account bij de OpenID Connect provider. In deze
 flow:
 
-1. Klikt een gebruiker op het inlogscherm op *Inloggen met OIDC*
+1. Klikt een gebruiker op het inlogscherm op *Inloggen met organisatieaccount*
 2. De gebruiker wordt naar de omgeving van de OpenID Connect provider geleid (bijv. Keycloak) waar ze inloggen met gebruikersnaam
    en wachtwoord (en eventuele Multi Factor Authentication)
 3. De OIDC omgeving stuurt de gebruiker terug naar Open Notificaties (waar de account aangemaakt
