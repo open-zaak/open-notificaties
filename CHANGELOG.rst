@@ -2,8 +2,25 @@
 Changes
 =======
 
-1.4.0 (2022-05-??)
+1.4.0 (2022-05-03)
 ==================
+
+**New features**
+
+* Implemented automatic delivery retry mechanism on failure (#1132)
+* You can now manually (re)-send notifications from the admin interface (#1135)
+* Improved admin interface for notifications (#1133)
+
+**Documentation**
+
+* document Open Notificaties message delivery guarantees (#1151)
+* described subscription filters in docs (#1134)
+
+**Project maintenance**
+
+* Replace ADFS library with generic OpenID Connect library - please see the notes below! (#1139)
+* Upgraded Python version from 3.7 to 3.9
+* Upgraded to Django 3.2.13 (#1136)
 
 .. warning::
 
