@@ -20,6 +20,10 @@ async-timeout==4.0.2
     # via
     #   -r requirements/base.txt
     #   redis
+attrs==21.4.0
+    # via
+    #   -r requirements/base.txt
+    #   glom
 babel==2.7.0
     # via
     #   -r requirements/base.txt
@@ -32,6 +36,11 @@ billiard==3.6.4.0
     #   celery
 black==21.9b0
     # via -r requirements/test-tools.in
+boltons==21.0.0
+    # via
+    #   -r requirements/base.txt
+    #   face
+    #   glom
 celery==5.2.6
     # via
     #   -r requirements/base.txt
@@ -165,11 +174,12 @@ djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
-docutils==0.15
+docutils==0.17.1
     # via
     #   -r requirements/base.txt
     #   sphinx
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 drf-nested-routers==0.93.4
     # via
     #   -r requirements/base.txt
@@ -178,6 +188,10 @@ drf-yasg==1.20.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
+face==20.1.1
+    # via
+    #   -r requirements/base.txt
+    #   glom
 factory-boy==3.2.1
     # via -r requirements/test-tools.in
 faker==2.0.1
@@ -192,6 +206,10 @@ gemma-zds-client==0.15.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
+glom==22.1.0
+    # via
+    #   -r requirements/base.txt
+    #   mozilla-django-oidc-db
 humanize==4.0.0
     # via
     #   -r requirements/base.txt
@@ -248,11 +266,11 @@ markupsafe==2.1.1
     #   jinja2
 mccabe==0.6.1
     # via flake8
-mozilla-django-oidc==1.2.4
+mozilla-django-oidc==2.0.0
     # via
     #   -r requirements/base.txt
     #   mozilla-django-oidc-db
-mozilla-django-oidc-db==0.8.0
+mozilla-django-oidc-db==0.10.0
     # via -r requirements/base.txt
 mypy-extensions==0.4.3
     # via black
@@ -279,9 +297,7 @@ prompt-toolkit==3.0.20
     #   -r requirements/base.txt
     #   click-repl
 psycopg2==2.9.3
-    # via
-    #   -r requirements/base.txt
-    #   mozilla-django-oidc-db
+    # via -r requirements/base.txt
 pycodestyle==2.6.0
     # via flake8
 pycparser==2.21
@@ -294,6 +310,7 @@ pygments==2.4.2
     # via
     #   -r requirements/base.txt
     #   sphinx
+    #   sphinx-tabs
 pyjwt==2.3.0
     # via
     #   -r requirements/base.txt
@@ -366,7 +383,6 @@ six==1.16.0
     #   django-choices
     #   faker
     #   isodate
-    #   mozilla-django-oidc
     #   pyopenssl
     #   python-dateutil
     #   requests-mock
@@ -380,7 +396,10 @@ sphinx==4.4.0
     # via
     #   -r requirements/base.txt
     #   sphinx-rtd-theme
+    #   sphinx-tabs
 sphinx-rtd-theme==1.0.0
+    # via -r requirements/base.txt
+sphinx-tabs==3.3.1
     # via -r requirements/base.txt
 sphinxcontrib-applehelp==1.0.1
     # via
