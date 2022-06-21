@@ -2,6 +2,14 @@
 Changes
 =======
 
+1.4.1 (2022-06-24)
+==================
+
+Bugfix release following 1.4.0
+
+* Fixed missing migration file for conversion from ADFS library to OpenID Connect library
+* Fixed the CI build not producing ``latest`` image tags correctly
+
 1.4.0 (2022-05-03)
 ==================
 
