@@ -1,16 +1,4 @@
-from django.core.management import call_command
 from django.db import migrations
-
-
-def forward(apps, schema_editor):
-    from django.apps import apps as django_apps
-    from django.contrib.contenttypes.management import create_contenttypes
-
-    apps = django_apps.get_app_configs()
-    for app in apps:
-        create_contenttypes(app)
-
-    call_command("loaddata", "default_admin_index.json")
 
 
 class Migration(migrations.Migration):
@@ -21,4 +9,4 @@ class Migration(migrations.Migration):
         ("datamodel", "0012_auto_20190605_1523"),
     ]
 
-    operations = [migrations.RunPython(forward, migrations.RunPython.noop)]
+    operations = []

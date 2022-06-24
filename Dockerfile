@@ -19,7 +19,7 @@ FROM node:16-bullseye-slim AS frontend-build
 WORKDIR /app
 
 COPY ./*.json /app/
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY ./Gulpfile.js /app/
 COPY ./build /app/build/
