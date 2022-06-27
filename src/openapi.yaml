@@ -901,6 +901,12 @@ components:
       - aanmaakdatum
       type: object
       properties:
+        uuid:
+          title: UUID
+          description: Unique resource identifier (UUID4)
+          type: string
+          format: uuid
+          readOnly: true
         kanaal:
           title: kanaal
           description: De naam van het kanaal (`KANAAL.naam`) waar het bericht op
