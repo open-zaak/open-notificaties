@@ -298,7 +298,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng_api_common @ git+https://github.com/VNG-Realisatie/vng-api-common.git@45303c6c79198c0bd6f39a2dcc5de9012bfcb06c
+vng_api_common @ git+https://github.com/VNG-Realisatie/vng-api-common.git@b2434918b1deb577263dfa2468a4bdfc440fa82a
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit
