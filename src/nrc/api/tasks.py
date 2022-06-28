@@ -1,7 +1,13 @@
+import inspect
 import json
 import logging
+from urllib.parse import urlparse
+from uuid import UUID
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django.core.serializers.json import DjangoJSONEncoder
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import requests
@@ -29,7 +35,7 @@ def add_autoretry_behaviour(task, **options):
     if autoretry_for and not hasattr(task, "_orig_run"):
 
         @wraps(task.run)
-        def run(*args, **kwargs):
+        def run(sub_id: int, msg: dict, **kwargs):
             config = NotificationsConfig.get_solo()
             max_retries = config.notification_delivery_max_retries
             retry_backoff = config.notification_delivery_retry_backoff
@@ -38,7 +44,7 @@ def add_autoretry_behaviour(task, **options):
             task.max_retries = max_retries
 
             try:
-                return task._orig_run(*args, **kwargs)
+                return task._orig_run(sub_id, msg, **kwargs)
             except Ignore:
                 # If Ignore signal occurs task shouldn't be retried,
                 # even if it suits autoretry_for list
@@ -59,17 +65,55 @@ def add_autoretry_behaviour(task, **options):
                         task, "override_max_retries", max_retries
                     )
 
-                ret = task.retry(exc=exc, **retry_kwargs)
-                # Stop propagation
-                if hasattr(task, "override_max_retries"):
-                    delattr(task, "override_max_retries")
-                raise ret
+                try:
+                    ret = task.retry(exc=exc, **retry_kwargs)
+                    # Stop propagation
+                    if hasattr(task, "override_max_retries"):
+                        delattr(task, "override_max_retries")
+                    raise ret
+                except autoretry_for:
+                    # Final retry failed, send email
+                    send_email_to_admins.delay(sub_id, msg["uuid"])
+                except Exception:
+                    raise
 
         task._orig_run, task.run = task.run, run
 
 
 class NotificationException(Exception):
     pass
+
+
+@app.task
+def send_email_to_admins(sub_id: int, notificatie_uuid: UUID) -> None:
+    subscription = Abonnement.objects.get(pk=sub_id)
+    config = NotificationsConfig.get_solo()
+
+    if not config.failed_notification_admin_recipients:
+        return
+
+    parsed = urlparse(config.api_root)
+    notifications_changelist = reverse("admin:datamodel_notificatie_changelist")
+
+    body = inspect.cleandoc(
+        """
+        Notification {notificatie_uuid} to subscriber {sub_uuid} failed.
+
+        See {admin_url} for more info
+    """.format(
+            notificatie_uuid=notificatie_uuid,
+            sub_uuid=subscription.uuid,
+            admin_url=f"{parsed.scheme}://{parsed.netloc}{notifications_changelist}",
+        )
+    )
+
+    send_mail(
+        f"Failed notification - {notificatie_uuid}",
+        body,
+        settings.DEFAULT_FROM_EMAIL,
+        config.failed_notification_admin_recipients,
+        fail_silently=False,
+    )
 
 
 @app.task
@@ -117,7 +161,7 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 notificatie_id=notificatie_id,
                 abonnement=sub,
                 attempt=kwargs.get("attempt", 1),
-                **response_init_kwargs
+                **response_init_kwargs,
             )
 
 
