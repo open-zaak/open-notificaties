@@ -497,6 +497,7 @@ OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
 #
 # Mozilla Django OIDC DB settings
 #
+OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
 OIDC_AUTHENTICATE_CLASS = "mozilla_django_oidc_db.views.OIDCAuthenticationRequestView"
 MOZILLA_DJANGO_OIDC_DB_CACHE = "oidc"
 MOZILLA_DJANGO_OIDC_DB_CACHE_TIMEOUT = 5 * 60
