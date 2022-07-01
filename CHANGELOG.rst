@@ -2,6 +2,13 @@
 Changes
 =======
 
+1.4.2 (2022-07-01)
+==================
+
+Fixed a crash when using the OIDC integration.
+
+Thanks @damm89 for reporting this and figuring out the cause!
+
 1.4.1 (2022-06-24)
 ==================
 
