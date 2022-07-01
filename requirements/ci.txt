@@ -113,6 +113,7 @@ django==3.2.13
     #   django-filter
     #   django-markup
     #   django-redis
+    #   django-rest-framework-condition
     #   django-solo
     #   djangorestframework
     #   drf-nested-routers
@@ -156,6 +157,10 @@ django-ordered-model==3.5
     #   django-admin-index
 django-redis==5.2.0
     # via -r requirements/base.txt
+django-rest-framework-condition==0.1.1
+    # via
+    #   -r requirements/base.txt
+    #   vng-api-common
 django-solo==2.0.0
     # via
     #   -r requirements/base.txt
@@ -444,10 +449,6 @@ typing-extensions==4.1.1
     #   -r requirements/base.txt
     #   black
     #   redis
-unidecode==1.0.23
-    # via
-    #   -r requirements/base.txt
-    #   vng-api-common
 uritemplate==3.0.0
     # via
     #   -r requirements/base.txt
@@ -466,7 +467,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.0.69
+vng-api-common==1.7.8
     # via -r requirements/base.txt
 waitress==2.1.1
     # via webtest
