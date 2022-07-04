@@ -1,5 +1,7 @@
+import inspect
 from unittest.mock import patch
 
+from django.core import mail
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
 
@@ -12,7 +14,7 @@ from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.notifications.models import NotificationsConfig
 from vng_api_common.tests import JWTAuthMixin
 
-from nrc.api.tasks import deliver_message
+from nrc.api.tasks import NotificationException, deliver_message, send_email_to_admins
 from nrc.datamodel.models import Notificatie
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -210,3 +212,77 @@ class NotificatieRetryTests(TestCase):
             full_jitter=False,
         )
         self.assertEqual(deliver_message.max_retries, 4)
+
+    @patch("nrc.api.tasks.send_email_to_admins.delay", side_effect=send_email_to_admins)
+    def test_notificatie_retry_email(
+        self,
+        mock_email,
+        mock_retry,
+        mock_config,
+        mock_get_exponential_backoff,
+    ):
+        """
+        Verify that an email is sent after all retries are done
+        """
+        mock_config.return_value = NotificationsConfig(
+            api_root="https://nrc.com/api/v1/",
+            notification_delivery_max_retries=4,
+            notification_delivery_retry_backoff=4,
+            notification_delivery_retry_backoff_max=28,
+            failed_notification_admin_recipients=["foo@bar.nl", "bar@baz.nl"],
+        )
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
+        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value="082096752011"
+        )
+        msg = {
+            "uuid": "920fc3b4-622c-45c9-b656-dee6cd463627",
+            "kanaal": "zaken",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        # Mock that max retries have been exceeded
+        mock_retry.side_effect = NotificationException()
+        with requests_mock.Mocker() as m:
+            m.post(abon.callback_url, status_code=404)
+            deliver_message(abon.id, msg)
+
+        mock_email.assert_called_once_with(
+            abon.pk, "920fc3b4-622c-45c9-b656-dee6cd463627"
+        )
+
+        self.assertEqual(len(mail.outbox), 1)
+
+        outbound_mail = mail.outbox[0]
+        notifications_changelist = reverse("admin:datamodel_notificatie_changelist")
+        admin_url = f"https://nrc.com{notifications_changelist}"
+
+        self.assertEqual(
+            outbound_mail.subject,
+            "Failed notification - 920fc3b4-622c-45c9-b656-dee6cd463627",
+        )
+        self.assertEqual(
+            outbound_mail.body,
+            inspect.cleandoc(
+                f"""
+            Notification 920fc3b4-622c-45c9-b656-dee6cd463627 to subscriber {abon.uuid} failed.
+
+            See {admin_url} for more info
+        """
+            ),
+        )
+        self.assertEqual(outbound_mail.from_email, "opennotificaties@example.com")
+        self.assertEqual(outbound_mail.to, ["foo@bar.nl", "bar@baz.nl"])
