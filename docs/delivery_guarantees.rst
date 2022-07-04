@@ -69,15 +69,7 @@ On delivery failure, Open Notificaties will automatically retry delivery, with
 exponential backoff. E.g. the first retry will be done after one second, the next after
 two seconds and the third after 4 seconds.
 
-The parameters for this can be :ref:`configured <installation_config_index>`:
-
-* ``NOTIFICATION_DELIVERY_MAX_RETRIES``: the maximum number of automatic retries. After
-  this amount of retries, Open Notificaties stops trying to deliver the message.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF``: if specified, a factor applied to the
-  exponential backoff. This allows you to tune how quickly automatic retries are
-  performed.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX``: an upper limit to the exponential
-  backoff time.
+The parameters for this are described and can be configured in the admin interface, under ``Configuration > Notification component configuration``.
 
 On top of that, via the admin interface you can manually select notifications to retry
 delivery for.
