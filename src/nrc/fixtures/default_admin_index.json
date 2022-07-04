@@ -81,11 +81,11 @@
                 "openidconnectconfig"
             ],
             [
-                "notifications",
+                "notifications_api_common",
                 "notificationsconfig"
             ],
             [
-                "notifications",
+                "notifications_api_common",
                 "subscription"
             ]
         ]
