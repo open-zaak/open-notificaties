@@ -1,13 +1,16 @@
 import inspect
 import json
 import logging
+from datetime import datetime
 from urllib.parse import urlparse
 from uuid import UUID
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import requests
@@ -20,6 +23,9 @@ from nrc.celery import app
 from nrc.datamodel.models import Abonnement, NotificatieResponse
 
 logger = logging.getLogger(__name__)
+
+
+LATEST_EMAIL_CACHE_PREFIX = "latest_notification_email"
 
 
 def add_autoretry_behaviour(task, **options):
@@ -84,7 +90,29 @@ class NotificationException(Exception):
     pass
 
 
+def cooldown_period(func):
+    def inner(sub_id: int, notificatie_uuid: UUID):
+        subscription = Abonnement.objects.get(pk=sub_id)
+        cache_key = f"{LATEST_EMAIL_CACHE_PREFIX}:{subscription.uuid}"
+        current_time = timezone.now()
+        latest_timestamp = cache.get(cache_key)
+        if (
+            not latest_timestamp
+            or (
+                current_time
+                - timezone.make_aware(datetime.fromtimestamp(latest_timestamp))
+            ).seconds
+            / 3600
+            >= 24
+        ):
+            cache.set(cache_key, current_time.timestamp())
+            return func(sub_id, notificatie_uuid)
+
+    return inner
+
+
 @app.task
+@cooldown_period
 def send_email_to_admins(sub_id: int, notificatie_uuid: UUID) -> None:
     subscription = Abonnement.objects.get(pk=sub_id)
     config = NotificationsConfig.get_solo()
