@@ -520,7 +520,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common @ git+https://github.com/VNG-Realisatie/vng-api-common.git@43779a141cfba3ecd5f90959c5d6b98c80386281
+vng-api-common @ git+https://github.com/VNG-Realisatie/vng-api-common.git@c870aec8ccabb8a7556426262f3c2f55800b08a8
     # via -r requirements/ci.txt
 waitress==2.1.1
     # via

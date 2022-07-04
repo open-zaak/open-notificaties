@@ -27,7 +27,7 @@ mozilla-django-oidc-db
 # API libraries
 djangorestframework
 gemma-zds-client<1.0
-git+https://github.com/VNG-Realisatie/vng-api-common.git@43779a141cfba3ecd5f90959c5d6b98c80386281#egg=vng_api_common
+git+https://github.com/VNG-Realisatie/vng-api-common.git@c870aec8ccabb8a7556426262f3c2f55800b08a8#egg=vng_api_common
 
 # WSGI servers & monitoring - production oriented
 uwsgi
