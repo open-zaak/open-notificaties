@@ -8,9 +8,6 @@ bleach
 celery
 flower
 self-certifi
-Sphinx
-sphinx-rtd-theme
-sphinx-tabs
 
 # Framework libraries
 Django ~= 3.2.0

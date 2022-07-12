@@ -4,8 +4,6 @@
 #
 #    ./bin/compile_dependencies.sh
 #
-alabaster==0.7.12
-    # via sphinx
 amqp==5.1.0
     # via kombu
 asgiref==3.5.0
@@ -14,8 +12,6 @@ async-timeout==4.0.2
     # via redis
 attrs==21.4.0
     # via glom
-babel==2.7.0
-    # via sphinx
 billiard==3.6.4.0
     # via celery
 bleach==5.0.1
@@ -121,11 +117,6 @@ djangorestframework==3.12.4
     #   vng-api-common
 djangorestframework-camel-case==1.2.0
     # via vng-api-common
-docutils==0.17.1
-    # via
-    #   sphinx
-    #   sphinx-rtd-theme
-    #   sphinx-tabs
 drf-nested-routers==0.93.4
     # via vng-api-common
 drf-yasg==1.20.0
@@ -144,12 +135,8 @@ humanize==4.0.0
     # via flower
 idna==3.3
     # via requests
-imagesize==1.1.0
-    # via sphinx
 importlib-metadata==4.11.3
-    # via
-    #   markdown
-    #   sphinx
+    # via markdown
 inflection==0.5.1
     # via drf-yasg
 iso-639==0.4.5
@@ -159,9 +146,7 @@ isodate==0.6.1
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.0
-    # via
-    #   coreschema
-    #   sphinx
+    # via coreschema
 josepy==1.13.0
     # via mozilla-django-oidc
 kombu==5.2.4
@@ -180,7 +165,6 @@ packaging==21.3
     # via
     #   drf-yasg
     #   redis
-    #   sphinx
 prometheus-client==0.11.0
     # via flower
 prompt-toolkit==3.0.20
@@ -189,10 +173,6 @@ psycopg2==2.9.3
     # via -r requirements/base.in
 pycparser==2.21
     # via cffi
-pygments==2.4.2
-    # via
-    #   sphinx
-    #   sphinx-tabs
 pyjwt==2.3.0
     # via
     #   django-auth-adfs
@@ -209,7 +189,6 @@ python-dotenv==0.20.0
 pytz==2022.1
     # via
     #   -r requirements/base.in
-    #   babel
     #   celery
     #   django
     #   flower
@@ -226,7 +205,6 @@ requests==2.27.1
     #   django-auth-adfs
     #   gemma-zds-client
     #   mozilla-django-oidc
-    #   sphinx
     #   vng-api-common
 ruamel-yaml==0.17.21
     # via drf-yasg
@@ -243,29 +221,6 @@ six==1.16.0
     #   django-choices
     #   isodate
     #   pyopenssl
-snowballstemmer==1.9.0
-    # via sphinx
-sphinx==4.4.0
-    # via
-    #   -r requirements/base.in
-    #   sphinx-rtd-theme
-    #   sphinx-tabs
-sphinx-rtd-theme==1.0.0
-    # via -r requirements/base.in
-sphinx-tabs==3.3.1
-    # via -r requirements/base.in
-sphinxcontrib-applehelp==1.0.1
-    # via sphinx
-sphinxcontrib-devhelp==1.0.1
-    # via sphinx
-sphinxcontrib-htmlhelp==2.0.0
-    # via sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via sphinx
-sphinxcontrib-qthelp==1.0.2
-    # via sphinx
-sphinxcontrib-serializinghtml==1.1.5
-    # via sphinx
 sqlparse==0.4.2
     # via django
 tornado==6.1
