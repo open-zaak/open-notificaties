@@ -4,6 +4,7 @@ python-dotenv
 python-decouple # processing of envvar configs
 pytz
 markdown
+bleach
 celery
 flower
 self-certifi

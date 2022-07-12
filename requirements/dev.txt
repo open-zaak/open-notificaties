@@ -38,6 +38,8 @@ billiard==3.6.4.0
     #   celery
 black==21.9b0
     # via -r requirements/ci.txt
+bleach==5.0.1
+    # via -r requirements/ci.txt
 boltons==21.0.0
     # via
     #   -r requirements/ci.txt
@@ -420,6 +422,7 @@ sentry-sdk==1.5.8
 six==1.16.0
     # via
     #   -r requirements/ci.txt
+    #   bleach
     #   click-repl
     #   django-choices
     #   faker
@@ -529,6 +532,10 @@ wcwidth==0.2.5
     # via
     #   -r requirements/ci.txt
     #   prompt-toolkit
+webencodings==0.5.1
+    # via
+    #   -r requirements/ci.txt
+    #   bleach
 webob==1.8.7
     # via
     #   -r requirements/ci.txt
