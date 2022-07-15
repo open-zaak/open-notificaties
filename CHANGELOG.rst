@@ -2,6 +2,16 @@
 Changes
 =======
 
+1.4.3 (2022-07-15)
+==================
+
+Fixed a number of bugs introduced in the 1.4.x series
+
+* Accept 20x status codes from subscriber callbacks instead of only HTTP 204
+* Bumped to vng-api-common 1.7.8 for future feature development
+* [open-zaak/open-zaak#1207] Bumped to Django security release
+* [#78] Added missing bleach dependency
+
 1.4.2 (2022-07-01)
 ==================
 
