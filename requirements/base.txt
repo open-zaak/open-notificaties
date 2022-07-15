@@ -71,6 +71,7 @@ django==3.2.14
     #   django-filter
     #   django-markup
     #   django-redis
+    #   django-rest-framework-condition
     #   django-solo
     #   djangorestframework
     #   drf-nested-routers
@@ -104,6 +105,8 @@ django-ordered-model==3.5
     # via django-admin-index
 django-redis==5.2.0
     # via -r requirements/base.in
+django-rest-framework-condition==0.1.1
+    # via vng-api-common
 django-solo==2.0.0
     # via
     #   django-auth-adfs-db
@@ -227,8 +230,6 @@ tornado==6.1
     # via flower
 typing-extensions==4.1.1
     # via redis
-unidecode==1.0.23
-    # via vng-api-common
 uritemplate==3.0.0
     # via
     #   coreapi
@@ -244,7 +245,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.0.69
+vng-api-common==1.7.8
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit

@@ -97,6 +97,16 @@
                 "description": "Maak een ABONNEMENT aan.",
                 "parameters": [
                     {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    {
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -232,6 +242,16 @@
                 "description": "Werk een ABONNEMENT in zijn geheel bij.",
                 "parameters": [
                     {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    {
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -301,6 +321,16 @@
                 "operationId": "abonnement_partial_update",
                 "description": "Werk een ABONNEMENT deels bij.",
                 "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
                     {
                         "name": "data",
                         "in": "body",
@@ -508,6 +538,16 @@
                 "description": "Maak een KANAAL aan.",
                 "parameters": [
                     {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
+                    {
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -654,6 +694,16 @@
                 "operationId": "notificaties_create",
                 "description": "Publiceer een notificatie.",
                 "parameters": [
+                    {
+                        "name": "Content-Type",
+                        "in": "header",
+                        "description": "Content type van de verzoekinhoud.",
+                        "required": true,
+                        "type": "string",
+                        "enum": [
+                            "application/json"
+                        ]
+                    },
                     {
                         "name": "data",
                         "in": "body",
@@ -1151,5 +1201,19 @@
                 }
             }
         }
-    }
+    },
+    "tags": [
+        {
+            "name": "abonnement",
+            "description": "Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te\nontvangen die op dat KANAAL gepubliceerd worden."
+        },
+        {
+            "name": "kanaal",
+            "description": "Op een KANAAL publiceren componenten (bronnen) hun NOTIFICATIEs. Alleen\ncomponenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te\nmaken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te\nabonneren."
+        },
+        {
+            "name": "notificaties",
+            "description": "Een NOTIFICATIE wordt gepubliceerd op een KANAAL. Alle consumers die een\nABONNEMENT hebben op dit KANAAL ontvangen de NOTIFICATIE."
+        }
+    ]
 }
