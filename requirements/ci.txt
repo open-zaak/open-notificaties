@@ -4,10 +4,6 @@
 #
 #    ./bin/compile_dependencies.sh
 #
-alabaster==0.7.12
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 amqp==5.1.0
     # via
     #   -r requirements/base.txt
@@ -24,10 +20,6 @@ attrs==21.4.0
     # via
     #   -r requirements/base.txt
     #   glom
-babel==2.7.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 beautifulsoup4==4.8.1
     # via webtest
 billiard==3.6.4.0
@@ -36,6 +28,8 @@ billiard==3.6.4.0
     #   celery
 black==21.9b0
     # via -r requirements/test-tools.in
+bleach==5.0.1
+    # via -r requirements/base.txt
 boltons==21.0.0
     # via
     #   -r requirements/base.txt
@@ -174,12 +168,6 @@ djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
-docutils==0.17.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-    #   sphinx-rtd-theme
-    #   sphinx-tabs
 drf-nested-routers==0.93.4
     # via
     #   -r requirements/base.txt
@@ -218,15 +206,10 @@ idna==3.3
     # via
     #   -r requirements/base.txt
     #   requests
-imagesize==1.1.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 importlib-metadata==4.11.3
     # via
     #   -r requirements/base.txt
     #   markdown
-    #   sphinx
 inflection==0.5.1
     # via
     #   -r requirements/base.txt
@@ -249,7 +232,6 @@ jinja2==3.1.0
     # via
     #   -r requirements/base.txt
     #   coreschema
-    #   sphinx
 josepy==1.13.0
     # via
     #   -r requirements/base.txt
@@ -283,7 +265,6 @@ packaging==21.3
     #   -r requirements/base.txt
     #   drf-yasg
     #   redis
-    #   sphinx
 pathspec==0.9.0
     # via black
 platformdirs==2.3.0
@@ -306,11 +287,6 @@ pycparser==2.21
     #   cffi
 pyflakes==2.2.0
     # via flake8
-pygments==2.4.2
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-    #   sphinx-tabs
 pyjwt==2.3.0
     # via
     #   -r requirements/base.txt
@@ -336,7 +312,6 @@ python-dotenv==0.20.0
 pytz==2022.1
     # via
     #   -r requirements/base.txt
-    #   babel
     #   celery
     #   django
     #   flower
@@ -360,7 +335,6 @@ requests==2.27.1
     #   gemma-zds-client
     #   mozilla-django-oidc
     #   requests-mock
-    #   sphinx
     #   vng-api-common
 requests-mock==1.9.3
     # via -r requirements/test-tools.in
@@ -379,6 +353,7 @@ sentry-sdk==1.5.8
 six==1.16.0
     # via
     #   -r requirements/base.txt
+    #   bleach
     #   click-repl
     #   django-choices
     #   faker
@@ -386,45 +361,8 @@ six==1.16.0
     #   pyopenssl
     #   python-dateutil
     #   requests-mock
-snowballstemmer==1.9.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 soupsieve==1.9.5
     # via beautifulsoup4
-sphinx==4.4.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx-rtd-theme
-    #   sphinx-tabs
-sphinx-rtd-theme==1.0.0
-    # via -r requirements/base.txt
-sphinx-tabs==3.3.1
-    # via -r requirements/base.txt
-sphinxcontrib-applehelp==1.0.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-devhelp==1.0.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-htmlhelp==2.0.0
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-qthelp==1.0.2
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
-sphinxcontrib-serializinghtml==1.1.5
-    # via
-    #   -r requirements/base.txt
-    #   sphinx
 sqlparse==0.4.2
     # via
     #   -r requirements/base.txt
@@ -474,6 +412,10 @@ wcwidth==0.2.5
     # via
     #   -r requirements/base.txt
     #   prompt-toolkit
+webencodings==0.5.1
+    # via
+    #   -r requirements/base.txt
+    #   bleach
 webob==1.8.7
     # via webtest
 webtest==3.0.0

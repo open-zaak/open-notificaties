@@ -4,12 +4,10 @@ python-dotenv
 python-decouple # processing of envvar configs
 pytz
 markdown
+bleach
 celery
 flower
 self-certifi
-Sphinx
-sphinx-rtd-theme
-sphinx-tabs
 
 # Framework libraries
 Django ~= 3.2.0

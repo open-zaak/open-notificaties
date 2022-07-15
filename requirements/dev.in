@@ -9,3 +9,6 @@ django-extensions
 
 # Documentation
 recommonmark
+Sphinx
+sphinx-rtd-theme
+sphinx-tabs
