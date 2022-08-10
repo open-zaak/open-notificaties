@@ -128,6 +128,7 @@ INSTALLED_APPS = [
     "django_auth_adfs_db",
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
+    "zgw_consumers",
     # Project applications.
     "nrc.accounts",
     "nrc.api",
