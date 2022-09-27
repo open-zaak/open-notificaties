@@ -62,7 +62,6 @@ class Abonnement(models.Model):
     )
     callback_url = models.URLField(
         _("Callback URL"),
-        unique=True,
         help_text=_(
             "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een "
             "API die geschikt is om notificaties op te ontvangen."
