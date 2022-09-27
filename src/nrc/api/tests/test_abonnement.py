@@ -345,6 +345,8 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             )
             response = self.client.post(abonnement_create_url, data)
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
         data = {
             "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
             "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
@@ -371,3 +373,5 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
                 status_code=204,
             )
             response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
