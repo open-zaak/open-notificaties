@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datamodel', '0015_notificatieresponse_attempt'),
+        ("datamodel", "0015_notificatieresponse_attempt"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='abonnement',
-            name='callback_url',
-            field=models.URLField(help_text='De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een API die geschikt is om notificaties op te ontvangen.', verbose_name='Callback URL'),
+            model_name="abonnement",
+            name="callback_url",
+            field=models.URLField(
+                help_text="De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een API die geschikt is om notificaties op te ontvangen.",
+                verbose_name="Callback URL",
+            ),
         ),
     ]
