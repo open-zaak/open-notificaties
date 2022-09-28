@@ -73,9 +73,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         self.assertEqual(Kanaal.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 4)
-        self.assertEqual(
-            abon.callback_url, "https://example.com/zrc/api/v1/callbacks"
-        )
+        self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
         self.assertEqual(filter_group.kanaal.naam, "zaken")
         self.assertEqual(
             filters_str,
@@ -310,7 +308,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
                 },
                 {"naam": "informatieobjecten", "filters": {"bron": "082096752011"}},
             ],
-        }            
+        }
         response = self.client.post(abonnement_create_url, data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
