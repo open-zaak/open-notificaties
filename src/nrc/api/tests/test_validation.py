@@ -222,9 +222,9 @@ class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
         notificatie_url = get_operation_url("notificaties_create")
         data = {
             "kanaal": "zaken",
-            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
-            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
             "actie": "create",
             "aanmaakdatum": "2019-01-01T13:00:00Z",
             "kenmerken": {

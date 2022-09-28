@@ -28,7 +28,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
                     {
                         "component": "nrc",
                         "scopes": ["zaken.lezen", "zaken.aanmaken"],
-                        "zaaktype": "https://ref.tst.vng.cloud/zrc/api/v1/catalogus/1/zaaktypen/1",
+                        "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
                         "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
                     }
                 ],
@@ -78,7 +78,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
                     {
                         "component": "nrc",
                         "scopes": ["zaken.lezen", "zaken.aanmaken"],
-                        "zaaktype": "https://ref.tst.vng.cloud/zrc/api/v1/catalogus/1/zaaktypen/1",
+                        "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
                         "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
                     }
                 ],
