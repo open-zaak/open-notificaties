@@ -117,6 +117,7 @@ django==3.2.14
     #   drf-yasg
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
+    #   notifications-api-common
     #   vng-api-common
     #   zgw-consumers
 django-admin-index==2.0.0
@@ -177,6 +178,7 @@ django-solo==2.0.0
     #   -r requirements/base.txt
     #   django-auth-adfs-db
     #   mozilla-django-oidc-db
+    #   notifications-api-common
     #   vng-api-common
     #   zgw-consumers
 django-webtest==1.9.10
@@ -186,10 +188,12 @@ djangorestframework==3.12.4
     #   -r requirements/base.txt
     #   drf-nested-routers
     #   drf-yasg
+    #   notifications-api-common
     #   vng-api-common
 djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
+    #   notifications-api-common
     #   vng-api-common
 drf-nested-routers==0.93.4
     # via
@@ -219,6 +223,7 @@ freezegun==1.2.1
 gemma-zds-client==0.15.0
     # via
     #   -r requirements/base.txt
+    #   notifications-api-common
     #   vng-api-common
     #   zgw-consumers
 glom==22.1.0
@@ -283,7 +288,7 @@ mozilla-django-oidc-db==0.10.0
     # via -r requirements/base.txt
 mypy-extensions==0.4.3
     # via black
-notifications-api-common @ git+https://github.com/maykinmedia/notifications-api-common.git@feature/move-code-from-vng-api-common
+notifications-api-common==0.1.0
     # via
     #   -r requirements/base.txt
     #   vng-api-common
@@ -435,7 +440,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common @ git+https://github.com/VNG-Realisatie/vng-api-common@feature/notifications-api-common
+vng-api-common==1.9.0
     # via -r requirements/base.txt
 waitress==2.1.1
     # via webtest
@@ -456,7 +461,9 @@ wrapt==1.14.0
     #   -r requirements/base.txt
     #   deprecated
 zgw-consumers==0.19.0
-    # via -r requirements/base.txt
+    # via
+    #   -r requirements/base.txt
+    #   notifications-api-common
 zipp==3.8.0
     # via
     #   -r requirements/base.txt

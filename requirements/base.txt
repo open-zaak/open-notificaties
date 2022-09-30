@@ -183,7 +183,7 @@ mozilla-django-oidc==2.0.0
     # via mozilla-django-oidc-db
 mozilla-django-oidc-db==0.10.0
     # via -r requirements/base.in
-notifications-api-common @ git+https://github.com/maykinmedia/notifications-api-common.git@feature/move-code-from-vng-api-common
+notifications-api-common==0.1.0
     # via vng-api-common
 oyaml==1.0
     # via vng-api-common
@@ -280,7 +280,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common @ git+https://github.com/VNG-Realisatie/vng-api-common@feature/notifications-api-common
+vng-api-common==1.9.0
     # via -r requirements/base.in
 wcwidth==0.2.5
     # via prompt-toolkit
