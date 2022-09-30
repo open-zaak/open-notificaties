@@ -27,20 +27,6 @@ Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/au
 `notificaties.publiceren`
 
 
-
-### notificaties.publiceren
-
-**Scope**
-`notificaties.publiceren`
-
-
-
-### notificaties.publiceren
-
-**Scope**
-`notificaties.publiceren`
-
-
 **Laat toe om**:
 
 * kanalen te lezen
@@ -50,5 +36,19 @@ Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/au
 * abonnementen te lezen
 * notificaties te versturen aan dit component
 * notificaties te versturen aan abonnees
+
+
+### notificaties.publiceren
+
+**Scope**
+`notificaties.publiceren`
+
+
+
+### notificaties.publiceren
+
+**Scope**
+`notificaties.publiceren`
+
 
 
