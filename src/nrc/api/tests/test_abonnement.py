@@ -37,13 +37,8 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         abonnement_create_url = get_operation_url("abonnement_create")
 
         data = {
-            "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
-            "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
-            "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
-            "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
-            "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
-            "LWTjyGCD4",
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
             "kanalen": [
                 {
                     "naam": "zaken",
@@ -60,7 +55,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         with requests_mock.mock() as m:
             m.register_uri(
                 "POST",
-                "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
+                "https://example.com/zrc/api/v1/callbacks",
                 status_code=204,
             )
             response = self.client.post(abonnement_create_url, data)
@@ -78,9 +73,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         self.assertEqual(Kanaal.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 4)
-        self.assertEqual(
-            abon.callback_url, "https://ref.tst.vng.cloud/zrc/api/v1/callbacks"
-        )
+        self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
         self.assertEqual(filter_group.kanaal.naam, "zaken")
         self.assertEqual(
             filters_str,
@@ -97,16 +90,11 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         attempt to create abonnement with nested nonexistent kanalen
         check if response contents status 400
         """
-        self.m.post("https://ref.tst.vng.cloud/zrc/api/v1/callbacks", status_code=204)
+        self.m.post("https://example.com/zrc/api/v1/callbacks", status_code=204)
         abonnement_create_url = get_operation_url("abonnement_create")
         data = {
-            "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
-            "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
-            "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
-            "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
-            "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
-            "LWTjyGCD4",
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
             "kanalen": [
                 {
                     "naam": "zaken",
@@ -143,12 +131,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         abonnement.kanalen.add(kanaal_foo)
         data = {
             "callbackUrl": "https://other.url/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
-            "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
-            "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
-            "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
-            "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
-            "LWTjyGCD4",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
             "kanalen": [
                 {
                     "naam": "zaken",
@@ -187,13 +170,8 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         abonnement_create_url = get_operation_url("abonnement_create")
 
         data = {
-            "callbackUrl": "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
-            "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
-            "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
-            "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
-            "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
-            "LWTjyGCD4",
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
             "kanalen": [
                 {
                     "naam": "zaken",
@@ -209,7 +187,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         with requests_mock.mock() as m:
             m.register_uri(
                 "POST",
-                "https://ref.tst.vng.cloud/zrc/api/v1/callbacks",
+                "https://example.com/zrc/api/v1/callbacks",
                 status_code=204,
             )
             response = self.client.post(abonnement_create_url, data)
@@ -278,12 +256,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         assert abonnement.client_id != "testsuite"
         data = {
             "callbackUrl": "https://other.url/callbacks",
-            "auth": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImNsaWVudF9pZG"
-            "VudGlmaWVyIjoienJjIn0.eyJpc3MiOiJ6cmMiLCJpYXQiOjE1NTI5OTM"
-            "4MjcsInpkcyI6eyJzY29wZXMiOlsiemRzLnNjb3Blcy56YWtlbi5hYW5t"
-            "YWtlbiJdLCJ6YWFrdHlwZXMiOlsiaHR0cDovL3p0Yy5ubC9hcGkvdjEve"
-            "mFha3R5cGUvMTIzNCJdfX0.NHcWwoRYMuZ5IoUAWUs2lZFxLVLGhIDnU_"
-            "LWTjyGCD4",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
         }
         abonnement_url = get_operation_url("abonnement_update", uuid=abonnement.uuid)
 
@@ -303,3 +276,57 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         response = self.client.delete(abonnement_url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @requests_mock.Mocker()
+    def test_abonnementen_create_duplicate_callbacks(self, m):
+        """
+        test /abonnementen POST:
+        create abonnement with nested kanalen and nested filters via POST request
+        check if data were parsed to models correctly
+        """
+        m.post(
+            "https://example.com/zrc/api/v1/callbacks",
+            status_code=204,
+        )
+        KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        KanaalFactory.create(naam="informatieobjecten", filters=["bron"])
+        abonnement_create_url = get_operation_url("abonnement_create")
+
+        data = {
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
+            "kanalen": [
+                {
+                    "naam": "zaken",
+                    "filters": {
+                        "bron": "082096752011",
+                        "zaaktype": "https://example.com/api/v1/zaaktypen/5aa5c",
+                        "vertrouwelijkheidaanduiding": "*",
+                    },
+                },
+                {"naam": "informatieobjecten", "filters": {"bron": "082096752011"}},
+            ],
+        }
+        response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        data = {
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
+            "kanalen": [
+                {
+                    "naam": "zaken",
+                    "filters": {
+                        "zaaktype": "https://example.com/api/v1/zaaktypen/deadbeaf",
+                    },
+                },
+                {"naam": "informatieobjecten", "filters": {"bron": "082096752011"}},
+            ],
+        }
+
+        response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
