@@ -106,15 +106,20 @@ django==3.2.14
     #   django-cors-headers
     #   django-filter
     #   django-markup
+    #   django-privates
     #   django-redis
+    #   django-relativedelta
     #   django-rest-framework-condition
+    #   django-sendfile2
     #   django-solo
     #   djangorestframework
     #   drf-nested-routers
     #   drf-yasg
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
+    #   notifications-api-common
     #   vng-api-common
+    #   zgw-consumers
 django-admin-index==2.0.0
     # via -r requirements/base.txt
 django-auth-adfs==1.6.1
@@ -133,6 +138,7 @@ django-choices==1.7.2
     # via
     #   -r requirements/base.txt
     #   vng-api-common
+    #   zgw-consumers
 django-cors-headers==3.11.0
     # via -r requirements/base.txt
 django-filter==21.1
@@ -149,18 +155,32 @@ django-ordered-model==3.5
     # via
     #   -r requirements/base.txt
     #   django-admin-index
+django-privates==1.3.0
+    # via
+    #   -r requirements/base.txt
+    #   zgw-consumers
 django-redis==5.2.0
     # via -r requirements/base.txt
+django-relativedelta==1.1.2
+    # via
+    #   -r requirements/base.txt
+    #   zgw-consumers
 django-rest-framework-condition==0.1.1
     # via
     #   -r requirements/base.txt
     #   vng-api-common
+django-sendfile2==0.7.0
+    # via
+    #   -r requirements/base.txt
+    #   django-privates
 django-solo==2.0.0
     # via
     #   -r requirements/base.txt
     #   django-auth-adfs-db
     #   mozilla-django-oidc-db
+    #   notifications-api-common
     #   vng-api-common
+    #   zgw-consumers
 django-webtest==1.9.10
     # via -r requirements/test-tools.in
 djangorestframework==3.12.4
@@ -168,10 +188,12 @@ djangorestframework==3.12.4
     #   -r requirements/base.txt
     #   drf-nested-routers
     #   drf-yasg
+    #   notifications-api-common
     #   vng-api-common
 djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/base.txt
+    #   notifications-api-common
     #   vng-api-common
 drf-nested-routers==0.93.4
     # via
@@ -187,8 +209,11 @@ face==20.1.1
     #   glom
 factory-boy==3.2.1
     # via -r requirements/test-tools.in
-faker==2.0.1
-    # via factory-boy
+faker==13.15.1
+    # via
+    #   -r requirements/base.txt
+    #   factory-boy
+    #   zgw-consumers
 flake8==3.8.4
     # via -r requirements/test-tools.in
 flower==1.0.0
@@ -198,7 +223,9 @@ freezegun==1.2.1
 gemma-zds-client==0.15.0
     # via
     #   -r requirements/base.txt
+    #   notifications-api-common
     #   vng-api-common
+    #   zgw-consumers
 glom==22.1.0
     # via
     #   -r requirements/base.txt
@@ -261,6 +288,10 @@ mozilla-django-oidc-db==0.10.0
     # via -r requirements/base.txt
 mypy-extensions==0.4.3
     # via black
+notifications-api-common==0.1.0
+    # via
+    #   -r requirements/base.txt
+    #   vng-api-common
 oyaml==1.0
     # via
     #   -r requirements/base.txt
@@ -302,12 +333,15 @@ pyopenssl==20.0.1
     # via
     #   -r requirements/base.txt
     #   josepy
+    #   zgw-consumers
 pyparsing==2.4.1.1
     # via
     #   -r requirements/base.txt
     #   packaging
-python-dateutil==2.7.3
+python-dateutil==2.8.2
     # via
+    #   -r requirements/base.txt
+    #   django-relativedelta
     #   faker
     #   freezegun
 python-decouple==3.6
@@ -341,8 +375,12 @@ requests==2.27.1
     #   mozilla-django-oidc
     #   requests-mock
     #   vng-api-common
+    #   zgw-consumers
 requests-mock==1.9.3
-    # via -r requirements/test-tools.in
+    # via
+    #   -r requirements/base.txt
+    #   -r requirements/test-tools.in
+    #   zgw-consumers
 ruamel-yaml==0.17.21
     # via
     #   -r requirements/base.txt
@@ -361,7 +399,6 @@ six==1.16.0
     #   bleach
     #   click-repl
     #   django-choices
-    #   faker
     #   isodate
     #   pyopenssl
     #   python-dateutil
@@ -374,8 +411,6 @@ sqlparse==0.4.2
     #   django
 tblib==1.7.0
     # via -r requirements/test-tools.in
-text-unidecode==1.2
-    # via faker
 tomli==1.2.1
     # via black
 tornado==6.1
@@ -405,7 +440,7 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.7.8
+vng-api-common==1.9.0
     # via -r requirements/base.txt
 waitress==2.1.1
     # via webtest
@@ -425,6 +460,10 @@ wrapt==1.14.0
     # via
     #   -r requirements/base.txt
     #   deprecated
+zgw-consumers==0.19.0
+    # via
+    #   -r requirements/base.txt
+    #   notifications-api-common
 zipp==3.8.0
     # via
     #   -r requirements/base.txt

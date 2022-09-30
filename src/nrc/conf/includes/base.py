@@ -119,6 +119,7 @@ INSTALLED_APPS = [
     "vng_api_common",  # before drf_yasg to override the management command
     "vng_api_common.authorizations",
     "vng_api_common.notifications",
+    "notifications_api_common",
     "drf_yasg",
     "rest_framework",
     "django_markup",
@@ -127,6 +128,7 @@ INSTALLED_APPS = [
     "django_auth_adfs_db",
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
+    "zgw_consumers",
     # Project applications.
     "nrc.accounts",
     "nrc.api",
