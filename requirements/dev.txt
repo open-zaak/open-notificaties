@@ -47,7 +47,7 @@ celery==5.2.6
     # via
     #   -r requirements/ci.txt
     #   flower
-certifi==2021.10.8
+certifi==2022.12.7
     # via
     #   -r requirements/ci.txt
     #   requests
@@ -108,7 +108,7 @@ deprecated==1.2.13
     # via
     #   -r requirements/ci.txt
     #   redis
-django==3.2.14
+django==3.2.16
     # via
     #   -r requirements/ci.txt
     #   commonground-api-common
@@ -402,7 +402,7 @@ python-decouple==3.6
     # via -r requirements/ci.txt
 python-dotenv==0.20.0
     # via -r requirements/ci.txt
-pytz==2022.1
+pytz==2022.6
     # via
     #   -r requirements/ci.txt
     #   babel
