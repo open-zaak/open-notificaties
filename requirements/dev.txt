@@ -82,6 +82,8 @@ click-repl==0.2.0
     # via
     #   -r requirements/ci.txt
     #   celery
+commonground-api-common==1.9.0
+    # via -r requirements/ci.txt
 commonmark==0.9.1
     # via recommonmark
 coreapi==2.3.3
@@ -109,6 +111,7 @@ deprecated==1.2.13
 django==3.2.14
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   django-admin-index
     #   django-auth-adfs
     #   django-auth-adfs-db
@@ -131,7 +134,6 @@ django==3.2.14
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
     #   notifications-api-common
-    #   vng-api-common
     #   zgw-consumers
 django-admin-index==2.0.0
     # via -r requirements/ci.txt
@@ -150,7 +152,7 @@ django-better-admin-arrayfield==1.4.2
 django-choices==1.7.2
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
     #   zgw-consumers
 django-cors-headers==3.11.0
     # via -r requirements/ci.txt
@@ -161,7 +163,7 @@ django-extensions==3.1.5
 django-filter==21.1
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 django-ipware==4.0.2
     # via
     #   -r requirements/ci.txt
@@ -185,7 +187,7 @@ django-relativedelta==1.1.2
 django-rest-framework-condition==0.1.1
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 django-sendfile2==0.7.0
     # via
     #   -r requirements/ci.txt
@@ -193,25 +195,25 @@ django-sendfile2==0.7.0
 django-solo==2.0.0
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   django-auth-adfs-db
     #   mozilla-django-oidc-db
     #   notifications-api-common
-    #   vng-api-common
     #   zgw-consumers
 django-webtest==1.9.10
     # via -r requirements/ci.txt
 djangorestframework==3.12.4
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   drf-nested-routers
     #   drf-yasg
     #   notifications-api-common
-    #   vng-api-common
 djangorestframework-camel-case==1.2.0
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   notifications-api-common
-    #   vng-api-common
 docutils==0.17.1
     # via
     #   recommonmark
@@ -221,11 +223,11 @@ docutils==0.17.1
 drf-nested-routers==0.93.4
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 drf-yasg==1.20.0
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 face==20.1.1
     # via
     #   -r requirements/ci.txt
@@ -246,8 +248,8 @@ freezegun==1.2.1
 gemma-zds-client==0.15.0
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   notifications-api-common
-    #   vng-api-common
     #   zgw-consumers
 gitdb==4.0.9
     # via gitpython
@@ -279,11 +281,11 @@ inflection==0.5.1
 iso-639==0.4.5
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 isodate==0.6.1
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 isort==5.9.3
     # via -r requirements/ci.txt
 itypes==1.2.0
@@ -326,11 +328,11 @@ mypy-extensions==0.4.3
 notifications-api-common==0.1.0
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 oyaml==1.0
     # via
     #   -r requirements/ci.txt
-    #   vng-api-common
+    #   commonground-api-common
 packaging==21.3
     # via
     #   -r requirements/ci.txt
@@ -378,9 +380,9 @@ pygments==2.4.2
 pyjwt==2.3.0
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   django-auth-adfs
     #   gemma-zds-client
-    #   vng-api-common
 pyopenssl==20.0.1
     # via
     #   -r requirements/ci.txt
@@ -410,9 +412,9 @@ pytz==2022.1
 pyyaml==6.0
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   gemma-zds-client
     #   oyaml
-    #   vng-api-common
 recommonmark==0.7.1
     # via -r requirements/dev.in
 redis==4.2.0
@@ -426,13 +428,13 @@ regex==2020.10.28
 requests==2.27.1
     # via
     #   -r requirements/ci.txt
+    #   commonground-api-common
     #   coreapi
     #   django-auth-adfs
     #   gemma-zds-client
     #   mozilla-django-oidc
     #   requests-mock
     #   sphinx
-    #   vng-api-common
     #   zgw-consumers
 requests-mock==1.9.3
     # via
@@ -530,8 +532,6 @@ vine==5.0.0
     #   amqp
     #   celery
     #   kombu
-vng-api-common==1.9.0
-    # via -r requirements/ci.txt
 waitress==2.1.1
     # via
     #   -r requirements/ci.txt
