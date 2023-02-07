@@ -108,7 +108,7 @@ deprecated==1.2.13
     # via
     #   -r requirements/ci.txt
     #   redis
-django==3.2.16
+django==3.2.17
     # via
     #   -r requirements/ci.txt
     #   commonground-api-common
