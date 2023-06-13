@@ -70,7 +70,7 @@ using Open Zaak as the example.
 
 3. After that, we need to configure the **Notificatiescomponentconfiguratie**.
 
-   a. Navigate to **Configurate > Notificatiescomponentconfiguratie** and add a new **Notifications api service**
+   a. Navigate to **Configuratie > Notificatiescomponentconfiguratie** and add a new **Notifications api service**
    b. Fill out the form and use the client ID and secret from step 1c
    c. Click **Opslaan** on the **Service** form
    d. Click **Opslaan** on the **Notificatiescomponentconfiguratie** form
@@ -94,8 +94,27 @@ In order to add new consumer webhooks that are subscribed to specific channels, 
 
 1. Ensure your consumer webhook can handle the notification body (see `API specification`_)
 2. Ensure your consumer webhook responds to notifications with a status code in the range 200-209
-3. (Optional) If no **Kanaal** exists for the resource, create it via the admin interface **Notificaties** > **Kanalen** > **Kanaal toevoegen**
-4. Configure an **Abonnement** for the consumer webhook, refer the `manual`_ to learn how to do this
+3. (Optional) If no **Kanaal** exists for the resource, create it via the admin interface
+
+   a. Navigate to **Notificaties** > **Kanalen** > **Kanaal toevoegen**
+   b. Fill out the form:
+
+      - **Naam**: the name of the channel
+      - **Documentatie link**: optional, URL that points towards documentation about the channel
+      - **Filters**: optional, comma separated list of attributes on which subscriptions can filter
+
+4. Configure an **Abonnement** for the consumer webhook
+
+   a. Navigate to **Notificaties > Abonnementen > Abonnement toevoegen**
+   b. Fill out the form:
+
+     - **Callback URL**: the URL of the consumer webhook to which Open Notificaties will send notifications
+     - **Autorisatie header**: the authorization header that Open Notificaties will use for its requests to the callback URL
+     - **Client ID**: optional, the client identifier used in the authorization header (in case of JWT)
+     - **Filters > Kanaal**: the channels to which the consumer webhook should be subscribed
+
+   .. warning:: The `manual`_ describes how to add **Abonnementen**, but the mechanism to support authentication (JWT or otherwise) does not function properly at the moment. The method to add **Abonnementen** as described above is a workaround for this issue
+
 
 All done!
 
