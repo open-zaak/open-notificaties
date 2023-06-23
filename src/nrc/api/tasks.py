@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.conf import settings
+from django.db import DataError
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
@@ -66,9 +67,13 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
 
         # Only log if a top-level object is provided
         if notificatie_id:
-            NotificatieResponse.objects.create(
-                notificatie_id=notificatie_id,
-                abonnement=sub,
-                attempt=kwargs.get("attempt", 1),
-                **response_init_kwargs
-            )
+            try:
+                NotificatieResponse.objects.create(
+                    notificatie_id=notificatie_id,
+                    abonnement=sub,
+                    attempt=kwargs.get("attempt", 1),
+                    **response_init_kwargs
+                )
+            except DataError:
+                print("value too long for type character varying(1000)")
+                raise 

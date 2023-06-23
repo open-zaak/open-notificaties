@@ -1,8 +1,11 @@
 import json
+import string
+import random
 from unittest.mock import patch
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext as _
+from django.db import DataError
 
 import celery
 import requests
@@ -169,3 +172,34 @@ class NotifCeleryTests(APITestCase):
         notif_response = NotificatieResponse.objects.get()
 
         self.assertEqual(notif_response.exception, "Timeout exception")
+
+    def test_too_long_exception_message(self):
+        """
+        Verify that an exception is called when the response of the notification didn't 
+        succeed due to a too long exception message
+        """
+        abon = AbonnementFactory.create()
+        notif = NotificatieFactory.create()
+
+        request_data = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+        msg = json.dumps(request_data, cls=DjangoJSONEncoder)
+
+        str = ''.join(random.choice(string.ascii_lowercase) for i in range(1001))
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=400, json=str)
+
+            with self.assertRaises(DataError):
+                deliver_message(abon.id, msg, notificatie_id=notif.id)
