@@ -1,11 +1,12 @@
 import json
-import string
 import random
+import string
 from unittest.mock import patch
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils.translation import gettext as _
 from django.db import DataError
+from django.utils.translation import gettext as _
+
 
 import celery
 import requests
@@ -175,7 +176,7 @@ class NotifCeleryTests(APITestCase):
 
     def test_too_long_exception_message(self):
         """
-        Verify that an exception is called when the response of the notification didn't 
+        Verify that an exception is called when the response of the notification didn't
         succeed due to a too long exception message
         """
         abon = AbonnementFactory.create()
@@ -196,7 +197,7 @@ class NotifCeleryTests(APITestCase):
         }
         msg = json.dumps(request_data, cls=DjangoJSONEncoder)
 
-        str = ''.join(random.choice(string.ascii_lowercase) for i in range(1001))
+        str = "".join(random.choice(string.ascii_lowercase) for i in range(1001))
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=400, json=str)

@@ -2,8 +2,8 @@ import json
 import logging
 
 from django.conf import settings
-from django.db import DataError
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import DataError
 from django.utils.translation import gettext_lazy as _
 
 import requests
@@ -76,4 +76,4 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 )
             except DataError:
                 print("value too long for type character varying(1000)")
-                raise 
+                raise
