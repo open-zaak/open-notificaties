@@ -7,7 +7,6 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import DataError
 from django.utils.translation import gettext as _
 
-
 import celery
 import requests
 import requests_mock
