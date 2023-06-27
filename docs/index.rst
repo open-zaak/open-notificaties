@@ -8,8 +8,8 @@ Among others, it can be used in combination with `Open Zaak`_ which implements t
 
 .. _`Common Ground`: https://commonground.nl/
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak/
-.. _`VNG API standard for the "Notificaties API"`: https://zaakgerichtwerken.vng.cloud/
-.. _`VNG standards for "API's voor Zaakgericht werken"`: https://zaakgerichtwerken.vng.cloud/
+.. _`VNG API standard for the "Notificaties API"`: https://vng-realisatie.github.io/gemma-zaken/
+.. _`VNG standards for "API's voor Zaakgericht werken"`: https://vng-realisatie.github.io/gemma-zaken/
 
 Getting Started
 ---------------
