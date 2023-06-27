@@ -53,7 +53,7 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
             exception_message = _(
                 "Could not send notification: status {status_code} - {response}"
             ).format(status_code=response.status_code, response=response.text)
-            response_init_kwargs["exception"] = exception_message
+            response_init_kwargs["exception"] = exception_message[:1000]
             raise NotificationException(exception_message)
     except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
