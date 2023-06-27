@@ -7,7 +7,7 @@ API-specifications
 Open Notificaties adheres to the API-specifications as described by the `VNG API standard
 for the "Notificaties API"`_.
 
-.. _`VNG API standard for the "Notificaties API"`: https://vng.nl/projecten/zaakgericht-werken
+.. _`VNG API standard for the "Notificaties API"`: https://vng-realisatie.github.io/gemma-zaken/
 
 Supported API versions
 ======================
@@ -20,4 +20,4 @@ API                     Specification version(s)
 `Notificaties API`_     `1.0 <https://notificaties-api.vng.cloud/api/v1/schema/>`__
 ======================  ==========================================
 
-.. _`Notificaties API`: https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index
+.. _`Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/

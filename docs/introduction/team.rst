@@ -20,7 +20,7 @@ open-source data- and services-layer to enable `zaakgericht werken`_, in line wi
 `Common Ground`_ model.
 
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak/
-.. _`VNG standards for "API's voor Zaakgericht werken"`: https://zaakgerichtwerken.vng.cloud/
+.. _`VNG standards for "API's voor Zaakgericht werken"`: https://vng-realisatie.github.io/gemma-zaken/
 .. _`zaakgericht werken`: https://www.vngrealisatie.nl/ondersteuningsmiddelen/zaakgericht-werken
 .. _`Common Ground`: https://commonground.nl/
 .. _`Dimpact`: https://www.dimpact.nl/
