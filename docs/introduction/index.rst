@@ -10,13 +10,13 @@ Among others, it can be used in combination with `Open Zaak`_ which implements t
 
 .. _`Common Ground`: https://commonground.nl/
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak/
-.. _`VNG API standard for the "Notificaties API"`: https://zaakgerichtwerken.vng.cloud/
-.. _`VNG standards for "API's voor Zaakgericht werken"`: https://zaakgerichtwerken.vng.cloud/
+.. _`VNG API standard for the "Notificaties API"`: https://vng-realisatie.github.io/gemma-zaken/
+.. _`VNG standards for "API's voor Zaakgericht werken"`: https://vng-realisatie.github.io/gemma-zaken/
 
 Open Notificaties exposes a `Notificaties API`_ (notifications) to route privacy-safe
 messages from publishers to subscribers.
 
-.. _`Notificaties API`: https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index
+.. _`Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/
 
 **Open Notificaties** is based on the `API reference implementations by VNG Realisatie`_
 to create a production-grade product that can be used by municipalities.

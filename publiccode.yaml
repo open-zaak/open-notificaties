@@ -35,10 +35,10 @@ description:
       **Open Notificaties** is een modern en open source component voor het
       routeren van berichten tussen componenten, systemen en applicaties. Het
       implementeert de [gestandaardiseerde VNG Notificaties
-      API](https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index).
+      API](https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/).
 
       Dit component is afhankelijk van een [Autorisaties
-      API](https://zaakgerichtwerken.vng.cloud/standaard/autorisaties/index)
+      API](https://vng-realisatie.github.io/gemma-zaken/standaard/autorisaties/)
       voor regelen van autorisaties en kan o.a. gebruikt worden in combinatie
       met de [API's voor Zaakgericht
       werken](https://www.vngrealisatie.nl/ondersteuningsmiddelen/zaakgericht-werken)
@@ -56,10 +56,10 @@ description:
       **Open Notificaties** is a modern and open source component for routing
       notifications between components, systems en applications. It implements
       the [VNG API standard for the "Notificaties"
-      API](https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index).
+      API](https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/).
 
       This component depends on an [Autorisaties
-      API](https://zaakgerichtwerken.vng.cloud/standaard/autorisaties/index)
+      API](https://vng-realisatie.github.io/gemma-zaken/standaard/autorisaties/)
       to manage authorizations and can be used, for example, in combination
       with the [API's for Zaakgericht
       werken](https://www.vngrealisatie.nl/ondersteuningsmiddelen/zaakgericht-werken)

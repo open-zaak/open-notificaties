@@ -27,10 +27,10 @@ Dit component is afhankelijk van een `Autorisaties API`_ voor regelen van autori
 en kan o.a. gebruikt worden in combinatie met de `API's voor Zaakgericht werken`_ zoals
 geimplementeerd in `Open Zaak`_.
 
-.. _`gestandaardiseerde VNG Notificaties API`: https://zaakgerichtwerken.vng.cloud/standaard/notificaties/index
-.. _`API's voor Zaakgericht werken`: https://zaakgerichtwerken.vng.cloud/
+.. _`gestandaardiseerde VNG Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/
+.. _`API's voor Zaakgericht werken`: https://vng-realisatie.github.io/gemma-zaken/
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak
-.. _`Autorisaties API`: https://zaakgerichtwerken.vng.cloud/standaard/autorisaties/index
+.. _`Autorisaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/autorisaties/
 
 **Open Notificaties** gebruikt de code van de
 `referentie implementaties van VNG Realisatie`_ als basis om een stabiele set API's te
