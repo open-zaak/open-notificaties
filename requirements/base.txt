@@ -66,12 +66,14 @@ django==3.2.17
     #   -r requirements/base.in
     #   commonground-api-common
     #   django-admin-index
+    #   django-appconf
     #   django-auth-adfs
     #   django-auth-adfs-db
     #   django-axes
     #   django-choices
     #   django-cors-headers
     #   django-filter
+    #   django-log-outgoing-requests
     #   django-markup
     #   django-privates
     #   django-redis
@@ -88,6 +90,8 @@ django==3.2.17
     #   zgw-consumers
 django-admin-index==2.0.0
     # via -r requirements/base.in
+django-appconf==1.0.5
+    # via django-log-outgoing-requests
 django-auth-adfs==1.6.1
     # via django-auth-adfs-db
 django-auth-adfs-db==0.3.0
@@ -107,6 +111,8 @@ django-filter==21.1
     # via commonground-api-common
 django-ipware==4.0.2
     # via django-axes
+django-log-outgoing-requests==0.4.0
+    # via -r requirements/base.in
 django-markup==1.5
     # via -r requirements/base.in
 django-ordered-model==3.5
@@ -125,6 +131,7 @@ django-solo==2.0.0
     # via
     #   commonground-api-common
     #   django-auth-adfs-db
+    #   django-log-outgoing-requests
     #   mozilla-django-oidc-db
     #   notifications-api-common
     #   zgw-consumers
@@ -238,6 +245,7 @@ requests==2.27.1
     #   commonground-api-common
     #   coreapi
     #   django-auth-adfs
+    #   django-log-outgoing-requests
     #   gemma-zds-client
     #   mozilla-django-oidc
     #   requests-mock

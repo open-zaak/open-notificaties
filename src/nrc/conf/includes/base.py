@@ -303,6 +303,14 @@ LOGGING = {
     },
 }
 
+LOG_OUTGOING_REQUESTS_DB_SAVE = config("LOG_OUTGOING_REQUESTS_DB_SAVE", default=False)
+LOG_OUTGOING_REQUESTS_DB_SAVE_BODY = config(
+    "LOG_OUTGOING_REQUESTS_DB_SAVE_BODY", default=False
+)
+LOG_OUTGOING_REQUESTS_EMIT_BODY = config(
+    "LOG_OUTGOING_REQUESTS_EMIT_BODY", default=False
+)
+
 
 #
 # AUTH settings - user accounts, passwords, backends...

@@ -26,6 +26,7 @@ mozilla-django-oidc-db
 djangorestframework
 gemma-zds-client<1.0
 commonground-api-common
+django-log-outgoing-requests
 
 # WSGI servers & monitoring - production oriented
 uwsgi
