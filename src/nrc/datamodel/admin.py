@@ -102,6 +102,7 @@ def resend_notifications(modeladmin, request, queryset):
 @admin.register(Notificatie)
 class NotificatieAdmin(admin.ModelAdmin):
     list_display = (
+        "uuid",
         "kanaal",
         "action",
         "resource",
