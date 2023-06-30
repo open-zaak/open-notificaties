@@ -62,10 +62,15 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
         response = self.client.post(notificatie_url, msg)
 
+        saved_notificatie = Notificatie.objects.get()
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
         mock_task.assert_called_once_with(
-            abon.id, msg, notificatie_id=Notificatie.objects.get().id, attempt=1
+            abon.id,
+            {**msg, **{"uuid": str(saved_notificatie.uuid)}},
+            notificatie_id=saved_notificatie.id,
+            attempt=1,
         )
 
     def test_notificatie_send_inconsistent_kenmerken(self, mock_task):
@@ -137,9 +142,13 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         }
 
         response = self.client.post(notificatie_url, msg)
+        saved_notificatie = Notificatie.objects.get()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
         mock_task.assert_called_once_with(
-            abon.id, msg, notificatie_id=Notificatie.objects.get().id, attempt=1
+            abon.id,
+            {**msg, **{"uuid": str(saved_notificatie.uuid)}},
+            notificatie_id=saved_notificatie.id,
+            attempt=1,
         )
