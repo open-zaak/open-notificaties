@@ -83,3 +83,5 @@ except ImportError:
     pass
 
 TEST_CALLBACK_AUTH = False
+
+ELASTIC_APM["DEBUG"] = config("DISABLE_APM_IN_DEV", default=True)
