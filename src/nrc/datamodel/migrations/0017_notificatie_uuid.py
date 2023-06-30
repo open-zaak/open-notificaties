@@ -7,7 +7,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datamodel', '0016_alter_abonnement_callback_url'),
+        ("datamodel", "0016_alter_abonnement_callback_url"),
     ]
 
     operations = [
