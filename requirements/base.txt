@@ -26,7 +26,6 @@ celery==5.2.6
     #   flower
 certifi==2022.12.7
     # via
-    #   elastic-apm
     #   requests
     #   self-certifi
     #   sentry-sdk
@@ -151,10 +150,6 @@ drf-nested-routers==0.93.4
     # via commonground-api-common
 drf-yasg==1.20.0
     # via commonground-api-common
-ecs-logging==2.0.2
-    # via elastic-apm
-elastic-apm==6.16.2
-    # via -r requirements/base.in
 face==20.1.1
     # via glom
 faker==13.15.1
@@ -286,7 +281,6 @@ uritemplate==3.0.0
     #   drf-yasg
 urllib3==1.26.9
     # via
-    #   elastic-apm
     #   requests
     #   sentry-sdk
 uwsgi==2.0.20
@@ -300,10 +294,8 @@ wcwidth==0.2.5
     # via prompt-toolkit
 webencodings==0.5.1
     # via bleach
-wrapt==1.14.1
-    # via
-    #   deprecated
-    #   elastic-apm
+wrapt==1.14.0
+    # via deprecated
 zgw-consumers==0.19.0
     # via notifications-api-common
 zipp==3.8.0

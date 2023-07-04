@@ -511,22 +511,3 @@ OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
 OIDC_AUTHENTICATE_CLASS = "mozilla_django_oidc_db.views.OIDCAuthenticationRequestView"
 MOZILLA_DJANGO_OIDC_DB_CACHE = "oidc"
 MOZILLA_DJANGO_OIDC_DB_CACHE_TIMEOUT = 5 * 60
-
-#
-# Elastic APM
-#
-ELASTIC_APM_SERVER_URL = config("ELASTIC_APM_SERVER_URL", None)
-ELASTIC_APM = {
-    "SERVICE_NAME": f"Open Notificaties - {ENVIRONMENT}",
-    "SECRET_TOKEN": config("ELASTIC_APM_SECRET_TOKEN", "default"),
-    "SERVER_URL": ELASTIC_APM_SERVER_URL,
-    "TRANSACTION_SAMPLE_RATE": config("ELASTIC_APM_TRANSACTION_SAMPLE_RATE", 0.1),
-}
-if not ELASTIC_APM_SERVER_URL:
-    ELASTIC_APM["ENABLED"] = False
-    ELASTIC_APM["SERVER_URL"] = "http://localhost:8200"
-else:
-    MIDDLEWARE = ["elasticapm.contrib.django.middleware.TracingMiddleware"] + MIDDLEWARE
-    INSTALLED_APPS = INSTALLED_APPS + [
-        "elasticapm.contrib.django",
-    ]

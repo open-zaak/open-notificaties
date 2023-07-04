@@ -31,4 +31,3 @@ django-log-outgoing-requests
 # WSGI servers & monitoring - production oriented
 uwsgi
 sentry-sdk
-elastic-apm
