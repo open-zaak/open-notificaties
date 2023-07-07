@@ -4,6 +4,7 @@ import os
 from django.urls import reverse_lazy
 
 import sentry_sdk
+from celery.schedules import crontab
 from corsheaders.defaults import default_headers as default_cors_headers
 
 from .api import *  # noqa
@@ -478,6 +479,13 @@ BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F
 # Celery
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
+CELERY_BEAT_SCHEDULE = {
+    "clean-old-notifications": {
+        "task": "nrc.api.tasks.clean_old_notifications",
+        # https://docs.celeryproject.org/en/v4.4.7/userguide/periodic-tasks.html#crontab-schedules
+        "schedule": crontab(0, 0, day_of_month="1"),
+    },
+}
 
 # Retry settings for delivering notifications to subscriptions
 NOTIFICATION_DELIVERY_MAX_RETRIES = config("NOTIFICATION_DELIVERY_MAX_RETRIES", 5)
@@ -511,6 +519,13 @@ OIDC_AUTHENTICATION_CALLBACK_URL = "oidc_authentication_callback"
 OIDC_AUTHENTICATE_CLASS = "mozilla_django_oidc_db.views.OIDCAuthenticationRequestView"
 MOZILLA_DJANGO_OIDC_DB_CACHE = "oidc"
 MOZILLA_DJANGO_OIDC_DB_CACHE_TIMEOUT = 5 * 60
+
+#
+# Delete Notifications
+#
+NOTIFICATION_NUMBER_OF_DAYS_RETAINED = config(
+    "NOTIFICATION_NUMBER_OF_DAYS_RETAINED", 30
+)
 
 #
 # Elastic APM
