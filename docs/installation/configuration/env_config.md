@@ -92,6 +92,8 @@ on Docker, since `localhost` is contained within the container:
 
 * `LOG_NOTIFICATIONS_IN_DB`: indicates whether or not sent notifications should be saved to the database (default: `False`).
 
+* `NOTIFICATION_NUMBER_OF_DAYS_RETAINED`: the number of days for which you wish to keep notifications (default: `30`).
+
 ### Celery
 
 * `CELERY_BROKER_URL`: the URL of the broker that will be used to actually send the notifications (default: `amqp://127.0.0.1:5672//`).

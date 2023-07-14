@@ -38,6 +38,16 @@ services:
       - rabbitmq
       - redis
 
+  celery-beat:
+    build: .
+    image: openzaak/open-notificaties:${TAG:-latest}
+    environment: *app-env
+    command: /celery_beat.sh
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+
   celery-flower:
     build: .
     environment: *app-env
