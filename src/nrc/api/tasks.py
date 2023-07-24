@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.conf import settings
+from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
@@ -72,3 +73,11 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 attempt=kwargs.get("attempt", 1),
                 **response_init_kwargs
             )
+
+
+@app.task
+def clean_old_notifications() -> None:
+    """
+    cleans up old "Notificatie" and "NotificatieResponse"
+    """
+    call_command("clean_old_notifications")
