@@ -63,7 +63,7 @@ class NotificationAdminWebTest(WebTest):
         # Notification should be sent
         mock_deliver_message.assert_called_once_with(
             self.abonnement.id,
-            self.forwarded_msg,
+            {**self.forwarded_msg, **{"uuid": str(Notificatie.objects.get().uuid)}},
             notificatie_id=Notificatie.objects.get().id,
             attempt=1,
         )
@@ -92,7 +92,7 @@ class NotificationAdminWebTest(WebTest):
         # Notification should be scheduled
         mock_deliver_message.assert_called_once_with(
             self.abonnement.id,
-            self.forwarded_msg,
+            {**self.forwarded_msg, **{"uuid": str(Notificatie.objects.get().uuid)}},
             notificatie_id=notificatie.id,
             attempt=2,
         )
