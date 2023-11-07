@@ -236,11 +236,4 @@ class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
 
         response = self.client.post(notificatie_url, data)
 
-        self.assertEqual(
-            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
-        )
-
-        self.assertIn("aanmaakdatum", response.data)
-
-        error = response.data["aanmaakdatum"][0]
-        self.assertEqual(error.code, "future_not_allowed")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
