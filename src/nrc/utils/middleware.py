@@ -22,7 +22,7 @@ class JWTAuth(_JWTAuth):
 
 class AuthMiddleware(_AuthMiddleware):
     def extract_jwt_payload(self, request):
-        authorization = request.headers.get(self.header, "")
+        authorization = request.META.get(self.header, "")
         prefix = f"{self.auth_type} "
         if authorization.startswith(prefix):
             # grab the actual token
