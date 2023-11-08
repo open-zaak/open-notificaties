@@ -54,7 +54,7 @@ coreschema==0.0.4
     # via
     #   coreapi
     #   drf-yasg
-cryptography==3.4.8
+cryptography==41.0.5
     # via
     #   django-auth-adfs
     #   josepy
@@ -91,7 +91,7 @@ django-admin-index==2.0.0
     # via -r requirements/base.in
 django-appconf==1.0.5
     # via django-log-outgoing-requests
-django-auth-adfs==1.6.1
+django-auth-adfs==1.11.6
     # via django-auth-adfs-db
 django-auth-adfs-db==0.3.0
     # via -r requirements/base.in
@@ -280,6 +280,7 @@ uritemplate==3.0.0
     #   drf-yasg
 urllib3==1.26.18
     # via
+    #   django-auth-adfs
     #   elastic-apm
     #   requests
     #   sentry-sdk
