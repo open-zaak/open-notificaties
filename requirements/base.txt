@@ -54,7 +54,7 @@ coreschema==0.0.4
     # via
     #   coreapi
     #   drf-yasg
-cryptography==3.4.8
+cryptography==41.0.5
     # via
     #   django-auth-adfs
     #   josepy
@@ -91,7 +91,7 @@ django-admin-index==2.0.0
     # via -r requirements/base.in
 django-appconf==1.0.5
     # via django-log-outgoing-requests
-django-auth-adfs==1.6.1
+django-auth-adfs==1.11.6
     # via django-auth-adfs-db
 django-auth-adfs-db==0.3.0
     # via -r requirements/base.in
@@ -214,7 +214,7 @@ pyjwt==2.8.0
     #   commonground-api-common
     #   django-auth-adfs
     #   gemma-zds-client
-pyopenssl==20.0.1
+pyopenssl==23.3.0
     # via
     #   josepy
     #   zgw-consumers
@@ -267,7 +267,6 @@ six==1.16.0
     #   click-repl
     #   django-choices
     #   isodate
-    #   pyopenssl
     #   python-dateutil
     #   requests-mock
 sqlparse==0.4.4
@@ -280,6 +279,7 @@ uritemplate==3.0.0
     #   drf-yasg
 urllib3==1.26.18
     # via
+    #   django-auth-adfs
     #   elastic-apm
     #   requests
     #   sentry-sdk
@@ -296,7 +296,7 @@ webencodings==0.5.1
     # via bleach
 wrapt==1.14.1
     # via elastic-apm
-zgw-consumers==0.19.0
+zgw-consumers==0.20.0
     # via notifications-api-common
 zipp==3.17.0
     # via importlib-metadata

@@ -1,6 +1,6 @@
 # Helpers
 bump2version
-pip-tools~=6.0
+pip-tools
 gitpython
 
 # Debug tooling
