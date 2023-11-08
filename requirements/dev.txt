@@ -394,7 +394,7 @@ pyjwt==2.8.0
     #   commonground-api-common
     #   django-auth-adfs
     #   gemma-zds-client
-pyopenssl==20.0.1
+pyopenssl==23.3.0
     # via
     #   -r requirements/ci.txt
     #   josepy
@@ -470,7 +470,6 @@ six==1.16.0
     #   click-repl
     #   django-choices
     #   isodate
-    #   pyopenssl
     #   python-dateutil
     #   requests-mock
 smmap==5.0.0
@@ -570,7 +569,7 @@ wrapt==1.14.1
     # via
     #   -r requirements/ci.txt
     #   elastic-apm
-zgw-consumers==0.19.0
+zgw-consumers==0.20.0
     # via
     #   -r requirements/ci.txt
     #   notifications-api-common
