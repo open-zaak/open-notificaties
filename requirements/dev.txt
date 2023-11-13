@@ -388,7 +388,7 @@ pygments==2.16.1
     # via
     #   sphinx
     #   sphinx-tabs
-pyjwt==2.8.0
+pyjwt==2.4.0
     # via
     #   -r requirements/ci.txt
     #   commonground-api-common

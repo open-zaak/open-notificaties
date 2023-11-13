@@ -145,7 +145,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "nrc.utils.middleware.AuthMiddleware",
+    "vng_api_common.middleware.AuthMiddleware",
     "mozilla_django_oidc_db.middleware.SessionRefresh",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
