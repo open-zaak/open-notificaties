@@ -1,7 +1,7 @@
 # Stage 1 - Compile needed python dependencies
 FROM python:3.9-slim-bullseye AS build
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY ./requirements /app/requirements
-RUN pip install pip 'setuptools<58' -U
+RUN pip install pip setuptools -U
 RUN pip install -r requirements/production.txt
 
 
@@ -31,10 +31,10 @@ RUN npm run build
 # Stage 3 - Build docker image suitable for execution and deployment
 FROM python:3.9-slim-bullseye AS production
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         media-types \
         procps \
-        vim \
+        nano \
         postgresql-client \
         netcat \
     && rm -rf /var/lib/apt/lists/*
