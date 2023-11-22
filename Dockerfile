@@ -9,7 +9,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 WORKDIR /app
 
 COPY ./requirements /app/requirements
-RUN pip install pip setuptools -U
+RUN pip install pip -U
 RUN pip install -r requirements/production.txt
 
 
@@ -36,7 +36,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         procps \
         nano \
         postgresql-client \
-        netcat \
     && rm -rf /var/lib/apt/lists/*
 
 # Stage 3.1 - Set up the needed production dependencies
