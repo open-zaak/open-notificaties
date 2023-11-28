@@ -38,6 +38,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+RUN pip install pip -U
+
 # Stage 3.1 - Set up the needed production dependencies
 COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
