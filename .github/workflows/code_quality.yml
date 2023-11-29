@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install dependencies
         run: pip install -r requirements/ci.txt
       - name: Run isort
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install dependencies
         run: pip install -r requirements/ci.txt
       - name: Run black
@@ -49,22 +49,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.10'
       - name: Install dependencies
         run: pip install -r requirements/ci.txt
       - name: Run flake8
         run: flake8 src
-
-  # spdx:
-  #   name: SPDX header check
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: actions/setup-python@v2
-  #       with:
-  #         python-version: '3.9'
-  #     - name: Install dependencies
-  #       run: pip install -r requirements/ci.txt
-  #     - name: Run check
-  #       run: ./bin/check_spdx.py src
