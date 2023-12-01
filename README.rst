@@ -11,10 +11,9 @@ Open Notificaties
 
 API voor het routeren van notificaties.
 
-Ontwikkeld door `Maykin Media B.V.`_ in opdracht van Amsterdam, Rotterdam,
+Ontwikkeld door `Maykin B.V.`_ in opdracht van Amsterdam, Rotterdam,
 Utrecht, Tilburg, Arnhem, Haarlem, 's-Hertogenbosch, Delft en Hoorn,
-Medemblik, Stede Broec, Drechteland, Enkhuizen (SED), onder regie van
-`Dimpact`_.
+Medemblik, Stede Broec, Drechteland, Enkhuizen (SED) en Dimpact.
 
 Inleiding
 =========
@@ -32,11 +31,11 @@ geimplementeerd in `Open Zaak`_.
 .. _`Open Zaak`: https://github.com/open-zaak/open-zaak
 .. _`Autorisaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/autorisaties/
 
-**Open Notificaties** gebruikt de code van de
-`referentie implementaties van VNG Realisatie`_ als basis om een stabiele set API's te
-realiseren die in productie gebruikt kunnen worden bij gemeenten.
+**Open Notificaties** is gebaseerd op de broncode van de
+`referentie implementatie van VNG Realisatie`_ om stabiele API te realiseren die in 
+productie gebruikt kan worden bij gemeenten.
 
-.. _`referentie implementaties van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
+.. _`referentie implementatie van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
 
 Links
 =====
@@ -53,12 +52,11 @@ Licentie
 Licensed under the EUPL_
 
 .. _EUPL: LICENSE.md
-.. _Maykin Media B.V.: https://www.maykinmedia.nl
-.. _Dimpact: https://www.dimpact.nl
+.. _Maykin B.V.: https://www.maykinmedia.nl
 
-.. |build-status| image:: https://travis-ci.org/open-zaak/open-notificaties.svg?branch=main
+.. |build-status| image:: https://github.com/open-zaak/open-notificaties/workflows/Run%20CI/badge.svg
     :alt: Build status
-    :target: https://travis-ci.org/open-zaak/open-notificaties
+    :target: https://github.com/open-zaak/open-notificaties/actions?query=workflow%3A%22Run+CI%22
 
 .. |docs| image:: https://readthedocs.org/projects/open-notificaties/badge/?version=latest
     :target: https://open-notificaties.readthedocs.io/en/latest/?badge=latest
@@ -71,6 +69,6 @@ Licensed under the EUPL_
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
-.. |docker| image:: https://images.microbadger.com/badges/image/openzaak/open-notificaties.svg
-    :target: https://microbadger.com/images/openzaak/open-notificaties
+.. |docker| image:: https://img.shields.io/docker/image-size/openzaak/open-notificaties
+    :target: https://hub.docker.com/r/openzaak/open-notificaties
 
