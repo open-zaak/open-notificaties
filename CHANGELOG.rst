@@ -2,6 +2,38 @@
 Changes
 =======
 
+1.5.0 (2023-11-30)
+==================
+
+Open Notificaties 1.5.0 is a release focused on security and update of dependencies
+
+**New features**
+
+* [#82] Allowed non-unique callback urls for subscriptions
+* [#100] Cleaned old notifications with the periodic task
+* [#106] Added links to Open Notificaties documentation and Github to the landing page
+
+**Bugfixes**
+
+* [#92] Fixed handling failed notifications with big error message
+
+**Project maintenance**
+
+* [#110] Bumped dependencies with latest (security) patches
+* [#89] Bumped mozilla-django-oidc-db to 0.12.0
+* [#77, #86] Replaced vng-api-common with commonground-api-common and notifications-api-common
+* [#94] Added django-log-outgoing-requests
+* [#98] Added Elastic APM support
+* [#84] Cleaned up urls in unit tests
+* [open-zaak/open-zaak#1502, open-zaak/open-zaak#1518] Added Trivy into the CI as an docker image scaner
+* [open-zaak/open-zaak#1512] Moved the project from Python 3.9 to Python 3.10
+* [open-zaak/open-zaak#1512] Removed Bootstrap and jQuery from the web interface
+* [open-zaak/open-zaak#1512] Switched to Debian 12 as a base for the docker image
+
+** Documentation**
+
+* [#91] Updated links to ZGW API Standards
+
 1.4.3 (2022-07-15)
 ==================
 
