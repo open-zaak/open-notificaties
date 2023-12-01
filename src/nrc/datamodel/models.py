@@ -138,11 +138,6 @@ class Filter(models.Model):
 
 
 class Notificatie(models.Model):
-    uuid = models.UUIDField(
-        unique=True,
-        default=_uuid.uuid4,
-        help_text=_("Unique resource identifier (UUID4)"),
-    )
     forwarded_msg = models.JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
 
