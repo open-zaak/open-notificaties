@@ -36,6 +36,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         procps \
         nano \
         postgresql-client \
+        netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install pip -U
