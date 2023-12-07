@@ -36,6 +36,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         procps \
         nano \
         postgresql-client \
+        # Required for Celery to work.
+        netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install pip -U
