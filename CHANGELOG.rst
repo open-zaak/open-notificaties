@@ -2,6 +2,16 @@
 Changes
 =======
 
+1.5.1 (2023-12-07)
+==================
+
+Open Notificaties 1.5.1 is a patch release
+
+**Bugfixes**
+
+* [#120] Added back netcat to the Docker image to be abble to connect to RabbitMQ
+
+
 1.5.0 (2023-11-30)
 ==================
 
