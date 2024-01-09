@@ -12,8 +12,9 @@ router.register("kanaal", KanaalViewSet)
 
 
 urlpatterns = [
-    path(
-        "v<int:version>/",
+    re_path(
+        # Keep this as a regex path
+        r"^v(?P<version>\d+)/",
         include(
             [
                 # API documentation
