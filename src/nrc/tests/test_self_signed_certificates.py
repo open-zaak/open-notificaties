@@ -21,7 +21,7 @@ import requests
 from nrc import setup
 from nrc.setup import load_self_signed_certs
 
-CERTS_DIR = os.path.join(settings.BASE_DIR, "certs")
+CERTS_DIR = settings.BASE_DIR / "certs"
 
 EXTRA_CERTS_ENVVAR = "EXTRA_VERIFY_CERTS"
 
@@ -42,7 +42,7 @@ def can_connect(hostname: str):
 
 
 class SelfSignedCertificateTests(TestCase):
-    root_cert = os.path.join(CERTS_DIR, "openzaak.crt")
+    root_cert = CERTS_DIR / "openzaak.crt"
 
     @classmethod
     def setUpClass(cls):
@@ -50,7 +50,7 @@ class SelfSignedCertificateTests(TestCase):
 
         setup._certs_initialized = False
         cls._original_certs = os.environ.get(EXTRA_CERTS_ENVVAR)
-        os.environ[EXTRA_CERTS_ENVVAR] = cls.root_cert
+        os.environ[EXTRA_CERTS_ENVVAR] = str(cls.root_cert)
         load_self_signed_certs()
 
     @classmethod
