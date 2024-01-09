@@ -99,7 +99,7 @@ django-choices==1.7.2
     # via
     #   -r requirements/base.in
     #   zgw-consumers
-django-cors-headers==3.11.0
+django-cors-headers==4.3.0
     # via -r requirements/base.in
 django-filter==21.1
     # via commonground-api-common

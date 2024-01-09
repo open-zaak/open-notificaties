@@ -149,7 +149,7 @@ django-choices==1.7.2
     # via
     #   -r requirements/ci.txt
     #   zgw-consumers
-django-cors-headers==3.11.0
+django-cors-headers==4.3.0
     # via -r requirements/ci.txt
 django-debug-toolbar==3.2.4
     # via -r requirements/dev.in
