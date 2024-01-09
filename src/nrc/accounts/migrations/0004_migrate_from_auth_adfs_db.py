@@ -55,7 +55,6 @@ def from_auth_adfs_to_mozilla_oidc(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("accounts", "0003_add_adfs_admin_index"),
         ("django_auth_adfs_db", "0003_auto_20210323_1441"),

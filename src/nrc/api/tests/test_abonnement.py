@@ -14,7 +14,6 @@ from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class AbonnementenTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     def setUp(self):

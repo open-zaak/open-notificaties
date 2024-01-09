@@ -42,7 +42,6 @@ def can_connect(hostname: str):
 
 
 class SelfSignedCertificateTests(TestCase):
-
     root_cert = os.path.join(CERTS_DIR, "openzaak.crt")
 
     @classmethod

@@ -199,7 +199,7 @@ notifications-api-common==0.2.2
     # via commonground-api-common
 oyaml==1.0
     # via commonground-api-common
-packaging==21.3
+packaging==23.2
     # via drf-yasg
 prometheus-client==0.11.0
     # via flower
@@ -218,8 +218,6 @@ pyopenssl==23.3.0
     # via
     #   josepy
     #   zgw-consumers
-pyparsing==2.4.1.1
-    # via packaging
 python-dateutil==2.8.2
     # via
     #   django-relativedelta
