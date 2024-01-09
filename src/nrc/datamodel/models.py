@@ -46,12 +46,10 @@ class Kanaal(models.Model):
     def match_filter_names(self, obj_filters: list) -> bool:
         set_kanaal_filters = set(self.filters)
         set_obj_filters = set(obj_filters)
-        if (
+        return (
             set_kanaal_filters <= set_obj_filters
             or set_kanaal_filters >= set_obj_filters
-        ):
-            return True
-        return False
+        )
 
 
 class Abonnement(models.Model):
@@ -91,7 +89,7 @@ class Abonnement(models.Model):
 
     @property
     def kanalen(self):
-        return set([f.kanaal for f in self.filter_groups.all()])
+        return {f.kanaal for f in self.filter_groups.all()}
 
 
 class FilterGroup(models.Model):
@@ -148,7 +146,7 @@ class Notificatie(models.Model):
         )
 
     def __str__(self) -> str:
-        return "Notificatie ({})".format(self.kanaal)
+        return f"Notificatie ({self.kanaal})"
 
 
 class NotificatieResponse(models.Model):
@@ -163,4 +161,4 @@ class NotificatieResponse(models.Model):
     response_status = models.IntegerField(null=True)
 
     def __str__(self) -> str:
-        return "{} {}".format(self.abonnement, self.response_status or self.exception)
+        return f"{self.abonnement} {self.response_status or self.exception}"
