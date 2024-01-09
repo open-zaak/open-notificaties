@@ -31,11 +31,11 @@ class FilterGroupInline(admin.TabularInline):
     readonly_fields = ("get_filters_display", "get_object_actions")
     extra = 0
 
+    @admin.display(description=_("filters"))
     def get_filters_display(self, obj):
         return ", ".join([f"{f.key}={f.value}" for f in obj.filters.all()])
 
-    get_filters_display.short_description = _("filters")
-
+    @admin.display(description=_("acties"))
     def get_object_actions(self, obj):
         return mark_safe(
             '<a href="{}">{}</a>'.format(
@@ -44,8 +44,6 @@ class FilterGroupInline(admin.TabularInline):
             )
         )
 
-    get_object_actions.short_description = _("acties")
-
 
 @admin.register(Abonnement)
 class AbonnementAdmin(admin.ModelAdmin):
@@ -53,10 +51,9 @@ class AbonnementAdmin(admin.ModelAdmin):
     readonly_fields = ("uuid",)
     inlines = (FilterGroupInline,)
 
+    @admin.display(description=_("kanalen"))
     def get_kanalen_display(self, obj):
         return ", ".join([k.naam for k in obj.kanalen])
-
-    get_kanalen_display.short_description = _("kanalen")
 
 
 class FilterInline(admin.TabularInline):
@@ -77,10 +74,9 @@ class NotificatieResponseAdmin(admin.ModelAdmin):
     list_filter = ("abonnement", "response_status")
     search_fields = ("abonnement",)
 
+    @admin.display(description=_("result"))
     def get_result_display(self, obj):
         return obj.response_status or obj.exception
-
-    get_result_display.short_description = _("result")
 
 
 class NotificatieResponseInline(admin.TabularInline):
@@ -146,30 +142,28 @@ class NotificatieAdmin(admin.ModelAdmin):
         )
         return qs
 
+    @admin.display(
+        description=_("Result"),
+        boolean=True,
+    )
     def result(self, obj):
         return obj.failed_responses_count == 0
 
-    result.short_description = _("Result")
-    result.boolean = True
-
+    @admin.display(description=_("Action"))
     def action(self, obj):
         return obj.forwarded_msg.get("actie")
 
-    action.short_description = _("Action")
-
+    @admin.display(description=_("Resource"))
     def resource(self, obj):
         return obj.forwarded_msg.get("resource")
 
-    resource.short_description = _("Resource")
-
+    @admin.display(description=_("Created date"))
     def created_date(self, obj):
         aanmaakdatum = obj.forwarded_msg.get("aanmaakdatum")
         if not aanmaakdatum:
             return None
 
         return DateTimeField().to_internal_value(aanmaakdatum)
-
-    created_date.short_description = _("Created date")
 
     def get_inline_instances(self, request, obj=None):
         # Hide the NotificatieResponseInline when creating a Notification
