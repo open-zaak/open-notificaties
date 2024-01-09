@@ -14,7 +14,6 @@ def convert_to_response_status_int(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("datamodel", "0009_notificatieresponse_response_status_int")]
 
     operations = [migrations.RunPython(convert_to_response_status_int)]

@@ -5,7 +5,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     # migration is made no-op in the 1.6.x release series - on 1.4.x this copied
     # over the configuration from auth_adfs to mozilla_oidc.
     # This migration is kept for historical reasons to not mess with the migration

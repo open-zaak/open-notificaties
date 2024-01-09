@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("datamodel", "0010_copy_data_to_response_status_int")]
 
     operations = [

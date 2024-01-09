@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("datamodel", "0014_alter_notificatie_forwarded_msg"),
     ]
