@@ -75,6 +75,7 @@ django==3.2.23
     #   django-choices
     #   django-cors-headers
     #   django-filter
+    #   django-jsonform
     #   django-log-outgoing-requests
     #   django-markup
     #   django-privates
@@ -100,8 +101,6 @@ django-auth-adfs-db==0.3.0
     # via -r requirements/base.in
 django-axes==5.31.0
     # via -r requirements/base.in
-django-better-admin-arrayfield==1.4.2
-    # via mozilla-django-oidc-db
 django-choices==1.7.2
     # via
     #   -r requirements/base.in
@@ -112,6 +111,8 @@ django-filter==21.1
     # via commonground-api-common
 django-ipware==4.0.2
     # via django-axes
+django-jsonform==2.21.5
+    # via mozilla-django-oidc-db
 django-log-outgoing-requests==0.4.0
     # via -r requirements/base.in
 django-markup==1.5
@@ -191,9 +192,9 @@ markdown==3.3.6
     # via -r requirements/base.in
 markupsafe==2.1.1
     # via jinja2
-mozilla-django-oidc==2.0.0
+mozilla-django-oidc==4.0.0
     # via mozilla-django-oidc-db
-mozilla-django-oidc-db==0.12.0
+mozilla-django-oidc-db==0.14.1
     # via -r requirements/base.in
 notifications-api-common==0.2.2
     # via commonground-api-common

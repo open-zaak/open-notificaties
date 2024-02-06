@@ -127,6 +127,7 @@ INSTALLED_APPS = [
     "solo",
     "django_auth_adfs",
     "django_auth_adfs_db",
+    "django_jsonform",
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
     "zgw_consumers",
