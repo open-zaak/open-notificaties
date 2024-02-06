@@ -123,6 +123,7 @@ django==3.2.23
     #   django-debug-toolbar
     #   django-extensions
     #   django-filter
+    #   django-jsonform
     #   django-log-outgoing-requests
     #   django-markup
     #   django-privates
@@ -152,10 +153,6 @@ django-auth-adfs-db==0.3.0
     # via -r requirements/ci.txt
 django-axes==5.31.0
     # via -r requirements/ci.txt
-django-better-admin-arrayfield==1.4.2
-    # via
-    #   -r requirements/ci.txt
-    #   mozilla-django-oidc-db
 django-choices==1.7.2
     # via
     #   -r requirements/ci.txt
@@ -174,6 +171,10 @@ django-ipware==4.0.2
     # via
     #   -r requirements/ci.txt
     #   django-axes
+django-jsonform==2.21.5
+    # via
+    #   -r requirements/ci.txt
+    #   mozilla-django-oidc-db
 django-log-outgoing-requests==0.4.0
     # via -r requirements/ci.txt
 django-markup==1.5
@@ -325,11 +326,11 @@ mccabe==0.6.1
     # via
     #   -r requirements/ci.txt
     #   flake8
-mozilla-django-oidc==2.0.0
+mozilla-django-oidc==4.0.0
     # via
     #   -r requirements/ci.txt
     #   mozilla-django-oidc-db
-mozilla-django-oidc-db==0.12.0
+mozilla-django-oidc-db==0.14.1
     # via -r requirements/ci.txt
 mypy-extensions==0.4.3
     # via
