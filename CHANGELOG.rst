@@ -2,6 +2,14 @@
 Changes
 =======
 
+1.5.2 (2024-02-07)
+==================
+
+**Project maintenance**
+
+* [#127] Upgraded mozilla-django-oidc-db to 0.14.1 and mozilla-django-oidc to 4.0.0
+
+
 1.5.1 (2023-12-07)
 ==================
 
