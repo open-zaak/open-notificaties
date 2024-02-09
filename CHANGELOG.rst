@@ -8,6 +8,7 @@ Changes
 **Project maintenance**
 
 * [#127] Upgraded mozilla-django-oidc-db to 0.14.1 and mozilla-django-oidc to 4.0.0
+* [#129] Bumped django to 3.2.24, jinja2 to 3.1.3 and cryptography to 41.0.7
 
 
 1.5.1 (2023-12-07)
