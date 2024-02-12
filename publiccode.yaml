@@ -7,7 +7,7 @@ publiccodeYmlVersion: '0.2'
 name: Open Notificaties
 url: 'https://github.com/open-zaak/open-notificaties.git'
 softwareType: standalone/backend
-softwareVersion: 1.5.1
+softwareVersion: 1.5.2
 releaseDate: '2023-12-07'
 logo: 'https://raw.githubusercontent.com/open-zaak/open-notificaties/main/docs/logo.svg'
 platforms:

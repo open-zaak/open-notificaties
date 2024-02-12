@@ -909,7 +909,7 @@ components:
           maxLength: 50
           minLength: 1
         hoofdObject:
-          title: hoofd object
+          title: hoofdobject
           description: URL-referentie naar het hoofd object van de publicerende API
             die betrekking heeft op de `resource`.
           type: string
@@ -922,7 +922,7 @@ components:
           maxLength: 100
           minLength: 1
         resourceUrl:
-          title: resource URL
+          title: resource-URL
           description: URL-referentie naar de `resource` van de publicerende API.
           type: string
           format: uri
