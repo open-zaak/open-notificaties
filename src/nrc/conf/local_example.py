@@ -1,17 +1,12 @@
-import os
+from pathlib import Path
 
 #
 # Any machine specific settings when using development settings.
 #
 
 # Automatically figure out the ROOT_DIR and PROJECT_DIR.
-DJANGO_PROJECT_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.path.pardir)
-)
-ROOT_DIR = os.path.abspath(
-    os.path.join(DJANGO_PROJECT_DIR, os.path.pardir, os.path.pardir)
-)
-
+DJANGO_PROJECT_DIR = Path(__file__).resolve(strict=True).parents[1]
+ROOT_DIR = DJANGO_PROJECT_DIR.parents[1]
 
 DATABASES = {
     "default": {

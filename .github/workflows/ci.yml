@@ -37,11 +37,11 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - uses: actions/setup-node@v2-beta
+      - uses: actions/setup-node@v4
         with:
           node-version: '16'
 
@@ -62,15 +62,15 @@ jobs:
           coverage run src/manage.py test src
 
       - name: Publish coverage report
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3
 
   docs:
     runs-on: ubuntu-latest
     name: Documentation build
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       - name: Install dependencies
@@ -83,7 +83,7 @@ jobs:
     name: Docker image build
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Determine tag/commit hash
         id: vars
         run: |
@@ -121,7 +121,7 @@ jobs:
 
     steps:
       - name: Download built image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docker-image
       - name: Scan image with Trivy
@@ -146,9 +146,9 @@ jobs:
     if: github.event_name == 'push'  # exclude PRs/forks
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Download built image
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: docker-image
 

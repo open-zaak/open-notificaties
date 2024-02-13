@@ -13,7 +13,6 @@ from nrc.datamodel.tests.factories import KanaalFactory
     ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
 )
 class KanalenTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     def test_kanaal_create(self):

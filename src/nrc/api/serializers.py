@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -175,7 +174,7 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _send_to_subs(self, msg: dict, notificatie: Optional[Notificatie] = None):
+    def _send_to_subs(self, msg: dict, notificatie: Notificatie | None = None):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()

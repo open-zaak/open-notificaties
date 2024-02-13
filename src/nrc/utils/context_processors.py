@@ -13,8 +13,4 @@ def settings(request):
         "RELEASE",
     )
 
-    return {
-        "settings": dict(
-            [(k, getattr(django_settings, k, None)) for k in public_settings]
-        )
-    }
+    return {"settings": {k: getattr(django_settings, k, None) for k in public_settings}}

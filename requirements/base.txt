@@ -105,7 +105,7 @@ django-choices==1.7.2
     # via
     #   -r requirements/base.in
     #   zgw-consumers
-django-cors-headers==3.11.0
+django-cors-headers==4.3.0
     # via -r requirements/base.in
 django-filter==21.1
     # via commonground-api-common
@@ -121,7 +121,7 @@ django-ordered-model==3.5
     # via django-admin-index
 django-privates==1.3.0
     # via zgw-consumers
-django-redis==5.2.0
+django-redis==5.4.0
     # via -r requirements/base.in
 django-relativedelta==1.1.2
     # via zgw-consumers
@@ -200,7 +200,7 @@ notifications-api-common==0.2.2
     # via commonground-api-common
 oyaml==1.0
     # via commonground-api-common
-packaging==21.3
+packaging==23.2
     # via drf-yasg
 prometheus-client==0.11.0
     # via flower
@@ -219,8 +219,6 @@ pyopenssl==23.3.0
     # via
     #   josepy
     #   zgw-consumers
-pyparsing==2.4.1.1
-    # via packaging
 python-dateutil==2.8.2
     # via
     #   django-relativedelta

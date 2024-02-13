@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("datamodel", "0011_remove_notificatieresponse_response_status")]
 
     operations = [
