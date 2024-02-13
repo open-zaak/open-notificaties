@@ -92,7 +92,6 @@ coverage==6.3.2
 cryptography==41.0.7
     # via
     #   -r requirements/base.txt
-    #   django-auth-adfs
     #   josepy
     #   mozilla-django-oidc
     #   pyopenssl
@@ -102,8 +101,6 @@ django==3.2.24
     #   commonground-api-common
     #   django-admin-index
     #   django-appconf
-    #   django-auth-adfs
-    #   django-auth-adfs-db
     #   django-axes
     #   django-choices
     #   django-cors-headers
@@ -130,12 +127,6 @@ django-appconf==1.0.5
     # via
     #   -r requirements/base.txt
     #   django-log-outgoing-requests
-django-auth-adfs==1.11.6
-    # via
-    #   -r requirements/base.txt
-    #   django-auth-adfs-db
-django-auth-adfs-db==0.3.0
-    # via -r requirements/base.txt
 django-axes==5.31.0
     # via -r requirements/base.txt
 django-choices==1.7.2
@@ -186,7 +177,6 @@ django-solo==2.0.0
     # via
     #   -r requirements/base.txt
     #   commonground-api-common
-    #   django-auth-adfs-db
     #   django-log-outgoing-requests
     #   mozilla-django-oidc-db
     #   notifications-api-common
@@ -338,7 +328,6 @@ pyjwt==2.4.0
     # via
     #   -r requirements/base.txt
     #   commonground-api-common
-    #   django-auth-adfs
     #   gemma-zds-client
 pyopenssl==23.3.0
     # via
@@ -382,7 +371,6 @@ requests==2.31.0
     #   -r requirements/base.txt
     #   commonground-api-common
     #   coreapi
-    #   django-auth-adfs
     #   django-log-outgoing-requests
     #   gemma-zds-client
     #   mozilla-django-oidc
@@ -438,7 +426,6 @@ uritemplate==3.0.0
 urllib3==1.26.18
     # via
     #   -r requirements/base.txt
-    #   django-auth-adfs
     #   elastic-apm
     #   requests
     #   sentry-sdk
