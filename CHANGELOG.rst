@@ -17,23 +17,36 @@ Changes
    After upgrading to 1.6, you can clean up the ADFS database entries by executing the
    ``bin/uninstall_adfs.sh`` script on your infrastructure.
 
-   .. tabs::
+    .. tabs::
 
      .. group-tab:: single-server
 
        .. code-block:: bash
-           docker exec opennotificaties-0 ./bin/uninstall_adfs.sh
+
+           $ docker exec opennotificaties-0 /app/bin/uninstall_adfs.sh
+
+           BEGIN
+           DROP TABLE
+           DELETE 3
+           COMMIT
+
+
      .. group-tab:: Kubernetes
 
        .. code-block:: bash
+
            $ kubectl get pods
-           NAME                        READY   STATUS    RESTARTS   AGE
-           cache-79455b996-jxk9r       1/1     Running   0          2d9h
-           nginx-8579d9dfbd-gdtbf      1/1     Running   0          2d9h
-           nginx-8579d9dfbd-wz6wn      1/1     Running   0          2d9h
+           NAME                                READY   STATUS    RESTARTS   AGE
+           cache-79455b996-jxk9r               1/1     Running   0          2d9h
            opennotificaties-7b696c8fd5-hchbq   1/1     Running   0          2d9h
            opennotificaties-7b696c8fd5-kz2pb   1/1     Running   0          2d9h
-           $ kubectl exec opennotificaties-7b696c8fd5-hchbq -- ./bin/uninstall_adfs.sh
+
+           $ kubectl exec opennotificaties-7b696c8fd5-hchbq -- /app/bin/uninstall_adfs.sh
+
+           BEGIN
+           DROP TABLE
+           DELETE 3
+           COMMIT
 
 
 1.5.2 (2024-02-07)
