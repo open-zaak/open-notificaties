@@ -124,8 +124,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_markup",
     "solo",
-    "django_auth_adfs",
-    "django_auth_adfs_db",
     "django_jsonform",
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
@@ -500,10 +498,6 @@ NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
 ADMIN_INDEX_SHOW_REMAINING_APPS_TO_SUPERUSERS = False
 ADMIN_INDEX_AUTO_CREATE_APP_GROUP = False
 
-#
-# DJANGO AUTH ADFS
-#
-AUTH_ADFS = {"SETTINGS_CLASS": "django_auth_adfs_db.settings.Settings"}
 
 #
 # OpenZaak configuration
