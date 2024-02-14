@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import TemplateView
 
 from vng_api_common.views import ViewConfigView
 
@@ -18,16 +18,6 @@ urlpatterns = [
     # Simply show the master template.
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("ref/", include("vng_api_common.urls")),
-    # See #1139 - the ADFS backend is phasing out. We provide redirects to give users time
-    # to update their redirect URIs on the ADFS side.
-    path(
-        "adfs/callback",
-        RedirectView.as_view(
-            permanent=True,
-            query_string=True,
-            pattern_name="oidc_authentication_callback",
-        ),
-    ),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("view-config/", ViewConfigView.as_view(), name="view-config"),
 ]

@@ -2,6 +2,53 @@
 Changes
 =======
 
+1.6.0 (2024-??-??)
+------------------
+
+.. warning::
+
+   Manual intervention required for ADFS/AAD users.
+
+   In Open Notificaties 1.4.x we replaced the ADFS/Azure AD integration with the generic OIDC
+   integration. If you are upgrading from an older version, you must first upgrade to
+   the 1.4.x release series before upgrading to 1.6, and follow the manual intervention
+   steps in the 1.4 release notes.
+
+   After upgrading to 1.6, you can clean up the ADFS database entries by executing the
+   ``bin/uninstall_adfs.sh`` script on your infrastructure.
+
+    .. tabs::
+
+     .. group-tab:: single-server
+
+       .. code-block:: bash
+
+           $ docker exec opennotificaties-0 /app/bin/uninstall_adfs.sh
+
+           BEGIN
+           DROP TABLE
+           DELETE 3
+           COMMIT
+
+
+     .. group-tab:: Kubernetes
+
+       .. code-block:: bash
+
+           $ kubectl get pods
+           NAME                                READY   STATUS    RESTARTS   AGE
+           cache-79455b996-jxk9r               1/1     Running   0          2d9h
+           opennotificaties-7b696c8fd5-hchbq   1/1     Running   0          2d9h
+           opennotificaties-7b696c8fd5-kz2pb   1/1     Running   0          2d9h
+
+           $ kubectl exec opennotificaties-7b696c8fd5-hchbq -- /app/bin/uninstall_adfs.sh
+
+           BEGIN
+           DROP TABLE
+           DELETE 3
+           COMMIT
+
+
 1.5.2 (2024-02-07)
 ==================
 
@@ -115,7 +162,7 @@ Bugfix release following 1.4.0
    ``https://open-notificaties.gemeente.nl/adfs/callback`` becomes
    ``https://open-notificaties.gemeente.nl/oidc/callback``.
 
-   In release 1.5.0 you will be able to finalize the removal by dropping the relevant
+   In release 1.6.0 you will be able to finalize the removal by dropping the relevant
    tables.
 
 1.3.0 (2022-03-28)

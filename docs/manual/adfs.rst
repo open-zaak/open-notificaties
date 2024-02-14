@@ -14,12 +14,12 @@ ADFS (On premise) being removed
    ``/adfs/callback`` should be changed into ``/oidc/callback``.
 
    Open Notificaties 1.4.0 provides a redirect from the old to the new URL, which will be
-   removed in Open Notificaties 1.5.0.
+   removed in Open Notificaties 1.6.0.
 
 Uninstalling
 ============
 
-The uninstaller can be run from Open Notificaties 1.5.0 onwards, after we have removed the
+The uninstaller can be run from Open Notificaties 1.6.0 onwards, after we have removed the
 external dependencies.
 
 .. tabs::

@@ -11,7 +11,6 @@ self-certifi
 
 # Framework libraries
 Django ~= 3.2.0
-django-auth-adfs-db
 django-axes
 django-choices
 django-cors-headers
