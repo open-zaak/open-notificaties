@@ -133,6 +133,7 @@ INSTALLED_APPS = [
     # Project applications.
     "nrc.accounts",
     "nrc.api",
+    "nrc.config",
     "nrc.datamodel",
     "nrc.utils",
 ]
@@ -560,3 +561,31 @@ else:
     INSTALLED_APPS = INSTALLED_APPS + [
         "elasticapm.contrib.django",
     ]
+
+#
+# Django setup configuration
+#
+SETUP_CONFIGURATION_STEPS = [
+    "nrc.config.site.SiteConfigurationStep",
+    "nrc.config.authorization.AuthorizationStep",
+    "nrc.config.authorization.OpenZaakAuthStep",
+]
+
+#
+# Open Notificaties settings
+#
+
+# Settings for setup_configuration command
+# sites config
+SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=True)
+OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "")
+OPENNOTIFICATIES_ORGANIZATION = config("OPENNOTIFICATIES_ORGANIZATION", "")
+# notif -> OZ auth config
+AUTHORIZATION_CONFIG_ENABLE = config("AUTHORIZATION_CONFIG_ENABLE", default=True)
+AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "")
+NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "")
+NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "")
+# OZ -> notif config
+OPENZAAK_NOTIF_CONFIG_ENABLE = config("OPENZAAK_NOTIF_CONFIG_ENABLE", default=True)
+OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "")
+OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "")
