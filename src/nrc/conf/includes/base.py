@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 import sentry_sdk
 from celery.schedules import crontab
 from corsheaders.defaults import default_headers as default_cors_headers
+from log_outgoing_requests.formatters import HttpFormatter
 
 from .api import *  # noqa
 from .environ import config, get_sentry_integrations
@@ -225,6 +226,7 @@ DEFAULT_FROM_EMAIL = "opennotificaties@example.com"
 # LOGGING
 #
 LOGGING_DIR = os.path.join(BASE_DIR, "log")
+LOG_REQUESTS = config("LOG_REQUESTS", default=False)
 
 LOGGING = {
     "version": 1,
@@ -236,6 +238,7 @@ LOGGING = {
         "timestamped": {"format": "%(asctime)s %(levelname)s %(name)s  %(message)s"},
         "simple": {"format": "%(levelname)s  %(message)s"},
         "performance": {"format": "%(asctime)s %(process)d | %(thread)d | %(message)s"},
+        "outgoing_requests": {"()": HttpFormatter},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -282,6 +285,16 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
         },
+        "log_outgoing_requests": {
+            "level": "DEBUG",
+            "formatter": "outgoing_requests",
+            "class": "logging.StreamHandler",  # to write to stdout
+        },
+        "save_outgoing_requests": {
+            "level": "DEBUG",
+            # enabling saving to database
+            "class": "log_outgoing_requests.handlers.DatabaseOutgoingRequestsHandler",
+        },
     },
     "loggers": {
         "nrc": {"handlers": ["project"], "level": "INFO", "propagate": True},
@@ -299,6 +312,13 @@ LOGGING = {
         "mozilla_django_oidc": {
             "handlers": ["project"],
             "level": "DEBUG",
+        },
+        "log_outgoing_requests": {
+            "handlers": ["log_outgoing_requests", "save_outgoing_requests"]
+            if LOG_REQUESTS
+            else [],
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }
