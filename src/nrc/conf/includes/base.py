@@ -563,6 +563,13 @@ else:
     ]
 
 #
+# ZGW-CONSUMERS
+#
+ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
+    os.path.join(DJANGO_PROJECT_DIR, "tests", "schemas"),
+]
+
+#
 # Django setup configuration
 #
 SETUP_CONFIGURATION_STEPS = [
