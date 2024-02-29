@@ -2,10 +2,11 @@ import uuid
 from io import StringIO
 
 from django.contrib.sites.models import Site
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+import requests
 import requests_mock
 from jwt import decode
 from rest_framework import status
@@ -107,3 +108,28 @@ class SetupConfigurationTests(TestCase):
             )
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @requests_mock.Mocker()
+    def test_setup_configuration_selftest_fails(self, m):
+        m.get("http://open-notificaties.example.com/", exc=requests.ConnectionError)
+        m.get("http://open-notificaties.example.com/api/v1/kanaal", json=[])
+        mock_service_oas_get(
+            m, "https://oz.example.com/autorisaties/api/v1/", APITypes.ac
+        )
+        m.get("https://oz.example.com/autorisaties/api/v1/applicaties", json=[])
+
+        with self.assertRaisesMessage(
+            CommandError,
+            "Could not access home page at 'http://open-notificaties.example.com/'",
+        ):
+            call_command("setup_configuration")
+
+    @requests_mock.Mocker()
+    def test_setup_configuration_without_selftest(self, m):
+        stdout = StringIO()
+
+        call_command("setup_configuration", no_selftest=True, stdout=stdout)
+        command_output = stdout.getvalue()
+
+        self.assertEqual(len(m.request_history), 0)
+        self.assertTrue("Selftest is skipped" in command_output)
