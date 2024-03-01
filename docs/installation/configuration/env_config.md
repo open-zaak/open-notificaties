@@ -127,6 +127,13 @@ The following parameters control the CORS policy.
   included. The value of this variable is added to these already included headers.
   Defaults to an empty list.
 
+### Initial configuration
+
+Open Notificaties supports `setup_configuration` management command, which allows configuration via
+environment variables. 
+All these environment variables are described at CLI configuration.
+
+
 ## Specifying the environment variables
 
 There are two strategies to specify the environment variables:
