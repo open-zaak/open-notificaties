@@ -100,6 +100,18 @@ Open Notificaties 1.5.0 is a release focused on security and update of dependenc
 
 * [#91] Updated links to ZGW API Standards
 
+.. warning::
+
+   Change in deployment is required. `/media/` volume should be configured to share OAS files.
+
+   Explanation:
+
+   The new version of ``zgw_consumers`` library adds ``oas_file`` filed to ``Service`` model.
+   This field saves OAS file into ``MEDIA_ROOT`` folder.
+   The deployment now should have a volume for it.
+   Please look at the example in ``docker-compose.yml``
+
+
 1.4.3 (2022-07-15)
 ==================
 
