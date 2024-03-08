@@ -2,8 +2,14 @@
 Changes
 =======
 
-1.6.0 (2024-??-??)
+1.6.0 (2024-03-08)
 ------------------
+
+**Project maintenance**
+
+* [#119] Upgraded commonground-api-common to 1.13.0, which fixed the configuration view
+* [#130] Removed ADFS
+* [#133] Added volume configuration to docker-compose as an example
 
 .. warning::
 
