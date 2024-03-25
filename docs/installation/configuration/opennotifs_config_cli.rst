@@ -5,7 +5,7 @@ Open Notificaties configuration (CLI)
 =====================================
 
 After deploying Open Notificaties, it needs to be configured to be fully functional. The
-command line tool ``setup_configuration`` assist with this configuration:
+command line tool ``setup_configuration`` assists with this configuration:
 
 * It uses environment variables for all configuration choices, therefore you can integrate this with your
   infrastructure tooling such as init containers and/or Kubernetes Jobs.
@@ -26,7 +26,7 @@ Preparation
 ===========
 
 The command executes the list of pluggable configuration steps, and each step
-required specific environment variables, that should be prepared.
+requires specific environment variables, that should be prepared.
 Here is the description of all available configuration steps and the environment variables, 
 use by each step. 
 
