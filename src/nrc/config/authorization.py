@@ -74,7 +74,7 @@ class AuthorizationStep(BaseConfigurationStep):
             client.list("applicatie")
         except requests.RequestException as exc:
             raise SelfTestFailed(
-                "Could not Could not retrieve list of applications from Autorisaties API."
+                "Could not retrieve list of applications from Autorisaties API."
             ) from exc
 
 
