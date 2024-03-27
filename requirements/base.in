@@ -17,7 +17,7 @@ django-choices
 django-cors-headers
 django-markup
 django-redis
-git+https://github.com/maykinmedia/django-setup-configuration.git@feature/1-config-command
+django-setup-configuration
 
 # Admin and UI libraries
 django-admin-index
