@@ -4,6 +4,7 @@ FROM python:3.10-slim-bookworm AS build
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -35,6 +36,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         media-types \
         procps \
         nano \
+        curl \
         postgresql-client \
         # Required for Celery to work.
         netcat-openbsd \
@@ -56,6 +58,7 @@ COPY ./bin/celery_worker.sh /celery_worker.sh
 COPY ./bin/celery_flower.sh /celery_flower.sh
 COPY ./bin/celery_beat.sh /celery_beat.sh
 COPY ./bin/uninstall_adfs.sh ./bin/uninstall_django_auth_adfs_db.sql /app/bin/
+COPY ./bin/setup_configuration.sh /setup_configuration.sh
 RUN mkdir /app/log
 
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css

@@ -128,6 +128,7 @@ django==3.2.24
     #   django-relativedelta
     #   django-rest-framework-condition
     #   django-sendfile2
+    #   django-setup-configuration
     #   django-solo
     #   djangorestframework
     #   drf-nested-routers
@@ -192,6 +193,8 @@ django-sendfile2==0.7.0
     # via
     #   -r requirements/ci.txt
     #   django-privates
+django-setup-configuration==0.1.0
+    # via -r requirements/ci.txt
 django-solo==2.0.0
     # via
     #   -r requirements/ci.txt
@@ -250,6 +253,8 @@ flake8==3.8.4
 flower==2.0.1
     # via -r requirements/ci.txt
 freezegun==1.2.1
+    # via -r requirements/ci.txt
+furl==2.1.3
     # via -r requirements/ci.txt
 gemma-zds-client==0.15.0
     # via
@@ -330,6 +335,10 @@ notifications-api-common==0.2.2
     # via
     #   -r requirements/ci.txt
     #   commonground-api-common
+orderedmultidict==1.0.1
+    # via
+    #   -r requirements/ci.txt
+    #   furl
 oyaml==1.0
     # via
     #   -r requirements/ci.txt
@@ -456,7 +465,9 @@ six==1.16.0
     #   bleach
     #   click-repl
     #   django-choices
+    #   furl
     #   isodate
+    #   orderedmultidict
     #   python-dateutil
     #   requests-mock
 smmap==5.0.0

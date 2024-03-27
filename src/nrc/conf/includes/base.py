@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 import sentry_sdk
 from celery.schedules import crontab
 from corsheaders.defaults import default_headers as default_cors_headers
+from log_outgoing_requests.formatters import HttpFormatter
 
 from .api import *  # noqa
 from .environ import config, get_sentry_integrations
@@ -128,9 +129,11 @@ INSTALLED_APPS = [
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
     "zgw_consumers",
+    "django_setup_configuration",
     # Project applications.
     "nrc.accounts",
     "nrc.api",
+    "nrc.config",
     "nrc.datamodel",
     "nrc.utils",
 ]
@@ -224,6 +227,7 @@ DEFAULT_FROM_EMAIL = "opennotificaties@example.com"
 # LOGGING
 #
 LOGGING_DIR = os.path.join(BASE_DIR, "log")
+LOG_REQUESTS = config("LOG_REQUESTS", default=False)
 
 LOGGING = {
     "version": 1,
@@ -235,6 +239,7 @@ LOGGING = {
         "timestamped": {"format": "%(asctime)s %(levelname)s %(name)s  %(message)s"},
         "simple": {"format": "%(levelname)s  %(message)s"},
         "performance": {"format": "%(asctime)s %(process)d | %(thread)d | %(message)s"},
+        "outgoing_requests": {"()": HttpFormatter},
     },
     "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
     "handlers": {
@@ -281,6 +286,16 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
         },
+        "log_outgoing_requests": {
+            "level": "DEBUG",
+            "formatter": "outgoing_requests",
+            "class": "logging.StreamHandler",  # to write to stdout
+        },
+        "save_outgoing_requests": {
+            "level": "DEBUG",
+            # enabling saving to database
+            "class": "log_outgoing_requests.handlers.DatabaseOutgoingRequestsHandler",
+        },
     },
     "loggers": {
         "nrc": {"handlers": ["project"], "level": "INFO", "propagate": True},
@@ -298,6 +313,13 @@ LOGGING = {
         "mozilla_django_oidc": {
             "handlers": ["project"],
             "level": "DEBUG",
+        },
+        "log_outgoing_requests": {
+            "handlers": ["log_outgoing_requests", "save_outgoing_requests"]
+            if LOG_REQUESTS
+            else [],
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }
@@ -539,3 +561,38 @@ else:
     INSTALLED_APPS = INSTALLED_APPS + [
         "elasticapm.contrib.django",
     ]
+
+#
+# ZGW-CONSUMERS
+#
+ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
+    os.path.join(DJANGO_PROJECT_DIR, "tests", "schemas"),
+]
+
+#
+# Django setup configuration
+#
+SETUP_CONFIGURATION_STEPS = [
+    "nrc.config.site.SiteConfigurationStep",
+    "nrc.config.authorization.AuthorizationStep",
+    "nrc.config.authorization.OpenZaakAuthStep",
+]
+
+#
+# Open Notificaties settings
+#
+
+# Settings for setup_configuration command
+# sites config
+SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=True)
+OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "")
+OPENNOTIFICATIES_ORGANIZATION = config("OPENNOTIFICATIES_ORGANIZATION", "")
+# notif -> OZ auth config
+AUTHORIZATION_CONFIG_ENABLE = config("AUTHORIZATION_CONFIG_ENABLE", default=True)
+AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "")
+NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "")
+NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "")
+# OZ -> notif config
+OPENZAAK_NOTIF_CONFIG_ENABLE = config("OPENZAAK_NOTIF_CONFIG_ENABLE", default=True)
+OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "")
+OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "")
