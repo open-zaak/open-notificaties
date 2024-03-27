@@ -49,10 +49,6 @@ services:
     volumes: &app-volumes
       - media:/app/media  # Shared media volume to get access to saved OAS files
     depends_on:
-      db:
-        condition: service_started
-      redis:
-        condition: service_started
       web-init:
         condition: service_completed_successfully
 
