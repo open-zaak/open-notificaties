@@ -28,6 +28,18 @@ if [ -d $fixtures_dir ]; then
     done
 fi
 
+# Create superuser
+# specify password by setting DJANGO_SUPERUSER_PASSWORD in the env
+# specify username by setting OPENNOTIFICATIES_SUPERUSER_USERNAME in the env
+# specify email by setting OPENNOTIF_SUPERUSER_EMAIL in the env
+if [ -n "${OPENNOTIFICATIES_SUPERUSER_USERNAME}" ]; then
+    python src/manage.py createinitialsuperuser \
+        --no-input \
+        --username "${OPENNOTIFICATIES_SUPERUSER_USERNAME}" \
+        --email "${OPENNOTIFICATIES_SUPERUSER_EMAIL:-admin\@admin.org}"
+    unset OPENNOTIFICATIES_SUPERUSER_USERNAME OPENNOTIFICATIES_SUPERUSER_EMAIL DJANGO_SUPERUSER_PASSWORD
+fi
+
 # Start server
 >&2 echo "Starting server"
 exec uwsgi \
