@@ -45,8 +45,8 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Start CI docker-compose
-        run: docker-compose -f docker-compose.ssl.yml up -d mock
+      - name: Start CI docker compose
+        run: docker compose -f docker-compose.ssl.yml up -d mock
 
       - name: Install dependencies
         run: pip install -r requirements/ci.txt codecov
