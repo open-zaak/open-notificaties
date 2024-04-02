@@ -8,6 +8,7 @@ bleach
 celery
 flower
 self-certifi
+furl
 
 # Framework libraries
 Django ~= 3.2.0
@@ -16,6 +17,7 @@ django-choices
 django-cors-headers
 django-markup
 django-redis
+django-setup-configuration
 
 # Admin and UI libraries
 django-admin-index

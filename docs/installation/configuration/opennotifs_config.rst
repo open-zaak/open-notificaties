@@ -1,8 +1,8 @@
 .. _installation_configuration:
 
-===============================
-Open Notificaties configuration
-===============================
+=======================================
+Open Notificaties configuration (admin)
+=======================================
 
 Before you can work with Open Notificaties after installation, a few settings
 need to be configured first.

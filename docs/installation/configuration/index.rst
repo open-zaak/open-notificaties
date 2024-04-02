@@ -7,4 +7,5 @@ Configuration
    :maxdepth: 1
 
    env_config
+   opennotifs_config_cli
    opennotifs_config
