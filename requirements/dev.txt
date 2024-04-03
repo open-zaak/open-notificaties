@@ -10,7 +10,7 @@ amqp==5.1.0
     # via
     #   -r requirements/ci.txt
     #   kombu
-asgiref==3.5.0
+asgiref==3.8.1
     # via
     #   -r requirements/ci.txt
     #   django
@@ -143,7 +143,7 @@ django-appconf==1.0.5
     # via
     #   -r requirements/ci.txt
     #   django-log-outgoing-requests
-django-axes==5.31.0
+django-axes[ipware]==6.4.0
     # via -r requirements/ci.txt
 django-choices==1.7.2
     # via
@@ -511,9 +511,10 @@ tornado==6.3.3
     # via
     #   -r requirements/ci.txt
     #   flower
-typing-extensions==4.1.1
+typing-extensions==4.10.0
     # via
     #   -r requirements/ci.txt
+    #   asgiref
     #   black
 uritemplate==3.0.0
     # via
