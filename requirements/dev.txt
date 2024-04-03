@@ -122,7 +122,6 @@ django==3.2.24
     #   django-filter
     #   django-jsonform
     #   django-log-outgoing-requests
-    #   django-markup
     #   django-privates
     #   django-redis
     #   django-relativedelta
@@ -168,8 +167,6 @@ django-jsonform==2.21.5
     #   -r requirements/ci.txt
     #   mozilla-django-oidc-db
 django-log-outgoing-requests==0.4.0
-    # via -r requirements/ci.txt
-django-markup==1.5
     # via -r requirements/ci.txt
 django-ordered-model==3.5
     # via
