@@ -25,7 +25,6 @@ from nrc.datamodel.tests.factories import (
     LOG_NOTIFICATIONS_IN_DB=True,
 )
 class NotificatieTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     def test_notificatie_send_success(self, mock_task):

@@ -1,5 +1,6 @@
 import datetime
 import os
+from pathlib import Path
 
 from django.urls import reverse_lazy
 
@@ -13,12 +14,8 @@ from .environ import config, get_sentry_integrations
 
 # Build paths inside the project, so further paths can be defined relative to
 # the code root.
-DJANGO_PROJECT_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)
-)
-BASE_DIR = os.path.abspath(
-    os.path.join(DJANGO_PROJECT_DIR, os.path.pardir, os.path.pardir)
-)
+DJANGO_PROJECT_DIR = Path(__file__).resolve(strict=True).parents[2]
+BASE_DIR = DJANGO_PROJECT_DIR.parents[1]
 
 #
 # Core Django settings
@@ -123,7 +120,6 @@ INSTALLED_APPS = [
     "notifications_api_common",
     "drf_yasg",
     "rest_framework",
-    "django_markup",
     "solo",
     "django_jsonform",
     "mozilla_django_oidc",
@@ -165,7 +161,7 @@ TEMPLATE_LOADERS = (
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(DJANGO_PROJECT_DIR, "templates")],
+        "DIRS": [DJANGO_PROJECT_DIR / "templates"],
         "APP_DIRS": False,  # conflicts with explicity specifying the loaders
         "OPTIONS": {
             "context_processors": [
@@ -183,7 +179,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "nrc.wsgi.application"
 
 # Translations
-LOCALE_PATHS = (os.path.join(DJANGO_PROJECT_DIR, "conf", "locale"),)
+LOCALE_PATHS = (DJANGO_PROJECT_DIR / "conf" / "locale",)
 
 #
 # SERVING of static and media files
@@ -191,10 +187,10 @@ LOCALE_PATHS = (os.path.join(DJANGO_PROJECT_DIR, "conf", "locale"),)
 
 STATIC_URL = "/static/"
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = BASE_DIR / "static"
 
 # Additional locations of static files
-STATICFILES_DIRS = [os.path.join(DJANGO_PROJECT_DIR, "static")]
+STATICFILES_DIRS = [DJANGO_PROJECT_DIR / "static"]
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -203,11 +199,11 @@ STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
 MEDIA_URL = "/media/"
 
-FIXTURE_DIRS = [os.path.join(DJANGO_PROJECT_DIR, "fixtures")]
+FIXTURE_DIRS = [DJANGO_PROJECT_DIR / "fixtures"]
 
 #
 # Sending EMAIL
@@ -226,7 +222,7 @@ DEFAULT_FROM_EMAIL = "opennotificaties@example.com"
 #
 # LOGGING
 #
-LOGGING_DIR = os.path.join(BASE_DIR, "log")
+LOGGING_DIR = BASE_DIR / "log"
 LOG_REQUESTS = config("LOG_REQUESTS", default=False)
 
 LOGGING = {
@@ -257,7 +253,7 @@ LOGGING = {
         "django": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(LOGGING_DIR, "django.log"),
+            "filename": LOGGING_DIR / "django.log",
             "formatter": "verbose",
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
@@ -265,7 +261,7 @@ LOGGING = {
         "project": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(LOGGING_DIR, "nrc.log"),
+            "filename": LOGGING_DIR / "nrc.log",
             "formatter": "verbose",
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
@@ -273,7 +269,7 @@ LOGGING = {
         "performance": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(LOGGING_DIR, "performance.log"),
+            "filename": LOGGING_DIR / "performance.log",
             "formatter": "performance",
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
@@ -281,7 +277,7 @@ LOGGING = {
         "notifications": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join(LOGGING_DIR, "notifications.log"),
+            "filename": LOGGING_DIR / "notifications.log",
             "formatter": "performance",
             "maxBytes": 1024 * 1024 * 10,  # 10 MB
             "backupCount": 10,
@@ -315,9 +311,11 @@ LOGGING = {
             "level": "DEBUG",
         },
         "log_outgoing_requests": {
-            "handlers": ["log_outgoing_requests", "save_outgoing_requests"]
-            if LOG_REQUESTS
-            else [],
+            "handlers": (
+                ["log_outgoing_requests", "save_outgoing_requests"]
+                if LOG_REQUESTS
+                else []
+            ),
             "level": "DEBUG",
             "propagate": True,
         },
@@ -401,7 +399,7 @@ if subpath:
 if "GIT_SHA" in os.environ:
     GIT_SHA = config("GIT_SHA", "")
 # in docker (build) context, there is no .git directory
-elif os.path.exists(os.path.join(BASE_DIR, ".git")):
+elif BASE_DIR.joinpath(".git").exists():
     try:
         import git
     except ImportError:
@@ -430,23 +428,15 @@ NUM_PROXIES = config(  # TODO: this also is relevant for DRF settings if/when we
 AXES_CACHE = "axes"  # refers to CACHES setting
 AXES_FAILURE_LIMIT = 5  # Default: 3
 AXES_LOCK_OUT_AT_FAILURE = True  # Default: True
-AXES_USE_USER_AGENT = False  # Default: False
 AXES_COOLOFF_TIME = datetime.timedelta(minutes=5)
-# after testing, the REMOTE_ADDR does not appear to be included with nginx (so single
-# reverse proxy) and the ipware detection didn't properly work. On K8s you typically have
-# ingress (load balancer) and then an additional nginx container for private file serving,
-# bringing the total of reverse proxies to 2 - meaning HTTP_X_FORWARDED_FOR basically
-# looks like ``$realIp,$ingressIp``. -> to get to $realIp, there is only 1 extra reverse
-# proxy included.
-AXES_PROXY_COUNT = NUM_PROXIES - 1 if NUM_PROXIES else None
-AXES_ONLY_USER_FAILURES = (
-    False  # Default: False (you might want to block on username rather than IP)
-)
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = (
-    False  # Default: False (you might want to block on username and IP)
-)
+AXES_LOCKOUT_PARAMETERS = [["ip_address", "user_agent", "username"]]
+# By default, Axes obfuscates values for formfields named "password", but the admin
+# interface login formfield name is "auth-password", so we obfuscate that as well
+AXES_SENSITIVE_PARAMETERS = ["password", "auth-password"]  # nosec
+
+AXES_IPWARE_PROXY_COUNT = NUM_PROXIES - 1 if NUM_PROXIES else None
 # The default meta precedence order
-IPWARE_META_PRECEDENCE_ORDER = (
+AXES_IPWARE_META_PRECEDENCE_ORDER = (
     "HTTP_X_FORWARDED_FOR",
     "X_FORWARDED_FOR",  # <client>, <proxy1>, <proxy2>
     "HTTP_CLIENT_IP",
@@ -566,7 +556,7 @@ else:
 # ZGW-CONSUMERS
 #
 ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
-    os.path.join(DJANGO_PROJECT_DIR, "tests", "schemas"),
+    DJANGO_PROJECT_DIR / "tests" / "schemas",
 ]
 
 #

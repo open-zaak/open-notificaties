@@ -11,7 +11,6 @@ from nrc.datamodel.tests.factories import KanaalFactory
 
 
 class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     @override_settings(
@@ -186,7 +185,6 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 
 
 class KanalenValidationTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     @override_settings(
@@ -209,7 +207,6 @@ class KanalenValidationTests(JWTAuthMixin, APITestCase):
 
 
 class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
-
     heeft_alle_autorisaties = True
 
     @freeze_time("2019-01-01T12:00:00Z")

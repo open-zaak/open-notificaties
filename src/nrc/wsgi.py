@@ -6,7 +6,9 @@ It exposes the WSGI callable as a module-level variable named ``application``.
 For more information on this file, see
 https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 """
+
 import os
+from pathlib import Path
 
 from django.core.wsgi import get_wsgi_application
 
@@ -19,7 +21,7 @@ def init_newrelic():
             import newrelic.agent
 
             newrelic.agent.initialize(
-                os.path.join(os.environ.get("PROJECT_ROOT"), "newrelic.ini"),
+                str(Path(os.environ.get("PROJECT_ROOT"), "newrelic.ini")),
                 "production",
             )
         except Exception as e:

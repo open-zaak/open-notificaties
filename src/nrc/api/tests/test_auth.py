@@ -1,6 +1,7 @@
 """
 Guarantee that the proper authorization machinery is in place.
 """
+
 import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
