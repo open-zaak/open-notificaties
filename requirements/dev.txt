@@ -370,7 +370,7 @@ prompt-toolkit==3.0.20
     # via
     #   -r requirements/ci.txt
     #   click-repl
-psycopg2==2.9.3
+psycopg==3.1.18
     # via -r requirements/ci.txt
 pycodestyle==2.11.1
     # via
@@ -512,6 +512,7 @@ typing-extensions==4.10.0
     #   -r requirements/ci.txt
     #   asgiref
     #   black
+    #   psycopg
 uritemplate==3.0.0
     # via
     #   -r requirements/ci.txt

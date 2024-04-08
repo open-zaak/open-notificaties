@@ -326,7 +326,7 @@ prompt-toolkit==3.0.20
     # via
     #   -r requirements/base.txt
     #   click-repl
-psycopg2==2.9.3
+psycopg==3.1.18
     # via -r requirements/base.txt
 pycodestyle==2.11.1
     # via flake8
@@ -422,6 +422,7 @@ typing-extensions==4.10.0
     #   -r requirements/base.txt
     #   asgiref
     #   black
+    #   psycopg
 uritemplate==3.0.0
     # via
     #   -r requirements/base.txt

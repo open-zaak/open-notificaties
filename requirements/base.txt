@@ -201,7 +201,7 @@ prometheus-client==0.11.0
     # via flower
 prompt-toolkit==3.0.20
     # via click-repl
-psycopg2==2.9.3
+psycopg==3.1.18
     # via -r requirements/base.in
 pycparser==2.21
     # via cffi
@@ -265,7 +265,9 @@ sqlparse==0.4.4
 tornado==6.3.3
     # via flower
 typing-extensions==4.10.0
-    # via asgiref
+    # via
+    #   asgiref
+    #   psycopg
 uritemplate==3.0.0
     # via
     #   coreapi

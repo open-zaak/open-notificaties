@@ -1,5 +1,5 @@
 # Core python libraries
-psycopg2
+psycopg
 python-dotenv
 python-decouple # processing of envvar configs
 pytz
