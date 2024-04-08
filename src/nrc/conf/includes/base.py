@@ -125,6 +125,7 @@ INSTALLED_APPS = [
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
     "zgw_consumers",
+    "simple_certmanager",
     "django_setup_configuration",
     # Project applications.
     "nrc.accounts",

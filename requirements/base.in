@@ -23,7 +23,7 @@ mozilla-django-oidc-db
 
 # API libraries
 djangorestframework
-gemma-zds-client<1.0
+gemma-zds-client
 commonground-api-common
 django-log-outgoing-requests
 

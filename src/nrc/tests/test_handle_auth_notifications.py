@@ -2,12 +2,12 @@ import uuid as _uuid
 
 from django.conf import settings
 
+import requests_mock
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.authorizations.models import Applicatie, AuthorizationsConfig
 from vng_api_common.constants import CommonResourceAction, VertrouwelijkheidsAanduiding
 from vng_api_common.tests import JWTAuthMixin, reverse
-from zds_client.tests.mocks import mock_client
 
 
 class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
@@ -19,20 +19,18 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
         applicatie_url = f"{config.api_root}/applicaties/{uuid}"
         webhook_url = reverse("notificaties-webhook")
 
-        responses = {
-            applicatie_url: {
-                "client_ids": ["id1"],
-                "label": "Melding Openbare Ruimte consumer",
-                "heeftAlleAutorisaties": False,
-                "autorisaties": [
-                    {
-                        "component": "nrc",
-                        "scopes": ["zaken.lezen", "zaken.aanmaken"],
-                        "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
-                        "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
-                    }
-                ],
-            }
+        response_data = {
+            "client_ids": ["id1"],
+            "label": "Melding Openbare Ruimte consumer",
+            "heeftAlleAutorisaties": False,
+            "autorisaties": [
+                {
+                    "component": "nrc",
+                    "scopes": ["zaken.lezen", "zaken.aanmaken"],
+                    "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
+                    "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
+                }
+            ],
         }
         data = {
             "kanaal": "autorisaties",
@@ -43,7 +41,9 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "aanmaakdatum": "2012-01-14T00:00:00Z",
             "kenmerken": {},
         }
-        with mock_client(responses):
+
+        with requests_mock.Mocker(real_http=True) as m:
+            m.get(applicatie_url, json=response_data)
             response = self.client.post(webhook_url, data)
 
         self.assertEqual(
@@ -69,20 +69,18 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "notificaties-webhook",
             kwargs={"version": settings.REST_FRAMEWORK["DEFAULT_VERSION"]},
         )
-        responses = {
-            applicatie_url: {
-                "client_ids": ["id1"],
-                "label": "after",
-                "heeftAlleAutorisaties": False,
-                "autorisaties": [
-                    {
-                        "component": "nrc",
-                        "scopes": ["zaken.lezen", "zaken.aanmaken"],
-                        "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
-                        "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
-                    }
-                ],
-            }
+        response_data = {
+            "client_ids": ["id1"],
+            "label": "after",
+            "heeftAlleAutorisaties": False,
+            "autorisaties": [
+                {
+                    "component": "nrc",
+                    "scopes": ["zaken.lezen", "zaken.aanmaken"],
+                    "zaaktype": "https://example.com/zrc/api/v1/catalogus/1/zaaktypen/1",
+                    "maxVertrouwelijkheidaanduiding": VertrouwelijkheidsAanduiding.beperkt_openbaar,
+                }
+            ],
         }
         data = {
             "kanaal": "autorisaties",
@@ -94,7 +92,8 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "kenmerken": {},
         }
 
-        with mock_client(responses):
+        with requests_mock.Mocker() as m:
+            m.get(applicatie_url, json=response_data)
             response = self.client.post(webhook_url, data)
 
         self.assertEqual(
