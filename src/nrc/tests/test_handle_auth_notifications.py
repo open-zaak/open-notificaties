@@ -8,6 +8,8 @@ from rest_framework.test import APITestCase
 from vng_api_common.authorizations.models import Applicatie, AuthorizationsConfig
 from vng_api_common.constants import CommonResourceAction, VertrouwelijkheidsAanduiding
 from vng_api_common.tests import JWTAuthMixin, reverse
+from zgw_consumers.constants import APITypes
+from zgw_consumers.test import mock_service_oas_get
 
 
 class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
@@ -42,7 +44,8 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             "kenmerken": {},
         }
 
-        with requests_mock.Mocker(real_http=True) as m:
+        with requests_mock.Mocker() as m:
+            mock_service_oas_get(m, url=config.api_root, service=APITypes.ac)
             m.get(applicatie_url, json=response_data)
             response = self.client.post(webhook_url, data)
 
