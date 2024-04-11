@@ -42,8 +42,6 @@ TIME_ZONE = "UTC"  # note: this *may* affect the output of DRF datetimes
 
 USE_I18N = True
 
-USE_L10N = True
-
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
@@ -125,6 +123,7 @@ INSTALLED_APPS = [
     "mozilla_django_oidc",
     "mozilla_django_oidc_db",
     "zgw_consumers",
+    "simple_certmanager",
     "django_setup_configuration",
     # Project applications.
     "nrc.accounts",
