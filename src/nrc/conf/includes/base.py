@@ -496,13 +496,6 @@ CELERY_BEAT_SCHEDULE = {
     },
 }
 
-# Retry settings for delivering notifications to subscriptions
-NOTIFICATION_DELIVERY_MAX_RETRIES = config("NOTIFICATION_DELIVERY_MAX_RETRIES", 5)
-NOTIFICATION_DELIVERY_RETRY_BACKOFF = config("NOTIFICATION_DELIVERY_RETRY_BACKOFF", 3)
-NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
-    "NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX", 48
-)
-
 #
 # DJANGO-ADMIN-INDEX
 #
@@ -565,6 +558,7 @@ SETUP_CONFIGURATION_STEPS = [
     "nrc.config.site.SiteConfigurationStep",
     "nrc.config.authorization.AuthorizationStep",
     "nrc.config.authorization.OpenZaakAuthStep",
+    "nrc.config.notification_retry.NotificationRetryConfigurationStep",
 ]
 
 #
@@ -585,3 +579,16 @@ NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "")
 OPENZAAK_NOTIF_CONFIG_ENABLE = config("OPENZAAK_NOTIF_CONFIG_ENABLE", default=True)
 OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "")
 OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "")
+
+# setup configuration for Notification retry
+# Retry settings for delivering notifications to subscriptions
+NOTIFICATION_RETRY_CONFIG_ENABLE = config(
+    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=True
+)
+NOTIFICATION_DELIVERY_MAX_RETRIES = config("NOTIFICATION_DELIVERY_MAX_RETRIES", None)
+NOTIFICATION_DELIVERY_RETRY_BACKOFF = config(
+    "NOTIFICATION_DELIVERY_RETRY_BACKOFF", None
+)
+NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
+    "NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX", None
+)
