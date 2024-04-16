@@ -16,6 +16,7 @@ from zgw_consumers.constants import APITypes
 from zgw_consumers.test import mock_service_oas_get
 
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
+from nrc.config.notification_retry import NotificationRetryConfigurationStep
 from nrc.config.site import SiteConfigurationStep
 
 
@@ -29,6 +30,8 @@ from nrc.config.site import SiteConfigurationStep
     OPENZAAK_NOTIF_SECRET="oz-secret",
 )
 class SetupConfigurationTests(TestCase):
+    maxDiff = None
+
     def setUp(self):
         super().setUp()
 
@@ -66,13 +69,15 @@ class SetupConfigurationTests(TestCase):
             command_output = stdout.getvalue().splitlines()
             expected_output = [
                 f"Configuration will be set up with following steps: [{SiteConfigurationStep()}, "
-                f"{AuthorizationStep()}, {OpenZaakAuthStep()}]",
+                f"{AuthorizationStep()}, {OpenZaakAuthStep()}, {NotificationRetryConfigurationStep()}]",
                 f"Configuring {SiteConfigurationStep()}...",
                 f"{SiteConfigurationStep()} is successfully configured",
                 f"Configuring {AuthorizationStep()}...",
                 f"{AuthorizationStep()} is successfully configured",
                 f"Configuring {OpenZaakAuthStep()}...",
                 f"{OpenZaakAuthStep()} is successfully configured",
+                f"Configuring {NotificationRetryConfigurationStep()}...",
+                f"{NotificationRetryConfigurationStep()} is successfully configured",
                 "Instance configuration completed.",
             ]
 
