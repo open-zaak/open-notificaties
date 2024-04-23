@@ -63,7 +63,7 @@ class SetupConfigurationTests(TestCase):
             },
         )
 
-        call_command("setup_configuration", stdout=stdout)
+        call_command("setup_configuration", stdout=stdout, no_color=True)
 
         with self.subTest("Command output"):
             command_output = stdout.getvalue().splitlines()

@@ -148,8 +148,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
 
 
-@patch("nrc.api.tasks.get_exponential_backoff_interval")
-@patch("nrc.api.tasks.NotificationsConfig.get_solo")
+@patch("notifications_api_common.autoretry.get_exponential_backoff_interval")
+@patch("notifications_api_common.autoretry.NotificationsConfig.get_solo")
 @patch("nrc.api.serializers.deliver_message.retry")
 class NotificatieRetryTests(TestCase):
     def test_notificatie_retry_use_global_config(
