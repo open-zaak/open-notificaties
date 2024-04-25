@@ -117,6 +117,7 @@ INSTALLED_APPS = [
     "vng_api_common.notifications",
     "notifications_api_common",
     "drf_yasg",
+    "drf_spectacular",
     "rest_framework",
     "solo",
     "django_jsonform",

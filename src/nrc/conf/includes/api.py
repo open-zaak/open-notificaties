@@ -5,11 +5,22 @@ API_VERSION = "1.0.0"
 REST_FRAMEWORK = BASE_REST_FRAMEWORK.copy()
 REST_FRAMEWORK["PAGE_SIZE"] = 100
 REST_FRAMEWORK.update(
-    {"DEFAULT_PERMISSION_CLASSES": ("vng_api_common.permissions.AuthScopesRequired",)}
+    {
+        "DEFAULT_PERMISSION_CLASSES": (
+            "vng_api_common.permissions.AuthScopesRequired",
+        ),
+        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    }
 )
 
 SECURITY_DEFINITION_NAME = "JWT-Claims"
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Open Notificaties API",
+}
+
+
+# todo REMOVE
 SWAGGER_SETTINGS = BASE_SWAGGER_SETTINGS.copy()
 SWAGGER_SETTINGS.update(
     {
