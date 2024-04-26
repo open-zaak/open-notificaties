@@ -32,8 +32,6 @@ urlpatterns = [
                     name="notificaties-list",
                 ),
                 path("", include(router.urls)),
-                # should not be picked up by drf-yasg
-                path("", include("vng_api_common.api.urls")),
                 path("", include("vng_api_common.notifications.api.urls")),
             ]
         ),
