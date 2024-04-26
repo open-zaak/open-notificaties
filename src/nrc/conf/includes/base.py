@@ -510,14 +510,6 @@ NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
 ADMIN_INDEX_SHOW_REMAINING_APPS_TO_SUPERUSERS = False
 ADMIN_INDEX_AUTO_CREATE_APP_GROUP = False
 
-
-#
-# OpenZaak configuration
-#
-
-OPENNOTIFICATIES_API_CONTACT_EMAIL = "support@maykinmedia.nl"
-OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
-
 #
 # Mozilla Django OIDC DB settings
 #

@@ -440,7 +440,7 @@ typing-extensions==4.10.0
     #   asgiref
     #   black
     #   psycopg
-uritemplate==3.0.0
+uritemplate==4.1.1
     # via
     #   -r requirements/base.txt
     #   coreapi

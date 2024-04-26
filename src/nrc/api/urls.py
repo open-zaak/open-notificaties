@@ -1,8 +1,7 @@
-from django.conf import settings
 from django.urls import include, path, re_path
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from vng_api_common import routers
-from vng_api_common.schema import SchemaView
 
 from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
 
@@ -18,16 +17,12 @@ urlpatterns = [
         include(
             [
                 # API documentation
-                re_path(
-                    r"^schema/openapi(?P<format>\.json|\.yaml)$",
-                    SchemaView.without_ui(cache_timeout=settings.SPEC_CACHE_TIMEOUT),
-                    name="schema-json",
+                path(
+                    "schema/openapi.yaml", SpectacularAPIView.as_view(), name="schema"
                 ),
                 path(
                     "schema/",
-                    SchemaView.with_ui(
-                        "redoc", cache_timeout=settings.SPEC_CACHE_TIMEOUT
-                    ),
+                    SpectacularRedocView.as_view(url_name="schema"),
                     name="schema-redoc",
                 ),
                 # actual API
