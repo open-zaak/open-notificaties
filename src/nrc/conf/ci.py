@@ -6,6 +6,7 @@ import os
 
 os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("SECRET_KEY", "dummy")
+os.environ.setdefault("ENVIRONMENT", "CI")
 
 from .includes.base import *  # noqa isort:skip
 
@@ -25,7 +26,5 @@ for logger in LOGGING["loggers"].values():
         }
     )
 LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
-
-ENVIRONMENT = "CI"
 
 TEST_CALLBACK_AUTH = False
