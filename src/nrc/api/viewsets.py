@@ -1,5 +1,11 @@
 import logging
 
+from drf_spectacular.utils import (
+    OpenApiParameter,
+    OpenApiTypes,
+    extend_schema,
+    extend_schema_view,
+)
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.response import Response
@@ -15,30 +21,22 @@ from .serializers import AbonnementSerializer, KanaalSerializer, MessageSerializ
 logger = logging.getLogger(__name__)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        summary="Alle ABONNEMENTen opvragen.",
+    ),
+    retrieve=extend_schema(summary="Een specifiek ABONNEMENT opvragen."),
+    create=extend_schema(summary="Maak een ABONNEMENT aan."),
+    update=extend_schema(summary="Werk een ABONNEMENT in zijn geheel bij."),
+    partial_update=extend_schema(summary="Werk een ABONNEMENT deels bij."),
+    destroy=extend_schema(summary="Verwijder een ABONNEMENT."),
+)
 class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
     """
     Opvragen en bewerken van ABONNEMENTen.
 
     Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te
     ontvangen die op dat KANAAL gepubliceerd worden.
-
-    create:
-    Maak een ABONNEMENT aan.
-
-    list:
-    Alle ABONNEMENTen opvragen.
-
-    retrieve:
-    Een specifiek ABONNEMENT opvragen.
-
-    update:
-    Werk een ABONNEMENT in zijn geheel bij.
-
-    partial_update:
-    Werk een ABONNEMENT deels bij.
-
-    destroy:
-    Verwijder een ABONNEMENT.
     """
 
     queryset = Abonnement.objects.all()
@@ -59,6 +57,11 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
         serializer.save(client_id=client_id)
 
 
+@extend_schema_view(
+    list=extend_schema(summary="Alle KANAALen opvragen."),
+    retrieve=extend_schema(summary="Een specifiek KANAAL opvragen."),
+    create=extend_schema(summary="Maak een KANAAL aan."),
+)
 class KanaalViewSet(
     CheckQueryParamsMixin,
     mixins.CreateModelMixin,
@@ -73,15 +76,6 @@ class KanaalViewSet(
     componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
     maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
     abonneren.
-
-    create:
-    Maak een KANAAL aan.
-
-    list:
-    Alle KANAALen opvragen.
-
-    retrieve:
-    Een specifiek KANAAL opvragen.
     """
 
     queryset = Kanaal.objects.all()
@@ -95,29 +89,25 @@ class KanaalViewSet(
     }
 
 
+@extend_schema(summary="Publiceer een notificatie.")
 class NotificatieAPIView(views.APIView):
     """
     Publiceren van NOTIFICATIEs.
 
     Een NOTIFICATIE wordt gepubliceerd op een KANAAL. Alle consumers die een
     ABONNEMENT hebben op dit KANAAL ontvangen de NOTIFICATIE.
-
-    create:
-    Publiceer een notificatie.
     """
 
     required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}
     # Exposed action of the view used by the vng_api_common
     action = "create"
+    serializer_class = MessageSerializer
 
-    @swagger_auto_schema(
-        request_body=MessageSerializer, responses={200: MessageSerializer}
-    )
     def create(self, request, *args, **kwargs):
         return self.post(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        serializer = MessageSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
 
