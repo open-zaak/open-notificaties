@@ -27,8 +27,8 @@ Preparation
 
 The command executes the list of pluggable configuration steps, and each step
 requires specific environment variables, that should be prepared.
-Here is the description of all available configuration steps and the environment variables, 
-use by each step. 
+Here is the description of all available configuration steps and the environment variables,
+use by each step.
 
 Sites configuration
 -------------------
@@ -64,6 +64,23 @@ Make sure that the correct permissions are configured in Open Zaak Autorisaties 
 * ``OPENZAAK_NOTIF_CLIENT_ID``: a client id, which Open Zaak uses to request Open Notificaties,
   for example, ``open-zaak``. Required.
 * ``OPENZAAK_NOTIF_SECRET``: some random string. Required.
+
+Notification retry configuration
+--------------------------------
+
+Open Notifications has a retry mechanism to guarantee notification delivery, this mechanism
+is described in :ref:`delivery_guarantees`. The parameters for this behavior can be configured via the
+following environment variables.
+
+* ``NOTIFICATION_DELIVERY_MAX_RETRIES``: the maximum number of retries Celery will do if sending a notification failed.
+* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF``: a boolean or a number. If this option is set to
+  ``True``, autoretries will be delayed following the rules of exponential backoff. If
+  this option is set to a number, it is used as a delay factor.
+* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX``: an integer, specifying number of seconds.
+  If ``retry_backoff`` is enabled, this option will set a maximum delay in seconds
+  between task autoretries. By default, this option is set to 48 seconds.
+
+These settings can also later be changed via the admin interface, under ``Configuration > Notification component configuration``.
 
 Execution
 =========

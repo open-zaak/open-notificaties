@@ -1,12 +1,12 @@
 import json
 import logging
 
-from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
 import requests
+from notifications_api_common.autoretry import add_autoretry_behaviour
 
 from nrc.celery import app
 from nrc.datamodel.models import Abonnement, NotificatieResponse
@@ -18,15 +18,7 @@ class NotificationException(Exception):
     pass
 
 
-@app.task(
-    autoretry_for=(
-        NotificationException,
-        requests.RequestException,
-    ),
-    max_retries=settings.NOTIFICATION_DELIVERY_MAX_RETRIES,
-    retry_backoff=settings.NOTIFICATION_DELIVERY_RETRY_BACKOFF,
-    retry_backoff_max=settings.NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX,
-)
+@app.task
 def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     """
     send msg to subscriber
@@ -81,3 +73,13 @@ def clean_old_notifications() -> None:
     cleans up old "Notificatie" and "NotificatieResponse"
     """
     call_command("clean_old_notifications")
+
+
+add_autoretry_behaviour(
+    deliver_message,
+    autoretry_for=(
+        NotificationException,
+        requests.RequestException,
+    ),
+    retry_jitter=False,
+)
