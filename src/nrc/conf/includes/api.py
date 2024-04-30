@@ -11,7 +11,7 @@ REST_FRAMEWORK.update(
         "DEFAULT_PERMISSION_CLASSES": (
             "vng_api_common.permissions.AuthScopesRequired",
         ),
-        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+        "DEFAULT_SCHEMA_CLASS": "nrc.utils.schema.AutoSchema",
     }
 )
 
@@ -37,6 +37,15 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api/v1",
     "SCHEMA_PATH_PREFIX_TRIM": True,
     "COMPONENT_NO_READ_ONLY_REQUIRED": True,
+    "APPEND_COMPONENTS": {
+        "securitySchemes": {
+            SECURITY_DEFINITION_NAME: {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
 }
 
 
