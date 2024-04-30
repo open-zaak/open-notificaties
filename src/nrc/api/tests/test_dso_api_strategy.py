@@ -10,22 +10,22 @@ from . import views
 
 class DSOApiStrategyTests(APITestCase):
     def test_api_19_documentation_version_json(self):
-        url = reverse("schema-json", kwargs={"format": ".json"})
+        url = reverse("schema")
 
-        response = self.client.get(url)
+        response = self.client.get(f"{url}?format=json")
 
-        self.assertIn("application/json", response["Content-Type"])
+        self.assertIn("application/vnd.oai.openapi+json", response["Content-Type"])
 
         doc = response.json()
 
         self.assertGreaterEqual(doc["openapi"], "3.0.0")
 
     def test_api_19_documentation_version_yaml(self):
-        url = reverse("schema-json", kwargs={"format": ".yaml"})
+        url = reverse("schema")
 
         response = self.client.get(url)
 
-        self.assertIn("application/yaml", response["Content-Type"])
+        self.assertIn("application/vnd.oai.openapi", response["Content-Type"])
 
         doc = yaml.safe_load(response.content)
 
