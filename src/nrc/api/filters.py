@@ -1,6 +1,5 @@
-from vng_api_common.filtersets import FilterSet
-
 from nrc.datamodel.models import Kanaal
+from nrc.utils.filterset import FilterSet
 
 
 class KanaalFilter(FilterSet):
