@@ -10,7 +10,7 @@ class AutoSchema(_AutoSchema):
         """
         Return a list of security requirements for this operation.
         `OpenApiAuthenticationExtension` can't be used here since it's tightly coupled
-        with DRF authentication classes, and we have none in Open Zaak
+        with DRF authentication classes
         """
         permissions = self.view.get_permissions()
         scope_permissions = [
@@ -25,3 +25,19 @@ class AutoSchema(_AutoSchema):
             return []
 
         return [{settings.SECURITY_DEFINITION_NAME: [str(scopes)]}]
+
+    def get_operation_id(self):
+        """
+        Use view basename as a base for operation_id
+        """
+        if hasattr(self.view, "basename"):
+            basename = self.view.basename
+            action = self.view.action
+            # make compatible with old OAS
+            if action == "destroy":
+                action = "delete"
+            elif action == "retrieve":
+                action = "read"
+
+            return f"{basename}_{action}"
+        return super().get_operation_id()
