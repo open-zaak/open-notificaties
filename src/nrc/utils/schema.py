@@ -1,7 +1,10 @@
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.openapi import AutoSchema as _AutoSchema
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiTypes
 from rest_framework import exceptions, serializers
+from vng_api_common.constants import HEADER_AUDIT, HEADER_LOGRECORD_ID, VERSION_HEADER
 from vng_api_common.inspectors.view import (
     DEFAULT_ACTION_ERRORS,
     HTTP_STATUS_CODE_TITLES,
@@ -132,3 +135,50 @@ class AutoSchema(_AutoSchema):
         if not response.get("description"):
             response["description"] = HTTP_STATUS_CODE_TITLES.get(int(status_code), "")
         return response
+
+    def get_override_parameters(self):
+        """Add request and response headers"""
+        version_headers = self.get_version_headers()
+        content_type_headers = self.get_content_type_headers()
+        location_headers = self.get_location_headers()
+        return version_headers + content_type_headers + location_headers
+
+    def get_version_headers(self) -> list[OpenApiParameter]:
+        return [
+            OpenApiParameter(
+                name=VERSION_HEADER,
+                type=str,
+                location=OpenApiParameter.HEADER,
+                description=_(
+                    "Geeft een specifieke API-versie aan in de context van "
+                    "een specifieke aanroep. Voorbeeld: 1.2.1."
+                ),
+                response=True,
+            )
+        ]
+
+    def get_content_type_headers(self) -> list[OpenApiParameter]:
+        if self.method not in ["POST", "PUT", "PATCH"]:
+            return []
+
+        return [
+            OpenApiParameter(
+                name="Content-Type",
+                type=str,
+                location=OpenApiParameter.HEADER,
+                description=_("Content type of the request body."),
+                enum=["application/json"],
+                required=True,
+            )
+        ]
+
+    def get_location_headers(self) -> list[OpenApiParameter]:
+        return [
+            OpenApiParameter(
+                name="Location",
+                type=OpenApiTypes.URI,
+                location=OpenApiParameter.HEADER,
+                description=_("URL waar de resource leeft."),
+                response=[201],
+            ),
+        ]
