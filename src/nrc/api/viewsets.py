@@ -1,12 +1,6 @@
 import logging
 
-from drf_spectacular.utils import (
-    OpenApiParameter,
-    OpenApiTypes,
-    extend_schema,
-    extend_schema_view,
-)
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.response import Response
 from vng_api_common.permissions import AuthScopesRequired, ClientIdRequired

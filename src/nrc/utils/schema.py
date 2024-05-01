@@ -1,18 +1,21 @@
+import logging
+
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.openapi import AutoSchema as _AutoSchema
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
 from rest_framework import exceptions, serializers
-from vng_api_common.constants import HEADER_AUDIT, HEADER_LOGRECORD_ID, VERSION_HEADER
+from vng_api_common.constants import VERSION_HEADER
 from vng_api_common.inspectors.view import (
     DEFAULT_ACTION_ERRORS,
     HTTP_STATUS_CODE_TITLES,
-    AutoSchema as oldAutoSchema,
 )
 from vng_api_common.permissions import BaseAuthRequired, get_required_scopes
 from vng_api_common.serializers import FoutSerializer, ValidatieFoutSerializer
 from vng_api_common.views import ERROR_CONTENT_TYPE
+
+logger = logging.getLogger(__name__)
 
 
 class AutoSchema(_AutoSchema):
