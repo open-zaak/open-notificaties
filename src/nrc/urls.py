@@ -6,13 +6,21 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from maykin_2fa import monkeypatch_admin
+from maykin_2fa.urls import urlpatterns, webauthn_urlpatterns
 from vng_api_common.views import ViewConfigView
 
 handler500 = "nrc.utils.views.server_error"
 
 admin.site.enable_nav_sidebar = False
 
+# Configure admin
+monkeypatch_admin()
+
 urlpatterns = [
+    # 2fa
+    path("admin/", include((urlpatterns, "maykin_2fa"))),
+    path("admin/", include((webauthn_urlpatterns, "two_factor"))),
     path("admin/", admin.site.urls),
     path("api/", include("nrc.api.urls")),
     # Simply show the master template.

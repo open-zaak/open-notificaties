@@ -104,6 +104,14 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Required by django-two-factor-auth and its dependencies
+    "django_otp",
+    "django_otp.plugins.otp_static",
+    "django_otp.plugins.otp_totp",
+    "two_factor",
+    # if you do *not* want to use hardware tokens, you can omit the next line
+    "two_factor.plugins.webauthn",
+    "maykin_2fa",
     # Optional applications.
     "ordered_model",
     "django_admin_index",
@@ -146,6 +154,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "vng_api_common.middleware.AuthMiddleware",
     "mozilla_django_oidc_db.middleware.SessionRefresh",
+    "maykin_2fa.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "vng_api_common.middleware.APIVersionHeaderMiddleware",
@@ -502,6 +511,26 @@ CORS_ALLOW_HEADERS = list(default_cors_headers) + config(
 # Django's SESSION_COOKIE_SAMESITE = "Lax" prevents session cookies from being sent
 # cross-domain. There is no need for these cookies to be sent, since the API itself
 # uses Bearer Authentication.
+
+#
+# MAYKIN-2FA
+#
+# Uses django-two-factor-auth under the hood, so relevant upstream package settings
+# apply too.
+#
+
+# we run the admin site monkeypatch instead.
+TWO_FACTOR_PATCH_ADMIN = False
+# Relying Party name for WebAuthn (hardware tokens)
+TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
+# use platform for fingerprint readers etc., or remove the setting to allow any.
+# cross-platform would limit the options to devices like phones/yubikeys
+TWO_FACTOR_WEBAUTHN_AUTHENTICATOR_ATTACHMENT = "cross-platform"
+# add entries from AUTHENTICATION_BACKENDS that already enforce their own two-factor
+# auth, avoiding having some set up MFA again in the project.
+MAYKIN_2FA_ALLOW_MFA_BYPASS_BACKENDS = [
+    "mozilla_django_oidc_db.backends.OIDCAuthenticationBackend",
+]
 
 #
 # SENTRY - error monitoring

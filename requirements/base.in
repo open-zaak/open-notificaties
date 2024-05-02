@@ -21,6 +21,7 @@ django-setup-configuration
 # Admin and UI libraries
 django-admin-index
 mozilla-django-oidc-db
+maykin-2fa
 
 # API libraries
 djangorestframework

@@ -6,7 +6,6 @@ from django.test import override_settings
 from django.urls import reverse
 from django.utils.timezone import now
 
-from django_webtest import WebTest
 from freezegun import freeze_time
 
 from nrc.accounts.tests.factories import SuperUserFactory
@@ -18,10 +17,13 @@ from nrc.datamodel.tests.factories import (
     NotificatieFactory,
     NotificatieResponseFactory,
 )
+from nrc.utils.webtest import WebTest
 
 
 @freeze_time("2022-01-01T12:00:00")
-@override_settings(LOG_NOTIFICATIONS_IN_DB=True)
+@override_settings(
+    LOG_NOTIFICATIONS_IN_DB=True,
+)
 @patch("nrc.api.serializers.deliver_message.delay")
 class NotificationAdminWebTest(WebTest):
     maxdiff = None

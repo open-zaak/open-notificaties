@@ -1,8 +1,9 @@
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from django_webtest import WebTest
 from mozilla_django_oidc_db.models import OpenIDConnectConfig
+
+from nrc.utils.webtest import WebTest
 
 
 class OIDCLoginButtonTestCase(WebTest):
