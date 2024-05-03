@@ -132,5 +132,7 @@ $djai-border-width: 8px;
 }
 
 .jwt {
-  word-wrap: break-word;
+  display: inline-block;
+  max-width: 40em;
+  word-break: break-all;
 }
