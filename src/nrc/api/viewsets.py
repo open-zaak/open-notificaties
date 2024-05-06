@@ -19,10 +19,10 @@ logger = logging.getLogger(__name__)
     list=extend_schema(
         summary="Alle ABONNEMENTen opvragen.",
     ),
-    retrieve=extend_schema(summary="Een specifiek ABONNEMENT opvragen."),
+    retrieve=extend_schema(summary="Een specifieke ABONNEMENT opvragen."),
     create=extend_schema(summary="Maak een ABONNEMENT aan."),
-    update=extend_schema(summary="Werk een ABONNEMENT in zijn geheel bij."),
-    partial_update=extend_schema(summary="Werk een ABONNEMENT deels bij."),
+    update=extend_schema(summary="Bewerk een ABONNEMENT in zijn geheelj."),
+    partial_update=extend_schema(summary="Bewerk een ABONNEMENT deels.."),
     destroy=extend_schema(summary="Verwijder een ABONNEMENT."),
 )
 class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
@@ -53,7 +53,7 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
 
 @extend_schema_view(
     list=extend_schema(summary="Alle KANAALen opvragen."),
-    retrieve=extend_schema(summary="Een specifiek KANAAL opvragen."),
+    retrieve=extend_schema(summary="Een specifieke KANAAL opvragen."),
     create=extend_schema(summary="Maak een KANAAL aan."),
 )
 class KanaalViewSet(
