@@ -385,7 +385,7 @@ paths:
 
         Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te
         ontvangen die op dat KANAAL gepubliceerd worden.
-      summary: Een specifiek ABONNEMENT opvragen.
+      summary: Een specifieke ABONNEMENT opvragen.
       parameters:
       - in: path
         name: uuid
@@ -527,7 +527,7 @@ paths:
 
         Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te
         ontvangen die op dat KANAAL gepubliceerd worden.
-      summary: Werk een ABONNEMENT in zijn geheel bij.
+      summary: Bewerk een ABONNEMENT in zijn geheelj.
       parameters:
       - in: header
         name: Content-Type
@@ -695,7 +695,7 @@ paths:
 
         Een consumer kan een ABONNEMENT nemen op een KANAAL om zo NOTIFICATIEs te
         ontvangen die op dat KANAAL gepubliceerd worden.
-      summary: Werk een ABONNEMENT deels bij.
+      summary: Bewerk een ABONNEMENT deels..
       parameters:
       - in: header
         name: Content-Type
@@ -1455,7 +1455,7 @@ paths:
         componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
         maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
         abonneren.
-      summary: Een specifiek KANAAL opvragen.
+      summary: Een specifieke KANAAL opvragen.
       parameters:
       - in: path
         name: uuid
