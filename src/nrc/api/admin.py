@@ -21,7 +21,7 @@ class JWTSecretAdmin(admin.ModelAdmin):
             auth = ClientAuth(obj.identifier, obj.secret)
             jwt = auth.credentials()["Authorization"]
             return format_html(
-                '<code class="copy-action jwt" data-copy-value="{val}">{val}</code><p>{hint}</p>',
+                '<code class="jwt">{val}</code><p>{hint}</p>',
                 val=jwt,
                 hint=_("Gebruik het JWT-token nooit direct in een applicatie."),
             )
