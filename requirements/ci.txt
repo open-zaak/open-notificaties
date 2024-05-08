@@ -107,6 +107,7 @@ django==4.2.11
     #   django-filter
     #   django-jsonform
     #   django-log-outgoing-requests
+    #   django-markup
     #   django-privates
     #   django-redis
     #   django-relativedelta
@@ -129,7 +130,9 @@ django-appconf==1.0.5
     #   -r requirements/base.txt
     #   django-log-outgoing-requests
 django-axes[ipware]==6.4.0
-    # via -r requirements/base.txt
+    # via
+    #   -r requirements/base.txt
+    #   django-axes
 django-choices==1.7.2
     # via
     #   -r requirements/base.txt
@@ -149,6 +152,8 @@ django-jsonform==2.21.5
     #   -r requirements/base.txt
     #   mozilla-django-oidc-db
 django-log-outgoing-requests==0.6.1
+    # via -r requirements/base.txt
+django-markup==1.8.1
     # via -r requirements/base.txt
 django-ordered-model==3.5
     # via

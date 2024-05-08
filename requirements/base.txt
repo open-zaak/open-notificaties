@@ -72,6 +72,7 @@ django==4.2.11
     #   django-filter
     #   django-jsonform
     #   django-log-outgoing-requests
+    #   django-markup
     #   django-privates
     #   django-redis
     #   django-relativedelta
@@ -104,6 +105,8 @@ django-ipware==4.0.2
 django-jsonform==2.21.5
     # via mozilla-django-oidc-db
 django-log-outgoing-requests==0.6.1
+    # via -r requirements/base.in
+django-markup==1.8.1
     # via -r requirements/base.in
 django-ordered-model==3.5
     # via django-admin-index
