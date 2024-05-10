@@ -1,5 +1,6 @@
 import datetime
 import os
+import warnings
 from pathlib import Path
 
 from django.urls import reverse_lazy
@@ -30,6 +31,7 @@ DEBUG = config("DEBUG", default=False)
 
 # = domains we're running on
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", split=True)
+USE_X_FORWARDED_HOST = config("USE_X_FORWARDED_HOST", default=False)
 
 IS_HTTPS = config("IS_HTTPS", default=not DEBUG)
 
@@ -82,7 +84,7 @@ CACHES = {
     },
     "oidc": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{config('CACHE_DEFAULT', 'localhost:6379/0')}",
+        "LOCATION": f"redis://{config('CACHE_OIDC', 'localhost:6379/0')}",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "IGNORE_EXCEPTIONS": True,
@@ -216,13 +218,27 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False)
 EMAIL_TIMEOUT = 10
 
-DEFAULT_FROM_EMAIL = "opennotificaties@example.com"
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", "opennotificaties@example.com")
 
 #
 # LOGGING
 #
-LOGGING_DIR = BASE_DIR / "log"
+#
+LOG_STDOUT = config("LOG_STDOUT", default=False)
+LOG_LEVEL = config("LOG_LEVEL", default="WARNING")
+LOG_QUERIES = config("LOG_QUERIES", default=False)
 LOG_REQUESTS = config("LOG_REQUESTS", default=False)
+if LOG_QUERIES and not DEBUG:
+    warnings.warn(
+        "Requested LOG_QUERIES=1 but DEBUG is false, no query logs will be emited.",
+        RuntimeWarning,
+    )
+
+
+LOGGING_DIR = BASE_DIR / "log"
+
+_root_handlers = ["console"] if LOG_STDOUT else ["project"]
+_django_handlers = ["console"] if LOG_STDOUT else ["django"]
 
 LOGGING = {
     "version": 1,
@@ -293,21 +309,40 @@ LOGGING = {
         },
     },
     "loggers": {
-        "nrc": {"handlers": ["project"], "level": "INFO", "propagate": True},
-        "nrc.api.serializers": {
-            "handlers": ["notifications"],
-            "level": "INFO",
+        "": {
+            "handlers": _root_handlers,
+            "level": "ERROR",
             "propagate": False,
         },
-        "django.request": {"handlers": ["django"], "level": "ERROR", "propagate": True},
+        "nrc": {"handlers": _root_handlers, "level": LOG_LEVEL, "propagate": True},
+        "nrc.api.serializers": {
+            "handlers": ["notifications"],
+            "level": LOG_LEVEL,
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": _django_handlers,
+            "level": LOG_LEVEL,
+            "propagate": True,
+        },
         "django.template": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": True,
         },
         "mozilla_django_oidc": {
-            "handlers": ["project"],
+            "handlers": _root_handlers,
+            "level": LOG_LEVEL,
+        },
+        "vng_api_common": {
+            "handlers": ["console"],
+            "level": LOG_LEVEL,
+            "propagate": True,
+        },
+        "django.db.backends": {
+            "handlers": ["console_db"] if LOG_QUERIES else [],
             "level": "DEBUG",
+            "propagate": False,
         },
         "log_outgoing_requests": {
             "handlers": (
@@ -328,6 +363,9 @@ LOG_OUTGOING_REQUESTS_DB_SAVE_BODY = config(
 LOG_OUTGOING_REQUESTS_EMIT_BODY = config(
     "LOG_OUTGOING_REQUESTS_EMIT_BODY", default=False
 )
+LOG_OUTGOING_REQUESTS_MAX_AGE = config(
+    "LOG_OUTGOING_REQUESTS_MAX_AGE", default=7
+)  # number of days
 
 
 #
@@ -383,7 +421,7 @@ SILENCED_SYSTEM_CHECKS = [
 PROJECT_NAME = "Open Notificaties"
 SITE_TITLE = "API dashboard"
 
-ENVIRONMENT = None
+ENVIRONMENT = config("ENVIRONMENT", "")
 ENVIRONMENT_SHOWN_IN_ADMIN = True
 
 LOG_NOTIFICATIONS_IN_DB = config("LOG_NOTIFICATIONS_IN_DB", default=False)

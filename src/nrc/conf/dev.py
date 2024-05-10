@@ -9,6 +9,7 @@ os.environ.setdefault(
 )
 os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("RELEASE", "dev")
+os.environ.setdefault("ENVIRONMENT", "development")
 
 os.environ.setdefault("DB_NAME", "opennotificaties")
 os.environ.setdefault("DB_USER", "opennotificaties")

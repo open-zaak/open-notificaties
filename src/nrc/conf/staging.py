@@ -4,7 +4,8 @@ Staging environment settings module.
 This *should* be nearly identical to production.
 """
 
-from .production import *  # noqa
+import os
 
-# Show active environment in admin.
-ENVIRONMENT = "staging"
+os.environ.setdefault("ENVIRONMENT", "staging")
+
+from .production import *  # noqa
