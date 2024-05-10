@@ -41,6 +41,13 @@ on Docker, since ``localhost`` is contained within the container:
 Optional
 --------
 
+* ``ENVIRONMENT``: An identifier for the environment, displayed in the admin depending on
+  the settings module used and included in the error monitoring (see ``SENTRY_DSN``).
+  The default is set according to ``DJANGO_SETTINGS_MODULE``. Good examples values are:
+  * ``production``
+  * ``test``
+  * ``ACME public``
+
 * ``SITE_ID``: defaults to ``1``. The database ID of the site object. You usually
   won't have to touch this.
 
@@ -63,6 +70,11 @@ Optional
   unless you're using the ``docker`` environment, then it defaults to ``postgres``.
 
 * ``DB_PORT``: port number of the database, defaults to ``5432``.
+
+* ``USE_X_FORWARDED_HOST``: whether to grab the domain/host from the ``X-Forwarded-Host``
+  header or not. This header is typically set by reverse proxies (such as nginx,
+  traefik, Apache...). Default ``False`` - this is a header that can be spoofed and you
+  need to ensure you control it before enabling this.
 
 * ``NUM_PROXIES``: the number of reverse proxies in front of Open Notificaties, as an
   integer. This is used to determine the actual client IP adres. Defaults to 1, which
@@ -91,6 +103,9 @@ Optional
 
 * ``SENTRY_DSN``: URL of the sentry project to send error reports to. Default
   empty, i.e. -> no monitoring set up. Highly recommended to configure this.
+
+* ``LOG_STDOUT``: whether to log to stdout or not. For Docker environments, defaults to
+  ``True``, for other environments the default is to log to file.
 
 * ``EXTRA_VERIFY_CERTS``: a comma-separated list of paths to certificates to trust, empty
   by default. If you're using self-signed certificates for the services that Open Notificaties
