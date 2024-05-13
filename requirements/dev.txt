@@ -87,7 +87,7 @@ click-repl==0.2.0
     # via
     #   -r requirements/ci.txt
     #   celery
-commonground-api-common==1.13.0
+commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common.git@issue/duplicated-scopes
     # via -r requirements/ci.txt
 commonmark==0.9.1
     # via recommonmark
