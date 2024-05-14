@@ -84,7 +84,7 @@ class KanaalViewSet(
 
 
 @extend_schema(summary="Publiceer een notificatie.")
-class NotificatieAPIView(views.APIView):
+class NotificatieAPIView(mixins.CreateModelMixin, views.APIView):
     """
     Publiceren van NOTIFICATIEs.
 
@@ -108,6 +108,7 @@ class NotificatieAPIView(views.APIView):
             # post to message queue
             # send to abonnement
             serializer.save()
+            headers = self.get_success_headers(data)
 
-            return Response(data, status=status.HTTP_201_CREATED)
+            return Response(data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
