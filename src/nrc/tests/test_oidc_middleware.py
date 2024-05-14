@@ -3,12 +3,14 @@ from urllib.parse import urlparse
 
 from django.urls import reverse
 
+from django_webtest import WebTest
+from maykin_2fa.test import disable_admin_mfa
 from mozilla_django_oidc_db.models import OpenIDConnectConfig
 
 from nrc.accounts.tests.factories import SuperUserFactory
-from nrc.utils.webtest import WebTest
 
 
+@disable_admin_mfa()
 class AdminSessionRefreshMiddlewareTests(WebTest):
     @patch(
         "mozilla_django_oidc_db.mixins.OpenIDConnectConfig.get_solo",
