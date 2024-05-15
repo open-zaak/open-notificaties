@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.openapi import AutoSchema as _AutoSchema
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
-from rest_framework import exceptions, serializers
+from rest_framework import exceptions, mixins, serializers
 from vng_api_common.constants import VERSION_HEADER
 from vng_api_common.inspectors.view import (
     DEFAULT_ACTION_ERRORS,
@@ -176,12 +176,16 @@ class AutoSchema(_AutoSchema):
         ]
 
     def get_location_headers(self) -> list[OpenApiParameter]:
-        return [
-            OpenApiParameter(
-                name="Location",
-                type=OpenApiTypes.URI,
-                location=OpenApiParameter.HEADER,
-                description=_("URL waar de resource leeft."),
-                response=[201],
-            ),
-        ]
+        # only for CreateModelMixin - exclude notificaties endpoint
+        if isinstance(self.view, mixins.CreateModelMixin):
+            return [
+                OpenApiParameter(
+                    name="Location",
+                    type=OpenApiTypes.URI,
+                    location=OpenApiParameter.HEADER,
+                    description=_("URL waar de resource leeft."),
+                    response=[201],
+                ),
+            ]
+
+        return []
