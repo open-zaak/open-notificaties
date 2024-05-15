@@ -10,9 +10,9 @@ from . import views
 
 class DSOApiStrategyTests(APITestCase):
     def test_api_19_documentation_version_json(self):
-        url = reverse("schema")
+        url = reverse("schema-json")
 
-        response = self.client.get(f"{url}?format=json")
+        response = self.client.get(url)
 
         self.assertIn("application/vnd.oai.openapi+json", response["Content-Type"])
 

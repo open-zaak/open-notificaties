@@ -1,6 +1,10 @@
 from django.urls import include, path, re_path
 
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularJSONAPIView,
+    SpectacularRedocView,
+)
 from vng_api_common import routers
 
 from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
@@ -19,6 +23,11 @@ urlpatterns = [
                 # API documentation
                 path(
                     "schema/openapi.yaml", SpectacularAPIView.as_view(), name="schema"
+                ),
+                path(
+                    "schema/openapi.json",
+                    SpectacularJSONAPIView.as_view(),
+                    name="schema-json",
                 ),
                 path(
                     "schema/",
