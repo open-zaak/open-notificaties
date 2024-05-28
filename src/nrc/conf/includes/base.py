@@ -120,6 +120,7 @@ INSTALLED_APPS = [
     "notifications_api_common",
     "drf_spectacular",
     "rest_framework",
+    "django_markup",
     "solo",
     "django_jsonform",
     "mozilla_django_oidc",
