@@ -26,6 +26,7 @@ djangorestframework
 gemma-zds-client
 commonground-api-common
 django-log-outgoing-requests
+drf-spectacular
 
 # WSGI servers & monitoring - production oriented
 uwsgi

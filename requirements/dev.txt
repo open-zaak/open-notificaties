@@ -22,6 +22,7 @@ attrs==21.4.0
     # via
     #   -r requirements/ci.txt
     #   glom
+    #   jsonschema
 babel==2.13.1
     # via sphinx
 beautifulsoup4==4.12.2
@@ -132,6 +133,7 @@ django==4.2.11
     #   django-solo
     #   djangorestframework
     #   drf-nested-routers
+    #   drf-spectacular
     #   drf-yasg
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
@@ -144,7 +146,9 @@ django-appconf==1.0.5
     #   -r requirements/ci.txt
     #   django-log-outgoing-requests
 django-axes[ipware]==6.4.0
-    # via -r requirements/ci.txt
+    # via
+    #   -r requirements/ci.txt
+    #   django-axes
 django-choices==1.7.2
     # via
     #   -r requirements/ci.txt
@@ -212,6 +216,7 @@ djangorestframework==3.14.0
     #   -r requirements/ci.txt
     #   commonground-api-common
     #   drf-nested-routers
+    #   drf-spectacular
     #   drf-yasg
     #   notifications-api-common
 djangorestframework-camel-case==1.4.2
@@ -229,6 +234,8 @@ drf-nested-routers==0.93.4
     # via
     #   -r requirements/ci.txt
     #   commonground-api-common
+drf-spectacular==0.27.2
+    # via -r requirements/ci.txt
 drf-yasg==1.21.7
     # via
     #   -r requirements/ci.txt
@@ -285,6 +292,7 @@ imagesize==1.1.0
 inflection==0.5.1
     # via
     #   -r requirements/ci.txt
+    #   drf-spectacular
     #   drf-yasg
 iso-639==0.4.5
     # via
@@ -309,6 +317,10 @@ josepy==1.13.0
     # via
     #   -r requirements/ci.txt
     #   mozilla-django-oidc
+jsonschema==4.17.3
+    # via
+    #   -r requirements/ci.txt
+    #   drf-spectacular
 kombu==5.2.4
     # via
     #   -r requirements/ci.txt
@@ -401,6 +413,10 @@ pyopenssl==23.3.0
     #   zgw-consumers
 pyproject-hooks==1.0.0
     # via build
+pyrsistent==0.20.0
+    # via
+    #   -r requirements/ci.txt
+    #   jsonschema
 python-dateutil==2.8.2
     # via
     #   -r requirements/ci.txt
@@ -421,6 +437,7 @@ pytz==2022.6
 pyyaml==6.0.1
     # via
     #   -r requirements/ci.txt
+    #   drf-spectacular
     #   drf-yasg
     #   gemma-zds-client
     #   oyaml
@@ -513,10 +530,11 @@ typing-extensions==4.10.0
     #   asgiref
     #   black
     #   psycopg
-uritemplate==3.0.0
+uritemplate==4.1.1
     # via
     #   -r requirements/ci.txt
     #   coreapi
+    #   drf-spectacular
     #   drf-yasg
 urllib3==1.26.18
     # via

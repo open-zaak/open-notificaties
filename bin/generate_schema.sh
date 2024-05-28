@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Run this script from the root of the repository
+
+set -e
+
+if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "You need to activate your virtual env before running this script"
+    exit 1
+fi
+
+echo "Generating OAS schema"
+src/manage.py spectacular \
+    --file ./src/openapi.yaml

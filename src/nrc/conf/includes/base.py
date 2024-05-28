@@ -114,11 +114,11 @@ INSTALLED_APPS = [
     "axes",
     "django_filters",
     "corsheaders",
-    "vng_api_common",  # before drf_yasg to override the management command
+    "vng_api_common",
     "vng_api_common.authorizations",
     "vng_api_common.notifications",
     "notifications_api_common",
-    "drf_yasg",
+    "drf_spectacular",
     "rest_framework",
     "solo",
     "django_jsonform",
@@ -539,14 +539,6 @@ CELERY_BEAT_SCHEDULE = {
 #
 ADMIN_INDEX_SHOW_REMAINING_APPS_TO_SUPERUSERS = False
 ADMIN_INDEX_AUTO_CREATE_APP_GROUP = False
-
-
-#
-# OpenZaak configuration
-#
-
-OPENNOTIFICATIES_API_CONTACT_EMAIL = "support@maykinmedia.nl"
-OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
 
 #
 # Mozilla Django OIDC DB settings
