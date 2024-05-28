@@ -2,8 +2,32 @@
 Changes
 =======
 
-1.6.0 (2024-??-??)
+1.6.0 (2024-05-28)
 ------------------
+
+**New features**
+
+* [#135] Added ``createinitialsuperuser`` management command to create admin superuser
+* [#87] Supported configuration of the API with a management command ``setup_configuration`` and environment variables
+* [open-zaak/open-zaak#1203] Added configuration of retry variables with admin UI and with
+  ``setup_configuration`` management command
+* [open-zaak/open-zaak#1626] Displayed generated JWT in the admin
+
+**Bugfixes**
+
+* [#119] Upgraded commonground-api-common, which fixed the configuration view
+* [#80, #153] Fixed scope view and removed duplicated scopes
+
+**Project maintenance**
+
+* [#124] Upgraded Django to 4.2 and bumped dependencies: django-redis, django-cors-headers,
+  django-axes, django-admin-index, django-relative-delta
+* [#130] Removed ADFS
+* [#133] Added volume configuration to docker-compose as an example
+* [#137] Updated test certificates
+* [#139] Replaced ``drf-yasg`` with ``drf-spectacular``
+* [open-zaak/open-zaak#1638] Converted ``env_config.md`` file to .rst
+* [open-zaak/open-zaak#1629] Added missing environment variables
 
 .. warning::
 
