@@ -512,7 +512,7 @@ if SENTRY_DSN:
     SENTRY_CONFIG = {
         "dsn": SENTRY_DSN,
         "release": RELEASE or "RELEASE not set",
-        "environment": ENVIRONMENT or "",
+        "environment": ENVIRONMENT,
     }
 
     sentry_sdk.init(

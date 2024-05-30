@@ -41,11 +41,6 @@ LOGGING["loggers"].update(
 )
 
 #
-# Custom settings
-#
-ENVIRONMENT = "development"
-
-#
 # Library settings
 #
 
