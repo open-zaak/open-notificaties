@@ -8,6 +8,7 @@ from django.utils.timezone import now
 
 from django_webtest import WebTest
 from freezegun import freeze_time
+from maykin_2fa.test import disable_admin_mfa
 
 from nrc.accounts.tests.factories import SuperUserFactory
 from nrc.datamodel.models import Notificatie, NotificatieResponse
@@ -20,8 +21,11 @@ from nrc.datamodel.tests.factories import (
 )
 
 
+@disable_admin_mfa()
 @freeze_time("2022-01-01T12:00:00")
-@override_settings(LOG_NOTIFICATIONS_IN_DB=True)
+@override_settings(
+    LOG_NOTIFICATIONS_IN_DB=True,
+)
 @patch("nrc.api.serializers.deliver_message.delay")
 class NotificationAdminWebTest(WebTest):
     maxdiff = None
