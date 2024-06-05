@@ -242,3 +242,14 @@ div:has(> div.help ) {
 div:has(> div.help ) {
   display: flex;
 }
+
+/* Footer */
+.version {
+  padding: 0 30px;
+  color: $color-secondary-dark;
+  font-size: smaller;
+
+  @at-root .login & {
+    text-align: center;
+  }
+}
