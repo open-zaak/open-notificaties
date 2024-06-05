@@ -212,3 +212,14 @@ div.help {
   display: inline-block;
   margin-left: inherit !important;
 }
+
+/* Footer */
+.version {
+  padding: 0 30px;
+  color: $color-secondary-dark;
+  font-size: smaller;
+
+  @at-root .login & {
+    text-align: center;
+  }
+}
