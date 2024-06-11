@@ -1,36 +1,10 @@
+open-api-framework
+
 # Core python libraries
-psycopg
-python-dotenv
-python-decouple # processing of envvar configs
-pytz
+#pytz
 markdown
-bleach
-celery
-flower
 self-certifi
 furl
 
-# Framework libraries
-Django ~= 4.2.0
-django-axes[ipware]
-django-cors-headers
-django-markup
-django-redis
-django-setup-configuration
-
-# Admin and UI libraries
-django-admin-index
-mozilla-django-oidc-db
-maykin-2fa
-
 # API libraries
-djangorestframework
 gemma-zds-client
-commonground-api-common
-django-log-outgoing-requests
-drf-spectacular
-
-# WSGI servers & monitoring - production oriented
-uwsgi
-sentry-sdk
-elastic-apm
