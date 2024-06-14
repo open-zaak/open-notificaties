@@ -1,7 +1,6 @@
 open-api-framework
 
 # Core python libraries
-#pytz
 markdown
 self-certifi
 furl
