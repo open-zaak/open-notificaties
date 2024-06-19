@@ -79,8 +79,6 @@ LOG_NOTIFICATIONS_IN_DB = config("LOG_NOTIFICATIONS_IN_DB", default=False)
 # NOTE: We override this setting from open-api-framework, because removing
 # this would change the name to `nrc - admin`
 TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
-# add entries from AUTHENTICATION_BACKENDS that already enforce their own two-factor
-# auth, avoiding having some set up MFA again in the project.
 
 # RabbitMQ
 BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F")

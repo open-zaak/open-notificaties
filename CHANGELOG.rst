@@ -7,6 +7,7 @@ Changes
 
 **New features**
 
+* [#1637] Added 2FA which can be disabled by the environment variable``DISABLE_2FA``.
 * Made user emails unique to prevent two users logging in with the same email, causing an error
 
 

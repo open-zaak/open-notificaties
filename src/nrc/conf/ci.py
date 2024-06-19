@@ -8,6 +8,8 @@ os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("SECRET_KEY", "dummy")
 os.environ.setdefault("ENVIRONMENT", "CI")
 
+os.environ.setdefault("DISABLE_2FA", "no")
+
 from .includes.base import *  # noqa isort:skip
 
 CACHES = {

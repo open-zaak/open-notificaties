@@ -8,6 +8,7 @@ and HTTPS is leveraged where possible to further secure things.
 import os
 
 os.environ.setdefault("ENVIRONMENT", "production")
+os.environ.setdefault("DISABLE_2FA", "no")
 
 from .includes.base import *  # noqa
 
