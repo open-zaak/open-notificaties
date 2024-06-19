@@ -7,6 +7,7 @@ Changes
 
 **New features**
 
+* [#1637] Added 2FA which can be disabled by the environment variable``DISABLE_2FA``.
 * [#135] Added ``createinitialsuperuser`` management command to create admin superuser
 * [#87] Supported configuration of the API with a management command ``setup_configuration`` and environment variables
 * [open-zaak/open-zaak#1203] Added configuration of retry variables with admin UI and with
