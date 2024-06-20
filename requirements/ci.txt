@@ -4,8 +4,6 @@
 #
 #    ./bin/compile_dependencies.sh
 #
--e git+https://github.com/maykinmedia/open-api-framework@37039c6aceafb7d81f1c41391f963c22e0ff8d26#egg=open_api_framework
-    # via -r requirements/base.txt
 amqp==5.1.0
     # via
     #   -r requirements/base.txt
