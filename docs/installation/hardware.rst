@@ -9,7 +9,7 @@ to reach a certain performance.
 
 Notifications are likely to increase over time, due to more external components makes
 use of it, or more subscribers want to receive notifications. Hence, we recommend a
-Kubernetes setup since it will scale more easy.
+Kubernetes setup since it will scale easier.
 
 Determine what you need
 -----------------------
