@@ -2,6 +2,20 @@
 Changes
 =======
 
+1.7.0 (2024-??-??)
+------------------
+
+**New features**
+
+.. warning::
+
+    The default value for ``ELASTIC_APM_SERVICE_NAME`` changed from ``Open Notificaties - <ENVIRONMENT>`` to ``nrc - <ENVIRONMENT>``.
+    The default values for ``DB_NAME``, ``DB_USER``, ``DB_PASSWORD`` changed from ``opennotificaties`` to ``nrc``.
+    The default value for ``LOG_OUTGOING_REQUESTS_DB_SAVE`` changed from ``False`` to ``True``.
+
+Bugfixes/QoL:
+* Settings module was refactored to use generic settings provided by Open API Framework
+
 1.6.0 (2024-05-28)
 ------------------
 
