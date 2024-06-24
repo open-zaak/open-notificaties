@@ -38,10 +38,10 @@ DO NOT PUT ANY TARGET APP-SPECIFIC RULES HERE.
   --object-tools-hover-bg: #{$color-dark};
 
   // version styling
-  --version-fg: #{$color-secondary-dark};
+  --version-fg: var(--body-quiet-color);
 
   // environment styling
-  --env-fg: #{$color-secondary};
+  --env-button-fg: #{$color-secondary};
 }
 
 
