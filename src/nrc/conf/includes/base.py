@@ -9,6 +9,7 @@ import sentry_sdk
 from celery.schedules import crontab
 from corsheaders.defaults import default_headers as default_cors_headers
 from log_outgoing_requests.formatters import HttpFormatter
+from open_api_framework.conf.base import TEMPLATE_LOADERS, TEMPLATES  # noqa
 
 from .api import *  # noqa
 from .environ import config, get_sentry_integrations
@@ -163,31 +164,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "nrc.urls"
-
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    "django.template.loaders.filesystem.Loader",
-    "django.template.loaders.app_directories.Loader",
-)
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [DJANGO_PROJECT_DIR / "templates"],
-        "APP_DIRS": False,  # conflicts with explicity specifying the loaders
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "open_api_framework.context_processors.project",
-                "nrc.utils.context_processors.settings",
-            ],
-            "loaders": TEMPLATE_LOADERS,
-        },
-    }
-]
 
 WSGI_APPLICATION = "nrc.wsgi.application"
 
