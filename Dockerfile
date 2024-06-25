@@ -1,5 +1,5 @@
 # Stage 1 - Compile needed python dependencies
-FROM python:3.10-slim-bookworm AS build
+FROM python:3.11-slim-bookworm AS build
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         build-essential \
@@ -30,7 +30,7 @@ RUN npm run build
 
 
 # Stage 3 - Build docker image suitable for execution and deployment
-FROM python:3.10-slim-bookworm AS production
+FROM python:3.11-slim-bookworm AS production
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         media-types \
@@ -45,7 +45,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 RUN pip install pip -U
 
 # Stage 3.1 - Set up the needed production dependencies
-COPY --from=build /usr/local/lib/python3.10 /usr/local/lib/python3.10
+COPY --from=build /usr/local/lib/python3.11 /usr/local/lib/python3.11
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
 
