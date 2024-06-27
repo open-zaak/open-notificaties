@@ -1,5 +1,3 @@
-import datetime
-
 from celery.schedules import crontab
 from open_api_framework.conf.base import *  # noqa
 from open_api_framework.conf.utils import config
@@ -51,15 +49,6 @@ LOGGING["loggers"]["nrc.api.serializers"] = {
     "propagate": False,
 }
 
-# TODO should be part of OAF?
-LOG_OUTGOING_REQUESTS_DB_SAVE_BODY = config(
-    "LOG_OUTGOING_REQUESTS_DB_SAVE_BODY", default=False
-)
-# TODO should be part of OAF?
-LOG_OUTGOING_REQUESTS_EMIT_BODY = config(
-    "LOG_OUTGOING_REQUESTS_EMIT_BODY", default=False
-)
-
 # using `SESSION_COOKIE_NAME` from OAF would change the name to `nrc_sessionid`
 SESSION_COOKIE_NAME = "opennotificaties_sessionid"
 
@@ -78,12 +67,6 @@ LOG_NOTIFICATIONS_IN_DB = config("LOG_NOTIFICATIONS_IN_DB", default=False)
 #                            #
 ##############################
 
-# Django-axes
-# TODO these settings are different from OAF
-AXES_FAILURE_LIMIT = 5  # Default: 3
-AXES_LOCK_OUT_AT_FAILURE = True  # Default: True
-AXES_COOLOFF_TIME = datetime.timedelta(minutes=5)
-
 #
 # MAYKIN-2FA
 #
@@ -93,7 +76,8 @@ AXES_COOLOFF_TIME = datetime.timedelta(minutes=5)
 
 # we run the admin site monkeypatch instead.
 # Relying Party name for WebAuthn (hardware tokens)
-# TODO removing this will change the name to `nrc - admin`
+# NOTE: We override this setting from open-api-framework, because removing
+# this would change the name to `nrc - admin`
 TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # add entries from AUTHENTICATION_BACKENDS that already enforce their own two-factor
 # auth, avoiding having some set up MFA again in the project.
@@ -102,7 +86,6 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F")
 
 # Celery
-# TODO different default from OAF
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
 CELERY_BEAT_SCHEDULE = {
     "clean-old-notifications": {
