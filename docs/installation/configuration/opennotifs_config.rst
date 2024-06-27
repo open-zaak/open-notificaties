@@ -80,12 +80,12 @@ using Open Zaak as the example.
 Configure Open Zaak
 ===================
 
-In case Open Zaak is not configured yet, refer to `configuration of Open Zaak`_. Use the following as input for the management command:
+In case Open Zaak is not configured yet, refer to `configuration of Open Zaak`_. Use the following values for the environment variables used for the ``setup_configuration`` command:
 
-   - **notifications-api-app-client-id**: client ID from step 1c above
-   - **notifications-api-app-secret**: secret from step 1c above
-   - **notifications-api-client-id**: client ID from step 2c above
-   - **notifications-api-secret**: secret from from step 2c above
+   - ``NOTIF_OPENZAAK_CLIENT_ID``: client ID from step 1c above
+   - ``NOTIF_OPENZAAK_SECRET``: secret from step 1c above
+   - ``OPENZAAK_NOTIF_CLIENT_ID``: client ID from step 2c above
+   - ``OPENZAAK_NOTIF_SECRET``: secret from from step 2c above
 
 Add notification consumers
 ==========================
