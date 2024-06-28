@@ -4,7 +4,7 @@
 
 set -e
 
-OUTPUT_FILE=$2
+OUTPUT_FILE=$1
 
 if [[ -z "$VIRTUAL_ENV" ]] && [[ ! -v CI_JOB ]]; then
     echo "You need to activate your virtual env before running this script"
