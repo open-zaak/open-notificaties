@@ -4,11 +4,13 @@
 
 set -e
 
-if [[ -z "$VIRTUAL_ENV" ]]; then
+OUTPUT_FILE=$2
+
+if [[ -z "$VIRTUAL_ENV" ]] && [[ ! -v CI_JOB ]]; then
     echo "You need to activate your virtual env before running this script"
     exit 1
 fi
 
 echo "Generating OAS schema"
 src/manage.py spectacular \
-    --file ./src/openapi.yaml
+    --file ${OUTPUT_FILE:-./src/openapi.yaml}
