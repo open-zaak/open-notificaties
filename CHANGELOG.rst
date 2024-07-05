@@ -7,11 +7,19 @@ Changes
 
 **New features**
 
+* Made user emails unique to prevent two users logging in with the same email, causing an error
+
+
 .. warning::
 
     The default value for ``ELASTIC_APM_SERVICE_NAME`` changed from ``Open Notificaties - <ENVIRONMENT>`` to ``nrc - <ENVIRONMENT>``.
     The default values for ``DB_NAME``, ``DB_USER``, ``DB_PASSWORD`` changed from ``opennotificaties`` to ``nrc``.
     The default value for ``LOG_OUTGOING_REQUESTS_DB_SAVE`` changed from ``False`` to ``True``.
+
+.. warning::
+    User email addresses will now be unique on a database level. The database migration will fail if there are already
+    two or more users with the same email address. You must ensure this is not the case before upgrading.
+
 
 Bugfixes/QoL:
 * Settings module was refactored to use generic settings provided by Open API Framework
