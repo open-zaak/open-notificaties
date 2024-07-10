@@ -47,6 +47,7 @@ SPECTACULAR_SETTINGS = {
             }
         }
     },
+    "TAGS": [{"name": "abonnement"}, {"name": "kanaal"}, {"name": "notificaties"}],
 }
 
 GEMMA_URL_INFORMATIEMODEL_VERSIE = "1.0"
