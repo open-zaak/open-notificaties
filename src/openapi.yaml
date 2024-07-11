@@ -1477,11 +1477,6 @@ paths:
                 type: string
               description: 'Geeft een specifieke API-versie aan in de context van
                 een specifieke aanroep. Voorbeeld: 1.2.1.'
-            Location:
-              schema:
-                type: string
-                format: uri
-              description: URL waar de resource leeft.
           content:
             application/json:
               schema:
@@ -1606,8 +1601,8 @@ components:
           readOnly: true
           description: URL-referentie naar dit object. Dit is de unieke identificatie
             en locatie van dit object.
-          min_length: 1
-          max_length: 1000
+          minLength: 1
+          maxLength: 1000
         callbackUrl:
           type: string
           format: uri
@@ -1706,8 +1701,8 @@ components:
           readOnly: true
           description: URL-referentie naar dit object. Dit is de unieke identificatie
             en locatie van dit object.
-          min_length: 1
-          max_length: 1000
+          minLength: 1
+          maxLength: 1000
         naam:
           type: string
           description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron
@@ -1783,8 +1778,8 @@ components:
           readOnly: true
           description: URL-referentie naar dit object. Dit is de unieke identificatie
             en locatie van dit object.
-          min_length: 1
-          max_length: 1000
+          minLength: 1
+          maxLength: 1000
         callbackUrl:
           type: string
           format: uri
@@ -1846,3 +1841,7 @@ components:
       bearerFormat: JWT
 servers:
 - url: /api/v1
+tags:
+- name: abonnement
+- name: kanaal
+- name: notificaties
