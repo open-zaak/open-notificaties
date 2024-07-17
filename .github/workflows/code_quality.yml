@@ -55,8 +55,8 @@ jobs:
       - name: Run flake8
         run: flake8 src
 
-  generate-oas-files:
-    name: Generate and upload OAS files for all components
+  oas-up-to-date:
+    name: Check for unexepected OAS changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -75,23 +75,6 @@ jobs:
         env:
           DJANGO_SETTINGS_MODULE: nrc.conf.ci
 
-      - name: Store generated OAS files
-        uses: actions/upload-artifact@v4
-        with:
-          name: open-notificaties-oas
-          path: openapi.yaml
-          retention-days: 1
-
-  oas-up-to-date:
-    name: Check for unexepected OAS changes
-    needs: tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download generated OAS
-        uses: actions/download-artifact@v4
-        with:
-          name: open-notificaties-oas
       - name: Check for OAS changes
         run: |
           diff openapi.yaml src/openapi.yaml
