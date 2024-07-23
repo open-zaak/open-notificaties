@@ -58,7 +58,12 @@ SESSION_COOKIE_NAME = "opennotificaties_sessionid"
 PROJECT_NAME = "Open Notificaties"
 SITE_TITLE = "API dashboard"
 
-LOG_NOTIFICATIONS_IN_DB = config("LOG_NOTIFICATIONS_IN_DB", default=False)
+LOG_NOTIFICATIONS_IN_DB = config(
+    "LOG_NOTIFICATIONS_IN_DB",
+    default=False,
+    help_text="indicates whether or not sent notifications should be saved to the database.",
+    group="Notifications",
+)
 
 
 ##############################
@@ -83,10 +88,21 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # auth, avoiding having some set up MFA again in the project.
 
 # RabbitMQ
-BROKER_URL = config("PUBLISH_BROKER_URL", "amqp://guest:guest@localhost:5672/%2F")
+# TODO is this actually used?
+BROKER_URL = config(
+    "PUBLISH_BROKER_URL",
+    "amqp://guest:guest@localhost:5672/%2F",
+    help_text="the URL of the broker that will be used to actually send the notifications",
+    group="Celery",
+)
 
 # Celery
-CELERY_BROKER_URL = config("CELERY_BROKER_URL", "amqp://127.0.0.1:5672//")
+CELERY_BROKER_URL = config(
+    "CELERY_BROKER_URL",
+    "amqp://127.0.0.1:5672//",
+    help_text="the URL of the broker that will be used to actually send the notifications",
+    group="Celery",
+)
 CELERY_BEAT_SCHEDULE = {
     "clean-old-notifications": {
         "task": "nrc.api.tasks.clean_old_notifications",
@@ -99,7 +115,10 @@ CELERY_BEAT_SCHEDULE = {
 # Delete Notifications
 #
 NOTIFICATION_NUMBER_OF_DAYS_RETAINED = config(
-    "NOTIFICATION_NUMBER_OF_DAYS_RETAINED", 30
+    "NOTIFICATION_NUMBER_OF_DAYS_RETAINED",
+    30,
+    help_text="the number of days for which you wish to keep notifications",
+    group="Notifications",
 )
 
 #
@@ -120,33 +139,57 @@ SETUP_CONFIGURATION_STEPS = [
 ]
 
 #
+# self-certifi
+#
+# To make sure this variable appears in the documentation
+config(
+    "EXTRA_VERIFY_CERTS",
+    "",
+    help_text=(
+        "a comma-separated list of paths to certificates to trust, "
+        "If you're using self-signed certificates for the services that Open Notificaties "
+        "communicates with, specify the path to those (root) certificates here, rather than "
+        "disabling SSL certificate verification. Example: "
+        "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
+    ),
+)
+
+#
 # Open Notificaties settings
 #
 
 # Settings for setup_configuration command
 # sites config
-SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=True)
-OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "")
-OPENNOTIFICATIES_ORGANIZATION = config("OPENNOTIFICATIES_ORGANIZATION", "")
+SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=True, add_to_docs=False)
+OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "", add_to_docs=False)
+OPENNOTIFICATIES_ORGANIZATION = config(
+    "OPENNOTIFICATIES_ORGANIZATION", "", add_to_docs=False
+)
 # notif -> OZ auth config
-AUTHORIZATION_CONFIG_ENABLE = config("AUTHORIZATION_CONFIG_ENABLE", default=True)
-AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "")
-NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "")
-NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "")
+AUTHORIZATION_CONFIG_ENABLE = config(
+    "AUTHORIZATION_CONFIG_ENABLE", default=True, add_to_docs=False
+)
+AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "", add_to_docs=False)
+NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "", add_to_docs=False)
+NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "", add_to_docs=False)
 # OZ -> notif config
-OPENZAAK_NOTIF_CONFIG_ENABLE = config("OPENZAAK_NOTIF_CONFIG_ENABLE", default=True)
-OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "")
-OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "")
+OPENZAAK_NOTIF_CONFIG_ENABLE = config(
+    "OPENZAAK_NOTIF_CONFIG_ENABLE", default=True, add_to_docs=False
+)
+OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "", add_to_docs=False)
+OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "", add_to_docs=False)
 
 # setup configuration for Notification retry
 # Retry settings for delivering notifications to subscriptions
 NOTIFICATION_RETRY_CONFIG_ENABLE = config(
-    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=True
+    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=True, add_to_docs=False
 )
-NOTIFICATION_DELIVERY_MAX_RETRIES = config("NOTIFICATION_DELIVERY_MAX_RETRIES", None)
+NOTIFICATION_DELIVERY_MAX_RETRIES = config(
+    "NOTIFICATION_DELIVERY_MAX_RETRIES", None, add_to_docs=False
+)
 NOTIFICATION_DELIVERY_RETRY_BACKOFF = config(
-    "NOTIFICATION_DELIVERY_RETRY_BACKOFF", None
+    "NOTIFICATION_DELIVERY_RETRY_BACKOFF", None, add_to_docs=False
 )
 NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
-    "NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX", None
+    "NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX", None, add_to_docs=False
 )
