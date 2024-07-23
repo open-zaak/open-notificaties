@@ -10,6 +10,7 @@ os.environ.setdefault(
 os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("RELEASE", "dev")
 os.environ.setdefault("ENVIRONMENT", "development")
+os.environ.setdefault("DISABLE_2FA", "True")
 
 os.environ.setdefault("DB_NAME", "opennotificaties")
 os.environ.setdefault("DB_USER", "opennotificaties")
@@ -50,10 +51,6 @@ MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]
 INTERNAL_IPS = ("127.0.0.1",)
 DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
 
-# None of the authentication backends require two-factor authentication.
-if config("DISABLE_2FA", default=True):  # pragma: no cover
-    MAYKIN_2FA_ALLOW_MFA_BYPASS_BACKENDS = AUTHENTICATION_BACKENDS
-
 # in memory cache and django-axes don't get along.
 # https://django-axes.readthedocs.io/en/latest/configuration.html#known-configuration-problems
 CACHES = {
@@ -84,4 +81,4 @@ except ImportError:
 
 TEST_CALLBACK_AUTH = False
 
-ELASTIC_APM["DEBUG"] = config("DISABLE_APM_IN_DEV", default=True)
+ELASTIC_APM["DEBUG"] = config("DISABLE_APM_IN_DEV", default=True, add_to_docs=False)
