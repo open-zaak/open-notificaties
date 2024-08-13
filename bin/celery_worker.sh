@@ -32,4 +32,6 @@ echo "Starting celery worker $WORKER_NAME with queue $QUEUE"
 exec celery \
     --app nrc \
     --workdir src \
-    worker "${worker_options[@]}"
+    worker "${worker_options[@]}" \
+    -E \
+    --max-tasks-per-child=50
