@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.test import override_settings
 
 import requests_mock
@@ -214,7 +216,8 @@ class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
         LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
         ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
     )
-    def test_notificaties_aanmaakdatum_in_future_fails(self):
+    @patch("jwt.api_jwt.PyJWT._validate_iat", return_value=None)
+    def test_notificaties_aanmaakdatum_in_future_fails(self, mock_validate_iat):
         KanaalFactory.create(naam="zaken")
         notificatie_url = get_operation_url("notificaties_create")
         data = {

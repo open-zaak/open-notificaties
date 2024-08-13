@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 
 from maykin_2fa import monkeypatch_admin
 from maykin_2fa.urls import urlpatterns, webauthn_urlpatterns
+from mozilla_django_oidc_db.views import AdminLoginFailure
 from vng_api_common.views import ViewConfigView
 
 handler500 = "nrc.utils.views.server_error"
@@ -18,6 +19,7 @@ admin.site.enable_nav_sidebar = False
 monkeypatch_admin()
 
 urlpatterns = [
+    path("admin/login/failure/", AdminLoginFailure.as_view(), name="admin-oidc-error"),
     # 2fa
     path("admin/", include((urlpatterns, "maykin_2fa"))),
     path("admin/", include((webauthn_urlpatterns, "two_factor"))),
