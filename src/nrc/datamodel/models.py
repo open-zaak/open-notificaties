@@ -6,6 +6,8 @@ from django.db import models
 from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
 
+from djangorestframework_camel_case.util import camelize
+
 
 class Kanaal(models.Model):
     uuid = models.UUIDField(
@@ -109,11 +111,17 @@ class FilterGroup(models.Model):
         verbose_name_plural = _("filters")
 
     def match_pattern(self, msg_filters: dict) -> bool:
-        for abon_filter in self.filters.all():
-            if abon_filter.key in msg_filters:
+        abon_filters = {
+            abon_filter.key: abon_filter.value for abon_filter in self.filters.all()
+        }
+        # to ignore case during matching let's camelize abon filter keys
+        # msg filters are already camelized in MessageSerializer.validate
+        abon_filters = camelize(abon_filters)
+        for abon_filter_key, abon_filter_value in abon_filters.items():
+            if abon_filter_key in msg_filters:
                 if not (
-                    abon_filter.value == "*"
-                    or abon_filter.value == msg_filters[abon_filter.key]
+                    abon_filter_value == "*"
+                    or abon_filter_value == msg_filters[abon_filter_key]
                 ):
                     return False
         return True

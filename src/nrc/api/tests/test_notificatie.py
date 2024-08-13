@@ -147,6 +147,58 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             abon.id, msg, notificatie_id=Notificatie.objects.get().id, attempt=1
         )
 
+    def test_objects_api_sent_notification(self, mock_task):
+        """
+        Regression test for https://github.com/open-zaak/open-notificaties/issues/171
+        Check that notifications.kenmerken in camelcase match Abonnement.filters in snake_case
+        """
+        object_kanaal = KanaalFactory.create(naam="objecten", filters=["object_type"])
+        abon1 = AbonnementFactory.create(
+            callback_url="https://example.com/callback1"
+        )  # should receive
+        abon2 = AbonnementFactory.create(
+            callback_url="https://example.com/callback2"
+        )  # shouldn't receive
+        filter_group1 = FilterGroupFactory.create(
+            kanaal=object_kanaal, abonnement=abon1
+        )
+        filter_group2 = FilterGroupFactory.create(
+            kanaal=object_kanaal, abonnement=abon2
+        )
+        FilterFactory.create(
+            filter_group=filter_group1,
+            key="object_type",
+            value="https://example.com/objecttypes/api/v2/objecttypes/0686234f-776f-42f5-b1b9-6e1aecbebab0",
+        )
+        FilterFactory.create(
+            filter_group=filter_group2,
+            key="object_type",
+            value="https://example.com/objecttypes/api/v2/objecttypes/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
+        )
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "objecten",
+            "hoofdObject": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
+            "resource": "object",
+            "resourceUrl": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "objectType": "https://example.com/objecttypes/api/v2/objecttypes/0686234f-776f-42f5-b1b9-6e1aecbebab0"
+            },
+        }
+
+        response = self.client.post(notificatie_url, msg)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+        mock_task.assert_called_once_with(
+            abon1.id, msg, notificatie_id=Notificatie.objects.get().id, attempt=1
+        )
+
 
 @patch("notifications_api_common.autoretry.get_exponential_backoff_interval")
 @patch("notifications_api_common.autoretry.NotificationsConfig.get_solo")
