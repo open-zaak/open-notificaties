@@ -55,6 +55,28 @@ class AbonnementAdmin(admin.ModelAdmin):
     def get_kanalen_display(self, obj):
         return ", ".join([k.naam for k in obj.kanalen])
 
+    def get_deleted_objects(self, objs, request):
+        deleted_objects, model_count, perms_needed, protected = (
+            super().get_deleted_objects(objs, request)
+        )
+
+        # Filter out the NotificationResponses, to avoid an enormous list when deleting
+        # an Abonnement
+        filtered_deleted_objects = []
+        for obj in deleted_objects:
+            if isinstance(obj, list):
+                filtered_obj = [
+                    item
+                    for item in obj
+                    if "Notificatie response"
+                    not in item  # Replace with your related model's name
+                ]
+                filtered_deleted_objects.append(filtered_obj)
+            else:
+                filtered_deleted_objects.append(obj)
+
+        return filtered_deleted_objects, model_count, perms_needed, protected
+
 
 class FilterInline(admin.TabularInline):
     model = Filter
