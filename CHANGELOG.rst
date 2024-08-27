@@ -2,13 +2,46 @@
 Changes
 =======
 
-1.7.0 (2024-??-??)
+1.7.0 (2024-08-26)
 ------------------
 
 **New features**
 
-* Made user emails unique to prevent two users logging in with the same email, causing an error
+* [#169] Made user emails unique to prevent two users logging in with the same email, causing an error
+* [#151] Added 2FA to the Admin
+* [#157] Optimized deleting abonnement with a lot of notifications in the Admin
 
+.. warning::
+
+    User email addresses will now be unique on a database level. The database migration will fail if there are already
+    two or more users with the same email address. You must ensure this is not the case before upgrading.
+
+.. warning::
+
+    Two-factor authentication is enabled by default. The ``DISABLE_2FA`` environment variable
+    can be used to disable it if needed.
+
+
+**Bugfixes**
+
+* [#168] Fixed CSS style for help-text icon in the Admin
+* [#166] Fixed ReadTheDocs build
+* [#171] Fixed filtering subscribers for ``objecten`` channel and ``object_type`` filter
+
+**Documentation**
+
+* [#142] Updated and improved documentation to configure ON and its consumers
+* [#174] Updated the documentation of environment variables using open-api-framework
+
+**Project maintaince**
+
+* [#159] Added open-api-framework
+* [#107, #163, #165] Refactored Settings module to use generic settings provided by Open API Framework
+* [#164] Updated Python to 3.11
+* [#176, #179] Bumped python dependencies due to security issues: ampq, django, celery, certifi, maykin-2fa,
+  mozilla-django-oidc-db, sentry-sdk, uwsgi and others
+* [#172] Added OAS checks to CI
+* [#177] Added celery healthcheck, the example how to use it can be found in ``docker-compose.yml``
 
 .. warning::
 
@@ -16,13 +49,6 @@ Changes
     The default values for ``DB_NAME``, ``DB_USER``, ``DB_PASSWORD`` changed from ``opennotificaties`` to ``nrc``.
     The default value for ``LOG_OUTGOING_REQUESTS_DB_SAVE`` changed from ``False`` to ``True``.
 
-.. warning::
-    User email addresses will now be unique on a database level. The database migration will fail if there are already
-    two or more users with the same email address. You must ensure this is not the case before upgrading.
-
-
-Bugfixes/QoL:
-* Settings module was refactored to use generic settings provided by Open API Framework
 
 1.6.0 (2024-05-28)
 ------------------
