@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 WORKDIR /app
 
 COPY ./requirements /app/requirements
-RUN pip install pip -U
+RUN pip install pip "setuptools>=70.0.0"
 RUN pip install -r requirements/production.txt
 
 
@@ -42,7 +42,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install pip -U
+RUN pip install pip "setuptools>=70.0.0"
 
 # Stage 3.1 - Set up the needed production dependencies
 COPY --from=build /usr/local/lib/python3.11 /usr/local/lib/python3.11
