@@ -35,7 +35,7 @@ Changes
 
 **Project maintaince**
 
-* [#159] Added open-api-framework
+* [#159] Added open-api-framework, which includes adding CSRF, CSP and HSTS settings.
 * [#107, #163, #165] Refactored Settings module to use generic settings provided by Open API Framework
 * [#164] Updated Python to 3.11
 * [#176, #179] Bumped python dependencies due to security issues: ampq, django, celery, certifi, maykin-2fa,
@@ -48,6 +48,13 @@ Changes
     The default value for ``ELASTIC_APM_SERVICE_NAME`` changed from ``Open Notificaties - <ENVIRONMENT>`` to ``nrc - <ENVIRONMENT>``.
     The default values for ``DB_NAME``, ``DB_USER``, ``DB_PASSWORD`` changed from ``opennotificaties`` to ``nrc``.
     The default value for ``LOG_OUTGOING_REQUESTS_DB_SAVE`` changed from ``False`` to ``True``.
+
+.. warning::
+
+    SECURE_HSTS_SECONDS has been added with a default of 31536000 seconds, ensure that
+    before upgrading to this version of open-api-framework, your entire application is served
+    over HTTPS, otherwise this setting can break parts of your application (see https://docs.djangoproject.com/en/4.2/ref/middleware/#http-strict-transport-security)
+
 
 
 1.6.0 (2024-05-28)
