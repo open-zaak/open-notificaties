@@ -2,7 +2,7 @@
 Changes
 =======
 
-1.7.0 (2024-08-26)
+1.7.0 (2024-09-02)
 ------------------
 
 **New features**
@@ -33,10 +33,11 @@ Changes
 * [#142] Updated and improved documentation to configure ON and its consumers
 * [#174] Updated the documentation of environment variables using open-api-framework
 
-**Project maintaince**
+**Project maintenance**
 
 * [#159] Added open-api-framework, which includes adding CSRF, CSP and HSTS settings.
 * [#107, #163, #165] Refactored Settings module to use generic settings provided by Open API Framework
+* [#163] Allow providing the ``ENVIRONMENT`` via envvar to Sentry
 * [#164] Updated Python to 3.11
 * [#176, #179] Bumped python dependencies due to security issues: ampq, django, celery, certifi, maykin-2fa,
   mozilla-django-oidc-db, sentry-sdk, uwsgi and others
