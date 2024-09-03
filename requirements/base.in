@@ -7,3 +7,4 @@ furl
 
 # API libraries
 gemma-zds-client
+git+https://github.com/maykinmedia/commonground-api-common.git@feature/dynamic-pagination
