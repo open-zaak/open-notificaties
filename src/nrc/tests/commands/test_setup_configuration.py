@@ -21,13 +21,17 @@ from nrc.config.site import SiteConfigurationStep
 
 
 @override_settings(
+    SITES_CONFIG_ENABLE=True,
     OPENNOTIFICATIES_DOMAIN="open-notificaties.example.com",
     OPENNOTIFICATIES_ORGANIZATION="ACME",
+    AUTHORIZATION_CONFIG_ENABLE=True,
     AUTORISATIES_API_ROOT="https://oz.example.com/autorisaties/api/v1/",
     NOTIF_OPENZAAK_CLIENT_ID="notif-client-id",
     NOTIF_OPENZAAK_SECRET="notif-secret",
+    OPENZAAK_NOTIF_CONFIG_ENABLE=True,
     OPENZAAK_NOTIF_CLIENT_ID="oz-client-id",
     OPENZAAK_NOTIF_SECRET="oz-secret",
+    NOTIFICATION_RETRY_CONFIG_ENABLE=True,
 )
 class SetupConfigurationTests(TestCase):
     maxDiff = None
