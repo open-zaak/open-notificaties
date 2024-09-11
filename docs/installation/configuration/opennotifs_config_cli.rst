@@ -35,7 +35,7 @@ Sites configuration
 
 Configure the domain where Open Notificaties is hosted
 
-* ``SITES_CONFIG_ENABLE``: enable Site configuration. Defaults to ``True``.
+* ``SITES_CONFIG_ENABLE``: enable Site configuration. Defaults to ``False``.
 * ``OPENNOTIFICATIES_DOMAIN``:  a ``[host]:[port]`` or ``[host]`` value. Required.
 * ``OPENNOTIFICATIES_ORGANIZATION``: name of Open Notificaties organization. Required.
 
@@ -47,7 +47,7 @@ of its consumers, therefore Open Notificaties should be able to request Open Zaa
 Make sure that the correct permissions are configured in Open Zaak Autorisaties API.
 
 * ``AUTHORIZATION_CONFIG_ENABLE``: enable Authorization configuration. Defaults
-  to ``True``.
+  to ``False``.
 * ``AUTORISATIES_API_ROOT``: full URL to the Authorisaties API root, for example
   ``https://open-zaak.gemeente.local/autorisaties/api/v1/``. Required.
 * ``NOTIF_OPENZAAK_CLIENT_ID``: a client id, which Open Notificaties uses to request
@@ -60,7 +60,7 @@ Open Zaak authentication configuration
 Open Zaak published notifications to the Open Notificaties, therefore it should have access.
 Make sure that the correct permissions are configured in Open Zaak Autorisaties API.
 
-* ``OPENZAAK_NOTIF_CONFIG_ENABLE``: enable Open Zaak configuration. Defaults to ``True``.
+* ``OPENZAAK_NOTIF_CONFIG_ENABLE``: enable Open Zaak configuration. Defaults to ``False``.
 * ``OPENZAAK_NOTIF_CLIENT_ID``: a client id, which Open Zaak uses to request Open Notificaties,
   for example, ``open-zaak``. Required.
 * ``OPENZAAK_NOTIF_SECRET``: some random string. Required.
@@ -72,6 +72,7 @@ Open Notifications has a retry mechanism to guarantee notification delivery, thi
 is described in :ref:`delivery_guarantees`. The parameters for this behavior can be configured via the
 following environment variables.
 
+* ``NOTIFICATION_RETRY_CONFIG_ENABLE``: enable Notification retry configuration. Defaults to ``False``.
 * ``NOTIFICATION_DELIVERY_MAX_RETRIES``: the maximum number of retries Celery will do if sending a notification failed.
 * ``NOTIFICATION_DELIVERY_RETRY_BACKOFF``: a boolean or a number. If this option is set to
   ``True``, autoretries will be delayed following the rules of exponential backoff. If
