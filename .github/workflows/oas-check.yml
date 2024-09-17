@@ -1,0 +1,18 @@
+name: check-oas
+
+on:
+  push:
+    paths:
+      - "src/openapi.yaml"
+      - .github/workflows/oas-check.yml
+    branches:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  open-api-workflow-check-oas:
+    uses: maykinmedia/open-api-workflows/.github/workflows/oas-check.yml@initial-setup
+    with:
+      schema-path: 'src/openapi.yaml'
+      python-version: '3.11'
+      django-settings-module: 'nrc.conf.ci'
