@@ -160,21 +160,21 @@ config(
 
 # Settings for setup_configuration command
 # sites config
-SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=True, add_to_docs=False)
+SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=False, add_to_docs=False)
 OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "", add_to_docs=False)
 OPENNOTIFICATIES_ORGANIZATION = config(
     "OPENNOTIFICATIES_ORGANIZATION", "", add_to_docs=False
 )
 # notif -> OZ auth config
 AUTHORIZATION_CONFIG_ENABLE = config(
-    "AUTHORIZATION_CONFIG_ENABLE", default=True, add_to_docs=False
+    "AUTHORIZATION_CONFIG_ENABLE", default=False, add_to_docs=False
 )
 AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "", add_to_docs=False)
 NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "", add_to_docs=False)
 NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "", add_to_docs=False)
 # OZ -> notif config
 OPENZAAK_NOTIF_CONFIG_ENABLE = config(
-    "OPENZAAK_NOTIF_CONFIG_ENABLE", default=True, add_to_docs=False
+    "OPENZAAK_NOTIF_CONFIG_ENABLE", default=False, add_to_docs=False
 )
 OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "", add_to_docs=False)
 OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "", add_to_docs=False)
@@ -182,7 +182,7 @@ OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "", add_to_docs=False)
 # setup configuration for Notification retry
 # Retry settings for delivering notifications to subscriptions
 NOTIFICATION_RETRY_CONFIG_ENABLE = config(
-    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=True, add_to_docs=False
+    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=False, add_to_docs=False
 )
 NOTIFICATION_DELIVERY_MAX_RETRIES = config(
     "NOTIFICATION_DELIVERY_MAX_RETRIES", None, add_to_docs=False
