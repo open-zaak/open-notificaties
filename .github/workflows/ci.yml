@@ -70,11 +70,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Set up backend environment
+        uses: maykinmedia/setup-django-backend@v1.3
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements/dev.txt pytest
+          setup-node: false
+
       - name: Generate environment variable documentation using OAf and check if it was updated
         run: |
           bin/generate_envvar_docs.sh
@@ -86,8 +87,6 @@ jobs:
           fi
         env:
           DJANGO_SETTINGS_MODULE: nrc.conf.ci
-      - name: Build and test docs
-        run: cd docs && pytest check_sphinx.py -v --tb=auto
 
   store-reusable-workflow-vars:
     name: create values which can be passed through a reusable workflow
@@ -103,11 +102,20 @@ jobs:
   open-api-ci:
     uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@initial-setup
     needs:
-      - tests
       - store-reusable-workflow-vars
     with:
       main-branch: 'main'
       python-version: '3.11'
+      docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}
+      run-docs: true
+
+  open-api-publish:
+    uses: maykinmedia/open-api-workflows/.github/workflows/publish.yml@initial-setup
+    needs:
+      - store-reusable-workflow-vars
+      - open-api-ci
+      - tests
+    with:
       docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}
       repository-owner: 'open-zaak'
     secrets:
