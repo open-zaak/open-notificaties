@@ -20,6 +20,7 @@ OPENNOTIFICATIES_API_CONTACT_EMAIL = "support@maykinmedia.nl"
 OPENNOTIFICATIES_API_CONTACT_URL = "https://www.maykinmedia.nl"
 
 SPECTACULAR_SETTINGS = {
+    "REDOC_DIST": "SIDECAR",
     "TITLE": "Open Notificaties API",
     "VERSION": API_VERSION,
     "DESCRIPTION": DESCRIPTION,

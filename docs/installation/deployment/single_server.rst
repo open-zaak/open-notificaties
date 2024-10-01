@@ -120,7 +120,7 @@ Navigate to the correct deployment directory:
 
 Create the ``vars/open-notificaties.yml`` file - you can find an example in
 ``vars/open-notificaties.yml.example``. Generate a secret key using the
-`django secret key generator`_ and put the value between single
+django secret key generator and put the value between single
 quotes.
 
 Configure the host by creating the ``hosts`` file from the example:
@@ -282,8 +282,6 @@ The format of each replica is:
     name: opennotificaties-worker-i
 
 .. _docker hub: https://hub.docker.com/u/openzaak
-.. _django secret key generator: https://miniwebtool.com/django-secret-key-generator/
-
 .. _deployment_containers_updating:
 
 Updating an Open Notificaties installation

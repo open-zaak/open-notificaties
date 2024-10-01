@@ -14,7 +14,6 @@ opennotificaties_db_username: open-notificaties
 opennotificaties_db_password: change-me
 
 # Used to provide cryptographic signing (tokens, cookies, etc.)
-# See: https://miniwebtool.com/django-secret-key-generator/
 opennotificaties_secret_key: 'generate-me'
 
 opennotificaties_replicas:
