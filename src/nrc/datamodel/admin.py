@@ -1,12 +1,16 @@
 from django.contrib import admin, messages
 from django.db.models import Count, OuterRef, Q, Subquery
-from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.urls import path, reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
+from requests.exceptions import RequestException
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import DateTimeField
 
 from nrc.api.utils import send_notification
+from nrc.api.validators import CallbackURLValidator
 
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
@@ -45,11 +49,112 @@ class FilterGroupInline(admin.TabularInline):
         )
 
 
+@admin.action(
+    description=_("Check the status of the callback URLs of selected Subscriptions")
+)
+def check_callback_url_status(modeladmin, request, queryset):
+    """
+    Make a request to the callback URLs of all selected Abonnementen and store the results
+    in the session
+
+    Any subsequent executions of this action will remove the previous results from the session
+    """
+    validator = CallbackURLValidator("callback_url", "auth")
+    callback_statuses = {}
+    for obj in queryset.iterator():
+        # Any other Abonnement that has the same callback URL and auth will be skipped
+        # and gets the same status
+        key = str((obj.callback_url, obj.auth))
+        if key in callback_statuses:
+            continue
+
+        try:
+            validator({"callback_url": obj.callback_url, "auth": obj.auth}, None)
+            callback_statuses[key] = True
+        except (ValidationError, RequestException):
+            callback_statuses[key] = False
+
+    messages.add_message(
+        request,
+        messages.SUCCESS,
+        _(
+            "Retrieve status for selected subscriptions. "
+            "All previous results have been reset."
+        ),
+    )
+    request.session["callback_statuses"] = callback_statuses
+
+
+class StatusCodeFilter(admin.SimpleListFilter):
+    title = "callback URL reachable?"
+    parameter_name = "callback_url_reachable"
+
+    def lookups(self, request, model_admin):
+        return [("true", "Yes"), ("false", "No"), ("unknown", "Unknown")]
+
+    def queryset(self, request, queryset):
+        if not self.value():
+            return queryset
+
+        filtered_ids = []
+        if callback_statuses := request.session.get("callback_statuses"):
+            for obj in queryset.iterator():
+                callback_status = callback_statuses.get(
+                    str((obj.callback_url, obj.auth)), None
+                )
+                if self.value() == "true" and callback_status:
+                    filtered_ids.append(obj.id)
+                elif self.value() == "false" and callback_status == False:  # noqa
+                    filtered_ids.append(obj.id)
+                elif self.value() == "unknown" and callback_status is None:
+                    filtered_ids.append(obj.id)
+            return queryset.filter(id__in=filtered_ids)
+        return queryset
+
+
 @admin.register(Abonnement)
 class AbonnementAdmin(admin.ModelAdmin):
-    list_display = ("uuid", "client_id", "callback_url", "get_kanalen_display")
+    list_display = (
+        "uuid",
+        "client_id",
+        "callback_url",
+        "get_callback_url_reachable",
+        "get_kanalen_display",
+    )
     readonly_fields = ("uuid",)
+    list_filter = (StatusCodeFilter,)
     inlines = (FilterGroupInline,)
+    actions = [check_callback_url_status]
+
+    def changelist_view(self, request, extra_context=None):
+        # Store the request object to ensure the custom admin field has access to it
+        self._request = request
+        return super().changelist_view(request, extra_context=extra_context)
+
+    def check_all_callback_urls(self, request):
+        queryset = Abonnement.objects.all()
+        check_callback_url_status(self, request, queryset)
+        self.message_user(request, _("Checked status of all callback URLs"))
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "check-all-callback-urls/",
+                self.admin_site.admin_view(self.check_all_callback_urls),
+                name="check_all_callback_urls",
+            ),
+        ]
+        return custom_urls + urls
+
+    @admin.display(description=_("callback URL reachable?"), boolean=True)
+    def get_callback_url_reachable(self, obj):
+        if callback_statuses := self._request.session.get("callback_statuses"):
+            return callback_statuses.get(str((obj.callback_url, obj.auth)), None)
+        return None
+
+    get_callback_url_reachable.boolean = True
 
     @admin.display(description=_("kanalen"))
     def get_kanalen_display(self, obj):
