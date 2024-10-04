@@ -100,7 +100,7 @@ jobs:
         id: image-name
 
   open-api-ci:
-    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@initial-setup
+    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@v1
     needs:
       - store-reusable-workflow-vars
     with:
@@ -110,7 +110,7 @@ jobs:
       run-docs: true
 
   open-api-publish:
-    uses: maykinmedia/open-api-workflows/.github/workflows/publish.yml@initial-setup
+    uses: maykinmedia/open-api-workflows/.github/workflows/publish.yml@v1
     needs:
       - store-reusable-workflow-vars
       - open-api-ci
