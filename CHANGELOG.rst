@@ -2,6 +2,22 @@
 Changes
 =======
 
+1.7.1 (2024-10-04)
+------------------
+
+**Bugfixes and QOL**
+
+* [#190] change SameSite session cookie to lax to fix OIDC login not working
+* [#190] fix API schema not showing caused by CSP errors
+* [#185] remove the need to manually configure Site.domain for the 2FA app title
+* [#188] change all setup configuration to disabled by default
+
+**Documentation**
+
+* [#188] update config env var descriptions
+* [#190, #191] remove broken links from documentation
+
+
 1.7.0 (2024-09-02)
 ------------------
 
