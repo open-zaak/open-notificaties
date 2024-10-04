@@ -95,6 +95,10 @@
             [
                 "notifications_api_common",
                 "subscription"
+            ],
+            [
+                "log_outgoing_requests",
+                "outgoingrequestslogconfig"
             ]
         ]
     }
@@ -113,6 +117,10 @@
             [
                 "axes",
                 "accesslog"
+            ],
+            [
+                "log_outgoing_requests",
+                "outgoingrequestslog"
             ]
         ]
     }
