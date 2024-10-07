@@ -13,76 +13,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  isort:
-    name: Code imports
-    runs-on: ubuntu-latest
+  open-api-workflow-code-quality:
+    uses: maykinmedia/open-api-workflows/.github/workflows/code-quality.yml@v1
+    with:
+      python-version: '3.11'
+      node-version: '16'
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements/ci.txt
-      - name: Run isort
-        run: isort --check-only --diff .
-
-  black:
-    name: Code format
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements/ci.txt
-      - name: Run black
-        run: black --check --diff src docs
-
-  flake8:
-    name: Code style
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: pip install -r requirements/ci.txt
-      - name: Run flake8
-        run: flake8 src
-
-  oas-up-to-date:
-    name: Check for unexepected OAS changes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: pip install -r requirements/ci.txt
-
-      - name: Generate OAS files
-        run: ./bin/generate_schema.sh openapi.yaml
-        env:
-          DJANGO_SETTINGS_MODULE: nrc.conf.ci
-
-      - name: Check for OAS changes
-        run: |
-          diff openapi.yaml src/openapi.yaml
-      - name: Write failure markdown
-        if: ${{ failure() }}
-        run: |
-          echo 'Run the following command locally and commit the changes' >> $GITHUB_STEP_SUMMARY
-          echo '' >> $GITHUB_STEP_SUMMARY
-          echo '```bash' >> $GITHUB_STEP_SUMMARY
-          echo './bin/generate_schema.sh' >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+      django-settings-module: 'nrc.conf.ci'

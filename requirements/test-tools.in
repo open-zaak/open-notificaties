@@ -1,5 +1,4 @@
 # Dependencies only relevant for (unit) testing
-coverage
 django-webtest
 factory-boy
 freezegun
@@ -12,3 +11,9 @@ vcrpy
 black
 isort
 flake8
+
+# Documentation
+recommonmark
+Sphinx
+sphinx-rtd-theme
+sphinx-tabs
