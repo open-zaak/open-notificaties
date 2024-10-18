@@ -9,10 +9,12 @@ from django.urls import reverse
 import requests
 import requests_mock
 from jwt import decode
+from notifications_api_common.models import NotificationsConfig
 from rest_framework import status
 from vng_api_common.authorizations.models import AuthorizationsConfig
 from zds_client.auth import ClientAuth
-from zgw_consumers.constants import APITypes
+from zgw_consumers.constants import APITypes, AuthTypes
+from zgw_consumers.models import Service
 from zgw_consumers.test import mock_service_oas_get
 
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
@@ -117,6 +119,35 @@ class SetupConfigurationTests(TestCase):
             )
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        with self.subTest("Open Notificaties can access itself"):
+            notifications_service = Service.objects.get()
+
+            self.assertEqual(
+                notifications_service.api_root,
+                "https://open-notificaties.example.com/api/v1/",
+            )
+            self.assertEqual(
+                notifications_service.oas,
+                "https://open-notificaties.example.com/api/v1/schema/openapi.yaml",
+            )
+            self.assertEqual(notifications_service.label, "Open Notificaties")
+            self.assertEqual(notifications_service.api_type, APITypes.nrc)
+            self.assertEqual(notifications_service.client_id, "notif-client-id")
+            self.assertEqual(notifications_service.secret, "notif-secret")
+            self.assertEqual(notifications_service.auth_type, AuthTypes.zgw)
+            self.assertEqual(notifications_service.user_id, "notif-client-id")
+            self.assertEqual(
+                notifications_service.user_representation, "Open Notificaties ACME"
+            )
+
+            config = NotificationsConfig.get_solo()
+
+            self.assertEqual(config.notifications_api_service, notifications_service)
+            # resp = self.client.get("/view-config/")
+
+        # import pdb; pdb.set_trace()
+        # TODO add test for service creation and check view config?
 
     @requests_mock.Mocker()
     def test_setup_configuration_selftest_fails(self, m):
