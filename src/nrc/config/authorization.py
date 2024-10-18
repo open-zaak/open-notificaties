@@ -6,9 +6,13 @@ from django.urls import reverse
 import requests
 from django_setup_configuration.configuration import BaseConfigurationStep
 from django_setup_configuration.exceptions import SelfTestFailed
+from furl import furl
+from notifications_api_common.models import NotificationsConfig
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from vng_api_common.models import APICredential, JWTSecret
 from zds_client import ClientAuth
+from zgw_consumers.constants import APITypes, AuthTypes
+from zgw_consumers.models import Service
 
 from nrc.utils import build_absolute_url
 
@@ -19,6 +23,8 @@ class AuthorizationStep(BaseConfigurationStep):
 
     1. Set up authorization to point to the API
     2. Add credentials for Open Notifications to request Open Zaak
+    3. Configure Open Notificaties such that it can access itself (required because
+       Open Notificaties must be subscribed to changes in the `autorisaties` channel)
 
     Normal mode doesn't change the credentials after its initial creation.
     If the client_id or secret is changed, run this command with 'overwrite' flag
@@ -26,6 +32,7 @@ class AuthorizationStep(BaseConfigurationStep):
 
     verbose_name = "Authorization Configuration"
     required_settings = [
+        "OPENNOTIFICATIES_DOMAIN",
         "AUTORISATIES_API_ROOT",
         "NOTIF_OPENZAAK_CLIENT_ID",
         "NOTIF_OPENZAAK_SECRET",
@@ -64,6 +71,35 @@ class AuthorizationStep(BaseConfigurationStep):
                 "user_representation": f"Open Notificaties {organization}",
             },
         )
+
+        # TODO remove hardcoded version?
+        # Step 3 (step 8/9 in Open Zaak configuration documentation)
+        api_version = settings.API_VERSION.split(".")[0]
+        notifs_api_root = (
+            furl(settings.OPENNOTIFICATIES_DOMAIN)
+            / reverse("api-root", kwargs={"version": api_version})
+        ).url
+        notifs_oas_url = (
+            furl(settings.OPENNOTIFICATIES_DOMAIN)
+            / reverse("schema", kwargs={"version": api_version})
+        ).url
+        scheme = "http" if settings.DEBUG else "https"
+        notification_service, _ = Service.objects.update_or_create(
+            api_root=f"{scheme}://{notifs_api_root}",
+            oas=f"{scheme}://{notifs_oas_url}",
+            defaults={
+                "label": "Open Notificaties",
+                "api_type": APITypes.nrc,
+                "client_id": settings.NOTIF_OPENZAAK_CLIENT_ID,
+                "secret": settings.NOTIF_OPENZAAK_SECRET,
+                "auth_type": AuthTypes.zgw,
+                "user_id": settings.NOTIF_OPENZAAK_CLIENT_ID,
+                "user_representation": f"Open Notificaties {organization}",
+            },
+        )
+        config = NotificationsConfig.get_solo()
+        config.notifications_api_service = notification_service
+        config.save()
 
     def test_configuration(self) -> None:
         """
