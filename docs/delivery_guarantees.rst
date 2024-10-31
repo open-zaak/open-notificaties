@@ -65,22 +65,45 @@ practice, Open Notificaties will consider any ``2xx`` response status code as
 
 **Retry mechanism**
 
-On delivery failure, Open Notificaties will automatically retry delivery, with
-exponential backoff. E.g. the first retry will be done after one second, the next after
-two seconds and the third after 4 seconds.
+By default, sending notifications to subscribers has automatic retry behaviour, i.e. if the notification
+publishing task has failed, it will automatically be rescheduled/tried again until the maximum
+retry limit has been reached.
 
-The parameters for this can be :ref:`configured <installation_config_index>`:
+**Autoretry explanation and configuration**
 
-* ``NOTIFICATION_DELIVERY_MAX_RETRIES``: the maximum number of automatic retries. After
-  this amount of retries, Open Notificaties stops trying to deliver the message.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF``: if specified, a factor applied to the
-  exponential backoff. This allows you to tune how quickly automatic retries are
-  performed.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX``: an upper limit to the exponential
-  backoff time.
+Retry behaviour is implemented using binary exponential backoff with a delay factor,
+the formula to calculate the time to wait until the next retry is as follows:
 
-On top of that, via the admin interface you can manually select notifications to retry
-delivery for.
+.. math::
+    t = \text{backoff_factor} * 2^c
+
+where `t` is time in seconds and  `c` is the number of retries that have been performed already.
+
+This behaviour can be configured using :ref:`setup_configuration <installation_configuration_cli_retry>`
+and also via the admin interface at **Configuratie > Notificatiescomponentconfiguratie**:
+
+* **Notification delivery max retries**: the maximum number of retries the task queue
+  will do if sending a notification has failed. Default is ``5``.
+* **Notification delivery retry backoff**: a boolean or a number. If this option is set to
+  ``True``, autoretries will be delayed following the rules of binary exponential backoff. If
+  this option is set to a number, it is used as a delay factor. Default is ``3``.
+* **Notification delivery retry backoff max**: an integer, specifying number of seconds.
+  If ``Notification delivery retry backoff`` is enabled, this option will set a maximum
+  delay in seconds between task autoretries. Default is ``48`` seconds.
+
+With the assumption that the requests are done immediately we can model the notification
+tasks schedule with the default configurations:
+
+1. At 0s the request to send a Notification to a subscriber is made, the notification task is scheduled, picked up
+   by worker and failed
+2. At 3s with 3s delay the first retry happens (``2^0`` * ``Notification delivery retry backoff``)
+3. At 9s with 6s delay - the second retry (``2^1`` * ``Notification delivery retry backoff``)
+4. At 21s with 12s delay - the third retry
+5. At 45s with 24s delay - the fourth retry
+6. At 1m33s with 48s delay - the fifth retry, which is the last one.
+
+So if the subscribed webhooks is up after 1 min of downtime the default configuration can handle it
+automatically.
 
 **Open Notificaties message broker**
 

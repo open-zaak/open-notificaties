@@ -65,6 +65,8 @@ Make sure that the correct permissions are configured in Open Zaak Autorisaties 
   for example, ``open-zaak``. Required.
 * ``OPENZAAK_NOTIF_SECRET``: some random string. Required.
 
+.. _installation_configuration_cli_retry:
+
 Notification retry configuration
 --------------------------------
 
