@@ -100,7 +100,7 @@ jobs:
         id: image-name
 
   open-api-ci:
-    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@v1
+    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@v3
     needs:
       - store-reusable-workflow-vars
     with:
