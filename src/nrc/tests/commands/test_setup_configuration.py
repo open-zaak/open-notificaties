@@ -12,7 +12,6 @@ from jwt import decode
 from notifications_api_common.models import NotificationsConfig
 from rest_framework import status
 from vng_api_common.authorizations.models import AuthorizationsConfig
-from zds_client.auth import ClientAuth
 from zgw_consumers.constants import APITypes, AuthTypes
 from zgw_consumers.models import Service
 from zgw_consumers.test import mock_service_oas_get
@@ -20,6 +19,7 @@ from zgw_consumers.test import mock_service_oas_get
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
 from nrc.config.notification_retry import NotificationRetryConfigurationStep
 from nrc.config.site import SiteConfigurationStep
+from nrc.utils.auth import generate_jwt
 
 
 @override_settings(
@@ -111,11 +111,13 @@ class SetupConfigurationTests(TestCase):
             self.assertEqual(decoded_jwt["client_id"], "notif-client-id")
 
         with self.subTest("Open Zaak can query Notification API"):
-            auth = ClientAuth("oz-client-id", "oz-secret")
+            token = generate_jwt(
+                "oz-client-id", "oz-secret", "oz-client-id", "oz-client-id"
+            )
 
             response = self.client.get(
                 reverse("kanaal-list", kwargs={"version": 1}),
-                HTTP_AUTHORIZATION=auth.credentials()["Authorization"],
+                HTTP_AUTHORIZATION=token,
             )
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)

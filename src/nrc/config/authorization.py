@@ -10,11 +10,11 @@ from furl import furl
 from notifications_api_common.models import NotificationsConfig
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from vng_api_common.models import APICredential, JWTSecret
-from zds_client import ClientAuth
 from zgw_consumers.constants import APITypes, AuthTypes
 from zgw_consumers.models import Service
 
 from nrc.utils import build_absolute_url
+from nrc.utils.auth import generate_jwt
 
 
 class AuthorizationStep(BaseConfigurationStep):
@@ -151,14 +151,16 @@ class OpenZaakAuthStep(BaseConfigurationStep):
         """
         endpoint = reverse("kanaal-list", kwargs={"version": "1"})
         full_url = build_absolute_url(endpoint, request=None)
-        auth = ClientAuth(
-            client_id=settings.OPENZAAK_NOTIF_CLIENT_ID,
-            secret=settings.OPENZAAK_NOTIF_SECRET,
+        token = generate_jwt(
+            settings.OPENZAAK_NOTIF_CLIENT_ID,
+            settings.OPENZAAK_NOTIF_SECRET,
+            settings.OPENZAAK_NOTIF_CLIENT_ID,
+            settings.OPENZAAK_NOTIF_CLIENT_ID,
         )
 
         try:
             response = requests.get(
-                full_url, headers={**auth.credentials(), "Accept": "application/json"}
+                full_url, headers={"Authorization": token, "Accept": "application/json"}
             )
             response.raise_for_status()
         except requests.RequestException as exc:
