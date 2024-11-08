@@ -46,6 +46,7 @@ Open Notificaties uses Open Zaak Authorisaties API to check authorizations
 of its consumers, therefore Open Notificaties should be able to request Open Zaak.
 Make sure that the correct permissions are configured in Open Zaak Autorisaties API.
 
+* ``OPENNOTIFICATIES_DOMAIN``:  a ``[host]:[port]`` or ``[host]`` value. Required.
 * ``AUTHORIZATION_CONFIG_ENABLE``: enable Authorization configuration. Defaults
   to ``False``.
 * ``AUTORISATIES_API_ROOT``: full URL to the Authorisaties API root, for example

@@ -3,7 +3,8 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from vng_api_common.models import JWTSecret
-from zds_client import ClientAuth
+
+from nrc.utils.auth import generate_jwt
 
 admin.site.unregister(JWTSecret)
 
@@ -18,8 +19,9 @@ class JWTSecretAdmin(admin.ModelAdmin):
     @admin.display(description="jwt")
     def get_jwt(self, obj):
         if obj.identifier and obj.secret:
-            auth = ClientAuth(obj.identifier, obj.secret)
-            jwt = auth.credentials()["Authorization"]
+            jwt = generate_jwt(
+                obj.identifier, obj.secret, obj.identifier, obj.identifier
+            )
             return format_html(
                 '<code class="jwt">{val}</code><p>{hint}</p>',
                 val=jwt,
