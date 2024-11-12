@@ -11,9 +11,7 @@ import requests_mock
 from jwt import decode
 from rest_framework import status
 from vng_api_common.authorizations.models import AuthorizationsConfig
-from zds_client.auth import ClientAuth
-from zgw_consumers.constants import APITypes
-from zgw_consumers.test import mock_service_oas_get
+from vng_api_common.authorizations.utils import generate_jwt
 
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
 from nrc.config.notification_retry import NotificationRetryConfigurationStep
@@ -48,9 +46,6 @@ class SetupConfigurationTests(TestCase):
         _uuid = uuid.uuid4()
         m.get("http://open-notificaties.example.com/", status_code=200)
         m.get("http://open-notificaties.example.com/api/v1/kanaal", json=[])
-        mock_service_oas_get(
-            m, "https://oz.example.com/autorisaties/api/v1/", APITypes.ac
-        )
         m.get(
             "https://oz.example.com/autorisaties/api/v1/applicaties",
             json={
@@ -96,7 +91,7 @@ class SetupConfigurationTests(TestCase):
             ac_client = AuthorizationsConfig.get_client()
             self.assertIsNotNone(ac_client)
 
-            ac_client.list("applicatie")
+            ac_client.get("applicaties")
 
             create_call = m.last_request
             self.assertEqual(
@@ -104,16 +99,18 @@ class SetupConfigurationTests(TestCase):
                 "https://oz.example.com/autorisaties/api/v1/applicaties",
             )
             self.assertIn("Authorization", create_call.headers)
+
             header_jwt = create_call.headers["Authorization"].split(" ")[1]
             decoded_jwt = decode(header_jwt, options={"verify_signature": False})
+
             self.assertEqual(decoded_jwt["client_id"], "notif-client-id")
 
         with self.subTest("Open Zaak can query Notification API"):
-            auth = ClientAuth("oz-client-id", "oz-secret")
+            token = generate_jwt("oz-client-id", "oz-secret", "", "")
 
             response = self.client.get(
                 reverse("kanaal-list", kwargs={"version": 1}),
-                HTTP_AUTHORIZATION=auth.credentials()["Authorization"],
+                HTTP_AUTHORIZATION=token,
             )
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -122,9 +119,6 @@ class SetupConfigurationTests(TestCase):
     def test_setup_configuration_selftest_fails(self, m):
         m.get("http://open-notificaties.example.com/", exc=requests.ConnectionError)
         m.get("http://open-notificaties.example.com/api/v1/kanaal", json=[])
-        mock_service_oas_get(
-            m, "https://oz.example.com/autorisaties/api/v1/", APITypes.ac
-        )
         m.get("https://oz.example.com/autorisaties/api/v1/applicaties", json=[])
 
         with self.assertRaisesMessage(

@@ -7,8 +7,9 @@ import requests
 from django_setup_configuration.configuration import BaseConfigurationStep
 from django_setup_configuration.exceptions import SelfTestFailed
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
-from vng_api_common.models import APICredential, JWTSecret
-from zds_client import ClientAuth
+from vng_api_common.authorizations.utils import generate_jwt
+from vng_api_common.models import JWTSecret
+from zgw_consumers.models import Service
 
 from nrc.utils import build_absolute_url
 
@@ -33,45 +34,51 @@ class AuthorizationStep(BaseConfigurationStep):
     enable_setting = "AUTHORIZATION_CONFIG_ENABLE"
 
     def is_configured(self) -> bool:
-        credential = APICredential.objects.filter(
-            api_root=settings.AUTORISATIES_API_ROOT
-        )
         auth_config = AuthorizationsConfig.get_solo()
+        service = auth_config.authorizations_api_service
 
-        return credential.exists() and bool(
-            auth_config.api_root == settings.AUTORISATIES_API_ROOT
-        )
+        if not service:
+            return False
+
+        return service.api_root == settings.AUTORISATIES_API_ROOT
 
     def configure(self) -> None:
         # Step 1
         auth_config = AuthorizationsConfig.get_solo()
-        if auth_config.api_root != settings.AUTORISATIES_API_ROOT:
-            auth_config.api_root = settings.AUTORISATIES_API_ROOT
+
+        if auth_config.component != ComponentTypes.nrc:
             auth_config.component = ComponentTypes.nrc
-            auth_config.save(update_fields=["api_root", "component"])
 
         # Step 2
         organization = (
             settings.OPENNOTIFICATIES_ORGANIZATION or settings.NOTIF_OPENZAAK_CLIENT_ID
         )
-        APICredential.objects.update_or_create(
+
+        service, _ = Service.objects.update_or_create(
             api_root=settings.AUTORISATIES_API_ROOT,
-            defaults={
-                "label": "Open Zaak Autorisaties API",
-                "client_id": settings.NOTIF_OPENZAAK_CLIENT_ID,
-                "secret": settings.NOTIF_OPENZAAK_SECRET,
-                "user_id": settings.NOTIF_OPENZAAK_CLIENT_ID,
-                "user_representation": f"Open Notificaties {organization}",
-            },
+            defaults=dict(
+                label="Open Zaak Autorisaties API",
+                client_id=settings.NOTIF_OPENZAAK_CLIENT_ID,
+                secret=settings.NOTIF_OPENZAAK_SECRET,
+                user_id=settings.NOTIF_OPENZAAK_CLIENT_ID,
+                user_representation=f"Open Notificaties {organization}",
+            )
         )
+
+        auth_config.authorizations_api_service = service
+        auth_config.save(update_fields=("component", "authorizations_api_service"))
 
     def test_configuration(self) -> None:
         """
         This check depends on the configuration  of permissions in Open Zaak
         """
         client = AuthorizationsConfig.get_client()
+
+        if not client:
+            raise SelfTestFailed("No service configured for the Autorisaties API")
+
         try:
-            client.list("applicatie")
+            client.get("applicaties")
         except requests.RequestException as exc:
             raise SelfTestFailed(
                 "Could not retrieve list of applications from Autorisaties API."
@@ -115,14 +122,17 @@ class OpenZaakAuthStep(BaseConfigurationStep):
         """
         endpoint = reverse("kanaal-list", kwargs={"version": "1"})
         full_url = build_absolute_url(endpoint, request=None)
-        auth = ClientAuth(
-            client_id=settings.OPENZAAK_NOTIF_CLIENT_ID,
-            secret=settings.OPENZAAK_NOTIF_SECRET,
+        token = generate_jwt(
+            settings.OPENZAAK_NOTIF_CLIENT_ID,
+            settings.OPENZAAK_NOTIF_SECRET,
+            "",
+            ""
         )
 
         try:
             response = requests.get(
-                full_url, headers={**auth.credentials(), "Accept": "application/json"}
+                full_url,
+                headers={"Authorization": token, "Accept": "application/json"}
             )
             response.raise_for_status()
         except requests.RequestException as exc:
