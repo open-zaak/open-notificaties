@@ -2,6 +2,20 @@
 Changes
 =======
 
+1.x.x (TBD)
+-----------
+**Bugfixes and QOL**
+
+* [#66] updated commonground-api-common to 0.x.x (TBD)
+
+.. warning::
+
+    Configuring external services is now done through the `Service` model. This
+    replaces the `APICredential` model in the admin interface. A data migration
+    was added to move to the `Service` model. It is advised to verify the `Service`
+    instances in the admin to verify the data migration was ran as expected.
+
+
 1.7.1 (2024-10-04)
 ------------------
 
