@@ -5,12 +5,9 @@ from django.test import TestCase, override_settings
 import requests
 import requests_mock
 from django_setup_configuration.exceptions import SelfTestFailed
-from requests_mock.mocker import Mocker
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from vng_api_common.models import JWTSecret
-from zgw_consumers.constants import APITypes
 from zgw_consumers.models import Service
-from zgw_consumers.test import mock_service_oas_get
 
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
 
@@ -27,7 +24,7 @@ class AuthorizationConfigurationTests(TestCase):
         configuration.configure()
 
         config = AuthorizationsConfig.get_solo()
-        service = Service.objects.get()
+        service = config.authorizations_api_service
 
         self.assertEqual(config.component, ComponentTypes.nrc)
         self.assertEqual(service.api_root, "https://oz.example.com/autorisaties/api/v1/")

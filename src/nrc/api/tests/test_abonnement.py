@@ -1,6 +1,7 @@
 from django.test import override_settings
 
 import requests_mock
+
 from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTAuthMixin, get_operation_url, get_validation_errors
@@ -9,10 +10,7 @@ from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
 
 
-@override_settings(
-    LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
-    ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-)
+@override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_200")
 class AbonnementenTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
