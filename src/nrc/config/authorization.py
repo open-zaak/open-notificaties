@@ -62,7 +62,7 @@ class AuthorizationStep(BaseConfigurationStep):
                 secret=settings.NOTIF_OPENZAAK_SECRET,
                 user_id=settings.NOTIF_OPENZAAK_CLIENT_ID,
                 user_representation=f"Open Notificaties {organization}",
-            )
+            ),
         )
 
         auth_config.authorizations_api_service = service
@@ -123,16 +123,12 @@ class OpenZaakAuthStep(BaseConfigurationStep):
         endpoint = reverse("kanaal-list", kwargs={"version": "1"})
         full_url = build_absolute_url(endpoint, request=None)
         token = generate_jwt(
-            settings.OPENZAAK_NOTIF_CLIENT_ID,
-            settings.OPENZAAK_NOTIF_SECRET,
-            "",
-            ""
+            settings.OPENZAAK_NOTIF_CLIENT_ID, settings.OPENZAAK_NOTIF_SECRET, "", ""
         )
 
         try:
             response = requests.get(
-                full_url,
-                headers={"Authorization": token, "Accept": "application/json"}
+                full_url, headers={"Authorization": token, "Accept": "application/json"}
             )
             response.raise_for_status()
         except requests.RequestException as exc:

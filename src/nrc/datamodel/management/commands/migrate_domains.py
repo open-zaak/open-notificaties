@@ -25,7 +25,7 @@ def _base_mapping(variable: tuple) -> tuple:
     )
 
 
-BASE_MAPPING = (_base_mapping(("zgw_consumers.Service", "api_root")))
+BASE_MAPPING = _base_mapping(("zgw_consumers.Service", "api_root"))
 
 MAPPING = BASE_MAPPING + (
     ("datamodel.Kanaal", "documentatie_link", *ZRC),
