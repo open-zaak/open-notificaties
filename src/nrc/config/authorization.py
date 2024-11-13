@@ -78,7 +78,8 @@ class AuthorizationStep(BaseConfigurationStep):
             raise SelfTestFailed("No service configured for the Autorisaties API")
 
         try:
-            client.get("applicaties")
+            response: requests.Response = client.get("applicaties")
+            response.raise_for_status()
         except requests.RequestException as exc:
             raise SelfTestFailed(
                 "Could not retrieve list of applications from Autorisaties API."

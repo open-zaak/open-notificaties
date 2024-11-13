@@ -53,7 +53,8 @@ class AuthorizationConfigurationTests(TestCase):
 
         m.get("https://oz.example.com/autorisaties/api/v1/applicaties", status_code=403)
 
-        configuration.test_configuration()
+        with self.assertRaises(SelfTestFailed):
+            configuration.test_configuration()
 
         self.assertEqual(
             m.last_request.url, "https://oz.example.com/autorisaties/api/v1/applicaties"
