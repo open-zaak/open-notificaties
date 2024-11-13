@@ -13,7 +13,7 @@ Changes
     Configuring external services is now done through the `Service` model. This
     replaces the `APICredential` model in the admin interface. A data migration
     was added to move to the `Service` model. It is advised to verify the `Service`
-    instances in the admin to verify the data migration was ran as expected.
+    instances in the admin to check that the data migration was ran as expected.
 
 
 1.7.1 (2024-10-04)
