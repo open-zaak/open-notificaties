@@ -62,6 +62,7 @@ class AuthorizationStep(BaseConfigurationStep):
                 secret=settings.NOTIF_OPENZAAK_SECRET,
                 user_id=settings.NOTIF_OPENZAAK_CLIENT_ID,
                 user_representation=f"Open Notificaties {organization}",
+                slug="authorization-api-service"
             ),
         )
 
