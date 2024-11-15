@@ -48,6 +48,7 @@ using Open Zaak as the example.
       - **Authorization type**: *ZGW client_id + secret*
       - **Gebruikers ID**: *Same as the Client ID*
       - **Gebruikersweergave**: *For example:* ``Open Notificaties``
+      - **Service slug**: *For example:* ``authorization-api-service``
 
       Make sure Open Notificaties is authorized in Open Zaak to access the
       Autorisaties API by using the same Client ID and Secret as given here.
