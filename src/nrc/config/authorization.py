@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: EUPL-1.2
 # Copyright (C) 2022 Dimpact
+from typing import Iterable
 from django.conf import settings
 from django.urls import reverse
 
@@ -12,6 +13,22 @@ from vng_api_common.models import JWTSecret
 from zgw_consumers.models import Service
 
 from nrc.utils import build_absolute_url
+
+
+def _generate_service_slug(existing_slugs: Iterable[str]) -> str:
+    default_slug = "authorization-api-service"
+
+    if not existing_slugs or default_slug not in existing_slugs:
+        return default_slug
+
+    slug = default_slug
+    count = 1
+
+    while slug in existing_slugs:
+        count += 1
+        slug = f"{default_slug}-{count}"
+
+    return slug
 
 
 class AuthorizationStep(BaseConfigurationStep):
@@ -62,9 +79,13 @@ class AuthorizationStep(BaseConfigurationStep):
                 secret=settings.NOTIF_OPENZAAK_SECRET,
                 user_id=settings.NOTIF_OPENZAAK_CLIENT_ID,
                 user_representation=f"Open Notificaties {organization}",
-                slug="authorization-api-service"
             ),
         )
+
+        if not service.slug:
+            slugs = Service.objects.values_list("slug", flat=True)
+            service.slug = _generate_service_slug(slugs)
+            service.save(update_fields=("slug",))
 
         auth_config.authorizations_api_service = service
         auth_config.save(update_fields=("component", "authorizations_api_service"))
