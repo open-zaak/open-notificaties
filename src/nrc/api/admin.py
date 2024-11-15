@@ -20,7 +20,7 @@ class JWTSecretAdmin(admin.ModelAdmin):
         if obj.identifier and obj.secret:
             return format_html(
                 '<code class="jwt">{val}</code><p>{hint}</p>',
-                val=generate_jwt(object.identifier, object.secret, "", ""),
+                val=generate_jwt(obj.identifier, obj.secret, "", ""),
                 hint=_("Gebruik het JWT-token nooit direct in een applicatie."),
             )
         return ""
