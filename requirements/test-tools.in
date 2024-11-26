@@ -17,3 +17,5 @@ recommonmark
 Sphinx
 sphinx-rtd-theme
 sphinx-tabs
+
+commonground-api-common[testutils]>=2.0.1
