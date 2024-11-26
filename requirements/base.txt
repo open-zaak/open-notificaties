@@ -62,7 +62,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common@feature/update-notifs-client
+commonground-api-common==2.0.1
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -303,7 +303,10 @@ requests==2.32.3
     #   django-log-outgoing-requests
     #   mozilla-django-oidc
     #   open-api-framework
+    #   requests-mock
     #   zgw-consumers
+requests-mock==1.12.1
+    # via commonground-api-common
 rpds-py==0.20.0
     # via
     #   jsonschema

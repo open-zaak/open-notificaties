@@ -105,7 +105,7 @@ click-repl==0.3.0
     # via
     #   -r requirements/base.txt
     #   celery
-commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common@feature/update-notifs-client
+commonground-api-common==2.0.1
     # via
     #   -r requirements/base.txt
     #   open-api-framework
@@ -555,7 +555,10 @@ requests==2.32.3
     #   sphinx
     #   zgw-consumers
 requests-mock==1.12.1
-    # via -r requirements/test-tools.in
+    # via
+    #   -r requirements/base.txt
+    #   -r requirements/test-tools.in
+    #   commonground-api-common
 rpds-py==0.20.0
     # via
     #   -r requirements/base.txt
