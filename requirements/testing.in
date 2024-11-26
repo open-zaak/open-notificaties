@@ -1,8 +1,0 @@
-# Shared between dev and Travis requirements to run our tests
-black
-coverage
-factory_boy
-freezegun
-isort
-requests-mock
-tblib
