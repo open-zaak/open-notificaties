@@ -15,10 +15,7 @@ from nrc.datamodel.tests.factories import KanaalFactory
 class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
-    @override_settings(
-        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-    )
+    @override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_404")
     def test_abonnementen_invalid_callback_url(self):
         KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
@@ -62,10 +59,7 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
         error = get_validation_errors(response, "nonFieldErrors")
         self.assertEqual(error["code"], "invalid-callback-url")
 
-    @override_settings(
-        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-    )
+    @override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_404")
     def test_abonnementen_callback_url_accept_20x_status_codes(self):
         KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
@@ -113,7 +107,6 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 
     @override_settings(
         LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
         TEST_CALLBACK_AUTH=True,
     )
     def test_abonnementen_callback_url_no_auth(self):
@@ -159,7 +152,6 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 
     @override_settings(
         LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
         TEST_CALLBACK_AUTH=True,
     )
     def test_webhooksite_whitelisted(self):
@@ -189,10 +181,7 @@ class AbonnementenValidationTests(JWTAuthMixin, APITestCase):
 class KanalenValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
-    @override_settings(
-        LINK_FETCHER="vng_api_common.mocks.link_fetcher_404",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-    )
+    @override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_404")
     def test_kanalen_invalid_documentatie_link_url(self):
         abonnement_create_url = get_operation_url("kanaal_create")
 
@@ -212,10 +201,7 @@ class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
     @freeze_time("2019-01-01T12:00:00Z")
-    @override_settings(
-        LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
-        ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-    )
+    @override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_200")
     @patch("jwt.api_jwt.PyJWT._validate_iat", return_value=None)
     def test_notificaties_aanmaakdatum_in_future_fails(self, mock_validate_iat):
         KanaalFactory.create(naam="zaken")

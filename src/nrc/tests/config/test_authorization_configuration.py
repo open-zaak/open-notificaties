@@ -5,10 +5,8 @@ from django.test import TestCase, override_settings
 import requests
 import requests_mock
 from django_setup_configuration.exceptions import SelfTestFailed
-from vng_api_common.authorizations.models import AuthorizationsConfig
-from vng_api_common.models import APICredential, JWTSecret
-from zgw_consumers.constants import APITypes
-from zgw_consumers.test import mock_service_oas_get
+from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
+from vng_api_common.models import JWTSecret
 
 from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
 
@@ -25,21 +23,21 @@ class AuthorizationConfigurationTests(TestCase):
         configuration.configure()
 
         config = AuthorizationsConfig.get_solo()
-        self.assertEqual(config.api_root, "https://oz.example.com/autorisaties/api/v1/")
+        service = config.authorizations_api_service
 
-        api_credentials = APICredential.objects.get(
-            api_root="https://oz.example.com/autorisaties/api/v1/"
+        self.assertEqual(config.component, ComponentTypes.nrc)
+        self.assertEqual(
+            service.api_root, "https://oz.example.com/autorisaties/api/v1/"
         )
-        self.assertEqual(api_credentials.client_id, "notif-client-id")
-        self.assertEqual(api_credentials.secret, "notif-secret")
+
+        self.assertEqual(service.client_id, "notif-client-id")
+        self.assertEqual(service.secret, "notif-secret")
 
     @requests_mock.Mocker()
     def test_selftest_ok(self, m):
         configuration = AuthorizationStep()
         configuration.configure()
-        mock_service_oas_get(
-            m, "https://oz.example.com/autorisaties/api/v1/", APITypes.ac
-        )
+
         m.get("https://oz.example.com/autorisaties/api/v1/applicaties", json=[])
 
         configuration.test_configuration()
@@ -52,12 +50,11 @@ class AuthorizationConfigurationTests(TestCase):
     def test_selftest_fail(self, m):
         configuration = AuthorizationStep()
         configuration.configure()
-        mock_service_oas_get(
-            m, "https://oz.example.com/autorisaties/api/v1/", APITypes.ac
-        )
-        m.get("https://oz.example.com/autorisaties/api/v1/applicaties", json=[])
 
-        configuration.test_configuration()
+        m.get("https://oz.example.com/autorisaties/api/v1/applicaties", status_code=403)
+
+        with self.assertRaises(SelfTestFailed):
+            configuration.test_configuration()
 
         self.assertEqual(
             m.last_request.url, "https://oz.example.com/autorisaties/api/v1/applicaties"

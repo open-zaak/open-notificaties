@@ -25,7 +25,6 @@ from nrc.datamodel.tests.factories import (
 @patch("nrc.api.serializers.deliver_message.delay")
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
-    ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
     LOG_NOTIFICATIONS_IN_DB=True,
 )
 class NotificatieTests(JWTAuthMixin, APITestCase):

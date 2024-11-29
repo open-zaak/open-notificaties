@@ -36,17 +36,19 @@ using Open Zaak as the example.
 1. Configure the credentials for the Open Zaak Autorisaties API (so Open
    Notificaties can access the Autorisaties API):
 
-   a. Navigate to **API Autorisaties > Externe API credentials**
-   b. Click **Externe API credential toevoegen**.
+   a. Navigate to **API Autorisaties > Services**
+   b. Click **Service toevoegen**.
    c. Fill out the form:
 
-      - **API root**: *The URL of the Open Zaak Autorisaties API endpoint*
+      - **Api root url**: *The URL of the Open Zaak Autorisaties API endpoint*
       - **Label**: *For example:* ``Open Zaak Autorisaties``
 
-      - **Client ID**: *For example:* ``open-notificaties``
+      - **Client id**: *For example:* ``open-notificaties``
       - **Secret**: *Some random string*
-      - **User ID**: *Same as the Client ID*
-      - **User representation**: *For example:* ``Open Notificaties``
+      - **Authorization type**: *ZGW client_id + secret*
+      - **Gebruikers ID**: *Same as the Client ID*
+      - **Gebruikersweergave**: *For example:* ``Open Notificaties``
+      - **Service slug**: *For example:* ``authorization-api-service``
 
       Make sure Open Notificaties is authorized in Open Zaak to access the
       Autorisaties API by using the same Client ID and Secret as given here.
@@ -56,8 +58,8 @@ using Open Zaak as the example.
 2. Then we need to allow Open Zaak to access Open Notificaties (for
    authentication purposes, so we can then check its authorizations):
 
-   a. Navigate to **API Autorisaties > Client credentials**
-   b. Click **Client credential toevoegen**.
+   a. Navigate to **API Autorisaties > Autorisatiegegevens**
+   b. Click **Autorisatiegegeven toevoegen**.
    c. Fill out the form:
 
       - **Client ID**: *For example:* ``open-zaak``

@@ -27,7 +27,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
 
 MIDDLEWARE.insert(
     MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware") + 1,
-    "vng_api_common.middleware.AuthMiddleware",
+    "vng_api_common.authorizations.middleware.AuthMiddleware",
 )
 MIDDLEWARE = MIDDLEWARE + ["vng_api_common.middleware.APIVersionHeaderMiddleware"]
 

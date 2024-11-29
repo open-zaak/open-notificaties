@@ -8,17 +8,21 @@ from rest_framework.test import APITestCase
 from vng_api_common.authorizations.models import Applicatie, AuthorizationsConfig
 from vng_api_common.constants import CommonResourceAction, VertrouwelijkheidsAanduiding
 from vng_api_common.tests import JWTAuthMixin, reverse
-from zgw_consumers.constants import APITypes
-from zgw_consumers.test import mock_service_oas_get
+from zgw_consumers.test.factories import ServiceFactory
 
 
 class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
     def test_handle_create_auth(self):
+        service = ServiceFactory(api_root="https://autorisaties-api.vng.cloud/api/v1")
         config = AuthorizationsConfig.get_solo()
+
+        config.authorizations_api_service = service
+        config.save(update_fields=("authorizations_api_service",))
+
         uuid = _uuid.uuid4()
-        applicatie_url = f"{config.api_root}/applicaties/{uuid}"
+        applicatie_url = f"{service.api_root}/applicaties/{uuid}"
         webhook_url = reverse("notificaties-webhook")
 
         response_data = {
@@ -45,7 +49,6 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
         }
 
         with requests_mock.Mocker() as m:
-            mock_service_oas_get(m, url=config.api_root, service=APITypes.ac)
             m.get(applicatie_url, json=response_data)
             response = self.client.post(webhook_url, data)
 
@@ -62,8 +65,14 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             client_ids=["id1"], label="before", heeft_alle_autorisaties=True
         )
         uuid = applicatie.uuid
+
+        service = ServiceFactory(api_root="https://autorisaties-api.vng.cloud/api/v1")
+
         config = AuthorizationsConfig.get_solo()
-        applicatie_url = f"{config.api_root}/applicaties/{uuid}"
+        config.authorizations_api_service = service
+        config.save(update_fields=("authorizations_api_service",))
+
+        applicatie_url = f"{service.api_root}/applicaties/{uuid}"
 
         self.assertEqual(applicatie.autorisaties.count(), 0)
 
@@ -115,8 +124,14 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
             client_ids=["id1"], label="for delete", heeft_alle_autorisaties=True
         )
         uuid = applicatie.uuid
+
+        service = ServiceFactory(api_root="https://autorisaties-api.vng.cloud/api/v1")
+
         config = AuthorizationsConfig.get_solo()
-        applicatie_url = f"{config.api_root}/applicaties/{uuid}"
+        config.authorizations_api_service = service
+        config.save(update_fields=("authorizations_api_service",))
+
+        applicatie_url = f"{service.api_root}/applicaties/{uuid}"
         webhook_url = reverse(
             "notificaties-webhook",
             kwargs={"version": settings.REST_FRAMEWORK["DEFAULT_VERSION"]},

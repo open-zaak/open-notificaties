@@ -9,10 +9,7 @@ from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
 
 
-@override_settings(
-    LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
-    ZDS_CLIENT_CLASS="vng_api_common.mocks.MockClient",
-)
+@override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_200")
 class AbonnementenTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 

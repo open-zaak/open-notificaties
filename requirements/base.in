@@ -4,6 +4,3 @@ open-api-framework
 markdown
 self-certifi
 furl
-
-# API libraries
-gemma-zds-client
