@@ -6,7 +6,7 @@ Changes
 -----------
 **Bugfixes and QOL**
 
-* [#66] updated commonground-api-common to 0.x.x (TBD)
+* [#66] updated commonground-api-common to 2.1.0 (TBD)
 
 .. warning::
 
