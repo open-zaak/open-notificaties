@@ -102,7 +102,7 @@ click-repl==0.3.0
     #   celery
 codecov==2.1.13
     # via -r requirements/ci.in
-commonground-api-common[testutils]==2.0.1
+commonground-api-common[testutils]==2.1.0
     # via
     #   -r requirements/base.txt
     #   -r requirements/test-tools.in
@@ -260,6 +260,7 @@ django-solo==2.3.0
 django-two-factor-auth[phonenumberslite,webauthn]==1.16.0
     # via
     #   -r requirements/base.txt
+    #   django-two-factor-auth
     #   maykin-2fa
 django-webtest==1.9.10
     # via -r requirements/test-tools.in
@@ -300,6 +301,7 @@ drf-nested-routers==0.94.1
 drf-spectacular[sidecar]==0.27.2
     # via
     #   -r requirements/base.txt
+    #   drf-spectacular
     #   open-api-framework
 drf-spectacular-sidecar==2024.7.1
     # via
@@ -424,7 +426,7 @@ multidict==6.0.5
     # via yarl
 mypy-extensions==0.4.3
     # via black
-notifications-api-common==0.3.0
+notifications-api-common==0.3.1
     # via
     #   -r requirements/base.txt
     #   commonground-api-common

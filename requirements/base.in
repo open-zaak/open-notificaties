@@ -4,5 +4,3 @@ open-api-framework
 markdown
 self-certifi
 furl
-
-commonground-api-common>=2.0.1
