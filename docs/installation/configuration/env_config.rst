@@ -110,6 +110,7 @@ Optional
 * ``LOG_OUTGOING_REQUESTS_MAX_AGE``: The amount of time after which request logs should be deleted from the database. Defaults to: ``7``.
 * ``SENTRY_DSN``: URL of the sentry project to send error reports to. Default empty, i.e. -> no monitoring set up. Highly recommended to configure this.
 * ``EXTRA_VERIFY_CERTS``: a comma-separated list of paths to certificates to trust, If you're using self-signed certificates for the services that Open Notificaties communicates with, specify the path to those (root) certificates here, rather than disabling SSL certificate verification. Example: ``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``. Defaults to: ``(empty string)``.
+* ``OPENNOTIFICATIES_DOMAIN``: The domain for this Open Notificaties instance (``[host]:[port]`` or ``[host]``). Defaults to: ``(empty string)``.
 
 
 

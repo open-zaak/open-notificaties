@@ -161,4 +161,8 @@ config(
 # Open Notificaties settings
 #
 
-OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "")
+OPENNOTIFICATIES_DOMAIN = config(
+    "OPENNOTIFICATIES_DOMAIN",
+    "",
+    help_text="The domain for this Open Notificaties instance (``[host]:[port]`` or ``[host]``)",
+)
