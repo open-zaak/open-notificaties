@@ -1,66 +1,51 @@
 from django.contrib.sites.models import Site
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
-import requests
-import requests_mock
-from django_setup_configuration.exceptions import SelfTestFailed
+from django_setup_configuration.test_utils import execute_single_step
 
 from nrc.config.site import SiteConfigurationStep
 
+CONFIG_FILE_PATH = "src/nrc/tests/config/files/setup_config_sites.yaml"
 
-@override_settings(
-    OPENNOTIFICATIES_DOMAIN="localhost:8000",
-    OPENNOTIFICATIES_ORGANIZATION="ACME",
-)
+
 class SiteConfigurationTests(TestCase):
     def setUp(self):
         super().setUp()
 
         self.addCleanup(Site.objects.clear_cache)
 
-    def test_set_domain(self):
-        configuration = SiteConfigurationStep()
-        configuration.configure()
+    def test_execute_configuration_step_success(self):
+        execute_single_step(SiteConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
         site = Site.objects.get_current()
-        self.assertEqual(site.domain, "localhost:8000")
-        self.assertEqual(site.name, "Open Notificaties ACME")
 
-    @requests_mock.Mocker()
-    def test_configuration_check_ok(self, m):
-        m.get("http://localhost:8000/", status_code=200)
-        configuration = SiteConfigurationStep()
-        configuration.configure()
+        self.assertEqual(site.domain, "opennotificaties.local:8000")
+        self.assertEqual(site.name, "Open Notificaties Demodam")
 
-        configuration.test_configuration()
+    def test_execute_configuration_step_update_existing(self):
+        site = Site.objects.get_current()
+        site.domain = "other-domain.local:8000"
+        site.name = "some other names"
+        site.save()
 
-        self.assertEqual(m.last_request.url, "http://localhost:8000/")
-        self.assertEqual(m.last_request.method, "GET")
+        execute_single_step(SiteConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-    @requests_mock.Mocker()
-    def test_configuration_check_failures(self, m):
-        configuration = SiteConfigurationStep()
-        configuration.configure()
+        site = Site.objects.get_current()
 
-        mock_kwargs = (
-            {"exc": requests.ConnectTimeout},
-            {"exc": requests.ConnectionError},
-            {"status_code": 404},
-            {"status_code": 403},
-            {"status_code": 500},
-        )
-        for mock_config in mock_kwargs:
-            with self.subTest(mock=mock_config):
-                m.get("http://localhost:8000/", **mock_config)
+        self.assertEqual(site.domain, "opennotificaties.local:8000")
+        self.assertEqual(site.name, "Open Notificaties Demodam")
 
-                with self.assertRaises(SelfTestFailed):
-                    configuration.test_configuration()
+    def test_execute_configuration_step_idempotent(self):
+        def make_assertions():
+            site = Site.objects.get_current()
 
-    def test_is_configured(self):
-        configuration = SiteConfigurationStep()
+            self.assertEqual(site.domain, "opennotificaties.local:8000")
+            self.assertEqual(site.name, "Open Notificaties Demodam")
 
-        self.assertFalse(configuration.is_configured())
+        execute_single_step(SiteConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        configuration.configure()
+        make_assertions()
 
-        self.assertTrue(configuration.is_configured())
+        execute_single_step(SiteConfigurationStep, yaml_source=CONFIG_FILE_PATH)
+
+        make_assertions()

@@ -1,129 +1,58 @@
-from unittest.mock import patch
+from django.test import TestCase
 
-from django.test import TestCase, override_settings
-
-import requests
-import requests_mock
-from django_setup_configuration.exceptions import SelfTestFailed
+from django_setup_configuration.test_utils import execute_single_step
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
-from vng_api_common.models import JWTSecret
+from zgw_consumers.test.factories import ServiceFactory
 
-from nrc.config.authorization import AuthorizationStep, OpenZaakAuthStep
+from nrc.config.authorization import AuthorizationStep
+
+CONFIG_FILE_PATH = "src/nrc/tests/config/files/setup_config_auth_config.yaml"
 
 
-@override_settings(
-    AUTORISATIES_API_ROOT="https://oz.example.com/autorisaties/api/v1/",
-    NOTIF_OPENZAAK_CLIENT_ID="notif-client-id",
-    NOTIF_OPENZAAK_SECRET="notif-secret",
-)
 class AuthorizationConfigurationTests(TestCase):
-    def test_configure(self):
-        configuration = AuthorizationStep()
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
 
-        configuration.configure()
+        cls.service = ServiceFactory.create(
+            slug="autorisaties-api",
+            api_root="http://openzaak.local/autorisaties/api/v1/",
+        )
+
+    def test_execute_configuration_step_success(self):
+        execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
+
+        config = AuthorizationsConfig.get_solo()
+
+        self.assertEqual(config.component, ComponentTypes.nrc)
+        self.assertEqual(config.authorizations_api_service, self.service)
+
+    def test_execute_configuration_step_update_existing(self):
+        config = AuthorizationsConfig.get_solo()
+        config.component = ComponentTypes.zrc
+        config.authorizations_api_service = ServiceFactory.create(slug="other-api")
+        config.save()
+
+        execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
 
         config = AuthorizationsConfig.get_solo()
         service = config.authorizations_api_service
 
         self.assertEqual(config.component, ComponentTypes.nrc)
-        self.assertEqual(
-            service.api_root, "https://oz.example.com/autorisaties/api/v1/"
-        )
+        self.assertEqual(service, self.service)
 
-        self.assertEqual(service.client_id, "notif-client-id")
-        self.assertEqual(service.secret, "notif-secret")
+    def test_execute_configuration_step_idempotent(self):
+        def make_assertions():
+            config = AuthorizationsConfig.get_solo()
+            service = config.authorizations_api_service
 
-    @requests_mock.Mocker()
-    def test_selftest_ok(self, m):
-        configuration = AuthorizationStep()
-        configuration.configure()
+            self.assertEqual(config.component, ComponentTypes.nrc)
+            self.assertEqual(service, self.service)
 
-        m.get("https://oz.example.com/autorisaties/api/v1/applicaties", json=[])
+        execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
 
-        configuration.test_configuration()
+        make_assertions()
 
-        self.assertEqual(
-            m.last_request.url, "https://oz.example.com/autorisaties/api/v1/applicaties"
-        )
+        execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
 
-    @requests_mock.Mocker()
-    def test_selftest_fail(self, m):
-        configuration = AuthorizationStep()
-        configuration.configure()
-
-        m.get("https://oz.example.com/autorisaties/api/v1/applicaties", status_code=403)
-
-        with self.assertRaises(SelfTestFailed):
-            configuration.test_configuration()
-
-        self.assertEqual(
-            m.last_request.url, "https://oz.example.com/autorisaties/api/v1/applicaties"
-        )
-
-    def test_is_configured(self):
-        configuration = AuthorizationStep()
-        self.assertFalse(configuration.is_configured())
-
-        configuration.configure()
-
-        self.assertTrue(configuration.is_configured())
-
-
-@override_settings(
-    OPENZAAK_NOTIF_CLIENT_ID="oz-client-id",
-    OPENZAAK_NOTIF_SECRET="oz-secret",
-)
-class OpenZaakConfigurationTests(TestCase):
-    def test_configure(self):
-        configuration = OpenZaakAuthStep()
-
-        configuration.configure()
-
-        jwt_secret = JWTSecret.objects.get(identifier="oz-client-id")
-        self.assertEqual(jwt_secret.secret, "oz-secret")
-
-    @requests_mock.Mocker()
-    @patch(
-        "nrc.config.authorization.build_absolute_url",
-        return_value="http://testserver/kanaal",
-    )
-    def test_selftest_ok(self, m, *mocks):
-        configuration = OpenZaakAuthStep()
-        configuration.configure()
-        m.get("http://testserver/kanaal", json=[])
-
-        configuration.test_configuration()
-
-        self.assertEqual(m.last_request.url, "http://testserver/kanaal")
-        self.assertEqual(m.last_request.method, "GET")
-
-    @requests_mock.Mocker()
-    @patch(
-        "nrc.config.authorization.build_absolute_url",
-        return_value="http://testserver/kanaal",
-    )
-    def test_selftest_fail(self, m, *mocks):
-        configuration = OpenZaakAuthStep()
-        configuration.configure()
-
-        mock_kwargs = (
-            {"exc": requests.ConnectTimeout},
-            {"exc": requests.ConnectionError},
-            {"status_code": 404},
-            {"status_code": 403},
-            {"status_code": 500},
-        )
-        for mock_config in mock_kwargs:
-            with self.subTest(mock=mock_config):
-                m.get("http://testserver/kanaal", **mock_config)
-
-                with self.assertRaises(SelfTestFailed):
-                    configuration.test_configuration()
-
-    def test_is_configured(self):
-        configuration = OpenZaakAuthStep()
-        self.assertFalse(configuration.is_configured())
-
-        configuration.configure()
-
-        self.assertTrue(configuration.is_configured())
+        make_assertions()
