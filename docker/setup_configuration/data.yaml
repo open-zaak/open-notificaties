@@ -1,0 +1,48 @@
+zgw_consumers_config_enable: True
+zgw_consumers:
+  services:
+  - identifier: autorisaties-api
+    label: Autorisaties API
+    api_root: http://localhost:8000/autorisaties/api/v1/
+    api_type: ac
+    auth_type: zgw
+    client_id: open-notificaties
+    secret: oPMsHCEuoP9Qh8vP06D7
+    user_id: open-notificaties
+    user_representation: Open Notificaties Demodam
+  - identifier: notificaties-api
+    label: Notificaties API
+    api_root: http://localhost:8001/api/v1/
+    api_type: nrc
+    auth_type: zgw
+    client_id: open-notificaties
+    secret: oPMsHCEuoP9Qh8vP06D7
+    user_id: open-notificaties
+    user_representation: Open Notificaties Demodam
+
+autorisaties_api_config_enable: True
+autorisaties_api:
+  # Configure Open Notificaties to make use of Open Zaak's Autorisaties API
+  authorizations_api_service_identifier: autorisaties-api
+
+vng_api_common_credentials_config_enable: True
+vng_api_common_credentials:
+  items:
+  # Credentials for Open Zaak to be able to make requests to Open Notificaties
+  - identifier: open-zaak2
+    secret: G2LIVfXal1J93puQkV3O
+  # Credentials for Open Notificaties, required for autorisaties subscription
+  - identifier: open-notificaties
+    secret: oPMsHCEuoP9Qh8vP06D7
+
+# notifications_config_enable: True
+# notifications_config:
+#   notifications_api_service_identifier: notificaties-api
+#   notification_delivery_max_retries: 5
+#   notification_delivery_retry_backoff: 3
+#   notification_delivery_retry_backoff_max: 30
+
+# site_config_enable: True
+# site_config:
+#   domain: localhost:8001
+#   organization: Demodam

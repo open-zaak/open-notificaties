@@ -36,14 +36,6 @@ services:
       - OPENNOTIFICATIES_SUPERUSER_USERNAME=admin
       - OPENNOTIFICATIES_SUPERUSER_EMAIL=admin@localhost
       - DJANGO_SUPERUSER_PASSWORD=admin
-      # setup_configuration env vars
-      - OPENNOTIFICATIES_DOMAIN=web:8000
-      - OPENNOTIFICATIES_ORGANIZATION=ON
-      - AUTORISATIES_API_ROOT=https://open-zaak.example.nl/autorisaties/api/v1/
-      - NOTIF_OPENZAAK_CLIENT_ID=notif-client-id
-      - NOTIF_OPENZAAK_SECRET=notif-secret
-      - OPENZAAK_NOTIF_CLIENT_ID=oz-client-id
-      - OPENZAAK_NOTIF_SECRET=oz-secret
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])"]
       interval: 30s
@@ -57,6 +49,7 @@ services:
       - 8000:8000
     volumes: &app-volumes
       - media:/app/media  # Shared media volume to get access to saved OAS files
+      - ./docker/setup_configuration:/app/setup_configuration
     depends_on:
       web-init:
         condition: service_completed_successfully
