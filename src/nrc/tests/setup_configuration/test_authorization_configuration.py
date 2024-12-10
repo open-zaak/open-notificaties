@@ -4,7 +4,7 @@ from django_setup_configuration.test_utils import execute_single_step
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from zgw_consumers.test.factories import ServiceFactory
 
-from nrc.config.authorization import AuthorizationStep
+from nrc.setup_configuration.authorization import AuthorizationStep
 
 CONFIG_FILE_PATH = "src/nrc/tests/config/files/setup_config_auth_config.yaml"
 

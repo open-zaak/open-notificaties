@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from django_setup_configuration.test_utils import execute_single_step
 
-from nrc.config.site import SiteConfigurationStep
+from nrc.setup_configuration.site import SiteConfigurationStep
 
 CONFIG_FILE_PATH = "src/nrc/tests/config/files/setup_config_sites.yaml"
 

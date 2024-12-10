@@ -20,7 +20,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
     # Project applications.
     "nrc.accounts",
     "nrc.api",
-    "nrc.config",
+    "nrc.setup_configuration",
     "nrc.datamodel",
     "nrc.utils",
 ]
@@ -134,7 +134,7 @@ ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
 SETUP_CONFIGURATION_STEPS = [
     "zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep",
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
-    "nrc.config.authorization.AuthorizationStep",
+    "nrc.setup_configuration.authorization.AuthorizationStep",
     # TODO these need to be implemented later
     # "notifications_api_common.contrib.setup_configuration.steps.NotificationConfigurationStep",
     # TODO this should be moved to `django-setup-configuration`

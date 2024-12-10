@@ -9,18 +9,13 @@ from django.urls import reverse
 
 import requests_mock
 from jwt import decode
-from notifications_api_common.contrib.setup_configuration.steps import (
-    NotificationConfigurationStep,
-)
-from notifications_api_common.models import NotificationsConfig
 from rest_framework import status
 from vng_api_common.authorizations.models import AuthorizationsConfig
 from vng_api_common.authorizations.utils import generate_jwt
 from vng_api_common.contrib.setup_configuration.steps import JWTSecretsConfigurationStep
 from zgw_consumers.contrib.setup_configuration.steps import ServiceConfigurationStep
 
-from nrc.config.authorization import AuthorizationStep
-from nrc.config.site import SiteConfigurationStep
+from nrc.setup_configuration.authorization import AuthorizationStep
 
 CONFIG_FILE_PATH = Path("src/nrc/tests/commands/files/setup_config_full.yaml").resolve()
 
