@@ -4,3 +4,5 @@ open-api-framework
 markdown
 self-certifi
 furl
+zgw-consumers[setup-configuration]
+commonground-api-common[setup-configuration]
