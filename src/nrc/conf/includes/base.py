@@ -132,6 +132,7 @@ ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
 # Django setup configuration
 #
 SETUP_CONFIGURATION_STEPS = [
+    "mozilla_django_oidc_db.setup_configuration.steps.AdminOIDCConfigurationStep",
     "zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep",
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
     "nrc.setup_configuration.authorization.AuthorizationStep",
