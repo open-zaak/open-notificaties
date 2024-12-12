@@ -135,10 +135,6 @@ SETUP_CONFIGURATION_STEPS = [
     "zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep",
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
     "nrc.setup_configuration.authorization.AuthorizationStep",
-    # TODO these need to be implemented later
-    # "notifications_api_common.contrib.setup_configuration.steps.NotificationConfigurationStep",
-    # TODO this should be moved to `django-setup-configuration`
-    # "nrc.config.site.SiteConfigurationStep",
 ]
 
 #
@@ -155,14 +151,4 @@ config(
         "disabling SSL certificate verification. Example: "
         "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
     ),
-)
-
-#
-# Open Notificaties settings
-#
-
-OPENNOTIFICATIES_DOMAIN = config(
-    "OPENNOTIFICATIES_DOMAIN",
-    "",
-    help_text="The domain for this Open Notificaties instance (``[host]:[port]`` or ``[host]``)",
 )

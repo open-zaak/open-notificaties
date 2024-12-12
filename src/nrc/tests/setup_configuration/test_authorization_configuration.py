@@ -6,7 +6,9 @@ from zgw_consumers.test.factories import ServiceFactory
 
 from nrc.setup_configuration.authorization import AuthorizationStep
 
-CONFIG_FILE_PATH = "src/nrc/tests/config/files/setup_config_auth_config.yaml"
+CONFIG_FILE_PATH = (
+    "src/nrc/tests/setup_configuration/files/setup_config_auth_config.yaml"
+)
 
 
 class AuthorizationConfigurationTests(TestCase):

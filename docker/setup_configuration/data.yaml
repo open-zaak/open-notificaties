@@ -34,15 +34,3 @@ vng_api_common_credentials:
   # Credentials for Open Notificaties, required for autorisaties subscription
   - identifier: open-notificaties
     secret: oPMsHCEuoP9Qh8vP06D7
-
-# notifications_config_enable: True
-# notifications_config:
-#   notifications_api_service_identifier: notificaties-api
-#   notification_delivery_max_retries: 5
-#   notification_delivery_retry_backoff: 3
-#   notification_delivery_retry_backoff_max: 30
-
-# site_config_enable: True
-# site_config:
-#   domain: localhost:8001
-#   organization: Demodam

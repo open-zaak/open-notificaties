@@ -1,4 +1,0 @@
-site_config_enable: True
-site_config:
-  domain: opennotificaties.local:8000
-  organization: Demodam
