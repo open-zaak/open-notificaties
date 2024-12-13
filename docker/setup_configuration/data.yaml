@@ -125,3 +125,9 @@ notifications_abonnementen_config:
       auth: Token bar
       kanalen:
         - naam: zaken
+
+sites_config_enable: true
+sites_config:
+  items:
+    - domain: example.com
+      name: Open Notificaties
