@@ -137,6 +137,7 @@ SETUP_CONFIGURATION_STEPS = [
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
     "nrc.setup_configuration.authorization.AuthorizationStep",
     "nrc.setup_configuration.kanalen.KanaalConfigurationStep",
+    "nrc.setup_configuration.abonnementen.AbonnementConfigurationStep",
 ]
 
 #
