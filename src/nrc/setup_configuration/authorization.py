@@ -1,6 +1,5 @@
-# SPDX-License-Identifier: EUPL-1.2
-# Copyright (C) 2022 Dimpact
 from django_setup_configuration.configuration import BaseConfigurationStep
+from django_setup_configuration.exceptions import ConfigurationRunFailed
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from zgw_consumers.models import Service
 
@@ -15,18 +14,18 @@ def get_service(slug: str) -> Service:
     try:
         return Service.objects.get(slug=slug)
     except Service.DoesNotExist as e:
-        raise Service.DoesNotExist(f"{str(e)} (identifier = {slug})")
+        raise ConfigurationRunFailed(f"{str(e)} (identifier = {slug})")
 
 
 class AuthorizationStep(BaseConfigurationStep[AuthorizationsConfigModel]):
     """
-    Open Notificaties uses Autorisaties API to check permissions of the clients.
+    Open Notificaties uses Autorisaties API to check permissions of the clients that
+    make requests to Open Notificaties.
 
-    1. Set up authorization to point to the API
-    2. Add credentials for Open Notifications to request Open Zaak
-
-    Normal mode doesn't change the credentials after its initial creation.
-    If the client_id or secret is changed, run this command with 'overwrite' flag
+    This step configures Open Notificaties to use the specified Autorisaties API. It is
+    dependent on ``zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep``
+    to load a ``Service`` for this Autorisaties API, which is referred to in this step by
+    ``authorizations_api_service_identifier``.
     """
 
     verbose_name = "Configuration for Autorisaties API"

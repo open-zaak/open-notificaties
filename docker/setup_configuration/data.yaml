@@ -3,16 +3,16 @@ zgw_consumers:
   services:
   - identifier: autorisaties-api
     label: Autorisaties API
-    api_root: http://localhost:8000/autorisaties/api/v1/
+    api_root: http://openzaak:8000/autorisaties/api/v1/
     api_type: ac
     auth_type: zgw
     client_id: open-notificaties
     secret: oPMsHCEuoP9Qh8vP06D7
     user_id: open-notificaties
-    user_representation: Open Notificaties Demodam
+    user_representation: Open Notificaties
   - identifier: notificaties-api
     label: Notificaties API
-    api_root: http://localhost:8001/api/v1/
+    api_root: http://web:8000/api/v1/
     api_type: nrc
     auth_type: zgw
     client_id: open-notificaties

@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from django_setup_configuration.exceptions import ConfigurationRunFailed
 from django_setup_configuration.test_utils import execute_single_step
 from vng_api_common.authorizations.models import AuthorizationsConfig, ComponentTypes
 from zgw_consumers.test.factories import ServiceFactory
@@ -58,3 +59,20 @@ class AuthorizationConfigurationTests(TestCase):
         execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
 
         make_assertions()
+
+    def test_execute_configuration_service_does_not_exist(self):
+        self.service.delete()
+        config = AuthorizationsConfig.get_solo()
+        config.authorizations_api_service = None
+        config.save()
+
+        with self.assertRaises(ConfigurationRunFailed) as exc:
+            execute_single_step(AuthorizationStep, yaml_source=CONFIG_FILE_PATH)
+        self.assertEqual(
+            str(exc.exception),
+            "Service matching query does not exist. (identifier = autorisaties-api)",
+        )
+
+        config = AuthorizationsConfig.get_solo()
+
+        self.assertIsNone(config.authorizations_api_service)

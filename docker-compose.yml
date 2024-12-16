@@ -3,11 +3,11 @@ version: '3.4'
 
 services:
   db:
-    image: postgres:12-alpine
+    image: postgis/postgis:12-2.5
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - ./docker-init-db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./docker/postgres.entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - db:/var/lib/postgresql/data
     command: postgres -c max_connections=300 -c log_min_messages=LOG
 
@@ -107,6 +107,44 @@ services:
       - "9000:80"
     depends_on:
       - web
+
+  openzaak:
+    image: openzaak/open-zaak:latest
+    environment: &app-env
+      - DJANGO_SETTINGS_MODULE=openzaak.conf.docker
+      - SECRET_KEY=${SECRET_KEY:-7(h1r2hk)8z9+05edulo_3qzymwbo&c24=)qz7+_@3&2sp=u%i}
+      - DB_NAME=openzaak
+      - DB_USER=openzaak
+      - IS_HTTPS=no
+      - ALLOWED_HOSTS=localhost,127.0.0.1,web,web.local,openzaak
+      - CORS_ALLOW_ALL_ORIGINS=True
+      - CSRF_TRUSTED_ORIGINS=http://localhost:9000
+      - CACHE_DEFAULT=redis:6379/0
+      - CACHE_AXES=redis:6379/0
+      - SUBPATH=${SUBPATH:-/}
+      - IMPORT_DOCUMENTEN_BASE_DIR=${IMPORT_DOCUMENTEN_BASE_DIR:-/app/import-data}
+      - IMPORT_DOCUMENTEN_BATCH_SIZE=${IMPORT_DOCUMENTEN_BATCH_SIZE:-500}
+      - OPENZAAK_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=admin
+      - OPENZAAK_SUPERUSER_EMAIL=admin@localhost
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - CELERY_LOGLEVEL=DEBUG
+      - CELERY_WORKER_CONCURRENCY=${CELERY_WORKER_CONCURRENCY:-4}
+      - ENVIRONMENT=dev
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # This should allow for enough time for migrations to run before the max
+      # retries have passed. This healthcheck in turn allows other containers
+      # to wait for the database migrations.
+      start_period: 30s
+    depends_on:
+      - db
+    ports:
+      - 8001:8000
 
 volumes:
   media:
