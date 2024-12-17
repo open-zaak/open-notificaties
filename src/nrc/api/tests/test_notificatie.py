@@ -70,6 +70,85 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             abon.id, msg, notificatie_id=Notificatie.objects.get().id, attempt=1
         )
 
+    def test_notificatie_multiple_filter_with_same_key_does_not_work(self, mock_task):
+        """
+        test /notificatie POST:
+        verify that having multiple filters within the same filtergroup with the same key
+        results in no notifications being set to the subscriber
+        """
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
+        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        # two filters with the same key, should result in no notification being sent
+        # to the subscriber
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value="082096752011"
+        )
+        FilterFactory.create(filter_group=filter_group, key="bron", value="12345")
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        response = self.client.post(notificatie_url, msg)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+        mock_task.assert_not_called()
+
+    def test_notificatie_for_abonnement_without_filter_group_does_not_work(
+        self, mock_task
+    ):
+        """
+        test /notificatie POST:
+        verify that having an Abonnement without filtergroup results in no notificaties
+        being sent to that subscriber
+
+        """
+        KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        AbonnementFactory.create(callback_url="https://example.com/callback")
+
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        response = self.client.post(notificatie_url, msg)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+        mock_task.assert_not_called()
+
     def test_notificatie_send_inconsistent_kenmerken(self, mock_task):
         """
         test /notificatie POST:

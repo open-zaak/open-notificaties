@@ -1,0 +1,18 @@
+notifications_abonnementen_config_enable: true
+notifications_abonnementen_config:
+  items:
+  - uuid: ff5a9438-6512-4c2d-b69e-6c512c466fb8
+    callback_url: http://localhost:8000/api/v1/callback
+    auth: Token foo
+    kanalen:
+    - filters:
+        zaaktype: http://open-zaak.local/catalogi/api/v1/zaaktypen/d0b3a90d-7959-4699-8bdb-bf228aef5e21
+      naam: zaken
+    - filters:
+        vertrouwelijkheidaanduiding: beperkt_openbaar
+      naam: zaken
+  - uuid: 03baec5a-93ef-4ba6-bb73-c548c12009a2
+    callback_url: http://localhost:8000/api/v1/other-callback
+    auth: Token bar
+    kanalen:
+    - naam: documenten

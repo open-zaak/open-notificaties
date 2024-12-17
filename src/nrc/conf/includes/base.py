@@ -136,6 +136,8 @@ SETUP_CONFIGURATION_STEPS = [
     "zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep",
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
     "nrc.setup_configuration.authorization.AuthorizationStep",
+    "nrc.setup_configuration.kanalen.KanaalConfigurationStep",
+    "nrc.setup_configuration.abonnementen.AbonnementConfigurationStep",
 ]
 
 #
