@@ -65,7 +65,7 @@ vng_api_common_credentials_config_enable: True
 vng_api_common_credentials:
   items:
     # Credentials for Open Zaak to be able to make requests to Open Notificaties
-    - identifier: open-zaak2
+    - identifier: open-zaak
       secret: G2LIVfXal1J93puQkV3O
     # Credentials for Open Notificaties, required for autorisaties subscription
     - identifier: open-notificaties
@@ -125,9 +125,32 @@ notifications_abonnementen_config:
       auth: Token bar
       kanalen:
         - naam: zaken
+    - uuid: 0f616bfd-aacc-4d85-a140-2af17a56217b
+      callback_url: http://web:8000/api/v1/callbacks
+      auth: Bearer foo
+      kanalen:
+        - naam: autorisaties
 
 sites_config_enable: true
 sites_config:
   items:
     - domain: example.com
       name: Open Notificaties
+
+notifications_config_enable: true
+notifications_config:
+  notifications_api_service_identifier: notificaties-api
+  notification_delivery_max_retries: 1
+  notification_delivery_retry_backoff: 2
+  notification_delivery_retry_backoff_max: 3
+
+notifications_subscriptions_config_enable: true
+notifications_subscriptions_config:
+  items:
+    - identifier: autorisaties-subscription
+      callback_url: http://web:8000/api/v1/callbacks
+      client_id: open-notificaties
+      secret: oPMsHCEuoP9Qh8vP06D7
+      uuid: 0f616bfd-aacc-4d85-a140-2af17a56217b
+      channels:
+        - autorisaties
