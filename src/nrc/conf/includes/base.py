@@ -138,6 +138,7 @@ SETUP_CONFIGURATION_STEPS = [
     "nrc.setup_configuration.authorization.AuthorizationStep",
     "nrc.setup_configuration.kanalen.KanaalConfigurationStep",
     "nrc.setup_configuration.abonnementen.AbonnementConfigurationStep",
+    "django_setup_configuration.contrib.sites.steps.SitesConfigurationStep",
 ]
 
 #

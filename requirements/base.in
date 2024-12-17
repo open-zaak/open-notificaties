@@ -4,6 +4,7 @@ open-api-framework
 markdown
 self-certifi
 furl
+django-setup-configuration>=0.5.0
 zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
