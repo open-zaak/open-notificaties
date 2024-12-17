@@ -5,11 +5,12 @@ Open Notificaties configuration (CLI)
 =====================================
 
 After deploying Open Notificaties, it needs to be configured to be fully functional. The
-command line tool ``setup_configuration`` assists with this configuration:
+command line tool ``setup_configuration`` assist with this configuration by loading a
+YAML file in which the configuration information is specified.
 
-* It uses environment variables for all configuration choices, therefore you can integrate this with your
-  infrastructure tooling such as init containers and/or Kubernetes Jobs.
-* The command can self-test the configuration to detect problems early on
+.. code-block:: bash
+
+    src/manage.py setup_configuration --yaml-file /path/to/your/yaml
 
 You can get the full command documentation with:
 
@@ -21,96 +22,95 @@ You can get the full command documentation with:
    running the command and you then run the exact same command again, the manual
    changes will be reverted.
 
-
 Preparation
 ===========
 
 The command executes the list of pluggable configuration steps, and each step
-requires specific environment variables, that should be prepared.
-Here is the description of all available configuration steps and the environment variables,
-use by each step.
+requires specific configuration information, that should be prepared.
+Here is the description of all available configuration steps and the shape of the data,
+used by each step.
+
+
+Services configuration
+----------------------
+
+In order for Open Notificaties to make requests to external services (such as the Autorisaties API),
+``Services`` must be configured. To enable this step, set ``zgw_consumers_config_enable`` to ``true`` in your
+configuration file and specify a list of ``Services``, for example:
+
+.. code-block:: yaml
+
+    zgw_consumers_config_enable: true
+    zgw_consumers:
+    services:
+      # all possible configurable fields
+      - identifier: objecten-test
+        label: Objecten API test
+        api_root: http://objecten.local/api/v1/
+        api_connection_check_path: objects
+        api_type: orc
+        auth_type: api_key
+        header_key: Authorization
+        header_value: Token foo
+        client_id: client
+        secret: super-secret
+        nlx: http://some-outway-adress.local:8080/
+        user_id: open-formulieren
+        user_representation: Open Formulieren
+        timeout: 5
+      # minimum required fields
+      - identifier: objecttypen-test
+        label: Objecttypen API test
+        api_root: http://objecttypen.local/api/v1/
+        api_type: orc
+        auth_type: api_key
+
+Client credentials
+------------------
+
+TODO: add generated documentation for ``JWTSecretsConfigurationStep``
+
+
+Autorisaties API configuration
+------------------------------
+
+Open Notificaties uses Autorisaties API to check permissions of the clients that
+make requests to Open Notificaties.
+
+This step configures Open Notificaties to use the specified Autorisaties API (see also :ref:`installation_configuration`). It is
+dependent on the `Services configuration`_ step to load a ``Service`` for this Autorisaties API,
+which is referred to in this step by ``authorizations_api_service_identifier``.
+To enable this step, set ``autorisaties_api_config_enable`` to ``true`` in your
+configuration file and specify which ``Service`` to use as the Autorisaties API, for example:
+
+.. code-block:: yaml
+
+    autorisaties_api_config_enable: True
+    autorisaties_api:
+      authorizations_api_service_identifier: autorisaties-api
+
+.. _installation_configuration_cli_retry:
+
+Notificaties configuration
+--------------------------
+
+TODO: add generated documentation
+
 
 Sites configuration
 -------------------
 
-Configure the domain where Open Notificaties is hosted
-
-* ``SITES_CONFIG_ENABLE``: enable Site configuration. Defaults to ``False``.
-* ``OPENNOTIFICATIES_DOMAIN``:  a ``[host]:[port]`` or ``[host]`` value. Required.
-* ``OPENNOTIFICATIES_ORGANIZATION``: name of Open Notificaties organization. Required.
-
-Authorization configuration
----------------------------
-
-Open Notificaties uses Open Zaak Authorisaties API to check authorizations
-of its consumers, therefore Open Notificaties should be able to request Open Zaak.
-Make sure that the correct permissions are configured in Open Zaak Autorisaties API.
-
-* ``AUTHORIZATION_CONFIG_ENABLE``: enable Authorization configuration. Defaults
-  to ``False``.
-* ``AUTORISATIES_API_ROOT``: full URL to the Authorisaties API root, for example
-  ``https://open-zaak.gemeente.local/autorisaties/api/v1/``. Required.
-* ``NOTIF_OPENZAAK_CLIENT_ID``: a client id, which Open Notificaties uses to request
-  Open Zaak, for example, ``open-notificaties``. Required.
-* ``NOTIF_OPENZAAK_SECRET``: some random string. Required.
-
-Open Zaak authentication configuration
---------------------------------------
-
-Open Zaak published notifications to the Open Notificaties, therefore it should have access.
-Make sure that the correct permissions are configured in Open Zaak Autorisaties API.
-
-* ``OPENZAAK_NOTIF_CONFIG_ENABLE``: enable Open Zaak configuration. Defaults to ``False``.
-* ``OPENZAAK_NOTIF_CLIENT_ID``: a client id, which Open Zaak uses to request Open Notificaties,
-  for example, ``open-zaak``. Required.
-* ``OPENZAAK_NOTIF_SECRET``: some random string. Required.
-
-.. _installation_configuration_cli_retry:
-
-Notification retry configuration
---------------------------------
-
-Open Notifications has a retry mechanism to guarantee notification delivery, this mechanism
-is described in :ref:`delivery_guarantees`. The parameters for this behavior can be configured via the
-following environment variables.
-
-* ``NOTIFICATION_RETRY_CONFIG_ENABLE``: enable Notification retry configuration. Defaults to ``False``.
-* ``NOTIFICATION_DELIVERY_MAX_RETRIES``: the maximum number of retries Celery will do if sending a notification failed.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF``: a boolean or a number. If this option is set to
-  ``True``, autoretries will be delayed following the rules of exponential backoff. If
-  this option is set to a number, it is used as a delay factor.
-* ``NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX``: an integer, specifying number of seconds.
-  If ``retry_backoff`` is enabled, this option will set a maximum delay in seconds
-  between task autoretries. By default, this option is set to 48 seconds.
-
-These settings can also later be changed via the admin interface, under ``Configuration > Notification component configuration``.
+TODO: add generated documentation
 
 Execution
 =========
 
-With the full command invocation, everything is configured at once and immediately
-tested. For all the self-tests to succeed, it's important that the configuration in the
-Open Zaak is done before calling this command.
+Open Notificaties configuration
+-------------------------------
 
-.. code-block:: bash
-
-    src/manage.py setup_configuration
-
-
-Alternatively, you can skip the self-tests by using the ``--no-selftest`` flag.
-
-.. code-block:: bash
-
-    src/manage.py setup_configuration --no-self-test
-
-
-``setup_configuration`` command checks if the configuration already exists before changing it.
-If you want to change some of the values of the existing configuration you can use ``--overwrite`` flag.
-
-.. code-block:: bash
-
-    src/manage.py setup_configuration --overwrite
-
+With the full command invocation, all defined configuration steps are applied. Each step is idempotent,
+so it's safe to run the command multiple times. The steps will overwrite any manual changes made in
+the admin if you run the command after making these changes.
 
 .. note:: Due to a cache-bug in the underlying framework, you need to restart all
    replicas for part of this change to take effect everywhere.

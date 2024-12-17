@@ -20,7 +20,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
     # Project applications.
     "nrc.accounts",
     "nrc.api",
-    "nrc.config",
+    "nrc.setup_configuration",
     "nrc.datamodel",
     "nrc.utils",
 ]
@@ -132,10 +132,9 @@ ZGW_CONSUMERS_TEST_SCHEMA_DIRS = [
 # Django setup configuration
 #
 SETUP_CONFIGURATION_STEPS = [
-    "nrc.config.site.SiteConfigurationStep",
-    "nrc.config.authorization.AuthorizationStep",
-    "nrc.config.authorization.OpenZaakAuthStep",
-    "nrc.config.notification_retry.NotificationRetryConfigurationStep",
+    "zgw_consumers.contrib.setup_configuration.steps.ServiceConfigurationStep",
+    "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
+    "nrc.setup_configuration.authorization.AuthorizationStep",
 ]
 
 #
@@ -152,44 +151,4 @@ config(
         "disabling SSL certificate verification. Example: "
         "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
     ),
-)
-
-#
-# Open Notificaties settings
-#
-
-# Settings for setup_configuration command
-# sites config
-SITES_CONFIG_ENABLE = config("SITES_CONFIG_ENABLE", default=False, add_to_docs=False)
-OPENNOTIFICATIES_DOMAIN = config("OPENNOTIFICATIES_DOMAIN", "", add_to_docs=False)
-OPENNOTIFICATIES_ORGANIZATION = config(
-    "OPENNOTIFICATIES_ORGANIZATION", "", add_to_docs=False
-)
-# notif -> OZ auth config
-AUTHORIZATION_CONFIG_ENABLE = config(
-    "AUTHORIZATION_CONFIG_ENABLE", default=False, add_to_docs=False
-)
-AUTORISATIES_API_ROOT = config("AUTORISATIES_API_ROOT", "", add_to_docs=False)
-NOTIF_OPENZAAK_CLIENT_ID = config("NOTIF_OPENZAAK_CLIENT_ID", "", add_to_docs=False)
-NOTIF_OPENZAAK_SECRET = config("NOTIF_OPENZAAK_SECRET", "", add_to_docs=False)
-# OZ -> notif config
-OPENZAAK_NOTIF_CONFIG_ENABLE = config(
-    "OPENZAAK_NOTIF_CONFIG_ENABLE", default=False, add_to_docs=False
-)
-OPENZAAK_NOTIF_CLIENT_ID = config("OPENZAAK_NOTIF_CLIENT_ID", "", add_to_docs=False)
-OPENZAAK_NOTIF_SECRET = config("OPENZAAK_NOTIF_SECRET", "", add_to_docs=False)
-
-# setup configuration for Notification retry
-# Retry settings for delivering notifications to subscriptions
-NOTIFICATION_RETRY_CONFIG_ENABLE = config(
-    "NOTIFICATION_RETRY_CONFIG_ENABLE", default=False, add_to_docs=False
-)
-NOTIFICATION_DELIVERY_MAX_RETRIES = config(
-    "NOTIFICATION_DELIVERY_MAX_RETRIES", None, add_to_docs=False
-)
-NOTIFICATION_DELIVERY_RETRY_BACKOFF = config(
-    "NOTIFICATION_DELIVERY_RETRY_BACKOFF", None, add_to_docs=False
-)
-NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX = config(
-    "NOTIFICATION_DELIVERY_RETRY_BACKOFF_MAX", None, add_to_docs=False
 )

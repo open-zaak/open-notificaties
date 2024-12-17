@@ -1,0 +1,3 @@
+autorisaties_api_config_enable: True
+autorisaties_api:
+  authorizations_api_service_identifier: autorisaties-api

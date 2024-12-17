@@ -6,4 +6,4 @@
 #set -e
 
 src/manage.py migrate
-src/manage.py setup_configuration --no-selftest
+src/manage.py setup_configuration --yaml-file setup_configuration/data.yaml
