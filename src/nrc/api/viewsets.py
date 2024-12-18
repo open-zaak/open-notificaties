@@ -7,6 +7,7 @@ from vng_api_common.permissions import AuthScopesRequired, ClientIdRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
 from nrc.datamodel.models import Abonnement, Kanaal
+from nrc.utils.help_text import mark_experimental
 
 from .filters import KanaalFilter
 from .scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
@@ -54,17 +55,22 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(summary="Alle KANAALen opvragen."),
     retrieve=extend_schema(summary="Een specifiek KANAAL opvragen."),
+    update=extend_schema(summary=mark_experimental("Een specifiek KANAAL bewerken.")),
+    partial_update=extend_schema(
+        summary=mark_experimental("Een specifiek KANAAL deels bewerken.")
+    ),
     create=extend_schema(summary="Maak een KANAAL aan."),
 )
 class KanaalViewSet(
     CheckQueryParamsMixin,
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
     """
-    Opvragen en aanmaken van KANAALen.
+    Opvragen, aanmaken en bewerken van KANAALen.
 
     Op een KANAAL publiceren componenten (bronnen) hun NOTIFICATIEs. Alleen
     componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
@@ -80,6 +86,8 @@ class KanaalViewSet(
         "list": SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
         "retrieve": SCOPE_NOTIFICATIES_PUBLICEREN | SCOPE_NOTIFICATIES_CONSUMEREN,
         "create": SCOPE_NOTIFICATIES_PUBLICEREN,
+        "update": SCOPE_NOTIFICATIES_PUBLICEREN,
+        "partial_update": SCOPE_NOTIFICATIES_PUBLICEREN,
     }
 
 

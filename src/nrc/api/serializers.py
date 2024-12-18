@@ -8,7 +8,8 @@ from django.utils.translation import gettext_lazy as _
 from djangorestframework_camel_case.util import camelize, underscoreize
 from notifications_api_common.api.serializers import NotificatieSerializer
 from rest_framework import fields, serializers
-from vng_api_common.validators import URLValidator
+from rest_framework.validators import UniqueValidator
+from vng_api_common.validators import IsImmutableValidator, URLValidator
 
 from nrc.api.tasks import deliver_message
 from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie
@@ -39,6 +40,12 @@ class KanaalSerializer(serializers.ModelSerializer):
         fields = ("url", "naam", "documentatie_link", "filters")
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
+            "naam": {
+                "validators": [
+                    UniqueValidator(queryset=Kanaal.objects.all()),
+                    IsImmutableValidator(),
+                ]
+            },
             "documentatie_link": {"required": False, "validators": [URLValidator()]},
             "filters": {"required": False},
         }
