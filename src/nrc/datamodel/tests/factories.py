@@ -19,7 +19,7 @@ class AbonnementFactory(factory.django.DjangoModelFactory):
 
 
 class KanaalFactory(factory.django.DjangoModelFactory):
-    naam = factory.Faker("word")
+    naam = factory.Sequence(lambda n: f"kanaal_{n}")
     documentatie_link = factory.Faker("url")
     filters = factory.List(factory.Faker("word") for i in range(3))
 
