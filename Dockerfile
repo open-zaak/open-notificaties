@@ -37,6 +37,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         procps \
         nano \
         curl \
+        gettext \
         postgresql-client \
         # Required for Celery to work.
         netcat-openbsd \
