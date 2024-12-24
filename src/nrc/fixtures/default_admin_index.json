@@ -65,6 +65,10 @@
             [
                 "datamodel",
                 "notificatie"
+            ],
+            [
+                "datamodel",
+                "notificatieresponse"
             ]
         ]
     }
