@@ -7,6 +7,7 @@ from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
+from rest_framework.fields import DateTimeField
 
 
 class Kanaal(models.Model):
@@ -152,6 +153,14 @@ class Notificatie(models.Model):
         return (
             self.notificatieresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
         )
+
+    @property
+    def created_date(self):
+        aanmaakdatum = self.forwarded_msg.get("aanmaakdatum")
+        if not aanmaakdatum:
+            return None
+
+        return DateTimeField().to_internal_value(aanmaakdatum)
 
     def __str__(self) -> str:
         return f"Notificatie ({self.kanaal})"

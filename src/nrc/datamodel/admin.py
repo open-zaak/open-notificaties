@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 
 from requests.exceptions import RequestException
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import DateTimeField
 
 from nrc.api.utils import send_notification
 from nrc.api.validators import CallbackURLValidator
@@ -196,14 +195,23 @@ class FilterGroup(admin.ModelAdmin):
 
 @admin.register(NotificatieResponse)
 class NotificatieResponseAdmin(admin.ModelAdmin):
-    list_display = ("notificatie", "abonnement", "get_result_display")
-
+    list_display = (
+        "notificatie",
+        "get_notificatie_created_date",
+        "abonnement",
+        "get_result_display",
+    )
+    raw_id_fields = ["notificatie", "abonnement"]
     list_filter = ("abonnement", "response_status")
     search_fields = ("abonnement",)
 
     @admin.display(description=_("result"))
     def get_result_display(self, obj):
         return obj.response_status or obj.exception
+
+    @admin.display(description=_("Notificatie created date"))
+    def get_notificatie_created_date(self, obj):
+        return obj.notificatie.created_date
 
 
 class NotificatieResponseInline(admin.TabularInline):
@@ -283,14 +291,6 @@ class NotificatieAdmin(admin.ModelAdmin):
     @admin.display(description=_("Resource"))
     def resource(self, obj):
         return obj.forwarded_msg.get("resource")
-
-    @admin.display(description=_("Created date"))
-    def created_date(self, obj):
-        aanmaakdatum = obj.forwarded_msg.get("aanmaakdatum")
-        if not aanmaakdatum:
-            return None
-
-        return DateTimeField().to_internal_value(aanmaakdatum)
 
     def get_inline_instances(self, request, obj=None):
         # Hide the NotificatieResponseInline when creating a Notification
