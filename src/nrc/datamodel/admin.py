@@ -115,9 +115,9 @@ class StatusCodeFilter(admin.SimpleListFilter):
 @admin.register(Abonnement)
 class AbonnementAdmin(admin.ModelAdmin):
     list_display = (
-        "callback_url",
         "uuid",
         "client_id",
+        "callback_url",
         "get_callback_url_reachable",
         "get_kanalen_display",
     )
