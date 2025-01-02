@@ -88,7 +88,7 @@ class Abonnement(models.Model):
         verbose_name_plural = _("abonnementen")
 
     def __str__(self) -> str:
-        return f"{self.callback_url}"
+        return self.callback_url
 
     @property
     def kanalen(self):
