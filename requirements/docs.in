@@ -1,0 +1,8 @@
+-c base.txt
+-r base.txt
+
+# Documentation
+recommonmark
+Sphinx
+sphinx-rtd-theme
+sphinx-tabs
