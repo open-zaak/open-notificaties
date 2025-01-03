@@ -1,5 +1,6 @@
 from functools import partial
 from pathlib import Path
+from unittest import skip
 from unittest.mock import patch
 from urllib.parse import urlparse
 
@@ -148,6 +149,7 @@ class OIDCFLowTests(WebTest):
         self.assertEqual(staff_user.username, "admin")
         self.assertEqual(staff_user.email, "admin@example.com")
 
+    @skip("Session Refresh is disabled")
     @mock_admin_oidc_config()
     @patch(
         "mozilla_django_oidc.middleware.SessionRefresh.is_refreshable_url",
