@@ -2,11 +2,30 @@
 Changes
 =======
 
-1.x.x (TBD)
------------
+1.8.0 (2024-01-07)
+------------------
+
+**New features**
+
+* [#108] Admin action to check Abonnement callback status
+* [#180] Provide an admin overview for notificatie responses
+* [#207] Add experimental PUT and PATCH for Kanaal
+* [#199] Add Admin OIDC Configuration step from django-setup-configuration
+* [#204] Add SitesConfiguration step from django-setup-configuration
+* [#200] Autorisaties-API configuration via django-setup-configuration
+* [#202] Configuration Kanalen via django-setup-configuration
+* [#202] Configuration Abonnementen via django-setup-configuration
+* [#203] Configuration Notification settings via django-setup-configuration
+* [maykinmedia/open-api-framework#46] Upgrade open-api-framework to 0.9.1
+
 **Bugfixes and QOL**
 
-* [#66] updated commonground-api-common to 2.1.0 (TBD)
+* [maykinmedia/open-api-framework#66] Update zgw consumers to 0.36.0
+* [#199] Upgrade mozilla-django-oidc-db to 0.21.1
+* [#203] Upgrade notifications-api-common to 0.4.0
+* [#204] Upgrade django-setup-configuration to 0.5.0
+* [#200] Fix ``CELERY_LOGLEVEL`` not working
+* [#200] Upgrade commonground-api-common to 2.2.0
 
 .. warning::
 
@@ -14,6 +33,26 @@ Changes
     replaces the `APICredential` model in the admin interface. A data migration
     was added to move to the `Service` model. It is advised to verify the `Service`
     instances in the admin to check that the data migration was ran as expected.
+
+.. warning::
+
+    ``LOG_STDOUT`` configuration variable now defaults to ``True`` instead of ``False``
+
+.. warning::
+
+    The previous setup configurations are no longer supported.
+    Make sure to replace the old configurations with the new ones.
+
+**Project maintenance**
+
+* [maykinmedia/objects-api#463] Add trivy image scan
+* [maykinmedia/open-api-framework#92] Fix docker latest tag publish
+* [maykinmedia/open-api-framework#13] Consistent CI configuration across the different projects.
+
+**Documentation**
+
+* [#200] Update docs for setup configuration changes
+* [maykinmedia/objects-api#403] Update delivery guarantee documentation
 
 
 1.7.1 (2024-10-04)
