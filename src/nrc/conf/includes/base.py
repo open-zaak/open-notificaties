@@ -65,6 +65,12 @@ LOG_NOTIFICATIONS_IN_DB = config(
     group="Notifications",
 )
 
+NOTIFICATION_REQUESTS_TIMEOUT = config(
+    "NOTIFICATION_REQUESTS_TIMEOUT",
+    default=10,
+    help_text="Timeout in seconds for HTTP requests.",
+    group="Notifications",
+)
 
 ##############################
 #                            #
