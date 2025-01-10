@@ -65,6 +65,12 @@ LOG_NOTIFICATIONS_IN_DB = config(
     group="Notifications",
 )
 
+NOTIFICATION_REQUESTS_TIMEOUT = config(
+    "NOTIFICATION_REQUESTS_TIMEOUT",
+    default=10,
+    help_text="Timeout in seconds for HTTP requests.",
+    group="Notifications",
+)
 
 ##############################
 #                            #
@@ -110,6 +116,25 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(0, 0, day_of_month="1"),
     },
 }
+
+# Add (by default) 5 (soft), 15 (hard) minute timeouts to all Celery tasks.
+CELERY_TASK_TIME_LIMIT = config(
+    "CELERY_TASK_HARD_TIME_LIMIT",
+    default=15 * 60,
+    help_text=(
+        "If a celery task exceeds this time limit, the worker processing the task will "
+        "be killed and replaced with a new one."
+    ),
+    group="Celery",
+)  # hard
+CELERY_TASK_SOFT_TIME_LIMIT = config(
+    "CELERY_TASK_SOFT_TIME_LIMIT",
+    default=5 * 60,
+    help_text=(
+        "If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised."
+    ),
+    group="Celery",
+)  # soft
 
 #
 # Delete Notifications

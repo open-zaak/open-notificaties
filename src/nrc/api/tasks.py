@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
@@ -40,6 +41,7 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
             sub.callback_url,
             data=json.dumps(msg, cls=DjangoJSONEncoder),
             headers={"Content-Type": "application/json", "Authorization": sub.auth},
+            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,
         )
         response_init_kwargs = {"response_status": response.status_code}
         if not 200 <= response.status_code < 300:
