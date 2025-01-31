@@ -2,6 +2,18 @@
 Changes
 =======
 
+1.9.0 (WIP)
+-----------
+
+* [#170] Add uniqu constraint for ``(Filter.filter_group, Filter.key)`` fields.
+
+.. warning::
+
+    The unique constraint is added for ``(Filter.filter_group, Filter.key)``.
+    If "datamodel.0017" migration is failing, remove duplicated manually from
+    the ``Filter`` model and try to run it again.
+
+
 1.8.0 (2025-01-13)
 ------------------
 
