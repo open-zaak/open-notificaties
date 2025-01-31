@@ -13,6 +13,11 @@ logger = logging.getLogger(__name__)
 class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationModel]):
     """
     Configure Abonnementen for Notificaties API
+
+    .. note::
+
+        The configured data here must correspond with the configured data from
+        the previous step ``NotificationSubscriptionConfigurationStep``
     """
 
     verbose_name = "Configuration for Notificaties API Abonnementen"
