@@ -4,7 +4,7 @@ open-api-framework
 markdown
 self-certifi
 furl
-django-setup-configuration>=0.5.0
+django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
 notifications-api-common[setup-configuration]
