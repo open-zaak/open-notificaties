@@ -20,22 +20,22 @@ services:
   web:
     build: .
     environment: &app-env
-      - DJANGO_SETTINGS_MODULE=nrc.conf.docker
-      - SECRET_KEY=${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
-      - IS_HTTPS=no
-      - ALLOWED_HOSTS=*
-      - CACHE_DEFAULT=redis:6379/0
-      - CACHE_AXES=redis:6379/1
-      - RABBITMQ_HOST=rabbitmq
-      - PUBLISH_BROKER_URL=amqp://guest:guest@rabbitmq:5672/%2F
-      - CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672//
-      - CELERY_RESULT_BACKEND=redis://redis:6379/1
-      - CELERY_LOGLEVEL=DEBUG
-      - CELERY_WORKER_CONCURRENCY=${CELERY_WORKER_CONCURRENCY:-4}
-      - SUBPATH=${SUBPATH:-/}
-      - OPENNOTIFICATIES_SUPERUSER_USERNAME=admin
-      - OPENNOTIFICATIES_SUPERUSER_EMAIL=admin@localhost
-      - DJANGO_SUPERUSER_PASSWORD=admin
+      DJANGO_SETTINGS_MODULE: nrc.conf.docker
+      SECRET_KEY: ${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
+      IS_HTTPS: no
+      ALLOWED_HOSTS: '*'
+      CACHE_DEFAULT: redis:6379/0
+      CACHE_AXES: redis:6379/1
+      RABBITMQ_HOST: rabbitmq
+      PUBLISH_BROKER_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      CELERY_BROKER_URL: amqp://guest:guest@rabbitmq:5672//
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      CELERY_LOGLEVEL: DEBUG
+      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-4}
+      SUBPATH: ${SUBPATH:-/}
+      OPENNOTIFICATIES_SUPERUSER_USERNAME: admin
+      OPENNOTIFICATIES_SUPERUSER_EMAIL: admin@localhost
+      DJANGO_SUPERUSER_PASSWORD: admin
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])"]
       interval: 30s
@@ -56,7 +56,11 @@ services:
 
   web-init:
     build: .
-    environment: *app-env
+    environment:
+      <<: *app-env
+      #
+      # Django-setup-configuration
+      RUN_SETUP_CONFIG: ${RUN_SETUP_CONFIG:-true}
     command: /setup_configuration.sh
     depends_on:
       - db
