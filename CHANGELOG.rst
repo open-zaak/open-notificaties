@@ -5,7 +5,7 @@ Changes
 1.9.0 (WIP)
 -----------
 
-* [#170] Add uniqu constraint for ``(Filter.filter_group, Filter.key)`` fields.
+* [#170] Add unique constraint for ``(Filter.filter_group, Filter.key)`` fields.
 
 .. warning::
 
