@@ -10,7 +10,7 @@ Changes
 .. warning::
 
     The unique constraint is added for ``(Filter.filter_group, Filter.key)``.
-    If "datamodel.0017" migration is failing, remove duplicated manually from
+    If "datamodel.0017" migration is failing, remove duplicate entries manually from
     the ``Filter`` model and try to run it again.
 
 
