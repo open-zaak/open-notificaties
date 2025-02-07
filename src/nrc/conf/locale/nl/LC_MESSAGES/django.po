@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-07 10:58+0000\n"
+"POT-Creation-Date: 2025-02-07 11:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,7 +112,7 @@ msgid ""
 msgstr ""
 
 #: src/nrc/api/serializers.py:82 src/nrc/datamodel/admin.py:158
-#: src/nrc/datamodel/models.py:44
+#: src/nrc/datamodel/models.py:43
 msgid "kanalen"
 msgstr ""
 
@@ -154,7 +154,7 @@ msgid "De opgegeven callback URL is niet beveiligd met autorisatie."
 msgstr ""
 
 #: src/nrc/datamodel/admin.py:37 src/nrc/datamodel/models.py:32
-#: src/nrc/datamodel/models.py:112
+#: src/nrc/datamodel/models.py:111
 msgid "filters"
 msgstr ""
 
@@ -231,99 +231,105 @@ msgstr "Succes"
 msgid "Failure"
 msgstr "Mislukt"
 
-#: src/nrc/datamodel/models.py:17 src/nrc/datamodel/models.py:62
+#: src/nrc/datamodel/models.py:17 src/nrc/datamodel/models.py:61
 msgid "Unique resource identifier (UUID4)"
 msgstr ""
 
 #: src/nrc/datamodel/models.py:20
-msgid "Naam"
-msgstr ""
+msgid "Name"
+msgstr "Naam"
 
 #: src/nrc/datamodel/models.py:24
 msgid ""
-"Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron "
-"vertegenwoordigd."
-msgstr ""
+"Name of the KANAAL (also called \"Exchange\") that represents the source."
+msgstr "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd."
 
 #: src/nrc/datamodel/models.py:28
-msgid "Documentatie link"
-msgstr ""
+msgid "Documentation link"
+msgstr "Documentatie link"
 
 #: src/nrc/datamodel/models.py:28
-msgid "URL naar documentatie."
-msgstr ""
+msgid "URL to documentation."
+msgstr "URL naar documentatie."
 
 #: src/nrc/datamodel/models.py:36
 msgid ""
-"Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken "
-"kunnen worden gebruikt bij het aanmaken van een ABONNEMENT."
+"List of possible filter attributes for a KANAAL. These filter attributes can "
+"be used when creating an ABONNEMENT"
 msgstr ""
+"Lijst van mogelijke filter kenmerken van een KANAAL. Deze "
+"filter kenmerken kunnen worden gebruikt bij het aanmaken "
+"van een ABONNEMENT."
 
-#: src/nrc/datamodel/models.py:43
+#: src/nrc/datamodel/models.py:42
 msgid "kanaal"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:65
+#: src/nrc/datamodel/models.py:64
 msgid "Callback URL"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:67
+#: src/nrc/datamodel/models.py:66
 msgid ""
+"The URL to which notifications should be sent. This URL should point to an "
+"API that is suitable to receive notifications."
+msgstr ""
 "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient "
 "uit te komen bij een API die geschikt is om notificaties op te ontvangen."
-msgstr ""
 
-#: src/nrc/datamodel/models.py:72
-msgid "Autorisatie header"
-msgstr ""
+#: src/nrc/datamodel/models.py:71
+msgid "Authorisation header"
+msgstr "Autorisatie header"
 
-#: src/nrc/datamodel/models.py:75
+#: src/nrc/datamodel/models.py:74
 msgid ""
+"Content of the Authorization header when sending notifications to the "
+"\"Callback URL\", for example: Bearer a4daa31..."
+msgstr ""
 "Autorisatie header invulling voor het vesturen naar de \"Callback URL\". "
 "Voorbeeld: Bearer a4daa31..."
-msgstr ""
 
-#: src/nrc/datamodel/models.py:80
+#: src/nrc/datamodel/models.py:79
 msgid "Client ID"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:83
+#: src/nrc/datamodel/models.py:82
 msgid "Client ID extracted from Auth header"
 msgstr "Client ID uit de Auth header"
 
-#: src/nrc/datamodel/models.py:87
+#: src/nrc/datamodel/models.py:86
 msgid "abonnement"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:88
+#: src/nrc/datamodel/models.py:87
 msgid "abonnementen"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:111
+#: src/nrc/datamodel/models.py:110
 msgid "filter"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:132
+#: src/nrc/datamodel/models.py:131
 msgid "Sleutel"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:133
+#: src/nrc/datamodel/models.py:132
 msgid "Waarde"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:143
+#: src/nrc/datamodel/models.py:142
 msgid "filter-onderdeel"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:144
+#: src/nrc/datamodel/models.py:143
 msgid "filter-onderdelen"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:174
+#: src/nrc/datamodel/models.py:173
 msgid "attempt"
 msgstr "poging"
 
-#: src/nrc/datamodel/models.py:175
+#: src/nrc/datamodel/models.py:174
 msgid "Indicates to which delivery attempt this response belongs."
 msgstr "Geeft aan bij de hoeveelste afleverpoging dit antwoord hoort."
 

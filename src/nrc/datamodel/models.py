@@ -17,15 +17,15 @@ class Kanaal(models.Model):
         help_text=_("Unique resource identifier (UUID4)"),
     )
     naam = models.CharField(
-        _("Naam"),
+        _("Name"),
         max_length=50,
         unique=True,
         help_text=_(
-            'Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron vertegenwoordigd.'
+            'Name of the KANAAL (also called "Exchange") that represents the source.'
         ),
     )
     documentatie_link = models.URLField(
-        _("Documentatie link"), blank=True, help_text=_("URL naar documentatie.")
+        _("Documentation link"), blank=True, help_text=_("URL to documentation.")
     )
     filters = ArrayField(
         models.CharField(max_length=100),
@@ -33,9 +33,8 @@ class Kanaal(models.Model):
         blank=True,
         default=list,
         help_text=_(
-            "Lijst van mogelijke filter kenmerken van een KANAAL. Deze "
-            "filter kenmerken kunnen worden gebruikt bij het aanmaken "
-            "van een ABONNEMENT."
+            "List of possible filter attributes for a KANAAL. These filter attributes "
+            "can be used when creating an ABONNEMENT"
         ),
     )
 
@@ -64,16 +63,16 @@ class Abonnement(models.Model):
     callback_url = models.URLField(
         _("Callback URL"),
         help_text=_(
-            "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient uit te komen bij een "
-            "API die geschikt is om notificaties op te ontvangen."
+            "The URL to which notifications should be sent. This URL should point to an "
+            "API that is suitable to receive notifications."
         ),
     )
     auth = models.CharField(
-        _("Autorisatie header"),
+        _("Authorisation header"),
         max_length=1000,
         help_text=_(
-            'Autorisatie header invulling voor het vesturen naar de "Callback URL". Voorbeeld: Bearer '
-            "a4daa31..."
+            "Content of the Authorization header when sending notifications to "
+            'the "Callback URL", for example: Bearer a4daa31...'
         ),
     )
     client_id = models.CharField(
