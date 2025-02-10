@@ -3,7 +3,7 @@ name: Check Open API Framework Version
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - '*'
   workflow_dispatch:
