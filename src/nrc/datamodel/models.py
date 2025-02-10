@@ -142,6 +142,7 @@ class Filter(models.Model):
         ordering = ("id",)
         verbose_name = _("filter-onderdeel")
         verbose_name_plural = _("filter-onderdelen")
+        unique_together = ["filter_group", "key"]
 
 
 class Notificatie(models.Model):
