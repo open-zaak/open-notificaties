@@ -13,6 +13,15 @@ logger = logging.getLogger(__name__)
 class KanaalConfigurationStep(BaseConfigurationStep[KanaalConfigurationModel]):
     """
     Configure Kanalen for Notificaties API
+
+    If Open Notificaties is being configured together with Open Zaak, this step can be
+    used as a replacement for the ``register_kanalen`` command in Open Zaak, because that
+    command requires Open Zaak to be able to make requests to Open Notificaties, which can
+    cause issues when deploying multiple application at once.
+
+    To use this step as a replacement for ``register_kanalen``, make sure to configure
+    the Kanalen defined in the
+    `Open Zaak repository <https://github.com/open-zaak/open-zaak/blob/main/src/notificaties.md>`_.
     """
 
     verbose_name = "Configuration for Notificaties API Kanalen"

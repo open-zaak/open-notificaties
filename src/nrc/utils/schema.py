@@ -7,11 +7,8 @@ from drf_spectacular.openapi import AutoSchema as _AutoSchema
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
 from rest_framework import exceptions, mixins, serializers
 from vng_api_common.constants import VERSION_HEADER
-from vng_api_common.inspectors.view import (
-    DEFAULT_ACTION_ERRORS,
-    HTTP_STATUS_CODE_TITLES,
-)
 from vng_api_common.permissions import BaseAuthRequired, get_required_scopes
+from vng_api_common.schema import DEFAULT_ACTION_ERRORS, HTTP_STATUS_CODE_TITLES
 from vng_api_common.serializers import FoutSerializer, ValidatieFoutSerializer
 from vng_api_common.views import ERROR_CONTENT_TYPE
 

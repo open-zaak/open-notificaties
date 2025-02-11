@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-03 08:40+0000\n"
+"POT-Creation-Date: 2025-02-07 11:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,64 +18,77 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/nrc/accounts/models.py:15
+#: src/nrc/accounts/models.py:16
 msgid "username"
 msgstr ""
 
-#: src/nrc/accounts/models.py:18
+#: src/nrc/accounts/models.py:19
 msgid "Required. 150 characters or fewer."
 msgstr ""
 
-#: src/nrc/accounts/models.py:19
+#: src/nrc/accounts/models.py:20
 msgid "A user with that username already exists."
 msgstr ""
 
-#: src/nrc/accounts/models.py:21
+#: src/nrc/accounts/models.py:22
 msgid "first name"
 msgstr ""
 
-#: src/nrc/accounts/models.py:22
+#: src/nrc/accounts/models.py:23
 msgid "last name"
 msgstr ""
 
-#: src/nrc/accounts/models.py:23
+#: src/nrc/accounts/models.py:24
 msgid "email address"
 msgstr ""
 
-#: src/nrc/accounts/models.py:25
+#: src/nrc/accounts/models.py:26
 msgid "staff status"
 msgstr ""
 
-#: src/nrc/accounts/models.py:27
+#: src/nrc/accounts/models.py:28
 msgid "Designates whether the user can log into this admin site."
 msgstr ""
 
-#: src/nrc/accounts/models.py:30
+#: src/nrc/accounts/models.py:31
 msgid "active"
 msgstr ""
 
-#: src/nrc/accounts/models.py:33
+#: src/nrc/accounts/models.py:34
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
 msgstr ""
 
-#: src/nrc/accounts/models.py:37
+#: src/nrc/accounts/models.py:38
 msgid "date joined"
 msgstr ""
 
-#: src/nrc/accounts/models.py:45
+#: src/nrc/accounts/models.py:46
 msgid "user"
 msgstr ""
 
-#: src/nrc/accounts/models.py:46
+#: src/nrc/accounts/models.py:47
 msgid "users"
 msgstr ""
 
-#: src/nrc/accounts/tests/test_oidc.py:17
-#: src/nrc/accounts/tests/test_oidc.py:35 src/nrc/templates/admin/login.html:11
+#: src/nrc/accounts/tests/test_admin.py:38
+msgid "Use a recovery token"
+msgstr ""
+
+#: src/nrc/accounts/tests/test_oidc.py:42
+#: src/nrc/accounts/tests/test_oidc.py:60
+#: src/nrc/accounts/tests/test_oidc.py:80
+#: src/nrc/accounts/tests/test_oidc.py:113
+#: src/nrc/accounts/tests/test_oidc.py:135
+#: src/nrc/templates/admin/login.html:11
+#: src/nrc/templates/maykin_2fa/login.html:9
 msgid "Login with organization account"
 msgstr "Inloggen met organisatieaccount"
+
+#: src/nrc/api/admin.py:24
+msgid "Gebruik het JWT-token nooit direct in een applicatie."
+msgstr ""
 
 #: src/nrc/api/serializers.py:24
 msgid "kenmerk"
@@ -85,41 +98,41 @@ msgstr ""
 msgid "Een waarde behorende bij de sleutel."
 msgstr ""
 
-#: src/nrc/api/serializers.py:52
+#: src/nrc/api/serializers.py:58
 msgid ""
 "De naam van het KANAAL (`KANAAL.naam`) waarop een abonnement is of wordt "
 "genomen."
 msgstr ""
 
-#: src/nrc/api/serializers.py:59
+#: src/nrc/api/serializers.py:65
 msgid ""
 "Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd worden. "
 "Alleen notificaties waarvan de kenmerken voldoen aan het filter worden "
 "doorgestuurd naar de afnemer van het ABONNEMENT."
 msgstr ""
 
-#: src/nrc/api/serializers.py:76 src/nrc/datamodel/admin.py:59
-#: src/nrc/datamodel/models.py:41
+#: src/nrc/api/serializers.py:82 src/nrc/datamodel/admin.py:158
+#: src/nrc/datamodel/models.py:43
 msgid "kanalen"
 msgstr ""
 
-#: src/nrc/api/serializers.py:80
+#: src/nrc/api/serializers.py:86
 msgid "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen."
 msgstr ""
 
-#: src/nrc/api/serializers.py:104 src/nrc/api/serializers.py:163
+#: src/nrc/api/serializers.py:110 src/nrc/api/serializers.py:169
 msgid "Kanaal met deze naam bestaat niet."
 msgstr ""
 
-#: src/nrc/api/serializers.py:114
+#: src/nrc/api/serializers.py:120
 msgid "abonnement filters aren't consistent with kanaal filters"
 msgstr "De abonnementfilters komen niet overeen met de kanaalfilters"
 
-#: src/nrc/api/serializers.py:171
+#: src/nrc/api/serializers.py:177
 msgid "Kenmerken aren't consistent with kanaal filters"
 msgstr "De kenmerken komen niet overeen met de kanaalfilters"
 
-#: src/nrc/api/tasks.py:54 src/nrc/api/tests/test_tasks.py:127
+#: src/nrc/api/tasks.py:49 src/nrc/api/tests/test_tasks.py:130
 #, python-brace-format
 msgid "Could not send notification: status {status_code} - {response}"
 msgstr "Notificatie versturen is gefaald: status {status_code} - {response}"
@@ -140,46 +153,67 @@ msgstr ""
 msgid "De opgegeven callback URL is niet beveiligd met autorisatie."
 msgstr ""
 
-#: src/nrc/datamodel/admin.py:37 src/nrc/datamodel/models.py:29
-#: src/nrc/datamodel/models.py:112
+#: src/nrc/datamodel/admin.py:37 src/nrc/datamodel/models.py:32
+#: src/nrc/datamodel/models.py:111
 msgid "filters"
 msgstr ""
 
-#: src/nrc/datamodel/admin.py:43
-msgid "Filters instellen"
-msgstr ""
-
-#: src/nrc/datamodel/admin.py:47
+#: src/nrc/datamodel/admin.py:41
 msgid "acties"
 msgstr ""
 
-#: src/nrc/datamodel/admin.py:83 src/nrc/datamodel/admin_filters.py:42
+#: src/nrc/datamodel/admin.py:46
+msgid "Filters instellen"
+msgstr ""
+
+#: src/nrc/datamodel/admin.py:52
+msgid "Check the status of the callback URLs of selected Subscriptions"
+msgstr ""
+
+#: src/nrc/datamodel/admin.py:80
+msgid ""
+"Retrieve status for selected subscriptions. All previous results have been "
+"reset."
+msgstr ""
+
+#: src/nrc/datamodel/admin.py:136
+msgid "Checked status of all callback URLs"
+msgstr ""
+
+#: src/nrc/datamodel/admin.py:150
+msgid "callback URL reachable?"
+msgstr ""
+
+#: src/nrc/datamodel/admin.py:208 src/nrc/datamodel/admin_filters.py:42
 msgid "result"
 msgstr ""
 
-#: src/nrc/datamodel/admin.py:90
+#: src/nrc/datamodel/admin.py:212
+#, fuzzy
+#| msgid "Created date"
+msgid "Notificatie created date"
+msgstr "Aanmaakdatum"
+
+#: src/nrc/datamodel/admin.py:221
 msgid "Re-send the selected notifications to all subscriptions"
 msgstr "Verstuur de geselecteerde notificaties opnieuw naar alle abonnees"
 
-#: src/nrc/datamodel/admin.py:98
+#: src/nrc/datamodel/admin.py:229
 msgid "Selected notifications have been scheduled."
-msgstr "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
+msgstr ""
+"De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: src/nrc/datamodel/admin.py:152
+#: src/nrc/datamodel/admin.py:281
 msgid "Result"
 msgstr "Resultaat"
 
-#: src/nrc/datamodel/admin.py:158
+#: src/nrc/datamodel/admin.py:287
 msgid "Action"
 msgstr "Actie"
 
-#: src/nrc/datamodel/admin.py:163
+#: src/nrc/datamodel/admin.py:291
 msgid "Resource"
 msgstr ""
-
-#: src/nrc/datamodel/admin.py:172
-msgid "Created date"
-msgstr "Aanmaakdatum"
 
 #: src/nrc/datamodel/admin_filters.py:30
 msgid "action"
@@ -197,35 +231,37 @@ msgstr "Succes"
 msgid "Failure"
 msgstr "Mislukt"
 
-#: src/nrc/datamodel/models.py:14 src/nrc/datamodel/models.py:61
+#: src/nrc/datamodel/models.py:17 src/nrc/datamodel/models.py:61
 msgid "Unique resource identifier (UUID4)"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:17
-msgid "Naam"
-msgstr ""
+#: src/nrc/datamodel/models.py:20
+msgid "Name"
+msgstr "Naam"
 
-#: src/nrc/datamodel/models.py:21
+#: src/nrc/datamodel/models.py:24
 msgid ""
-"Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron "
-"vertegenwoordigd."
-msgstr ""
+"Name of the KANAAL (also called \"Exchange\") that represents the source."
+msgstr "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron vertegenwoordigd."
 
-#: src/nrc/datamodel/models.py:25
-msgid "Documentatie link"
-msgstr ""
+#: src/nrc/datamodel/models.py:28
+msgid "Documentation link"
+msgstr "Documentatie link"
 
-#: src/nrc/datamodel/models.py:25
-msgid "URL naar documentatie."
-msgstr ""
+#: src/nrc/datamodel/models.py:28
+msgid "URL to documentation."
+msgstr "URL naar documentatie."
 
-#: src/nrc/datamodel/models.py:33
+#: src/nrc/datamodel/models.py:36
 msgid ""
-"Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken "
-"kunnen worden gebruikt bij het aanmaken van een ABONNEMENT."
+"List of possible filter attributes for a KANAAL. These filter attributes can "
+"be used when creating an ABONNEMENT"
 msgstr ""
+"Lijst van mogelijke filter kenmerken van een KANAAL. Deze "
+"filter kenmerken kunnen worden gebruikt bij het aanmaken "
+"van een ABONNEMENT."
 
-#: src/nrc/datamodel/models.py:40
+#: src/nrc/datamodel/models.py:42
 msgid "kanaal"
 msgstr ""
 
@@ -233,63 +269,67 @@ msgstr ""
 msgid "Callback URL"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:67
+#: src/nrc/datamodel/models.py:66
 msgid ""
+"The URL to which notifications should be sent. This URL should point to an "
+"API that is suitable to receive notifications."
+msgstr ""
 "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient "
 "uit te komen bij een API die geschikt is om notificaties op te ontvangen."
-msgstr ""
 
-#: src/nrc/datamodel/models.py:72
-msgid "Autorisatie header"
-msgstr ""
+#: src/nrc/datamodel/models.py:71
+msgid "Authorisation header"
+msgstr "Autorisatie header"
 
-#: src/nrc/datamodel/models.py:75
+#: src/nrc/datamodel/models.py:74
 msgid ""
+"Content of the Authorization header when sending notifications to the "
+"\"Callback URL\", for example: Bearer a4daa31..."
+msgstr ""
 "Autorisatie header invulling voor het vesturen naar de \"Callback URL\". "
 "Voorbeeld: Bearer a4daa31..."
-msgstr ""
 
-#: src/nrc/datamodel/models.py:80
+#: src/nrc/datamodel/models.py:79
 msgid "Client ID"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:83
+#: src/nrc/datamodel/models.py:82
 msgid "Client ID extracted from Auth header"
 msgstr "Client ID uit de Auth header"
 
-#: src/nrc/datamodel/models.py:87
+#: src/nrc/datamodel/models.py:86
 msgid "abonnement"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:88
+#: src/nrc/datamodel/models.py:87
 msgid "abonnementen"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:111
+#: src/nrc/datamodel/models.py:110
 msgid "filter"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:126
+#: src/nrc/datamodel/models.py:131
 msgid "Sleutel"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:127
+#: src/nrc/datamodel/models.py:132
 msgid "Waarde"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:137
+#: src/nrc/datamodel/models.py:142
 msgid "filter-onderdeel"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:138
+#: src/nrc/datamodel/models.py:143
 msgid "filter-onderdelen"
 msgstr ""
 
-#: src/nrc/datamodel/models.py:160
+#: src/nrc/datamodel/models.py:173
 msgid "attempt"
 msgstr "poging"
 
-#: src/nrc/datamodel/models.py:161
+#: src/nrc/datamodel/models.py:174
 msgid "Indicates to which delivery attempt this response belongs."
 msgstr "Geeft aan bij de hoeveelste afleverpoging dit antwoord hoort."
 
@@ -301,6 +341,46 @@ msgstr ""
 msgid "Change password"
 msgstr ""
 
-#: src/nrc/templates/admin/base_site.html:29
+#: src/nrc/templates/admin/base_site.html:31
+msgid "Manage two-factor auth"
+msgstr ""
+
+#: src/nrc/templates/admin/base_site.html:33
 msgid "Log out"
+msgstr ""
+
+#: src/nrc/templates/admin/datamodel/abonnement/change_list.html:6
+msgid "Check status of callback URLs"
+msgstr ""
+
+#: src/nrc/templates/maykin_2fa/login.html:7
+msgid "or"
+msgstr ""
+
+#: src/nrc/templates/maykin_2fa/login.html:16
+msgid "Contact support to start the account recovery process"
+msgstr ""
+
+#: src/nrc/utils/help_text.py:5
+msgid "**EXPERIMENTEEL** {}"
+msgstr ""
+
+#: src/nrc/utils/oas_extensions/hyperlink_identity.py:18
+msgid ""
+"URL-referentie naar dit object. Dit is de unieke identificatie en locatie "
+"van dit object."
+msgstr ""
+
+#: src/nrc/utils/schema.py:153
+msgid ""
+"Geeft een specifieke API-versie aan in de context van een specifieke "
+"aanroep. Voorbeeld: 1.2.1."
+msgstr ""
+
+#: src/nrc/utils/schema.py:169
+msgid "Content type of the request body."
+msgstr ""
+
+#: src/nrc/utils/schema.py:183
+msgid "URL waar de resource leeft."
 msgstr ""

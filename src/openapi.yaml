@@ -1938,10 +1938,10 @@ components:
           type: string
           format: uri
           readOnly: true
-          description: URL-referentie naar dit object. Dit is de unieke identificatie
-            en locatie van dit object.
           minLength: 1
           maxLength: 1000
+          description: URL-referentie naar dit object. Dit is de unieke identificatie
+            en locatie van dit object.
         callbackUrl:
           type: string
           format: uri
@@ -2038,10 +2038,10 @@ components:
           type: string
           format: uri
           readOnly: true
-          description: URL-referentie naar dit object. Dit is de unieke identificatie
-            en locatie van dit object.
           minLength: 1
           maxLength: 1000
+          description: URL-referentie naar dit object. Dit is de unieke identificatie
+            en locatie van dit object.
         naam:
           type: string
           description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron
@@ -2115,10 +2115,10 @@ components:
           type: string
           format: uri
           readOnly: true
-          description: URL-referentie naar dit object. Dit is de unieke identificatie
-            en locatie van dit object.
           minLength: 1
           maxLength: 1000
+          description: URL-referentie naar dit object. Dit is de unieke identificatie
+            en locatie van dit object.
         callbackUrl:
           type: string
           format: uri
@@ -2146,10 +2146,10 @@ components:
           type: string
           format: uri
           readOnly: true
-          description: URL-referentie naar dit object. Dit is de unieke identificatie
-            en locatie van dit object.
           minLength: 1
           maxLength: 1000
+          description: URL-referentie naar dit object. Dit is de unieke identificatie
+            en locatie van dit object.
         naam:
           type: string
           description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron

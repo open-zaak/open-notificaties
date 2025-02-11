@@ -8,12 +8,25 @@ from nrc.datamodel.models import Abonnement, Kanaal
 
 class AuthorizationsConfigModel(ConfigurationModel):
     authorizations_api_service_identifier: str = DjangoModelRef(
-        AuthorizationsConfig, "authorizations_api_service"
+        AuthorizationsConfig,
+        "authorizations_api_service",
+        description=(
+            "The identifier of the Autorisaties API service "
+            "(which could be defined in the previous `ServiceConfigurationStep`)"
+        ),
+        examples=["autorisaties-api"],
     )
+
+    class Meta:
+        extra_kwargs = {"authorizations_api_service_identifier": {"required": True}}
 
 
 class KanaalConfigurationItem(ConfigurationModel):
-    filters: list[str] = DjangoModelRef(Kanaal, "filters")
+    filters: list[str] = DjangoModelRef(
+        Kanaal,
+        "filters",
+        examples=[["bronorganisatie", "zaaktype", "vertrouwelijkheidaanduiding"]],
+    )
 
     class Meta:
         django_model_refs = {
@@ -21,6 +34,12 @@ class KanaalConfigurationItem(ConfigurationModel):
                 "naam",
                 "documentatie_link",
             ]
+        }
+        extra_kwargs = {
+            "naam": {"examples": ["zaken"]},
+            "documentatie_link": {
+                "examples": ["https://openzaak.local/ref/kanalen/#zaken"]
+            },
         }
 
 
@@ -32,8 +51,13 @@ class KanalenFilterConfigurationModel(ConfigurationModel):
     filters: dict[str, str] = Field(
         description="Key value mapping based on which notifications will be filtered",
         default_factory=dict,
+        examples=[
+            {
+                "zaaktype": "https://openzaak.local/catalogi/api/v1/zaaktypen/d109cd8a-fe7b-4eb2-8cab-766712a4a267"
+            }
+        ],
     )
-    naam: str = Field(description="The name of the channel")
+    naam: str = Field(description="The name of the channel", examples=["zaken"])
 
 
 class AbonnementConfigurationItem(ConfigurationModel):
@@ -48,6 +72,10 @@ class AbonnementConfigurationItem(ConfigurationModel):
                 "callback_url",
                 "auth",
             ]
+        }
+        extra_kwargs = {
+            "callback_url": {"examples": ["https://example.com/api/webhook/"]},
+            "auth": {"examples": ["Token po4T8YpTZmeKXVWJAQCZ"]},
         }
 
 

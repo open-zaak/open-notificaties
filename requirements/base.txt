@@ -58,7 +58,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==2.2.0
+commonground-api-common==2.5.0
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -103,7 +103,6 @@ django==4.2.17
     #   drf-nested-routers
     #   drf-spectacular
     #   drf-spectacular-sidecar
-    #   drf-yasg
     #   maykin-2fa
     #   mozilla-django-oidc
     #   mozilla-django-oidc-db
@@ -152,7 +151,7 @@ django-sendfile2==0.7.1
     # via django-privates
 django-sessionprofile==3.0.0
     # via open-api-framework
-django-setup-configuration==0.5.0
+django-setup-configuration==0.7.1
     # via
     #   -r requirements/base.in
     #   commonground-api-common
@@ -178,7 +177,6 @@ djangorestframework==3.15.2
     #   djangorestframework-inclusions
     #   drf-nested-routers
     #   drf-spectacular
-    #   drf-yasg
     #   notifications-api-common
     #   open-api-framework
 djangorestframework-camel-case==1.4.2
@@ -189,14 +187,16 @@ djangorestframework-gis==1.0
     # via open-api-framework
 djangorestframework-inclusions==1.2.0
     # via open-api-framework
+docutils==0.21.2
+    # via django-setup-configuration
 drf-nested-routers==0.94.1
     # via commonground-api-common
 drf-spectacular==0.27.2
-    # via open-api-framework
+    # via
+    #   commonground-api-common
+    #   open-api-framework
 drf-spectacular-sidecar==2024.7.1
     # via drf-spectacular
-drf-yasg==1.21.7
-    # via commonground-api-common
 ecs-logging==2.2.0
     # via elastic-apm
 elastic-apm==6.23.0
@@ -217,9 +217,7 @@ humanize==4.10.0
 idna==3.7
     # via requests
 inflection==0.5.1
-    # via
-    #   drf-spectacular
-    #   drf-yasg
+    # via drf-spectacular
 iso-639==0.4.5
     # via commonground-api-common
 isodate==0.6.1
@@ -244,11 +242,11 @@ maykin-2fa==1.0.1
     # via open-api-framework
 mozilla-django-oidc==4.0.1
     # via mozilla-django-oidc-db
-mozilla-django-oidc-db==0.21.1
+mozilla-django-oidc-db==0.22.0
     # via
     #   -r requirements/base.in
     #   open-api-framework
-notifications-api-common==0.4.0
+notifications-api-common==0.6.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
@@ -258,8 +256,6 @@ orderedmultidict==1.0.1
     # via furl
 oyaml==1.0
     # via commonground-api-common
-packaging==24.1
-    # via drf-yasg
 phonenumberslite==8.13.43
     # via django-two-factor-auth
 prometheus-client==0.20.0
@@ -299,13 +295,10 @@ python-dotenv==1.0.1
     #   open-api-framework
     #   pydantic-settings
 pytz==2024.1
-    # via
-    #   drf-yasg
-    #   flower
+    # via flower
 pyyaml==6.0.2
     # via
     #   drf-spectacular
-    #   drf-yasg
     #   oyaml
     #   pydantic-settings
 qrcode==7.4.2
@@ -332,6 +325,10 @@ rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
+ruamel-yaml==0.18.10
+    # via django-setup-configuration
+ruamel-yaml-clib==0.2.12
+    # via ruamel-yaml
 self-certifi==1.0.0
     # via -r requirements/base.in
 sentry-sdk==2.12.0
@@ -360,7 +357,6 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
-    #   drf-yasg
 urllib3==2.2.2
     # via
     #   elastic-apm
@@ -381,7 +377,7 @@ webencodings==0.5.1
     # via bleach
 wrapt==1.16.0
     # via elastic-apm
-zgw-consumers==0.36.0
+zgw-consumers==0.37.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
