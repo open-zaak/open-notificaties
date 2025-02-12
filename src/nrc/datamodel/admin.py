@@ -203,7 +203,7 @@ class NotificatieResponseAdmin(admin.ModelAdmin):
     )
     raw_id_fields = ["notificatie", "abonnement"]
     list_filter = ("abonnement", "response_status")
-    search_fields = ("abonnement",)
+    search_fields = ("abonnement__callback_url",)
 
     @admin.display(description=_("result"))
     def get_result_display(self, obj):
