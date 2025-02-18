@@ -121,6 +121,6 @@ In order to add new consumer webhooks that are subscribed to specific channels, 
 All done!
 
 .. _`documentation of Open Zaak`: https://open-zaak.readthedocs.io/en/latest/installation/config/openzaak_config.html#configure-notificaties-api
-.. _`configuration of Open Zaak`: https://open-zaak.readthedocs.io/en/stable/installation/config/openzaak_config_cli.html#open-zaak-configuration
+.. _`configuration of Open Zaak`: https://open-zaak.readthedocs.io/en/stable/installation/config/openzaak_config_cli.html#open-zaak-configuration-cli
 .. _`manual`: https://open-notificaties.readthedocs.io/en/stable/manual/subscriptions.html#aanmaken-abonnement
 .. _`API specification`: https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/1.0.0/src/openapi.yaml#tag/notificaties
