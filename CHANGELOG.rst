@@ -53,7 +53,8 @@ Changes
 .. warning::
 
     The previous setup configurations are no longer supported.
-    Make sure to replace the old configurations with the new ones.
+    Make sure to replace the old configurations with the new ones. See :ref:`installation_configuration_cli`
+    for the new configuration file format.
 
 **Project maintenance**
 
