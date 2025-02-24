@@ -16,5 +16,5 @@ projects: ["maykinmedia/15"]
   - [ ] Version bump
   - [ ] Regenerate API spec
   - [ ] Update READMEs with release dates + links
-- [ ] Bump version number with `bin/bump-my-version.sh bump bump <major|minor|patch>`
+- [ ] Bump version number with `bin/bump-my-version.sh bump <major|minor|patch>`
 - [ ] Update changelog
