@@ -89,5 +89,10 @@ LABEL org.label-schema.vcs-ref=$COMMIT_HASH \
       org.label-schema.version=$RELEASE \
       org.label-schema.name="Open Notificaties"
 
+# Run collectstatic and compilemessages, so the result is already included in
+# the image
+RUN python src/manage.py collectstatic --noinput \
+    && python src/manage.py compilemessages
+
 EXPOSE 8000
 CMD ["/start.sh"]
