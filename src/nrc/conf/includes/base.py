@@ -4,8 +4,6 @@ from open_api_framework.conf.utils import config
 
 from .api import *  # noqa
 
-init_sentry()
-
 #
 # Core Django settings
 #
