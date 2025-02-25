@@ -47,6 +47,7 @@ release = nrc.__version__
 # ones.
 extensions = [
     "sphinx.ext.todo",
+    "sphinx.ext.extlinks",
     "recommonmark",
     "sphinx_tabs.tabs",
     "sphinx.ext.autodoc",
@@ -97,3 +98,18 @@ linkcheck_ignore = [
     r"https://.*sentry\.openzaak\.nl.*",
     r"https://redocly.github.io/*",
 ]
+
+extlinks = {
+    "open-notificaties": (
+        "https://github.com/open-zaak/open-notificaties/issues/%s",
+        "#%s",
+    ),
+    "open-api-framework": (
+        "https://github.com/maykinmedia/open-api-framework/issues/%s",
+        "#%s",
+    ),
+    "maykin-charts": (
+        "https://github.com/maykinmedia/charts/issues/%s",
+        "#%s",
+    ),
+}

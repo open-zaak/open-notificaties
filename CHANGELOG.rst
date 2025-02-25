@@ -2,10 +2,15 @@
 Changes
 =======
 
-1.9.0 (WIP)
------------
+1.8.1 (2025-03-04)
+==================
 
-* [#170] Add unique constraint for ``(Filter.filter_group, Filter.key)`` fields.
+**Bugfixes and QOL**
+
+* [:open-notificaties:`234`] Fix search functionality on Notificatie response admin page
+* [:open-notificaties:`248`] Fix broken tooltip helptexts for datetime fields in admin
+* [:open-notificaties:`251`] Hide ``Abonnement.client_id`` from admin, because this field is currently unused
+* [:open-notificaties:`170`] Add unique constraint for ``(Filter.filter_group, Filter.key)`` fields.
 
 .. warning::
 
@@ -13,9 +18,33 @@ Changes
     If "datamodel.0017" migration is failing, remove duplicate entries manually from
     the ``Filter`` model and try to run it again.
 
+**Documentation**
+
+* [:open-notificaties:`210`] Add documentation for setup-configuration steps (see :ref:`installation_configuration_cli`)
+
+**Project maintenance**
+
+* Upgrading dependencies:
+
+  * Upgrade node version from 16 to 20
+  * Upgrade npm packages to fix vulnerabilities
+  * Upgrade deployment deps to fix vulnerabilities
+  * Upgrade python packages to fix vulnerabilities
+  * Upgrade open-api-framework to 0.9.3
+  * Upgrade commonground-api-common to 2.5.0
+  * Upgrade notifications-api-common to 0.6.0
+  * Upgrade zgw-consumers to 0.37.0
+  * Upgrade mozilla-django-oidc-db to 0.22.0
+  * Upgrade django-setup-configuration to 0.7.1
+* Compile translations in Docker build
+* Add bump-my-version to dev dependencies
+* [:open-api-framework:`100`] Add quick-start workflow to test docker-compose.yml
+* [:open-api-framework:`44`] add workflow to CI to auto-update open-api-framework
+* [:maykin-charts:`165`] Remove unused celery worker command line args
+* [:open-api-framework:`81`] Switch from pip-compile to UV
 
 1.8.0 (2025-01-13)
-------------------
+==================
 
 **New features**
 
@@ -69,7 +98,7 @@ Changes
 
 
 1.7.1 (2024-10-04)
-------------------
+==================
 
 **Bugfixes and QOL**
 
@@ -85,7 +114,7 @@ Changes
 
 
 1.7.0 (2024-09-02)
-------------------
+==================
 
 **New features**
 
@@ -141,7 +170,7 @@ Changes
 
 
 1.6.0 (2024-05-28)
-------------------
+==================
 
 **New features**
 
