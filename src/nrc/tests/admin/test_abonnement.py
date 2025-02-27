@@ -116,35 +116,35 @@ class AbonnementAdminWebTest(WebTest):
 
         with self.subTest("initial callback statuses are unknown"):
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[2].text,
+                row_incorrect_auth.find_all("td")[1].text,
                 abonnement_url_incorrect_auth.callback_url,
             )
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_incorrect_auth.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_unreachable.find_all("td")[2].text,
+                row_unreachable.find_all("td")[1].text,
                 abonnement_url_unreachable.callback_url,
             )
             self.assertEqual(
-                row_unreachable.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_unreachable.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_unreachable2.find_all("td")[2].text,
+                row_unreachable2.find_all("td")[1].text,
                 abonnement_url_unreachable_duplicate.callback_url,
             )
             self.assertEqual(
-                row_unreachable2.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_unreachable2.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_reachable.find_all("td")[2].text,
+                row_reachable.find_all("td")[1].text,
                 abonnement_url_reachable.callback_url,
             )
             self.assertEqual(
-                row_reachable.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_reachable.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
         form = response.forms[0]
@@ -162,37 +162,37 @@ class AbonnementAdminWebTest(WebTest):
         )
         with self.subTest("callback statuses are known"):
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[2].text,
+                row_incorrect_auth.find_all("td")[1].text,
                 abonnement_url_incorrect_auth.callback_url,
             )
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_incorrect_auth.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_unreachable.find_all("td")[2].text,
+                row_unreachable.find_all("td")[1].text,
                 abonnement_url_unreachable.callback_url,
             )
             self.assertEqual(
-                row_unreachable.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             # This row is marked as false despite not being selected for the action,
             # because it has the same callback URL and auth as another selected Subscription
             self.assertEqual(
-                row_unreachable2.find_all("td")[2].text,
+                row_unreachable2.find_all("td")[1].text,
                 abonnement_url_unreachable_duplicate.callback_url,
             )
             self.assertEqual(
-                row_unreachable2.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable2.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_reachable.find_all("td")[2].text,
+                row_reachable.find_all("td")[1].text,
                 abonnement_url_reachable.callback_url,
             )
             self.assertEqual(
-                row_reachable.find_all("td")[3].find("img").attrs["alt"], "True"
+                row_reachable.find_all("td")[2].find("img").attrs["alt"], "True"
             )
 
         filtered_response = self.app.get(
@@ -204,27 +204,27 @@ class AbonnementAdminWebTest(WebTest):
         )
         with self.subTest("callback statuses are known"):
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[2].text,
+                row_incorrect_auth.find_all("td")[1].text,
                 abonnement_url_incorrect_auth.callback_url,
             )
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_incorrect_auth.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_unreachable.find_all("td")[2].text,
+                row_unreachable.find_all("td")[1].text,
                 abonnement_url_unreachable.callback_url,
             )
             self.assertEqual(
-                row_unreachable.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_unreachable2.find_all("td")[2].text,
+                row_unreachable2.find_all("td")[1].text,
                 abonnement_url_unreachable_duplicate.callback_url,
             )
             self.assertEqual(
-                row_unreachable2.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable2.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
     @tag("gh-108")
@@ -267,35 +267,35 @@ class AbonnementAdminWebTest(WebTest):
 
         with self.subTest("initial callback statuses are unknown"):
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[2].text,
+                row_incorrect_auth.find_all("td")[1].text,
                 abonnement_url_incorrect_auth.callback_url,
             )
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_incorrect_auth.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_unreachable.find_all("td")[2].text,
+                row_unreachable.find_all("td")[1].text,
                 abonnement_url_unreachable.callback_url,
             )
             self.assertEqual(
-                row_unreachable.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_unreachable.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_unreachable2.find_all("td")[2].text,
+                row_unreachable2.find_all("td")[1].text,
                 abonnement_url_unreachable_duplicate.callback_url,
             )
             self.assertEqual(
-                row_unreachable2.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_unreachable2.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
             self.assertEqual(
-                row_reachable.find_all("td")[2].text,
+                row_reachable.find_all("td")[1].text,
                 abonnement_url_reachable.callback_url,
             )
             self.assertEqual(
-                row_reachable.find_all("td")[3].find("img").attrs["alt"], "None"
+                row_reachable.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
         response = self.app.get(
@@ -309,37 +309,37 @@ class AbonnementAdminWebTest(WebTest):
         )
         with self.subTest("callback statuses are known"):
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[2].text,
+                row_incorrect_auth.find_all("td")[1].text,
                 abonnement_url_incorrect_auth.callback_url,
             )
             self.assertEqual(
-                row_incorrect_auth.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_incorrect_auth.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_unreachable.find_all("td")[2].text,
+                row_unreachable.find_all("td")[1].text,
                 abonnement_url_unreachable.callback_url,
             )
             self.assertEqual(
-                row_unreachable.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             # This row is marked as false despite not being selected for the action,
             # because it has the same callback URL and auth as another selected Subscription
             self.assertEqual(
-                row_unreachable2.find_all("td")[2].text,
+                row_unreachable2.find_all("td")[1].text,
                 abonnement_url_unreachable_duplicate.callback_url,
             )
             self.assertEqual(
-                row_unreachable2.find_all("td")[3].find("img").attrs["alt"], "False"
+                row_unreachable2.find_all("td")[2].find("img").attrs["alt"], "False"
             )
 
             self.assertEqual(
-                row_reachable.find_all("td")[2].text,
+                row_reachable.find_all("td")[1].text,
                 abonnement_url_reachable.callback_url,
             )
             self.assertEqual(
-                row_reachable.find_all("td")[3].find("img").attrs["alt"], "True"
+                row_reachable.find_all("td")[2].find("img").attrs["alt"], "True"
             )
 
     def test_check_all_callback_urls_not_allowed_for_non_staff_user(self):

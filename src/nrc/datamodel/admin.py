@@ -115,7 +115,6 @@ class StatusCodeFilter(admin.SimpleListFilter):
 class AbonnementAdmin(admin.ModelAdmin):
     list_display = (
         "uuid",
-        "client_id",
         "callback_url",
         "get_callback_url_reachable",
         "get_kanalen_display",
@@ -124,6 +123,11 @@ class AbonnementAdmin(admin.ModelAdmin):
     list_filter = (StatusCodeFilter,)
     inlines = (FilterGroupInline,)
     actions = [check_callback_url_status]
+    fields = (
+        "callback_url",
+        "auth",
+        "uuid",
+    )
 
     def changelist_view(self, request, extra_context=None):
         # Store the request object to ensure the custom admin field has access to it
