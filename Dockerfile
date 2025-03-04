@@ -15,7 +15,7 @@ RUN pip install -r requirements/production.txt
 
 
 # Stage 2 - build frontend
-FROM node:16-bookworm-slim AS frontend-build
+FROM node:20-bookworm-slim AS frontend-build
 
 WORKDIR /app
 
@@ -88,6 +88,11 @@ LABEL org.label-schema.vcs-ref=$COMMIT_HASH \
       org.label-schema.vcs-url="https://github.com/open-zaak/open-notificaties" \
       org.label-schema.version=$RELEASE \
       org.label-schema.name="Open Notificaties"
+
+# Run collectstatic and compilemessages, so the result is already included in
+# the image
+RUN python src/manage.py collectstatic --noinput \
+    && python src/manage.py compilemessages
 
 EXPOSE 8000
 CMD ["/start.sh"]
