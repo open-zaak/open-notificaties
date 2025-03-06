@@ -238,7 +238,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - abonnement
@@ -392,7 +392,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - abonnement
@@ -535,14 +535,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - abonnement
@@ -703,14 +703,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - abonnement
@@ -869,7 +869,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - abonnement
@@ -1156,7 +1156,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - kanaal
@@ -1312,7 +1312,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - kanaal
@@ -1457,14 +1457,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - kanaal
@@ -1627,14 +1627,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unique resource identifier (UUID4)
+          description: Unieke resource identificatie (UUID4)
         required: true
       tags:
       - kanaal
@@ -1795,7 +1795,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type van de verzoekinhoud.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - notificaties

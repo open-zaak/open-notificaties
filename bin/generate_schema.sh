@@ -13,4 +13,6 @@ fi
 
 echo "Generating OAS schema"
 src/manage.py spectacular \
-    --file ${OUTPUT_FILE:-./src/openapi.yaml}
+    --file ${OUTPUT_FILE:-./src/openapi.yaml} \
+    --validate \
+    --lang="nl-nl"
