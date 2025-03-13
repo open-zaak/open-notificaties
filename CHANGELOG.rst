@@ -2,6 +2,18 @@
 Changes
 =======
 
+1.x.x (2025-03-31)
+==================
+
+**Project maintenance**
+
+* Confirm support for Postgres 17 and drop (verified) support for Postgres 12
+* Confirm support for RabbitMQ 4.0 and drop (verified) support for RabbitMQ 3.9
+* Upgrade dependencies
+
+  * Development tools: black to 25.1.0, flake to 7.1.2 and isort to 6.0.1
+
+
 1.8.1 (2025-03-04)
 ==================
 
