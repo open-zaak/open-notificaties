@@ -163,7 +163,6 @@ SETUP_CONFIGURATION_STEPS = [
     "notifications_api_common.contrib.setup_configuration.steps.NotificationConfigurationStep",
     "notifications_api_common.contrib.setup_configuration.steps.NotificationSubscriptionConfigurationStep",
     "nrc.setup_configuration.abonnementen.AbonnementConfigurationStep",
-    "django_setup_configuration.contrib.sites.steps.SitesConfigurationStep",
 ]
 
 #
@@ -180,4 +179,11 @@ config(
         "disabling SSL certificate verification. Example: "
         "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
     ),
+)
+
+
+SITE_DOMAIN = config(
+    "SITE_DOMAIN",
+    default="example.com",
+    help_text=("Defines the primary domain where the application is hosted."),
 )
