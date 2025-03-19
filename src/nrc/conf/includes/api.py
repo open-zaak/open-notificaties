@@ -51,6 +51,8 @@ SPECTACULAR_SETTINGS = {
     "TAGS": [{"name": "abonnement"}, {"name": "kanaal"}, {"name": "notificaties"}],
 }
 
+COMMONGROUND_API_COMMON_GET_DOMAIN = "nrc.utils.get_domain"
+
 GEMMA_URL_INFORMATIEMODEL_VERSIE = "1.0"
 
 TEST_CALLBACK_AUTH = True
