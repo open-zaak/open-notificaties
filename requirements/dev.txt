@@ -167,7 +167,7 @@ coverage==6.3.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   codecov
-cryptography==43.0.3
+cryptography==44.0.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -181,7 +181,7 @@ cssselect==1.2.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   pyquery
-django==4.2.19
+django==4.2.20
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -323,7 +323,7 @@ django-sessionprofile==3.0.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-setup-configuration==0.7.1
+django-setup-configuration==0.7.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -508,7 +508,7 @@ itypes==1.2.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   coreapi
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -529,7 +529,7 @@ jsonschema-specifications==2023.12.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   jsonschema
-kombu==5.4.0
+kombu==5.5.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -695,7 +695,7 @@ pyjwt==2.9.0
     #   -r requirements/ci.txt
     #   commonground-api-common
     #   zgw-consumers
-pyopenssl==24.2.1
+pyopenssl==25.0.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -922,15 +922,17 @@ typing-extensions==4.12.2
     #   mozilla-django-oidc-db
     #   pydantic
     #   pydantic-core
+    #   pyopenssl
     #   qrcode
     #   rich-click
     #   zgw-consumers
     #   zgw-consumers-oas
-tzdata==2024.1
+tzdata==2025.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   celery
+    #   kombu
 uritemplate==4.1.1
     # via
     #   -c requirements/ci.txt
