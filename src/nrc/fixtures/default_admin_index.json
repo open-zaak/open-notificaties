@@ -107,6 +107,10 @@
             [
                 "log_outgoing_requests",
                 "outgoingrequestslogconfig"
+            ],
+            [
+                "sites",
+                "site"
             ]
         ]
     }

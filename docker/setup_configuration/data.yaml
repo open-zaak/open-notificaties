@@ -136,7 +136,7 @@ sites_config:
   items:
     - domain: example.com
       name: Open Notificaties
-
+      
 notifications_config_enable: true
 notifications_config:
   notifications_api_service_identifier: notificaties-api

@@ -12,6 +12,10 @@ from .api import *  # noqa
 # APPLICATIONS enabled for this project
 #
 INSTALLED_APPS = INSTALLED_APPS + [
+    # `django.contrib.sites` added at the project level because it has been removed at the packages level.
+    # This component is deprecated and should be completely removed.
+    # To determine the project's domain, use the `SITE_DOMAIN` environment variable.
+    "django.contrib.sites",
     # External applications.
     "vng_api_common.authorizations",
     "vng_api_common.notifications",
@@ -181,3 +185,5 @@ config(
         "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
     ),
 )
+
+NOTIFICATIONS_API_GET_DOMAIN = "nrc.utils.get_domain"
