@@ -2,17 +2,31 @@
 Changes
 =======
 
-1.x.x (2025-03-31)
+1.8.2 (2025-04-03)
 ==================
 
 **Project maintenance**
 
-* Confirm support for Postgres 17 and drop (verified) support for Postgres 12
-* Confirm support for RabbitMQ 4.0 and drop (verified) support for RabbitMQ 3.9
+* [:open-api-framework:`59`] Add ``SITE_DOMAIN`` environment variable which will replace ``sites`` configuration in version 2.0
+* [:open-api-framework:`115`] Fix OAS check github action
+* [:open-api-framework:`116`] Fix codecov publish
+* [:open-api-framework:`117`] Upgrade version of CI dependencies
+
+  * Confirm support for Postgres 17
+  * Confirm support for RabbitMQ 4.0
+  * Development tools: black to 25.1.0, flake8 to 7.1.2 and isort to 6.0.1
+  * Upgrade GHA versions
+
 * Upgrade dependencies
 
-  * Development tools: black to 25.1.0, flake to 7.1.2 and isort to 6.0.1
-
+  * Upgrade cryptography to 44.0.2
+  * Upgrade jinja2 to 3.1.6
+  * Upgrade kombu to 5.5.2
+  * Upgrade django to 4.2.20
+  * Upgrade django-setup-configuration to 0.7.2
+  * Upgrade open-api-framework to 0.9.6
+  * Upgrade notifications-api-common to 0.7.2
+  * Upgrade commonground-api-common to 2.5.5
 
 1.8.1 (2025-03-04)
 ==================
@@ -108,7 +122,6 @@ Changes
 * [#200] Update docs for setup configuration changes
 * [maykinmedia/objects-api#403] Update delivery guarantee documentation
 
-
 1.7.1 (2024-10-04)
 ==================
 
@@ -123,7 +136,6 @@ Changes
 
 * [#188] update config env var descriptions
 * [#190, #191] remove broken links from documentation
-
 
 1.7.0 (2024-09-02)
 ==================
@@ -178,8 +190,6 @@ Changes
     SECURE_HSTS_SECONDS has been added with a default of 31536000 seconds, ensure that
     before upgrading to this version of open-api-framework, your entire application is served
     over HTTPS, otherwise this setting can break parts of your application (see https://docs.djangoproject.com/en/4.2/ref/middleware/#http-strict-transport-security)
-
-
 
 1.6.0 (2024-05-28)
 ==================
