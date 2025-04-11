@@ -21,3 +21,18 @@ API                     Specification version(s)
 ======================  ==========================================
 
 .. _`Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/
+
+
+Deviation from the standards
+----------------------------
+ 
+While Open Notificaties supports above mentioned standard it also provides extra features, which can enrich
+the client experience. The full list of them is documented :ref:`here <api_experimental>`.
+ 
+Reference
+---------
+
+.. toctree::
+   :maxdepth: 1
+   
+   experimental
