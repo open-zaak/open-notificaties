@@ -26,7 +26,7 @@ API                     Specification version(s)
 Deviation from the standards
 ----------------------------
  
-While Open Notificaties supports above mentioned standards it also provides extra features, which can enrich
+While Open Notificaties supports above mentioned standard it also provides extra features, which can enrich
 the client experience. The full list of them is documented :ref:`here <api_experimental>`.
  
 Reference

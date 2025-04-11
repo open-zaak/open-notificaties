@@ -4,8 +4,8 @@
 Experimental features of Open Notificaties
 ==========================================
 
-Open Notificaties, which adhere to :ref:`VNG standards <api_index>`.
-Moreover it provides extra features which are not included in the standards.
+Open Notificaties implements the Notificaties API which adheres to the :ref:`VNG standard <api_index>`.
+Moreover it provides extra features which are not included in this standard.
 All such features are marked as "experimental" (or "experimenteel") in the OAS.
  
 There are no breaking changes from the VNG standards and these changes are mostly small
