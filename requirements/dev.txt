@@ -142,7 +142,7 @@ codecov==2.1.13
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-commonground-api-common==2.5.5
+commonground-api-common==2.6.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -422,7 +422,7 @@ factory-boy==3.2.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-faker==13.15.1
+faker==37.1.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -490,11 +490,6 @@ iniconfig==2.0.0
     #   -r requirements/ci.txt
     #   pytest
 iso-639==0.4.5
-    # via
-    #   -c requirements/ci.txt
-    #   -r requirements/ci.txt
-    #   commonground-api-common
-isodate==0.6.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -722,7 +717,6 @@ python-dateutil==2.9.0.post0
     #   -r requirements/ci.txt
     #   celery
     #   django-relativedelta
-    #   faker
     #   freezegun
 python-decouple==3.8
     # via
@@ -829,7 +823,6 @@ six==1.16.0
     #   -r requirements/ci.txt
     #   bleach
     #   furl
-    #   isodate
     #   orderedmultidict
     #   python-dateutil
 smmap==5.0.0
@@ -932,6 +925,7 @@ tzdata==2025.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   celery
+    #   faker
     #   kombu
 uritemplate==4.1.1
     # via
