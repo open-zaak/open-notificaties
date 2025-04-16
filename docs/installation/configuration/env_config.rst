@@ -49,6 +49,7 @@ Celery
 * ``CELERY_RESULT_BACKEND``: the URL of the backend/broker that will be used by Celery to send the notifications. Defaults to: ``redis://localhost:6379/1``.
 * ``PUBLISH_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://guest:guest@localhost:5672/%2F``.
 * ``CELERY_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://127.0.0.1:5672//``.
+* ``CELERY_RESULT_EXPIRES``: How long the results of tasks will be stored in Redis (in seconds), this can be set to a lower duration to lower memory usage for Redis. Defaults to: ``3600``.
 * ``CELERY_TASK_HARD_TIME_LIMIT``: If a celery task exceeds this time limit, the worker processing the task will be killed and replaced with a new one. Defaults to: ``900``.
 * ``CELERY_TASK_SOFT_TIME_LIMIT``: If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised. Defaults to: ``300``.
 
