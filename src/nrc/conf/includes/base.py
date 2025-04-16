@@ -118,6 +118,12 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(0, 0, day_of_month="1"),
     },
 }
+CELERY_RESULT_EXPIRES = config(
+    "CELERY_RESULT_EXPIRES",
+    3600,
+    help_text="able to limit the amount of redis memory used",
+    group="Celery",
+)
 
 # Add (by default) 5 (soft), 15 (hard) minute timeouts to all Celery tasks.
 CELERY_TASK_TIME_LIMIT = config(
