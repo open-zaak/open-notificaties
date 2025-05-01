@@ -1,6 +1,6 @@
 {
   "name": "nrc",
-  "version": "1.8.2",
+  "version": "1.9.0",
   "description": "Open Notificaties",
   "main": "src/index.js",
   "directories": {
