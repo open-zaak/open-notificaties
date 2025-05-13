@@ -173,7 +173,7 @@ SETUP_CONFIGURATION_STEPS = [
     "nrc.setup_configuration.authorization.AuthorizationStep",
     "vng_api_common.contrib.setup_configuration.steps.JWTSecretsConfigurationStep",
     "nrc.setup_configuration.kanalen.KanaalConfigurationStep",
-    "notifications_api_common.contrib.setup_configuration.steps.NotificationConfigurationStep",
+    "nrc.setup_configuration.steps.NotificationConfigurationStep",
     "notifications_api_common.contrib.setup_configuration.steps.NotificationSubscriptionConfigurationStep",
     "nrc.setup_configuration.abonnementen.AbonnementConfigurationStep",
     "django_setup_configuration.contrib.sites.steps.SitesConfigurationStep",
