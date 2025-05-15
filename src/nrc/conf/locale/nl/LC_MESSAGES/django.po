@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-25 09:04+0000\n"
+"POT-Creation-Date: 2025-05-01 08:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,7 +110,7 @@ msgid ""
 "doorgestuurd naar de afnemer van het ABONNEMENT."
 msgstr ""
 
-#: nrc/api/serializers.py:82 nrc/datamodel/admin.py:158
+#: nrc/api/serializers.py:82 nrc/datamodel/admin.py:162
 #: nrc/datamodel/models.py:43
 msgid "kanalen"
 msgstr ""
@@ -167,50 +167,51 @@ msgstr ""
 
 #: nrc/datamodel/admin.py:52
 msgid "Check the status of the callback URLs of selected Subscriptions"
-msgstr "Haal de status op van de callback URLs van de geselecteerde Abonnementen"
+msgstr ""
+"Haal de status op van de callback URLs van de geselecteerde Abonnementen"
 
 #: nrc/datamodel/admin.py:80
 msgid ""
 "Retrieve status for selected subscriptions. All previous results have been "
 "reset."
 msgstr ""
-"Haal de status op voor de geselecteerde abonnementen. Alle voorgaande resultaten zullen "
-"gereset worden."
+"Haal de status op voor de geselecteerde abonnementen. Alle voorgaande "
+"resultaten zullen gereset worden."
 
-#: nrc/datamodel/admin.py:136
+#: nrc/datamodel/admin.py:140
 msgid "Checked status of all callback URLs"
 msgstr "Status opgehaald voor alle callback URLs"
 
-#: nrc/datamodel/admin.py:150
+#: nrc/datamodel/admin.py:154
 msgid "callback URL reachable?"
 msgstr "callback URL bereikbaar?"
 
-#: nrc/datamodel/admin.py:208 nrc/datamodel/admin_filters.py:42
+#: nrc/datamodel/admin.py:212 nrc/datamodel/admin_filters.py:42
 msgid "result"
 msgstr "resultaat"
 
-#: nrc/datamodel/admin.py:212
+#: nrc/datamodel/admin.py:216
 msgid "Notificatie created date"
 msgstr "Aanmaakdatum"
 
-#: nrc/datamodel/admin.py:221
+#: nrc/datamodel/admin.py:225
 msgid "Re-send the selected notifications to all subscriptions"
 msgstr "Verstuur de geselecteerde notificaties opnieuw naar alle abonnees"
 
-#: nrc/datamodel/admin.py:229
+#: nrc/datamodel/admin.py:233
 msgid "Selected notifications have been scheduled."
 msgstr ""
 "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: nrc/datamodel/admin.py:281
+#: nrc/datamodel/admin.py:285
 msgid "Result"
 msgstr "Resultaat"
 
-#: nrc/datamodel/admin.py:287
+#: nrc/datamodel/admin.py:291
 msgid "Action"
 msgstr "Actie"
 
-#: nrc/datamodel/admin.py:291
+#: nrc/datamodel/admin.py:295
 msgid "Resource"
 msgstr "Resource"
 

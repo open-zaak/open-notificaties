@@ -2,6 +2,25 @@
 Changes
 =======
 
+1.9.0 (2025-05-15)
+==================
+
+**New features**
+
+* [:open-notificaties:`240`] Add ``CELERY_RESULT_EXPIRES`` (see :ref:`installation_env_config`) environment variable to configure how long
+  results for tasks will be stored in Redis. This duration can be lowered to avoid
+  high memory consumption by Redis.
+
+**Project maintenance**
+
+* Upgrade packages
+
+  * commonground-api-common to version 2.6.2
+  * development dependency h11 to version 0.16.0 to fix security issue
+
+* [:open-notificaties:`239`] Add overview of experimental API features (deviations from the Notificaties API standard)
+  to the documentation. See :ref:`api_experimental` for more information.
+
 1.8.2 (2025-04-03)
 ==================
 
