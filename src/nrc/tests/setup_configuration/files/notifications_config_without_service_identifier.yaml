@@ -1,0 +1,5 @@
+notifications_config_enable: true
+notifications_config:
+  notification_delivery_max_retries: 5
+  notification_delivery_retry_backoff: 2
+  notification_delivery_retry_backoff_max: 20

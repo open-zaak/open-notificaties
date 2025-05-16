@@ -79,7 +79,7 @@ the formula to calculate the time to wait until the next retry is as follows:
 
 where `t` is time in seconds and  `c` is the number of retries that have been performed already.
 
-This behaviour can be configured using :ref:`setup_configuration <ref_step_notifications_api_common.contrib.setup_configuration.steps.NotificationConfigurationStep>`
+This behaviour can be configured using :ref:`setup_configuration <ref_step_nrc.setup_configuration.steps.NotificationConfigurationStep>`
 and also via the admin interface at **Configuratie > Notificatiescomponentconfiguratie**:
 
 * **Notification delivery max retries**: the maximum number of retries the task queue

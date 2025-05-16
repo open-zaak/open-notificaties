@@ -1,5 +1,10 @@
+from typing import Optional
+
 from django_setup_configuration.fields import DjangoModelRef
 from django_setup_configuration.models import ConfigurationModel
+from notifications_api_common.contrib.setup_configuration.models import (
+    NotificationConfigurationModel as _NotificationConfigurationModel,
+)
 from pydantic import UUID4, Field
 from vng_api_common.authorizations.models import AuthorizationsConfig
 
@@ -81,3 +86,12 @@ class AbonnementConfigurationItem(ConfigurationModel):
 
 class AbonnementConfigurationModel(ConfigurationModel):
     items: list[AbonnementConfigurationItem]
+
+
+class NotificationConfigurationModel(_NotificationConfigurationModel):
+    notifications_api_service_identifier: Optional[str] = Field(
+        default=None, examples=["notificaties-api"]
+    )
+
+    class Meta(_NotificationConfigurationModel.Meta):
+        pass
