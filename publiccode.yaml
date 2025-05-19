@@ -75,7 +75,7 @@ dependsOn:
   open:
     - name: PostgreSQL
       optional: true
-      versionMin: '13.0'
+      versionMin: '14.0'
     - name: Kubernetes
       optional: true
       versionMin: '1.12'

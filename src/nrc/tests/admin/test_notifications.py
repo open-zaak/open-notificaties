@@ -55,7 +55,7 @@ class NotificationAdminWebTest(WebTest):
             reverse("admin:datamodel_notificatie_add"), user=self.user
         )
 
-        form = response.form
+        form = response.forms["notificatie_form"]
 
         form["forwarded_msg"] = json.dumps(self.forwarded_msg, default=str)
         form["kanaal"] = self.kanaal.pk
@@ -88,7 +88,7 @@ class NotificationAdminWebTest(WebTest):
             user=self.user,
         )
 
-        form = response.form
+        form = response.forms["notificatie_form"]
         response = form.submit()
 
         self.assertEqual(response.status_code, 302)

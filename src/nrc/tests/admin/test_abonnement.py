@@ -47,7 +47,7 @@ class AbonnementAdminWebTest(WebTest):
             ),
             user=self.user,
         )
-        summary_text = response.html.find("div", {"class": "content"}).find("ul").text
+        summary_text = response.html.find("div", {"id": "content"}).find("ul").text
 
         self.assertIn("Notificatie responses: 100", summary_text)
 
@@ -68,13 +68,13 @@ class AbonnementAdminWebTest(WebTest):
 
         response = form.submit()
 
-        summary_text = response.html.find("div", {"class": "content"}).find("ul").text
+        summary_text = response.html.find("div", {"id": "content"}).find("ul").text
 
         self.assertIn("Notificatie responses: 100", summary_text)
 
         # Deleted objects list has no ID in bulk delete view
         deleted_objects = (
-            response.html.find("div", {"class": "content"}).find_all("ul")[1].text
+            response.html.find("div", {"id": "content"}).find_all("ul")[1].text
         )
 
         self.assertNotIn("Notificatie response", deleted_objects)
@@ -147,7 +147,7 @@ class AbonnementAdminWebTest(WebTest):
                 row_reachable.find_all("td")[2].find("img").attrs["alt"], "None"
             )
 
-        form = response.forms[0]
+        form = response.forms[1]
         form["action"] = "check_callback_url_status"
         form["_selected_action"] = [
             abonnement_url_reachable.pk,

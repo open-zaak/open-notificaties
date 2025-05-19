@@ -180,7 +180,7 @@ cssselect==1.2.0
     #   pyquery
 distlib==0.3.9
     # via virtualenv
-django==4.2.20
+django==5.2.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -246,7 +246,7 @@ django-csp==3.8
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-debug-toolbar==3.2.4
+django-debug-toolbar>=4.3
     # via -r requirements/dev.in
 django-extensions==3.1.5
     # via -r requirements/dev.in
@@ -346,7 +346,7 @@ django-two-factor-auth==1.16.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   maykin-2fa
-django-webtest==1.9.10
+django-webtest==1.9.13
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt

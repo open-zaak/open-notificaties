@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: ['13', '14', '15', '16', '17']
+        postgres: ['14', '15', '16', '17']
 
     name: Tests (PG ${{ matrix.postgres }})
 
