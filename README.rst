@@ -7,7 +7,7 @@ Open Notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.11
 
-|build-status| |docs| |coverage| |black| |docker|
+|build-status| |docs| |coverage| |ruff| |docker|
 
 API voor het routeren van notificaties.
 
@@ -66,8 +66,9 @@ Licensed under the EUPL_
     :alt: Coverage
     :target: https://codecov.io/gh/open-zaak/open-notificaties
 
-.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
+.. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
+    :target: https://github.com/astral-sh/ruff
+    :alt: Ruff
 
 .. |docker| image:: https://img.shields.io/docker/image-size/openzaak/open-notificaties
     :target: https://hub.docker.com/r/openzaak/open-notificaties
