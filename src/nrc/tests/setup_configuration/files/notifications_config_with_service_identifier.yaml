@@ -1,0 +1,6 @@
+notifications_config_enable: true
+notifications_config:
+  notification_delivery_max_retries: 4
+  notification_delivery_retry_backoff: 1
+  notification_delivery_retry_backoff_max: 10
+  notifications_api_service_identifier: notificaties-api
