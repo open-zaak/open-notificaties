@@ -65,7 +65,7 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 notificatie_id=notificatie_id,
                 abonnement=sub,
                 attempt=kwargs.get("attempt", 1),
-                **response_init_kwargs
+                **response_init_kwargs,
             )
 
 

@@ -10,6 +10,7 @@ Django specific.
 Note that you should have the CI docker-compose running with the mock endpoints, which
 uses the self-signed certificates.
 """
+
 import os
 import socket
 from unittest import TestCase, skipIf

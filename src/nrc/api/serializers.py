@@ -83,7 +83,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         source="filter_groups",
         many=True,
         help_text=_(
-            "Een lijst van kanalen en filters waarop het ABONNEMENT " "wordt afgenomen."
+            "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen."
         ),
     )
 
