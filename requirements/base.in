@@ -6,7 +6,7 @@ self-certifi
 furl
 
 # Django libraries
-django-structlog
+django-structlog[celery]
 django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
