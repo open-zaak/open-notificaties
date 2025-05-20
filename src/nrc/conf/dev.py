@@ -11,6 +11,7 @@ os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("RELEASE", "dev")
 os.environ.setdefault("ENVIRONMENT", "development")
 os.environ.setdefault("DISABLE_2FA", "True")
+os.environ.setdefault("LOG_FORMAT_CONSOLE", "plain_console")
 
 os.environ.setdefault("DB_NAME", "opennotificaties")
 os.environ.setdefault("DB_USER", "opennotificaties")
@@ -25,19 +26,19 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 LOGGING["loggers"].update(
     {
-        "nrc": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
-        "django": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+        "nrc": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
+        "django": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
         "django.utils.autoreload": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,
         },
         "django.db.backends": {
-            "handlers": ["django"],
+            "handlers": ["json_file"],
             "level": "DEBUG",
             "propagate": False,
         },
-        "performance": {"handlers": ["console"], "level": "INFO", "propagate": True},
+        "performance": {"handlers": ["console"], "level": "INFO", "propagate": False},
     }
 )
 
