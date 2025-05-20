@@ -14,6 +14,7 @@ import os
 import tempfile
 from pathlib import Path
 
+import structlog
 from dotenv import load_dotenv
 from self_certifi import load_self_signed_certs as _load_self_signed_certs
 
@@ -24,6 +25,8 @@ def setup_env():
     # load the environment variables containing the secrets/config
     dotenv_path = Path(__file__).parents[2] / ".env"
     load_dotenv(dotenv_path)
+
+    structlog.contextvars.bind_contextvars(source="app")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nrc.conf.dev")
 

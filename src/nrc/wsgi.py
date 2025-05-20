@@ -7,30 +7,30 @@ For more information on this file, see
 https://docs.djangoproject.com/en/2.0/howto/deployment/wsgi/
 """
 
-import os
-from pathlib import Path
+from datetime import datetime, timezone
 
 from django.core.wsgi import get_wsgi_application
 
 from nrc.setup import setup_env
 
+try:
+    import uwsgi  # pyright: ignore[reportMissingModuleSource] uwsgi magic...
+except ImportError:
+    uwsgi = None
 
-def init_newrelic():
-    if os.environ.get("PROJECT_ROOT"):
-        try:
-            import newrelic.agent
-
-            newrelic.agent.initialize(
-                str(Path(os.environ.get("PROJECT_ROOT"), "newrelic.ini")),
-                "production",
-            )
-        except Exception as e:
-            print("Could not initialize New Relic APM, ignoring:")
-            print(e)
-
-
-# Enable New Relic on production
-# init_newrelic()
 
 setup_env()
-application = get_wsgi_application()
+
+
+class LogVars:
+    def __init__(self, application):
+        self.application = application
+
+    def __call__(self, environ, start_response):
+        if uwsgi is not None:
+            now = datetime.now(tz=timezone.utc)
+            uwsgi.set_logvar("iso8601timestamp", now.isoformat())
+        return self.application(environ, start_response)
+
+
+application = LogVars(get_wsgi_application())
