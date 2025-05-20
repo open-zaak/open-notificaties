@@ -1,3 +1,5 @@
+from typing import cast
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
@@ -13,6 +15,7 @@ from vng_api_common.validators import IsImmutableValidator, URLValidator
 from nrc.api.tasks import deliver_message
 from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie
 
+from .types import NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
 logger = structlog.stdlib.get_logger(__name__)
@@ -180,7 +183,9 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _send_to_subs(self, msg: dict, notificatie: Notificatie | None = None):
+    def _send_to_subs(
+        self, msg: NotificationMessage, notificatie: Notificatie | None = None
+    ):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
@@ -209,13 +214,23 @@ class MessageSerializer(NotificatieSerializer):
         for sub in list(subs):
             deliver_message.delay(sub.id, msg, **task_kwargs)
 
-    def create(self, validated_data: dict) -> dict:
-        logger.info("handling_notification", notification_data=validated_data)
+    def create(self, validated_data: NotificationMessage) -> NotificationMessage:
+        # `.pop` return type is Any, so explicitly cast it
+        notificatie = cast(Notificatie | None, validated_data.pop("notificatie", None))
 
-        notificatie = validated_data.pop("notificatie", None)
-
-        # send to subs
-        self._send_to_subs(validated_data, notificatie=notificatie)
+        with structlog.contextvars.bound_contextvars(
+            channel_name=validated_data["kanaal"],
+            notification_id=notificatie.id if notificatie else None,
+            resource=validated_data["resource"],
+            resource_url=validated_data["resourceUrl"],
+            main_object_url=validated_data["hoofdObject"],
+            creation_date=validated_data["aanmaakdatum"],
+            action=validated_data["actie"],
+            additional_attributes=validated_data.get("kenmerken"),
+        ):
+            logger.info("notification_received")
+            # send to subs
+            self._send_to_subs(validated_data, notificatie=notificatie)
         return validated_data
 
     @classmethod

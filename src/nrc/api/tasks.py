@@ -8,9 +8,12 @@ from django.utils.translation import gettext_lazy as _
 import requests
 import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
+from structlog.contextvars import bind_contextvars
 
 from nrc.celery import app
 from nrc.datamodel.models import Abonnement, NotificatieResponse
+
+from .types import SendNotificationTaskKwargs
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -20,7 +23,7 @@ class NotificationException(Exception):
 
 
 @app.task
-def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
+def deliver_message(sub_id: int, msg: SendNotificationTaskKwargs, **kwargs) -> None:
     """
     send msg to subscriber
 
@@ -28,14 +31,15 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     """
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
+    bind_contextvars(subscription_pk=sub_id, attempt_number=kwargs.get("attempt"))
+
     try:
         sub = Abonnement.objects.get(pk=sub_id)
     except Abonnement.DoesNotExist:
-        logger.warning(
-            "subscription_does_not_exist",
-            subscription_pk=sub_id,
-        )
+        logger.warning("subscription_does_not_exist")
         return
+
+    bind_contextvars(subscription_callback=sub.callback_url)
 
     try:
         response = requests.post(
@@ -50,19 +54,18 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 "Could not send notification: status {status_code} - {response}"
             ).format(status_code=response.status_code, response=response.text)
             response_init_kwargs["exception"] = exception_message[:1000]
+            logger.warning(
+                "notification_failed",
+                http_status_code=response.status_code,
+            )
             raise NotificationException(exception_message)
+        else:
+            logger.info("notification_successful")
     except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
+        logger.exception("notification_error", exc_info=e)
         raise
     finally:
-        # log of the response of the call
-        logger.debug(
-            "notification_attempted",
-            subscription_pk=sub_id,
-            notification_data=msg,
-            response=response_init_kwargs,
-        )
-
         # Only log if a top-level object is provided
         if notificatie_id:
             NotificatieResponse.objects.create(
