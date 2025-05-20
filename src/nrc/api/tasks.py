@@ -1,5 +1,4 @@
 import json
-import logging
 
 from django.conf import settings
 from django.core.management import call_command
@@ -7,12 +6,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
 
 from nrc.celery import app
 from nrc.datamodel.models import Abonnement, NotificatieResponse
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class NotificationException(Exception):
@@ -32,7 +32,8 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
         sub = Abonnement.objects.get(pk=sub_id)
     except Abonnement.DoesNotExist:
         logger.warning(
-            "Could not retrieve abonnement %d, not delivering message", sub_id
+            "subscription_does_not_exist",
+            subscription_pk=sub_id,
         )
         return
 
@@ -56,7 +57,10 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     finally:
         # log of the response of the call
         logger.debug(
-            "Notification response for %d, %r: %r", sub_id, msg, response_init_kwargs
+            "notification_attempted",
+            subscription_pk=sub_id,
+            notification_data=msg,
+            response=response_init_kwargs,
         )
 
         # Only log if a top-level object is provided

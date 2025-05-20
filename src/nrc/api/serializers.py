@@ -1,10 +1,9 @@
-import logging
-
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from djangorestframework_camel_case.util import camelize, underscoreize
 from notifications_api_common.api.serializers import NotificatieSerializer
 from rest_framework import fields, serializers
@@ -16,7 +15,7 @@ from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notifi
 
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class FiltersField(fields.DictField):
@@ -211,7 +210,7 @@ class MessageSerializer(NotificatieSerializer):
             deliver_message.delay(sub.id, msg, **task_kwargs)
 
     def create(self, validated_data: dict) -> dict:
-        logger.info("Handling notification %r", validated_data)
+        logger.info("handling_notification", notification_data=validated_data)
 
         notificatie = validated_data.pop("notificatie", None)
 

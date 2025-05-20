@@ -1,5 +1,4 @@
-import logging
-
+import structlog
 from django_setup_configuration.configuration import BaseConfigurationStep
 from django_setup_configuration.exceptions import ConfigurationRunFailed
 
@@ -7,7 +6,7 @@ from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
 
 from .models import AbonnementConfigurationModel
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationModel]):
@@ -63,8 +62,7 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                     )
 
             logger.debug(
-                "%s Abonnement with uuid='%s' and pk='%s'",
-                "Created" if created else "Updated",
-                abonnement.uuid,
-                abonnement.pk,
+                "subscription_created" if created else "subscription_updated",
+                subscription_uuid=abonnement.uuid,
+                subscription_pk=abonnement.pk,
             )
