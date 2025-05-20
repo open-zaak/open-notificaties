@@ -103,8 +103,8 @@ class StatusCodeFilter(admin.SimpleListFilter):
                 )
                 if self.value() == "true" and callback_status:
                     filtered_ids.append(obj.id)
-                elif self.value() == "false" and callback_status == False:  # noqa
-                    filtered_ids.append(obj.id)
+                elif self.value() == "false" and not callback_status:
+                    filtered_ids.append(obj.id)  # noqa SIM114
                 elif self.value() == "unknown" and callback_status is None:
                     filtered_ids.append(obj.id)
             return queryset.filter(id__in=filtered_ids)
