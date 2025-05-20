@@ -10,7 +10,6 @@ admin.site.unregister(JWTSecret)
 
 @admin.register(JWTSecret)
 class JWTSecretAdmin(admin.ModelAdmin):
-
     list_display = ("identifier",)
 
     readonly_fields = ("get_jwt",)

@@ -13,8 +13,6 @@ codecov
 pytest
 
 # code linting/formatting
-black
-isort
-flake8
+ruff
 
 commonground-api-common[testutils]>=2.0.1
