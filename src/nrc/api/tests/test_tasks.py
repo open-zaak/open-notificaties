@@ -168,3 +168,42 @@ class NotifCeleryTests(APITestCase):
         notif_response = NotificatieResponse.objects.get()
 
         self.assertEqual(len(notif_response.exception), 1000)
+
+    @patch("nrc.api.tasks.deliver_message.retry")
+    def test_notificatie_abonnement_does_not_exist(self, retry_mock):
+        """
+        Verify that a retry is called when the sending of the notification didn't
+        succeed due to an invalid response
+        """
+        retry_mock.side_effect = celery.exceptions.Retry
+
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with capture_logs() as cap_logs:
+            deliver_message(-1, request_data, notificatie_id=notif.id)
+
+            self.assertEqual(
+                cap_logs,
+                [
+                    {
+                        "event": "subscription_does_not_exist",
+                        "log_level": "error",
+                    }
+                ],
+            )
+
+        self.assertEqual(NotificatieResponse.objects.count(), 0)

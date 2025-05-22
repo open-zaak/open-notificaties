@@ -42,7 +42,7 @@ def deliver_message(
     try:
         sub = Abonnement.objects.get(pk=sub_id)
     except Abonnement.DoesNotExist:
-        logger.warning("subscription_does_not_exist")
+        logger.error("subscription_does_not_exist")
         return
 
     bind_contextvars(subscription_callback=sub.callback_url)
