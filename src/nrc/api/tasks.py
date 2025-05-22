@@ -22,8 +22,10 @@ class NotificationException(Exception):
     pass
 
 
-@app.task
-def deliver_message(sub_id: int, msg: SendNotificationTaskKwargs, **kwargs) -> None:
+@app.task(bind=True)
+def deliver_message(
+    self, sub_id: int, msg: SendNotificationTaskKwargs, **kwargs
+) -> None:
     """
     send msg to subscriber
 
@@ -31,7 +33,11 @@ def deliver_message(sub_id: int, msg: SendNotificationTaskKwargs, **kwargs) -> N
     """
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
-    bind_contextvars(subscription_pk=sub_id, attempt_number=kwargs.get("attempt"))
+    # `autoretry_attempt_number` is the number of times the same task was automatically retried
+    # `attempt_number` is the number of tasks that were started for this notification (without counting automatic retries)
+    autoretry_attempt_number = self.request.retries + 1
+    attempt_number = kwargs.get("attempt", 1)
+    bind_contextvars(subscription_pk=sub_id, notification_id=notificatie_id)
 
     try:
         sub = Abonnement.objects.get(pk=sub_id)
@@ -57,13 +63,24 @@ def deliver_message(sub_id: int, msg: SendNotificationTaskKwargs, **kwargs) -> N
             logger.warning(
                 "notification_failed",
                 http_status_code=response.status_code,
+                autoretry_attempt_number=autoretry_attempt_number,
+                attempt_number=attempt_number,
             )
             raise NotificationException(exception_message)
         else:
-            logger.info("notification_successful")
+            logger.info(
+                "notification_successful",
+                attempt_number=attempt_number,
+                autoretry_attempt_number=autoretry_attempt_number,
+            )
     except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
-        logger.exception("notification_error", exc_info=e)
+        logger.exception(
+            "notification_error",
+            exc_info=e,
+            attempt_number=attempt_number,
+            autoretry_attempt_number=autoretry_attempt_number,
+        )
         raise
     finally:
         # Only log if a top-level object is provided
@@ -71,7 +88,7 @@ def deliver_message(sub_id: int, msg: SendNotificationTaskKwargs, **kwargs) -> N
             NotificatieResponse.objects.create(
                 notificatie_id=notificatie_id,
                 abonnement=sub,
-                attempt=kwargs.get("attempt", 1),
+                attempt=attempt_number,
                 **response_init_kwargs,
             )
 

@@ -17,4 +17,3 @@ class NotificationMessage(TypedDict):
 
 class SendNotificationTaskKwargs(NotificationMessage):
     notificatie_id: NotRequired[int | None]
-    attempt: NotRequired[int | None]

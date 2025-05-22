@@ -220,7 +220,6 @@ class MessageSerializer(NotificatieSerializer):
 
         with structlog.contextvars.bound_contextvars(
             channel_name=validated_data["kanaal"],
-            notification_id=notificatie.id if notificatie else None,
             resource=validated_data["resource"],
             resource_url=validated_data["resourceUrl"],
             main_object_url=validated_data["hoofdObject"],

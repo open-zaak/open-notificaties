@@ -79,6 +79,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             notification_successful = next(
                 log for log in cap_logs if log["event"] == "notification_successful"
             )
+            notification_id = Notificatie.objects.last().pk
 
             self.assertEqual(
                 notification_received,
@@ -98,7 +99,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "user_id": None,
@@ -123,7 +123,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_successful",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
+                        "notification_id": notification_id,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
@@ -185,9 +185,12 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
             )
-            notification_failed = next(
+            error_logs = (
                 log for log in cap_logs if log["event"] == "notification_failed"
             )
+            notification_failed = next(error_logs)
+            retry_notification_failed = next(error_logs)
+            notification_id = Notificatie.objects.last().pk
 
             self.assertEqual(
                 notification_received,
@@ -207,7 +210,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "user_id": None,
@@ -232,9 +234,10 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_failed",
                         "http_status_code": 400,
                         "attempt_number": 1,
+                        "autoretry_attempt_number": 1,
                         "log_level": "warning",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
+                        "notification_id": notification_id,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
@@ -243,6 +246,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
+            self.assertEqual(retry_notification_failed["autoretry_attempt_number"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -293,9 +297,12 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
             )
-            notification_error = next(
+            error_logs = (
                 log for log in cap_logs if log["event"] == "notification_error"
             )
+            notification_error = next(error_logs)
+            retry_notification_error = next(error_logs)
+            notification_id = Notificatie.objects.last().pk
 
             self.assertEqual(
                 notification_received,
@@ -315,7 +322,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "user_id": None,
@@ -340,9 +346,10 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_error",
                         "exc_info": exc,
                         "attempt_number": 1,
+                        "autoretry_attempt_number": 1,
                         "log_level": "error",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
-                        "notification_id": None,
+                        "notification_id": notification_id,
                         "resource": "status",
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
@@ -351,6 +358,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
+            self.assertEqual(retry_notification_error["autoretry_attempt_number"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
