@@ -33,7 +33,7 @@ class AbonnementenConfigurationTests(TestCase):
     def test_execute_configuration_step_success(self):
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEquals(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
@@ -89,7 +89,7 @@ class AbonnementenConfigurationTests(TestCase):
 
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEquals(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
@@ -119,13 +119,13 @@ class AbonnementenConfigurationTests(TestCase):
     def test_execute_configuration_step_idempotent(self):
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEquals(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEquals(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 2)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 

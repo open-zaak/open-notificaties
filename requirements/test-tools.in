@@ -10,7 +10,6 @@ requests-mock
 tblib
 vcrpy
 codecov
-pytest
 
 # code linting/formatting
 ruff

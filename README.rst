@@ -5,9 +5,9 @@ Open Notificaties
 :Version: 1.9.0
 :Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
-:PythonVersion: 3.11
+:PythonVersion: 3.12
 
-|build-status| |docs| |coverage| |ruff| |docker|
+|build-status| |docs| |coverage| |code-style| |codeql| |ruff| |docker| |python-versions|
 
 API voor het routeren van notificaties.
 
@@ -65,6 +65,17 @@ Licensed under the EUPL_
 .. |coverage| image:: https://codecov.io/github/open-zaak/open-notificaties/branch/main/graphs/badge.svg?branch=main
     :alt: Coverage
     :target: https://codecov.io/gh/open-zaak/open-notificaties
+
+.. |code-style| image:: https://github.com/open-zaak/open-notificaties/actions/workflows/code_quality.yml/badge.svg?branch=main
+    :alt: Code style
+    :target: https://github.com/open-zaak/open-notificaties/actions/workflows/code_quality.yml
+
+.. |codeql| image:: https://github.com/open-zaak/open-notificaties/actions/workflows/codeql-analysis.yml/badge.svg?branch=main
+    :alt: CodeQL scan
+    :target: https://github.com/open-zaak/open-notificaties/actions/workflows/codeql-analysis.yml
+
+.. |python-versions| image:: https://img.shields.io/badge/python-3.12%2B-blue.svg
+    :alt: Supported Python version
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
     :target: https://github.com/astral-sh/ruff
