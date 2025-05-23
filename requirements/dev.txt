@@ -248,7 +248,7 @@ django-csp==3.8
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-debug-toolbar>=4.3
+django-debug-toolbar==5.2.0
     # via -r requirements/dev.in
 django-extensions==3.1.5
     # via -r requirements/dev.in
@@ -830,7 +830,7 @@ soupsieve==1.9.5
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   beautifulsoup4
-sphinx==7.4.7
+sphinx==8.1.3
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
