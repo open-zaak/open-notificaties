@@ -246,7 +246,7 @@ django-csp==3.8
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-debug-toolbar>=4.3
+django-debug-toolbar==5.2.0
     # via -r requirements/dev.in
 django-extensions==3.1.5
     # via -r requirements/dev.in
@@ -569,7 +569,7 @@ notifications-api-common==0.7.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   commonground-api-common
-open-api-framework==0.9.6
+open-api-framework==0.10.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
