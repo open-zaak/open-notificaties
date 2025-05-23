@@ -4,12 +4,8 @@ name: Code quality checks
 on:
   push:
     branches:
-      - main
-    paths:
-      - '**.py'
-  pull_request:
-    paths:
-      - '**.py'
+      - main 
+  pull_request: 
   workflow_dispatch:
 
 jobs:
