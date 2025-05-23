@@ -57,13 +57,15 @@ DO NOT PUT ANY TARGET APP-SPECIFIC RULES HERE.
   }
 }
 
-#user-tools a {
+#user-tools a,
+#user-tools button {
   border-bottom: none;
   text-decoration: underline;
 
   &:focus,
   &:hover {
     color: var(--header-link-color);
+    margin-bottom: 0;
   }
 }
 
