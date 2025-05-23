@@ -34,6 +34,33 @@ Database
 * ``DB_PORT``: port number of the database. Defaults to: ``5432``.
 
 
+Logging
+-------
+
+* ``LOG_STDOUT``: whether to log to stdout or not. Defaults to: ``True``.
+* ``LOG_LEVEL``: control the verbosity of logging output. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``WARNING``.
+* ``LOG_QUERIES``: enable (query) logging at the database backend level. Note that you must also set ``DEBUG=1``, which should be done very sparingly!. Defaults to: ``False``.
+* ``LOG_REQUESTS``: enable logging of the outgoing requests. Defaults to: ``False``.
+* ``LOG_OUTGOING_REQUESTS_EMIT_BODY``: Whether or not outgoing request bodies should be logged. Defaults to: ``True``.
+* ``LOG_OUTGOING_REQUESTS_DB_SAVE``: Whether or not outgoing request logs should be saved to the database. Defaults to: ``False``.
+* ``LOG_OUTGOING_REQUESTS_DB_SAVE_BODY``: Whether or not outgoing request bodies should be saved to the database. Defaults to: ``True``.
+* ``LOG_OUTGOING_REQUESTS_MAX_AGE``: The amount of time after which request logs should be deleted from the database. Defaults to: ``7``.
+* ``ENABLE_STRUCTLOG_REQUESTS``: enable structured logging of requests. Defaults to: ``True``.
+* ``LOG_FORMAT_CONSOLE``: The format for the console logging handler, possible options: ``json``, ``plain_console``. Defaults to: ``json``.
+
+
+Celery
+------
+
+* ``CELERY_LOGLEVEL``: control the verbosity of logging output for celery, independent of ``LOG_LEVEL``. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``INFO``.
+* ``CELERY_RESULT_BACKEND``: the URL of the backend/broker that will be used by Celery to send the notifications. Defaults to: ``redis://localhost:6379/1``.
+* ``PUBLISH_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://guest:guest@localhost:5672/%2F``.
+* ``CELERY_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://127.0.0.1:5672//``.
+* ``CELERY_RESULT_EXPIRES``: How long the results of tasks will be stored in Redis (in seconds), this can be set to a lower duration to lower memory usage for Redis. Defaults to: ``3600``.
+* ``CELERY_TASK_HARD_TIME_LIMIT``: If a celery task exceeds this time limit, the worker processing the task will be killed and replaced with a new one. Defaults to: ``900``.
+* ``CELERY_TASK_SOFT_TIME_LIMIT``: If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised. Defaults to: ``300``.
+
+
 Cross-Origin-Resource-Sharing
 -----------------------------
 
@@ -41,17 +68,6 @@ Cross-Origin-Resource-Sharing
 * ``CORS_ALLOWED_ORIGINS``: explicitly list the allowed origins for cross-domain requests. Example: http://localhost:3000,https://some-app.gemeente.nl. Defaults to: ``[]``.
 * ``CORS_ALLOWED_ORIGIN_REGEXES``: same as ``CORS_ALLOWED_ORIGINS``, but supports regular expressions. Defaults to: ``[]``.
 * ``CORS_EXTRA_ALLOW_HEADERS``: headers that are allowed to be sent as part of the cross-domain request. By default, Authorization, Accept-Crs and Content-Crs are already included. The value of this variable is added to these already included headers. Defaults to: ``[]``.
-
-
-Celery
-------
-
-* ``CELERY_RESULT_BACKEND``: the URL of the backend/broker that will be used by Celery to send the notifications. Defaults to: ``redis://localhost:6379/1``.
-* ``PUBLISH_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://guest:guest@localhost:5672/%2F``.
-* ``CELERY_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://127.0.0.1:5672//``.
-* ``CELERY_RESULT_EXPIRES``: How long the results of tasks will be stored in Redis (in seconds), this can be set to a lower duration to lower memory usage for Redis. Defaults to: ``3600``.
-* ``CELERY_TASK_HARD_TIME_LIMIT``: If a celery task exceeds this time limit, the worker processing the task will be killed and replaced with a new one. Defaults to: ``900``.
-* ``CELERY_TASK_SOFT_TIME_LIMIT``: If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised. Defaults to: ``300``.
 
 
 Elastic APM
@@ -95,11 +111,6 @@ Optional
 * ``EMAIL_HOST_PASSWORD``: password to connect to the mail server. Defaults to: ``(empty string)``.
 * ``EMAIL_USE_TLS``: whether to use TLS or not to connect to the mail server. Should be True if you're changing the ``EMAIL_PORT`` to 487. Defaults to: ``False``.
 * ``DEFAULT_FROM_EMAIL``: The default email address from which emails are sent. Defaults to: ``nrc@example.com``.
-* ``LOG_STDOUT``: whether to log to stdout or not. Defaults to: ``True``.
-* ``LOG_LEVEL``: control the verbosity of logging output. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``WARNING``.
-* ``LOG_QUERIES``: enable (query) logging at the database backend level. Note that you must also set ``DEBUG=1``, which should be done very sparingly!. Defaults to: ``False``.
-* ``LOG_REQUESTS``: enable logging of the outgoing requests. Defaults to: ``False``.
-* ``CELERY_LOGLEVEL``: control the verbosity of logging output for celery, independent of ``LOG_LEVEL``. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``INFO``.
 * ``SESSION_COOKIE_AGE``: For how long, in seconds, the session cookie will be valid. Defaults to: ``1209600``.
 * ``SESSION_COOKIE_SAMESITE``: The value of the SameSite flag on the session cookie. This flag prevents the cookie from being sent in cross-site requests thus preventing CSRF attacks and making some methods of stealing session cookie impossible.Currently interferes with OIDC. Keep the value set at Lax if used. Defaults to: ``Lax``.
 * ``CSRF_COOKIE_SAMESITE``: The value of the SameSite flag on the CSRF cookie. This flag prevents the cookie from being sent in cross-site requests. Defaults to: ``Strict``.
@@ -112,10 +123,6 @@ Optional
 * ``SITE_DOMAIN``: Defines the primary domain where the application is hosted. Defaults to: ``(empty string)``.
 * ``SENTRY_DSN``: URL of the sentry project to send error reports to. Default empty, i.e. -> no monitoring set up. Highly recommended to configure this.
 * ``DISABLE_2FA``: Whether or not two factor authentication should be disabled. Defaults to: ``False``.
-* ``LOG_OUTGOING_REQUESTS_EMIT_BODY``: Whether or not outgoing request bodies should be logged. Defaults to: ``True``.
-* ``LOG_OUTGOING_REQUESTS_DB_SAVE``: Whether or not outgoing request logs should be saved to the database. Defaults to: ``False``.
-* ``LOG_OUTGOING_REQUESTS_DB_SAVE_BODY``: Whether or not outgoing request bodies should be saved to the database. Defaults to: ``True``.
-* ``LOG_OUTGOING_REQUESTS_MAX_AGE``: The amount of time after which request logs should be deleted from the database. Defaults to: ``7``.
 * ``EXTRA_VERIFY_CERTS``: a comma-separated list of paths to certificates to trust, If you're using self-signed certificates for the services that Open Notificaties communicates with, specify the path to those (root) certificates here, rather than disabling SSL certificate verification. Example: ``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``. Defaults to: ``(empty string)``.
 
 

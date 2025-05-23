@@ -4,6 +4,8 @@ Continuous integration settings module.
 
 import os
 
+from open_api_framework.conf.utils import mute_logging
+
 os.environ.setdefault("IS_HTTPS", "no")
 os.environ.setdefault("SECRET_KEY", "dummy")
 os.environ.setdefault("ENVIRONMENT", "CI")
@@ -17,14 +19,6 @@ CACHES = {
     "oidc": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
 }
 
-for logger in LOGGING["loggers"].values():
-    logger.update(
-        {
-            "level": "CRITICAL",
-            "handlers": [],
-            "propagate": False,
-        }
-    )
-LOGGING["loggers"][""] = {"level": "CRITICAL", "handlers": []}
+mute_logging(LOGGING)
 
 TEST_CALLBACK_AUTH = False

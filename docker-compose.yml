@@ -10,12 +10,18 @@ services:
       - ./docker/postgres.entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
       - db:/var/lib/postgresql/data
     command: postgres -c max_connections=300 -c log_min_messages=LOG
+    networks:
+      - open-notificaties-dev
 
   rabbitmq:
     image: rabbitmq:4.0-alpine
+    networks:
+      - open-notificaties-dev
 
   redis:
     image: redis
+    networks:
+      - open-notificaties-dev
 
   web:
     build: .
@@ -37,6 +43,9 @@ services:
       OPENNOTIFICATIES_SUPERUSER_USERNAME: admin
       OPENNOTIFICATIES_SUPERUSER_EMAIL: admin@localhost
       DJANGO_SUPERUSER_PASSWORD: admin
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DISABLE_2FA: ${DISABLE_2FA:-yes}
+      LOG_NOTIFICATIONS_IN_DB: ${LOG_NOTIFICATIONS_IN_DB:-yes}
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])"]
       interval: 30s
@@ -54,6 +63,8 @@ services:
     depends_on:
       web-init:
         condition: service_completed_successfully
+    networks:
+      - open-notificaties-dev
 
   web-init:
     build: .
@@ -68,6 +79,8 @@ services:
       - rabbitmq
       - redis
     volumes: *app-volumes
+    networks:
+      - open-notificaties-dev
 
   celery:
     build: .
@@ -83,6 +96,8 @@ services:
     depends_on:
       web:
         condition: service_healthy
+    networks:
+      - open-notificaties-dev
 
   celery-beat:
     build: .
@@ -94,6 +109,8 @@ services:
       - db
       - rabbitmq
       - redis
+    networks:
+      - open-notificaties-dev
 
   celery-flower:
     build: .
@@ -103,6 +120,8 @@ services:
       - 5555:5555
     depends_on:
       - rabbitmq
+    networks:
+      - open-notificaties-dev
 
   nginx:
     image: nginx
@@ -112,6 +131,8 @@ services:
       - "9000:80"
     depends_on:
       - web
+    networks:
+      - open-notificaties-dev
 
   openzaak:
     image: openzaak/open-zaak:latest
@@ -137,6 +158,8 @@ services:
       - CELERY_LOGLEVEL=DEBUG
       - CELERY_WORKER_CONCURRENCY=${CELERY_WORKER_CONCURRENCY:-4}
       - ENVIRONMENT=dev
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DISABLE_2FA=${DISABLE_2FA:-yes}
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; exit(requests.head('http://localhost:8000/admin/').status_code not in [200, 302])"]
       interval: 30s
@@ -150,6 +173,8 @@ services:
       - db
     ports:
       - 8001:8000
+    networks:
+      - open-notificaties-dev
 
   openzaak_celery:
     image: openzaak/open-zaak:latest
@@ -165,7 +190,13 @@ services:
     depends_on:
       openzaak:
         condition: service_healthy
+    networks:
+      - open-notificaties-dev
 
 volumes:
   media:
   db:
+
+networks:
+  open-notificaties-dev:
+    name: open-notificaties-dev

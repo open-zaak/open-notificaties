@@ -1,8 +1,7 @@
-import logging
-
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
+import structlog
 from drf_spectacular.openapi import AutoSchema as _AutoSchema
 from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
 from rest_framework import exceptions, mixins, serializers
@@ -12,7 +11,7 @@ from vng_api_common.schema import DEFAULT_ACTION_ERRORS, HTTP_STATUS_CODE_TITLES
 from vng_api_common.serializers import FoutSerializer, ValidatieFoutSerializer
 from vng_api_common.views import ERROR_CONTENT_TYPE
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class AutoSchema(_AutoSchema):
@@ -68,7 +67,7 @@ class AutoSchema(_AutoSchema):
         # general errors
         general_klasses = DEFAULT_ACTION_ERRORS.get(action)
         if general_klasses is None:
-            logger.debug("Unknown action %s, no default error responses added")
+            logger.debug("unknown_openapi_action", action=action)
             return {}
 
         exception_klasses = general_klasses[:]

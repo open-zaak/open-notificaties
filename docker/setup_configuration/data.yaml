@@ -140,7 +140,7 @@ sites_config:
 notifications_config_enable: true
 notifications_config:
   notifications_api_service_identifier: notificaties-api
-  notification_delivery_max_retries: 1
+  notification_delivery_max_retries: 2
   notification_delivery_retry_backoff: 2
   notification_delivery_retry_backoff_max: 3
 

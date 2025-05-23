@@ -4,6 +4,9 @@ FROM python:3.11-slim-bookworm AS build
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
         build-essential \
         libpq-dev \
+        # required for (log) routing support in uwsgi
+        libpcre3 \
+        libpcre3-dev \
         git \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,6 +41,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
         nano \
         curl \
         gettext \
+        libpcre3 \
         postgresql-client \
         # Required for Celery to work.
         netcat-openbsd \
@@ -61,6 +65,7 @@ COPY ./bin/celery_beat.sh /celery_beat.sh
 COPY ./bin/uninstall_adfs.sh ./bin/uninstall_django_auth_adfs_db.sql /app/bin/
 COPY ./bin/check_celery_worker_liveness.py ./bin/
 COPY ./bin/setup_configuration.sh /setup_configuration.sh
+COPY ./bin/uwsgi.ini /
 RUN mkdir /app/log /app/config /app/tmp
 
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
