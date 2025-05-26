@@ -40,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
       - uses: actions/setup-node@v4
         with:
           node-version: '16'
@@ -75,7 +75,7 @@ jobs:
       - name: Set up backend environment
         uses: maykinmedia/setup-django-backend@v1.3
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           setup-node: false
 
       - name: Generate environment variable documentation using OAf and check if it was updated
@@ -107,7 +107,7 @@ jobs:
       - store-reusable-workflow-vars
     with:
       main-branch: 'main'
-      python-version: '3.11'
+      python-version: '3.12'
       docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}
       run-docs: true
       django-settings-module: nrc.conf.ci
