@@ -1,6 +1,4 @@
-from datetime import datetime
 from unittest.mock import patch
-from zoneinfo import ZoneInfo
 
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
@@ -93,9 +91,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -117,9 +113,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_successful",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -204,9 +198,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -228,13 +220,11 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_failed",
                         "http_status_code": 400,
-                        "attempt_number": 1,
-                        "autoretry_attempt_number": 1,
+                        "notification_attempt_count": 1,
+                        "task_attempt_count": 1,
                         "log_level": "warning",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -246,7 +236,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_notification_failed["autoretry_attempt_number"], 2)
+            self.assertEqual(retry_notification_failed["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -316,9 +306,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_received",
                         "log_level": "info",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -340,13 +328,11 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                             "vertrouwelijkheidaanduiding": "openbaar",
                         },
                         "channel_name": "zaken",
-                        "creation_date": datetime(
-                            2025, 1, 1, 12, 0, tzinfo=ZoneInfo(key="UTC")
-                        ),
+                        "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_error",
                         "exc_info": exc,
-                        "attempt_number": 1,
-                        "autoretry_attempt_number": 1,
+                        "notification_attempt_count": 1,
+                        "task_attempt_count": 1,
                         "log_level": "error",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -358,7 +344,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_notification_error["autoretry_attempt_number"], 2)
+            self.assertEqual(retry_notification_error["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)

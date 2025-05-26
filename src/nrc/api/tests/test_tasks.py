@@ -59,8 +59,8 @@ class NotifCeleryTests(APITestCase):
                     [
                         {
                             "http_status_code": 400,
-                            "attempt_number": 1,
-                            "autoretry_attempt_number": 1,
+                            "notification_attempt_count": 1,
+                            "task_attempt_count": 1,
                             "event": "notification_failed",
                             "log_level": "warning",
                         }
@@ -119,8 +119,8 @@ class NotifCeleryTests(APITestCase):
                     [
                         {
                             "event": "notification_error",
-                            "attempt_number": 1,
-                            "autoretry_attempt_number": 1,
+                            "notification_attempt_count": 1,
+                            "task_attempt_count": 1,
                             "log_level": "error",
                             "exc_info": exc,
                         }

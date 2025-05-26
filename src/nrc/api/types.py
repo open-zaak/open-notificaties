@@ -5,7 +5,7 @@ from nrc.datamodel.models import Notificatie
 
 
 class NotificationMessage(TypedDict):
-    aanmaakdatum: str | datetime
+    aanmaakdatum: datetime
     actie: str
     hoofdObject: str
     kanaal: str

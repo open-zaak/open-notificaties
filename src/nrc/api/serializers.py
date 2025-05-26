@@ -223,7 +223,8 @@ class MessageSerializer(NotificatieSerializer):
             resource=validated_data["resource"],
             resource_url=validated_data["resourceUrl"],
             main_object_url=validated_data["hoofdObject"],
-            creation_date=validated_data["aanmaakdatum"],
+            # Explicitly use `strftime` because `isoformat` adds a `+00:00` suffix
+            creation_date=validated_data["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
             action=validated_data["actie"],
             additional_attributes=validated_data.get("kenmerken"),
         ):

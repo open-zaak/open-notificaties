@@ -33,10 +33,10 @@ def deliver_message(
     """
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
-    # `autoretry_attempt_number` is the number of times the same task was automatically retried
-    # `attempt_number` is the number of tasks that were started for this notification (without counting automatic retries)
-    autoretry_attempt_number = self.request.retries + 1
-    attempt_number = kwargs.get("attempt", 1)
+    # `task_attempt_count` is the number of times the same task was automatically retried
+    # `notification_attempt_count` is the number of tasks that were started for this notification (without counting automatic retries)
+    task_attempt_count = self.request.retries + 1
+    notification_attempt_count = kwargs.get("attempt", 1)
     bind_contextvars(subscription_pk=sub_id, notification_id=notificatie_id)
 
     try:
@@ -63,23 +63,23 @@ def deliver_message(
             logger.warning(
                 "notification_failed",
                 http_status_code=response.status_code,
-                autoretry_attempt_number=autoretry_attempt_number,
-                attempt_number=attempt_number,
+                task_attempt_count=task_attempt_count,
+                notification_attempt_count=notification_attempt_count,
             )
             raise NotificationException(exception_message)
         else:
             logger.info(
                 "notification_successful",
-                attempt_number=attempt_number,
-                autoretry_attempt_number=autoretry_attempt_number,
+                notification_attempt_count=notification_attempt_count,
+                task_attempt_count=task_attempt_count,
             )
     except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "notification_error",
             exc_info=e,
-            attempt_number=attempt_number,
-            autoretry_attempt_number=autoretry_attempt_number,
+            notification_attempt_count=notification_attempt_count,
+            task_attempt_count=task_attempt_count,
         )
         raise
     finally:
@@ -88,7 +88,7 @@ def deliver_message(
             NotificatieResponse.objects.create(
                 notificatie_id=notificatie_id,
                 abonnement=sub,
-                attempt=attempt_number,
+                attempt=notification_attempt_count,
                 **response_init_kwargs,
             )
 
