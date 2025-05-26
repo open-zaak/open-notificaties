@@ -60,7 +60,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==2.6.2
+commonground-api-common==2.6.4
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -225,7 +225,7 @@ idna==3.7
     # via requests
 inflection==0.5.1
     # via drf-spectacular
-iso-639==0.4.5
+iso639-lang==2.6.0
     # via commonground-api-common
 itypes==1.2.0
     # via coreapi
@@ -255,7 +255,7 @@ notifications-api-common==0.7.2
     # via
     #   -r requirements/base.in
     #   commonground-api-common
-open-api-framework==0.10.0
+open-api-framework==0.10.1
     # via -r requirements/base.in
 orderedmultidict==1.0.1
     # via furl
