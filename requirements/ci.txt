@@ -725,7 +725,7 @@ structlog==25.3.0
     #   django-structlog
 tblib==1.7.0
     # via -r requirements/test-tools.in
-tornado==6.4.2
+tornado==6.5
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
