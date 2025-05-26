@@ -2,7 +2,7 @@
 Open Notificaties
 =================
 
-:Version: 1.9.0
+:Version: 1.10.0
 :Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.12
