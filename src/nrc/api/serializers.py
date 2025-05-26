@@ -1,5 +1,3 @@
-from typing import cast
-
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
@@ -215,8 +213,7 @@ class MessageSerializer(NotificatieSerializer):
             deliver_message.delay(sub.id, msg, **task_kwargs)
 
     def create(self, validated_data: NotificationMessage) -> NotificationMessage:
-        # `.pop` return type is Any, so explicitly cast it
-        notificatie = cast(Notificatie | None, validated_data.pop("notificatie", None))
+        notificatie: Notificatie | None = validated_data.pop("notificatie", None)
 
         with structlog.contextvars.bound_contextvars(
             channel_name=validated_data["kanaal"],
