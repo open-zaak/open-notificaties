@@ -1,5 +1,4 @@
 import json
-import logging
 
 from django.conf import settings
 from django.core.management import call_command
@@ -7,20 +6,26 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 
 import requests
+import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
+from structlog.contextvars import bind_contextvars
 
 from nrc.celery import app
 from nrc.datamodel.models import Abonnement, NotificatieResponse
 
-logger = logging.getLogger(__name__)
+from .types import SendNotificationTaskKwargs
+
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class NotificationException(Exception):
     pass
 
 
-@app.task
-def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
+@app.task(bind=True)
+def deliver_message(
+    self, sub_id: int, msg: SendNotificationTaskKwargs, **kwargs
+) -> None:
     """
     send msg to subscriber
 
@@ -28,13 +33,19 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
     """
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
+    # `task_attempt_count` is the number of times the same task was automatically retried
+    # `notification_attempt_count` is the number of tasks that were started for this notification (without counting automatic retries)
+    task_attempt_count = self.request.retries + 1
+    notification_attempt_count = kwargs.get("attempt", 1)
+    bind_contextvars(subscription_pk=sub_id, notification_id=notificatie_id)
+
     try:
         sub = Abonnement.objects.get(pk=sub_id)
     except Abonnement.DoesNotExist:
-        logger.warning(
-            "Could not retrieve abonnement %d, not delivering message", sub_id
-        )
+        logger.error("subscription_does_not_exist")
         return
+
+    bind_contextvars(subscription_callback=sub.callback_url)
 
     try:
         response = requests.post(
@@ -49,22 +60,35 @@ def deliver_message(sub_id: int, msg: dict, **kwargs) -> None:
                 "Could not send notification: status {status_code} - {response}"
             ).format(status_code=response.status_code, response=response.text)
             response_init_kwargs["exception"] = exception_message[:1000]
+            logger.warning(
+                "notification_failed",
+                http_status_code=response.status_code,
+                task_attempt_count=task_attempt_count,
+                notification_attempt_count=notification_attempt_count,
+            )
             raise NotificationException(exception_message)
+        else:
+            logger.info(
+                "notification_successful",
+                notification_attempt_count=notification_attempt_count,
+                task_attempt_count=task_attempt_count,
+            )
     except requests.RequestException as e:
         response_init_kwargs = {"exception": str(e)}
+        logger.exception(
+            "notification_error",
+            exc_info=e,
+            notification_attempt_count=notification_attempt_count,
+            task_attempt_count=task_attempt_count,
+        )
         raise
     finally:
-        # log of the response of the call
-        logger.debug(
-            "Notification response for %d, %r: %r", sub_id, msg, response_init_kwargs
-        )
-
         # Only log if a top-level object is provided
         if notificatie_id:
             NotificatieResponse.objects.create(
                 notificatie_id=notificatie_id,
                 abonnement=sub,
-                attempt=kwargs.get("attempt", 1),
+                attempt=notification_attempt_count,
                 **response_init_kwargs,
             )
 

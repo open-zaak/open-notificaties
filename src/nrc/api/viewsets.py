@@ -1,5 +1,4 @@
-import logging
-
+import structlog
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, status, views, viewsets
 from rest_framework.response import Response
@@ -13,7 +12,7 @@ from .filters import KanaalFilter
 from .scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
 from .serializers import AbonnementSerializer, KanaalSerializer, MessageSerializer
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 @extend_schema_view(

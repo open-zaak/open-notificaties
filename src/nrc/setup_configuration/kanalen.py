@@ -1,5 +1,4 @@
-import logging
-
+import structlog
 from django_setup_configuration.configuration import BaseConfigurationStep
 from django_setup_configuration.exceptions import ConfigurationRunFailed
 
@@ -7,7 +6,7 @@ from nrc.datamodel.models import Kanaal
 
 from .models import KanaalConfigurationModel
 
-logger = logging.getLogger(__name__)
+logger = structlog.stdlib.get_logger(__name__)
 
 
 class KanaalConfigurationStep(BaseConfigurationStep[KanaalConfigurationModel]):
@@ -43,8 +42,7 @@ class KanaalConfigurationStep(BaseConfigurationStep[KanaalConfigurationModel]):
             )
 
             logger.debug(
-                "%s Kanaal with naam='%s' and pk='%s'",
-                "Created" if created else "Updated",
-                kanaal.naam,
-                kanaal.pk,
+                "channel_created" if created else "channel_updated",
+                channel_name=kanaal.naam,
+                channel_pk=kanaal.pk,
             )
