@@ -17,3 +17,4 @@ further configured via the management interface.
    notifications
    adfs
    oidc
+   logging
