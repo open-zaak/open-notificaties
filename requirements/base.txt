@@ -350,7 +350,7 @@ sqlparse==0.5.1
     # via django
 structlog==25.3.0
     # via django-structlog
-tornado==6.4.2
+tornado==6.5
     # via flower
 typing-extensions==4.12.2
     # via
