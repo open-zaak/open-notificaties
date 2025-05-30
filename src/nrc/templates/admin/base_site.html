@@ -12,6 +12,10 @@
 
 {% block branding %}
     <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ settings.PROJECT_NAME }} beheer</a></h1>
+
+    {% if user.is_anonymous %}
+      {% include "admin/color_theme_toggle.html" %}
+    {% endif %}
 {% endblock %}
 
 {% block welcome-msg %}
@@ -34,4 +38,6 @@
         {% csrf_token %}
         <button type="submit">{% trans 'Log out' %}</button>
     </form>
+
+    {% include "admin/color_theme_toggle.html" %}
 {% endblock %}
