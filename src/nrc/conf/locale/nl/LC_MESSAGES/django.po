@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-01 08:54+0000\n"
+"POT-Creation-Date: 2025-05-26 11:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Login with organization account"
 msgstr "Inloggen met organisatieaccount"
 
-#: nrc/api/admin.py:24
+#: nrc/api/admin.py:23
 msgid "Gebruik het JWT-token nooit direct in een applicatie."
 msgstr ""
 
@@ -131,7 +131,7 @@ msgstr "De abonnementfilters komen niet overeen met de kanaalfilters"
 msgid "Kenmerken aren't consistent with kanaal filters"
 msgstr "De kenmerken komen niet overeen met de kanaalfilters"
 
-#: nrc/api/tasks.py:49 nrc/api/tests/test_tasks.py:130
+#: nrc/api/tasks.py:60 nrc/api/tests/test_tasks.py:76
 #, python-brace-format
 msgid "Could not send notification: status {status_code} - {response}"
 msgstr "Notificatie versturen is gefaald: status {status_code} - {response}"
@@ -346,7 +346,7 @@ msgstr "Wachtwoord wijzigen"
 msgid "Manage two-factor auth"
 msgstr "Tweefactorauthenticatie beheren"
 
-#: nrc/templates/admin/base_site.html:33
+#: nrc/templates/admin/base_site.html:35
 msgid "Log out"
 msgstr "Uitloggen"
 
@@ -372,16 +372,16 @@ msgid ""
 "van dit object."
 msgstr ""
 
-#: nrc/utils/schema.py:153
+#: nrc/utils/schema.py:152
 msgid ""
 "Geeft een specifieke API-versie aan in de context van een specifieke "
 "aanroep. Voorbeeld: 1.2.1."
 msgstr ""
 
-#: nrc/utils/schema.py:169
+#: nrc/utils/schema.py:168
 msgid "Content type of the request body."
 msgstr "Inhoudstype van de request body."
 
-#: nrc/utils/schema.py:183
+#: nrc/utils/schema.py:182
 msgid "URL waar de resource leeft."
 msgstr ""

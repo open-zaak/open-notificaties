@@ -2,6 +2,48 @@
 Changes
 =======
 
+1.10.0 (2025-06-03)
+===================
+
+.. warning::
+
+    This release upgrades Django to version 5.2.1, which requires PostgreSQL version 14 or higher.
+    Attempting to deploy with PostgreSQL <14 will cause errors during deployment.
+
+
+**New features**
+
+.. note::
+
+  The logging format has been changed from unstructured to structured with `structlog <https://www.structlog.org/en/stable/>`_.
+  For more information on the available log events and their context, see :ref:`manual_logging`.
+
+* [:open-notificaties:`277`] Emit logs when receiving/sending notifications
+* [:open-notificaties:`277`] Log the task autoretry attempt count for failed notifications
+
+**Bugfixes/QOL**
+
+* [:open-notificaties:`258`] Make ``notifications_api_service_identifier`` optional for ``setup_configuration``
+  (see :ref:`Configuration for Notificaties API <ref_step_nrc.setup_configuration.steps.NotificationConfigurationStep>`)
+* Do not use ``save_outgoing_requests`` log handler if ``LOG_REQUESTS`` is set to false
+
+**Project maintenance**
+
+* Upgraded dependencies
+
+  * [:open-api-framework:`140`] python to 3.12
+  * [:open-notificaties:`273`] Django to 5.2.1
+  * setuptools to 78.1.1 to fix security issues
+  * tornado to 6.5 to fix security issues
+  * open-api-framework to 0.10.1
+  * commonground-api-common to 2.6.4
+
+* [:open-api-framework:`132`] Remove pytest and check_sphinx.py, replace with simpler commands
+* [:open-notificaties:`279`] Make local docker-compose setup easier to work with
+* [:open-notificaties:`279`] Add docker compose setup for observability (Grafana/Loki/Promtail)
+* [:open-api-workflows:`24`] Replace OAS workflows with single workflow
+* [:open-api-framework:`133`] Replace black, isort and flake8 with ruff and update code-quality workflow
+
 1.9.0 (2025-05-15)
 ==================
 
