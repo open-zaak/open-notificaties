@@ -12,3 +12,5 @@ zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
 notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
+
+psycopg[pool]

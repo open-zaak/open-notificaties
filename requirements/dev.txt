@@ -619,6 +619,14 @@ prompt-toolkit==3.0.47
     #   -r requirements/ci.txt
     #   click-repl
     #   questionary
+psycopg==3.2.9
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+psycopg-pool==3.2.6
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
 psycopg2==2.9.9
     # via
     #   -c requirements/ci.txt
@@ -894,6 +902,8 @@ typing-extensions==4.12.2
     #   -r requirements/ci.txt
     #   anyio
     #   mozilla-django-oidc-db
+    #   psycopg
+    #   psycopg-pool
     #   pydantic
     #   pydantic-core
     #   pyopenssl
