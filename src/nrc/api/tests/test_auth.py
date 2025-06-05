@@ -3,8 +3,10 @@ Guarantee that the proper authorization machinery is in place.
 """
 
 import requests_mock
+from freezegun import freeze_time
+from jwt.exceptions import ImmatureSignatureError
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
 from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
 
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
@@ -255,3 +257,26 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
         response = self.client.post(url)
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+@freeze_time("2025-01-01T12:00:05Z")
+class JWTIatTests(JWTAuthMixin, APITestCase):
+    @freeze_time("2025-01-01T12:00:00Z")
+    def test_iat_in_future_fails(self):
+        self.applicatie.heeft_alle_autorisaties = True
+        self.applicatie.save()
+        url = reverse("kanaal-list")
+
+        with self.assertRaises(ImmatureSignatureError):
+            self.client.get(url)
+
+    @override_settings(TIME_LEEWAY=5)
+    @freeze_time("2025-01-01T12:00:01Z")
+    def test_iat_in_future_with_leeway(self):
+        self.applicatie.heeft_alle_autorisaties = True
+        self.applicatie.save()
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
