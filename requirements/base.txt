@@ -60,7 +60,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==2.6.4
+commonground-api-common==2.6.6
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -331,10 +331,7 @@ requests==2.32.3
     #   django-log-outgoing-requests
     #   mozilla-django-oidc
     #   open-api-framework
-    #   requests-mock
     #   zgw-consumers
-requests-mock==1.12.1
-    # via commonground-api-common
 rpds-py==0.20.0
     # via
     #   jsonschema

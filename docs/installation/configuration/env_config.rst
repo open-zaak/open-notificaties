@@ -134,6 +134,7 @@ Optional
 * ``SENTRY_DSN``: URL of the sentry project to send error reports to. Default empty, i.e. -> no monitoring set up. Highly recommended to configure this.
 * ``DISABLE_2FA``: Whether or not two factor authentication should be disabled. Defaults to: ``False``.
 * ``EXTRA_VERIFY_CERTS``: a comma-separated list of paths to certificates to trust, If you're using self-signed certificates for the services that Open Notificaties communicates with, specify the path to those (root) certificates here, rather than disabling SSL certificate verification. Example: ``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``. Defaults to: ``(empty string)``.
+* ``TIME_LEEWAY``: Some validation & JWT validation has a time aspect (usually in the form of the ``iat`` and ``nbf`` claims). Clock drift between server and client can occur. This setting allows specifying the leeway in seconds, and defaults to ``0`` (no leeway). It is advised to not make this larger than a couple of minutes. Defaults to: ``0``.
 
 
 
