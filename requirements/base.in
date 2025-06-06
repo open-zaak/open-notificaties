@@ -12,3 +12,6 @@ zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
 notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
+
+# TODO temp
+git+https://github.com/maykinmedia/notifications-api-common.git@feature/oz-635-add-time-leeway-setting
