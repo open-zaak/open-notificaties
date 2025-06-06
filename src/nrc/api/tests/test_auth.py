@@ -4,7 +4,6 @@ Guarantee that the proper authorization machinery is in place.
 
 import requests_mock
 from freezegun import freeze_time
-from jwt.exceptions import ImmatureSignatureError
 from rest_framework import status
 from rest_framework.test import APITestCase, override_settings
 from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
@@ -267,8 +266,8 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
         self.applicatie.save()
         url = reverse("kanaal-list")
 
-        with self.assertRaises(ImmatureSignatureError):
-            self.client.get(url)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @override_settings(TIME_LEEWAY=5)
     @freeze_time("2025-01-01T12:00:01Z")
