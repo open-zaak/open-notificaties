@@ -6,14 +6,14 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
   workflow_dispatch:
 
 env:
   IMAGE_NAME: openzaak/open-notificaties
   DJANGO_SETTINGS_MODULE: nrc.conf.ci
-  DB_PASSWORD: ''
+  DB_PASSWORD: ""
   DB_USER: postgres
   ALLOWED_HOSTS: openzaak.nl
 
@@ -22,9 +22,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        postgres: ['14', '15', '16', '17']
+        postgres: ["14", "15", "16", "17"]
+        use_pooling: [false]
+        include:
+          - postgres: "17"
+            use_pooling: true
 
-    name: Tests (PG ${{ matrix.postgres }})
+    name: Run the Django test suite (PG ${{ matrix.postgres }}, ${{matrix.use_pooling && 'with connection pooling' || ''}}
 
     services:
       postgres:
@@ -40,10 +44,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: "16"
 
       - name: Start CI docker compose
         run: docker compose --file docker-compose.ssl.yml up --detach mock
@@ -60,6 +64,8 @@ jobs:
         run: |
           python src/manage.py collectstatic --noinput --link
           coverage run src/manage.py test src
+        env:
+          DB_POOL_ENABLED: ${{ matrix.use_pooling }}
 
       - name: Publish coverage report
         uses: codecov/codecov-action@v4
@@ -75,7 +81,7 @@ jobs:
       - name: Set up backend environment
         uses: maykinmedia/setup-django-backend@v1.3
         with:
-          python-version: '3.12'
+          python-version: "3.12"
           setup-node: false
 
       - name: Generate environment variable documentation using OAf and check if it was updated
@@ -98,7 +104,7 @@ jobs:
 
     steps:
       - run: echo "image-name=$IMAGE_NAME" >> $GITHUB_OUTPUT
-        name: 'Store the docker image name'
+        name: "Store the docker image name"
         id: image-name
 
   open-api-ci:
@@ -106,8 +112,8 @@ jobs:
     needs:
       - store-reusable-workflow-vars
     with:
-      main-branch: 'main'
-      python-version: '3.12'
+      main-branch: "main"
+      python-version: "3.12"
       docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}
       run-docs: true
       django-settings-module: nrc.conf.ci
@@ -120,7 +126,7 @@ jobs:
       - tests
     with:
       docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}
-      repository-owner: 'open-zaak'
+      repository-owner: "open-zaak"
     secrets:
       docker-username: ${{ secrets.DOCKER_USERNAME }}
       docker-token: ${{ secrets.DOCKER_TOKEN }}
