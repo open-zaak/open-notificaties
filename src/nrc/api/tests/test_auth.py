@@ -262,6 +262,12 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
 class JWTIatTests(JWTAuthMixin, APITestCase):
     @freeze_time("2025-01-01T12:00:00Z")
     def test_iat_in_future_fails(self):
+        """
+        The vng-api-common JWTAuth middleware does not catch the jwt.exceptions.ImmatureSignatureError
+        which causes an HTTP 500 server error.
+
+        Note that when running this test locally it raises the error which causes the test to fail.
+        """
         self.applicatie.heeft_alle_autorisaties = True
         self.applicatie.save()
         url = reverse("kanaal-list")
