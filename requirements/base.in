@@ -14,3 +14,6 @@ notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
 
 psycopg[pool]
+
+# TODO temp
+git+https://github.com/maykinmedia/commonground-api-common.git@issue/jwt-500-exception

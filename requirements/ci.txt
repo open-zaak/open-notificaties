@@ -114,7 +114,7 @@ click-repl==0.3.0
     #   celery
 codecov==2.1.13
     # via -r requirements/test-tools.in
-commonground-api-common==2.6.6
+commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common.git@b0d73410edb053819d4f7b9ec46511e897c7ab17
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt

@@ -260,20 +260,23 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
 
 @freeze_time("2025-01-01T12:00:05Z")
 class JWTIatTests(JWTAuthMixin, APITestCase):
-    @freeze_time("2025-01-01T12:00:00Z")
-    def test_iat_in_future_fails(self):
-        """
-        The vng-api-common JWTAuth middleware does not catch the jwt.exceptions.ImmatureSignatureError
-        which causes an HTTP 500 server error.
-
-        Note that when running this test locally it raises the error which causes the test to fail.
-        """
+    @freeze_time("2025-01-01T12:00:10Z")
+    def test_iat_ok(self):
         self.applicatie.heeft_alle_autorisaties = True
         self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-01-01T12:00:00Z")
+    def test_iat_in_future_fails(self):
+        self.applicatie.heeft_alle_autorisaties = True
+        self.applicatie.save()
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @override_settings(TIME_LEEWAY=5)
     @freeze_time("2025-01-01T12:00:01Z")
@@ -285,3 +288,14 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(TIME_LEEWAY=5)
+    @freeze_time("2025-01-01T11:59:54Z")
+    def test_iat_in_future_later_than_leeway(self):
+        self.applicatie.heeft_alle_autorisaties = True
+        self.applicatie.save()
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
