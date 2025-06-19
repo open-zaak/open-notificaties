@@ -538,3 +538,9 @@ TIME_LEEWAY = config(
         "not make this larger than a couple of minutes."
     ),
 )
+
+JWT_EXPIRY = config(
+    "JWT_EXPIRY",
+    default=3600,
+    help_text="duration a JWT is considered to be valid, in seconds.",
+)
