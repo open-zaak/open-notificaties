@@ -260,29 +260,26 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
 
 @freeze_time("2025-01-01T12:00:05Z")
 class JWTIatTests(JWTAuthMixin, APITestCase):
+    heeft_alle_autorisaties = True
+
     @freeze_time("2025-01-01T12:00:10Z")
     def test_iat_ok(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2025-01-01T12:00:00Z")
-    def test_iat_in_future_fails(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
+    def test_iat_in_future_ok(self):
+        """iat in future logs warning"""
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @override_settings(TIME_LEEWAY=5)
     @freeze_time("2025-01-01T12:00:01Z")
     def test_iat_in_future_with_leeway(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
@@ -291,19 +288,16 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
 
     @override_settings(TIME_LEEWAY=5)
     @freeze_time("2025-01-01T11:59:54Z")
-    def test_iat_in_future_with_leeway_fails(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
+    def test_iat_in_future_with_leeway_ok(self):
+        """iat in future logs warning"""
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2025-01-01T13:00:00Z")
     def test_exp_ok(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
@@ -311,8 +305,6 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
 
     @freeze_time("2025-01-01T13:00:06Z")
     def test_exp_in_future_fails(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
@@ -321,8 +313,6 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
     @freeze_time("2025-01-01T13:00:06Z")
     @override_settings(TIME_LEEWAY=5)
     def test_exp_in_future_with_leeway(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)
@@ -331,8 +321,6 @@ class JWTIatTests(JWTAuthMixin, APITestCase):
     @freeze_time("2025-01-01T13:00:10Z")
     @override_settings(TIME_LEEWAY=5)
     def test_exp_in_future_with_leeway_fails(self):
-        self.applicatie.heeft_alle_autorisaties = True
-        self.applicatie.save()
         url = reverse("kanaal-list")
 
         response = self.client.get(url)

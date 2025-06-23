@@ -60,7 +60,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common.git@52178f0793ca6fc1221413f7a323ff37b619a72d
+commonground-api-common @ git+https://github.com/maykinmedia/commonground-api-common.git@7adc7f06232f3831854f3173e1806e3d10b7f964
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -286,7 +286,7 @@ pydantic-core==2.27.1
     # via pydantic
 pydantic-settings==2.6.1
     # via django-setup-configuration
-pyjwt==2.9.0
+pyjwt==2.10.1
     # via
     #   commonground-api-common
     #   zgw-consumers
