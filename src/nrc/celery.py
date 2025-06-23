@@ -6,7 +6,7 @@ from django.conf import settings
 
 import structlog
 from celery import Celery, bootsteps
-from celery.signals import worker_ready, worker_shutdown
+from celery.signals import setup_logging, worker_ready, worker_shutdown
 from django_structlog.celery.steps import DjangoStructLogInitStep
 from open_api_framework.conf.utils import config
 
@@ -33,6 +33,7 @@ app.autodiscover_tasks()
 
 
 # Use django's logging settings as these are reset by Celery by default
+@setup_logging.connect
 def receiver_setup_logging(
     loglevel, logfile, format, colorize, **kwargs
 ):  # pragma: no cover
@@ -87,7 +88,6 @@ def receiver_setup_logging(
             },
         }
     )
-
     exception_processors = (
         [structlog.processors.format_exc_info] if formatter == "json" else []
     )
