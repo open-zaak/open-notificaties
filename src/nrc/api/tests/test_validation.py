@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from django.test import override_settings
 
 import requests_mock
@@ -197,13 +195,11 @@ class KanalenValidationTests(JWTAuthMixin, APITestCase):
         self.assertEqual(error["code"], "bad-url")
 
 
+@freeze_time("2019-01-01T12:00:00Z")
 class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
-    @freeze_time("2019-01-01T12:00:00Z")
-    @override_settings(LINK_FETCHER="vng_api_common.mocks.link_fetcher_200")
-    @patch("jwt.api_jwt.PyJWT._validate_iat", return_value=None)
-    def test_notificaties_aanmaakdatum_in_future_fails(self, mock_validate_iat):
+    def test_notificaties_aanmaakdatum_in_future_fails(self):
         KanaalFactory.create(naam="zaken")
         notificatie_url = get_operation_url("notificaties_create")
         data = {
@@ -230,3 +226,27 @@ class NotificatiesValidationTests(JWTAuthMixin, APITestCase):
 
         error = response.data["aanmaakdatum"][0]
         self.assertEqual(error.code, "future_not_allowed")
+
+    @override_settings(TIME_LEEWAY=5)
+    def test_notificaties_aanmaakdatum_in_future_with_leeway(self):
+        KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        notificatie_url = get_operation_url("notificaties_create")
+        data = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2019-01-01T12:00:04Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        response = self.client.post(notificatie_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)

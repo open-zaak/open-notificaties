@@ -3,8 +3,9 @@ Guarantee that the proper authorization machinery is in place.
 """
 
 import requests_mock
+from freezegun import freeze_time
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, override_settings
 from vng_api_common.tests import AuthCheckMixin, JWTAuthMixin, reverse
 
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
@@ -255,3 +256,72 @@ class NotificatiesWriteScopeTests(JWTAuthMixin, APITestCase):
         response = self.client.post(url)
 
         self.assertNotEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+@freeze_time("2025-01-01T12:00:05Z")
+class JWTIatTests(JWTAuthMixin, APITestCase):
+    heeft_alle_autorisaties = True
+
+    @freeze_time("2025-01-01T12:00:10Z")
+    def test_iat_ok(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-01-01T12:00:00Z")
+    def test_iat_in_future_ok(self):
+        """iat in future logs warning"""
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(TIME_LEEWAY=5)
+    @freeze_time("2025-01-01T12:00:01Z")
+    def test_iat_in_future_with_leeway(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @override_settings(TIME_LEEWAY=5)
+    @freeze_time("2025-01-01T11:59:54Z")
+    def test_iat_in_future_with_leeway_ok(self):
+        """iat in future logs warning"""
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-01-01T13:00:00Z")
+    def test_exp_ok(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-01-01T13:00:06Z")
+    def test_exp_in_future_fails(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @freeze_time("2025-01-01T13:00:06Z")
+    @override_settings(TIME_LEEWAY=5)
+    def test_exp_in_future_with_leeway(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-01-01T13:00:10Z")
+    @override_settings(TIME_LEEWAY=5)
+    def test_exp_in_future_with_leeway_fails(self):
+        url = reverse("kanaal-list")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
