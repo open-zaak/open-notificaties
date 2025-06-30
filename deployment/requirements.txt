@@ -2,7 +2,7 @@
 #    ./bin/compile_dependencies.sh
 ansible==9.12.0
     # via -r deployment/requirements.in
-ansible-core==2.16.13
+ansible-core==2.16.14
     # via ansible
 attrs==23.1.0
     # via
@@ -68,7 +68,7 @@ referencing==0.30.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.3
+requests==2.32.4
     # via
     #   kubernetes
     #   requests-oauthlib
@@ -87,7 +87,7 @@ six==1.16.0
     #   kubernetes
     #   openshift
     #   python-dateutil
-urllib3==1.26.19
+urllib3==1.26.20
     # via
     #   kubernetes
     #   requests
