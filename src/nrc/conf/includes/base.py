@@ -526,3 +526,21 @@ NOTIFICATIONS_API_GET_DOMAIN = "nrc.utils.get_domain"
 #
 DJANGO_STRUCTLOG_IP_LOGGING_ENABLED = False
 DJANGO_STRUCTLOG_CELERY_ENABLED = True
+
+
+TIME_LEEWAY = config(
+    "TIME_LEEWAY",
+    default=0,
+    help_text=(
+        "Some validation & JWT validation has a time aspect (usually in the form of the ``iat`` and "
+        "``nbf`` claims). Clock drift between server and client can occur. This setting allows "
+        "specifying the leeway in seconds, and defaults to ``0`` (no leeway). It is advised to "
+        "not make this larger than a couple of minutes."
+    ),
+)
+
+JWT_EXPIRY = config(
+    "JWT_EXPIRY",
+    default=3600,
+    help_text="duration a JWT is considered to be valid, in seconds.",
+)
