@@ -36,9 +36,3 @@ uv pip compile \
     --output-file "$root_dir/requirements/dev.txt" \
     "$@" \
     "$root_dir/requirements/dev.in"
-
-# Deployment deps
-uv pip compile \
-    --output-file "$root_dir/deployment/requirements.txt" \
-    "$@" \
-    "$root_dir/deployment/requirements.in"

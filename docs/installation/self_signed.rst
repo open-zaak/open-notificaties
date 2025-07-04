@@ -63,4 +63,4 @@ example:
         openzaak/open-notificaties:latest
 
 Of course, you will need to adapt this solution to your deployment method (Helm,
-Kubernetes, single-server...).
+Kubernetes...).
