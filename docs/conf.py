@@ -120,6 +120,10 @@ extlinks = {
         "https://github.com/maykinmedia/charts/issues/%s",
         "#%s",
     ),
+    "open-zaak": (
+        "https://github.com/open-zaak/open-zaak/issues/%s",
+        "#%s",
+    ),
 }
 
 django_structlog_version = _version("django-structlog")

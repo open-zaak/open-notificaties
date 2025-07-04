@@ -2,6 +2,47 @@
 Changes
 =======
 
+1.11.0 (2025-07-04)
+===================
+
+**New features**
+
+* [:open-zaak:`635`] Add ``TIME_LEEWAY`` environment varialbe for JWT & field validation (see :ref:`installation_env_config`)
+
+* [:open-notificaties:`283`] Add db connection pooling environment variables (see :ref:`installation_env_config`)
+
+  * DB_POOL_ENABLED
+  * DB_POOL_MIN_SIZE
+  * DB_POOL_MAX_SIZE
+  * DB_POOL_TIMEOUT
+  * DB_POOL_MAX_WAITING
+  * DB_POOL_MAX_LIFETIME
+  * DB_POOL_MAX_IDLE
+  * DB_POOL_RECONNECT_TIMEOUT
+  * DB_POOL_NUM_WORKERS
+
+* [maykinmedia/objects-api#607] Add DB_CONN_MAX_AGE environment variable (see :ref:`installation_env_config`)
+
+**Project maintenance**
+
+* Upgrade dependencies
+
+  * Django to 5.2.3
+  * notifications-api-common to 0.7.3
+  * commonground-api-common to 2.6.7
+  * open-api-framework to 0.11.0
+  * requests to 2.32.4
+  * urllib3 to 2.5.0
+  * vcrpy to 7.0.0
+
+* [:open-notificaties:`297`] Fix duplicate / unstructured celery logs
+* [:open-api-framework:`151`] Move ruff config to pyproject.toml
+* [:open-api-framework:`139`] Integrate django-upgrade-check
+
+**Bugfixes**
+
+* [:open-api-framework:`149`] Fix dark/light theme toggle
+
 1.10.0 (2025-06-03)
 ===================
 
