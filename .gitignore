@@ -37,8 +37,3 @@ src/nrc/static/js/
 
 # Documentation artifacts
 docs/_build
-
-# Deployment tooling
-deployment/single-server/vars/*.yml
-!deployment/single-server/vars/postgres.yml
-!deployment/single-server/vars/*.example.yml
