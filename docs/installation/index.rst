@@ -37,6 +37,7 @@ Guides
    :maxdepth: 1
 
    hardware
+   prerequisites
    deployment/kubernetes
    deployment/single_server
    configuration/index
