@@ -75,7 +75,7 @@ Retry behaviour is implemented using binary exponential backoff with a delay fac
 the formula to calculate the time to wait until the next retry is as follows:
 
 .. math::
-    t = \text{backoff_factor} * 2^c
+    t = \text{backoff_factor} * \text{base_factor}^c
 
 where `t` is time in seconds and  `c` is the number of retries that have been performed already.
 
@@ -83,24 +83,29 @@ This behaviour can be configured using :ref:`setup_configuration <ref_step_nrc.s
 and also via the admin interface at **Configuratie > Notificatiescomponentconfiguratie**:
 
 * **Notification delivery max retries**: the maximum number of retries the task queue
-  will do if sending a notification has failed. Default is ``5``.
+  will do if sending a notification has failed. Default is ``7``.
 * **Notification delivery retry backoff**: a boolean or a number. If this option is set to
   ``True``, autoretries will be delayed following the rules of binary exponential backoff. If
-  this option is set to a number, it is used as a delay factor. Default is ``3``.
+  this option is set to a number, it is used as a delay factor. Default is ``25``.
 * **Notification delivery retry backoff max**: an integer, specifying number of seconds.
   If ``Notification delivery retry backoff`` is enabled, this option will set a maximum
-  delay in seconds between task autoretries. Default is ``48`` seconds.
+  delay in seconds between task autoretries. Default is ``52000`` seconds.
+* **Notification delivery base factor**: the base factor used for exponential backoff.
+  This can be increased or decreased to spread retries over a longer or shorter time period.
+  Default is ``4``.
 
 With the assumption that the requests are done immediately we can model the notification
 tasks schedule with the default configurations:
 
 1. At 0s the request to send a Notification to a subscriber is made, the notification task is scheduled, picked up
    by worker and failed
-2. At 3s with 3s delay the first retry happens (``2^0`` * ``Notification delivery retry backoff``)
-3. At 9s with 6s delay - the second retry (``2^1`` * ``Notification delivery retry backoff``)
-4. At 21s with 12s delay - the third retry
-5. At 45s with 24s delay - the fourth retry
-6. At 1m33s with 48s delay - the fifth retry, which is the last one.
+2. At 25s with 25s delay the first retry happens (``4^0`` * ``Notification delivery retry backoff``)
+3. At 2m5s with 100s delay - the second retry (``4^1`` * ``Notification delivery retry backoff``)
+4. At 8m45s with 400s delay - the third retry
+5. At 35m25s with 1600s delay - the fourth retry
+6. At 2h22m5s with 6400s delay - the fifth retry
+7. At 9h28m45s with 25600s delay - the sixth retry
+8. At 23h55m25s with 52000s delay - the seventh and final retry, capped by max delay.
 
 So if the subscribed webhooks is up after 1 min of downtime the default configuration can handle it
 automatically.
