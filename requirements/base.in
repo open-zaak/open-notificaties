@@ -9,7 +9,7 @@ furl
 django-structlog[celery]
 django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
-commonground-api-common[setup-configuration]
+git+https://github.com/maykinmedia/commonground-api-common.git@issue/105-remove-coreapi[setup-configuration]
 notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
 
