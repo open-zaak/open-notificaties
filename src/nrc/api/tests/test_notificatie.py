@@ -594,6 +594,7 @@ class NotificatieRetryTests(TestCase):
             factor=4,
             retries=0,
             maximum=28,
+            base=4,
             full_jitter=False,
         )
         self.assertEqual(deliver_message.max_retries, 4)

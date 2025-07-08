@@ -495,7 +495,7 @@ mozilla-django-oidc-db==0.22.0
     #   open-api-framework
 multidict==6.0.5
     # via yarl
-notifications-api-common==0.7.3
+notifications-api-common==0.8.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
