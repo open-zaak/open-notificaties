@@ -7,7 +7,7 @@ Kubernetes
 Here you can find a reference implementation of a Open Notificaties deployment for
 a Kubernetes cluster using `Helm`_.
 
-This Helm chart installs Open Notificaties and is dependent on a PostgreSQL
+The `Helm chart`_ installs Open Notificaties and is dependent on a PostgreSQL
 database, installed using a `subchart`_.
 
 .. warning:: The default settings are unsafe and should only be used for
@@ -28,3 +28,4 @@ Install the Helm chart with following commands:
 
 .. _`Helm`: https://helm.sh/
 .. _`subchart`: https://github.com/bitnami/charts/tree/master/bitnami/postgresql
+.. _`Helm chart`: https://github.com/maykinmedia/charts/tree/main/charts/opennotificaties
