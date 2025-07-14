@@ -4,8 +4,7 @@ Installation
 ============
 
 There are several ways to install Open Notificaties. A scalable solution is to use
-:ref:`Kubernetes<deployment_kubernetes>`. You can also run the
-:ref:`Docker containers<deployment_containers>` on a single machine
+:ref:`Kubernetes<deployment_kubernetes>`.
 
 Before you begin
 ----------------
@@ -39,7 +38,6 @@ Guides
    hardware
    prerequisites
    deployment/kubernetes
-   deployment/single_server
    configuration/index
    self_signed
 
