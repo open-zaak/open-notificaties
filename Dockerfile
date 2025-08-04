@@ -65,6 +65,7 @@ COPY ./bin/celery_beat.sh /celery_beat.sh
 COPY ./bin/uninstall_adfs.sh ./bin/uninstall_django_auth_adfs_db.sql /app/bin/
 COPY ./bin/check_celery_worker_liveness.py ./bin/
 COPY ./bin/setup_configuration.sh /setup_configuration.sh
+COPY ./bin/dump_data.sh /dump_data.sh
 COPY ./bin/uwsgi.ini /
 RUN mkdir /app/log /app/config /app/tmp
 

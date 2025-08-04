@@ -18,3 +18,4 @@ further configured via the management interface.
    adfs
    oidc
    logging
+   scripts
