@@ -8,6 +8,10 @@ from open_api_framework.conf.utils import config
 from .api import *  # noqa
 
 #
+# Core Django settings
+#
+
+#
 # APPLICATIONS enabled for this project
 #
 INSTALLED_APPS = INSTALLED_APPS + [
