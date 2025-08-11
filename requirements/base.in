@@ -1,4 +1,6 @@
-open-api-framework
+open-api-framework[celery,cors,markup,geo,csp,commonground,inclusions,sanitization,server,redis]
+
+django-csp~=3.8
 
 # Core python libraries
 markdown

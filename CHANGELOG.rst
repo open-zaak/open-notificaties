@@ -2,6 +2,44 @@
 Changes
 =======
 
+1.12.0 (2025-08-11)
+===================
+
+**New features**
+
+* [:open-notificaties:`290`] Add configurable base factor exponential backoff for retry mechanism (see :ref:`delivery_guarantees`).
+  This parameter is also configurable with ``setup_configuration`` via ``notification_delivery_base_factor`` (see :ref:`installation_env_config` > Configuration for Notificaties API).
+* [:open-notificaties:`290`] Changed default values of retry mechanism parameters to make sure the retries cover a period of approximately 24 hours:
+
+  * **Notification delivery max retries**: 7
+  * **Notification delivery retry backoff**: 25
+  * **Notification delivery retry backoff max**: 52000 seconds
+  * **Notification delivery base factor**: 4
+
+**Project maintenance**
+
+* Use db connection pooling settings from OAF
+* Upgrade python dependencies:
+
+  * ``notifications-api-common`` to 0.8.0
+  * ``django-privates`` to 3.1.1
+  * ``open-api-framework`` to 0.12.0
+  * ``bleach`` to 6.2.0
+  * ``commonground-api-common`` to 2.8.0
+  * ``django-cors-headers`` to 4.7.0
+  * ``django-markup`` to 1.10
+  * ``django-redis`` to 6.0.0
+  * ``djangorestframework-gis`` to 1.2.0
+  * ``humanize`` to 4.12.3
+
+* Remove unused ``coreapi`` dependency
+
+**Documentation**
+
+* Fix incorrect default in docs for ``DB_CONN_MAX_AGE``
+* [:open-api-framework:`118`] Remove deployment tooling/documentation
+* [:open-api-framework:`148`] Add prerequisites docs page (including supported PostgreSQL, Redis and RabbitMQ versions)
+
 1.11.0 (2025-07-04)
 ===================
 
