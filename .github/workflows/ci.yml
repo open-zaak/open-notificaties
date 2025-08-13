@@ -112,6 +112,7 @@ jobs:
     needs:
       - store-reusable-workflow-vars
     with:
+      apt-packages: 'graphviz graphviz-dev'
       main-branch: "main"
       python-version: "3.12"
       docker-image-name: ${{ needs.store-reusable-workflow-vars.outputs.image-name }}

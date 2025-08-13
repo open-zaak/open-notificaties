@@ -10,3 +10,6 @@ pre-commit
 # Debug tooling
 django-debug-toolbar
 django-extensions
+
+# docs
+pygraphviz

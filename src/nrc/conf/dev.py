@@ -46,6 +46,9 @@ LOGGING["loggers"].update(
 # Library settings
 #
 
+# Django extensions
+INSTALLED_APPS += ["django_extensions"]
+
 # Django debug toolbar
 INSTALLED_APPS += ["debug_toolbar"]
 MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]

@@ -14,7 +14,10 @@ from importlib.metadata import version as _version
 import django
 from django.utils.translation import activate
 
-sys.path.insert(0, os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("."))
+sys.path.insert(1, os.path.abspath("../src"))
+
+from model_graph import generate_model_graphs
 
 import nrc  # noqa isort:skip
 
@@ -55,8 +58,11 @@ extensions = [
     "recommonmark",
     "sphinx_tabs.tabs",
     "sphinx.ext.autodoc",
+    "sphinx.ext.graphviz",
+    "sphinx_markdown_tables",
     "django_setup_configuration.documentation.setup_config_example",
     "django_setup_configuration.documentation.setup_config_usage",
+    "uml_directive.uml",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -91,7 +97,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ["_static"]
 
 todo_include_todos = True
 
@@ -133,3 +139,12 @@ intersphinx_mapping = {
         None,
     ),
 }
+
+#
+#   Datamodel image creation
+#
+graphviz_output_format = "png"
+
+
+def setup(app):
+    app.connect("builder-inited", generate_model_graphs)
