@@ -402,6 +402,11 @@ NOTIFICATION_REQUESTS_TIMEOUT = config(
     group="Notifications",
 )
 
+
+# Default (connection timeout, read timeout) for the requests library (in seconds)
+REQUESTS_DEFAULT_TIMEOUT = (10, 30)
+
+
 ##############################
 #                            #
 # 3RD PARTY LIBRARY SETTINGS #
