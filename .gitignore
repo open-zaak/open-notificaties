@@ -37,3 +37,4 @@ src/nrc/static/js/
 
 # Documentation artifacts
 docs/_build
+/docs/_static/uml/*.png
