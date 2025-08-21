@@ -16,6 +16,7 @@ from django.utils.translation import activate
 
 sys.path.insert(0, os.path.abspath("../src"))
 
+
 import nrc  # noqa isort:skip
 
 from nrc.setup import setup_env  # noqa isort:skip
@@ -55,8 +56,11 @@ extensions = [
     "recommonmark",
     "sphinx_tabs.tabs",
     "sphinx.ext.autodoc",
+    "sphinx.ext.graphviz",
+    "sphinx_markdown_tables",
     "django_setup_configuration.documentation.setup_config_example",
     "django_setup_configuration.documentation.setup_config_usage",
+    "vng_api_common.diagrams.uml_images",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -80,6 +84,11 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 source_suffix = [".rst", ".md"]
 
+
+# Datamodel image settings
+graphviz_output_format = "png"
+
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -91,7 +100,7 @@ html_theme = "sphinx_rtd_theme"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ["_static"]
 
 todo_include_todos = True
 
