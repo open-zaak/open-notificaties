@@ -13,7 +13,6 @@ asgiref==3.8.1
     # via
     #   django
     #   django-axes
-    #   django-cors-headers
     #   django-structlog
 asn1crypto==1.5.1
     # via webauthn
@@ -24,8 +23,6 @@ attrs==24.2.0
     #   referencing
 billiard==4.2.0
     # via celery
-bleach==6.1.0
-    # via open-api-framework
 boltons==24.0.0
     # via
     #   face
@@ -35,9 +32,7 @@ cbor2==5.6.4
 celery==5.4.0
     # via
     #   django-structlog
-    #   flower
     #   notifications-api-common
-    #   open-api-framework
 certifi==2024.7.4
     # via
     #   elastic-apm
@@ -61,9 +56,7 @@ click-plugins==1.1.1
 click-repl==0.3.0
     # via celery
 commonground-api-common==2.9.0
-    # via
-    #   -r requirements/base.in
-    #   open-api-framework
+    # via -r requirements/base.in
 cryptography==44.0.2
     # via
     #   django-simple-certmanager
@@ -77,17 +70,13 @@ django==5.2.3
     #   django-admin-index
     #   django-appconf
     #   django-axes
-    #   django-cors-headers
-    #   django-csp
     #   django-filter
     #   django-formtools
     #   django-jsonform
     #   django-log-outgoing-requests
-    #   django-markup
     #   django-otp
     #   django-phonenumber-field
     #   django-privates
-    #   django-redis
     #   django-relativedelta
     #   django-rest-framework-condition
     #   django-sendfile2
@@ -99,7 +88,6 @@ django==5.2.3
     #   django-two-factor-auth
     #   django-upgrade-check
     #   djangorestframework
-    #   djangorestframework-inclusions
     #   drf-nested-routers
     #   drf-spectacular
     #   drf-spectacular-sidecar
@@ -115,10 +103,6 @@ django-appconf==1.0.6
     # via django-log-outgoing-requests
 django-axes==6.5.1
     # via open-api-framework
-django-cors-headers==4.4.0
-    # via open-api-framework
-django-csp==3.8
-    # via open-api-framework
 django-filter==24.3
     # via
     #   commonground-api-common
@@ -133,8 +117,6 @@ django-jsonform==2.22.0
     #   open-api-framework
 django-log-outgoing-requests==0.6.1
     # via open-api-framework
-django-markup==1.8.1
-    # via open-api-framework
 django-ordered-model==3.7.4
     # via django-admin-index
 django-otp==1.5.1
@@ -143,8 +125,6 @@ django-phonenumber-field==7.3.0
     # via django-two-factor-auth
 django-privates==3.1.1
     # via django-simple-certmanager
-django-redis==5.4.0
-    # via open-api-framework
 django-relativedelta==2.0.0
     # via zgw-consumers
 django-rest-framework-condition==0.1.1
@@ -179,8 +159,6 @@ django-upgrade-check==1.1.0
 djangorestframework==3.15.2
     # via
     #   commonground-api-common
-    #   djangorestframework-gis
-    #   djangorestframework-inclusions
     #   drf-nested-routers
     #   drf-spectacular
     #   notifications-api-common
@@ -189,10 +167,6 @@ djangorestframework-camel-case==1.4.2
     # via
     #   commonground-api-common
     #   notifications-api-common
-djangorestframework-gis==1.0
-    # via open-api-framework
-djangorestframework-inclusions==1.2.0
-    # via open-api-framework
 docutils==0.21.2
     # via django-setup-configuration
 drf-nested-routers==0.94.1
@@ -209,8 +183,6 @@ elastic-apm==6.23.0
     # via open-api-framework
 face==20.1.1
     # via glom
-flower==2.0.1
-    # via open-api-framework
 furl==2.1.3
     # via
     #   -r requirements/base.in
@@ -218,8 +190,6 @@ furl==2.1.3
     #   notifications-api-common
 glom==23.5.0
     # via mozilla-django-oidc-db
-humanize==4.10.0
-    # via flower
 idna==3.7
     # via requests
 inflection==0.5.1
@@ -248,7 +218,7 @@ notifications-api-common==0.8.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
-open-api-framework==0.11.0
+open-api-framework==0.12.0
     # via -r requirements/base.in
 orderedmultidict==1.0.1
     # via furl
@@ -256,8 +226,6 @@ oyaml==1.0
     # via commonground-api-common
 phonenumberslite==8.13.43
     # via django-two-factor-auth
-prometheus-client==0.20.0
-    # via flower
 prompt-toolkit==3.0.47
     # via click-repl
 psycopg==3.2.9
@@ -300,8 +268,6 @@ python-dotenv==1.0.1
     #   pydantic-settings
 python-ipware==3.0.0
     # via django-ipware
-pytz==2024.1
-    # via flower
 pyyaml==6.0.2
     # via
     #   drf-spectacular
@@ -309,8 +275,6 @@ pyyaml==6.0.2
     #   pydantic-settings
 qrcode==7.4.2
     # via django-two-factor-auth
-redis==5.0.8
-    # via django-redis
 referencing==0.35.1
     # via
     #   jsonschema
@@ -339,7 +303,6 @@ sentry-sdk==2.12.0
     # via open-api-framework
 six==1.16.0
     # via
-    #   bleach
     #   furl
     #   orderedmultidict
     #   python-dateutil
@@ -347,8 +310,6 @@ sqlparse==0.5.1
     # via django
 structlog==25.3.0
     # via django-structlog
-tornado==6.5
-    # via flower
 typing-extensions==4.12.2
     # via
     #   mozilla-django-oidc-db
@@ -370,8 +331,6 @@ urllib3==2.5.0
     #   elastic-apm
     #   requests
     #   sentry-sdk
-uwsgi==2.0.26
-    # via open-api-framework
 vine==5.1.0
     # via
     #   amqp
@@ -381,8 +340,6 @@ wcwidth==0.2.13
     # via prompt-toolkit
 webauthn==2.2.0
     # via django-two-factor-auth
-webencodings==0.5.1
-    # via bleach
 wrapt==1.16.0
     # via elastic-apm
 zgw-consumers==1.0.0
