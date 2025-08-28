@@ -2,9 +2,10 @@ from django.test import override_settings
 from django.urls import reverse_lazy
 
 from django_webtest import WebTest
+from maykin_common.vcr import VCRMixin
 
 
-class ViewConfigTestCase(WebTest):
+class ViewConfigTestCase(VCRMixin, WebTest):
     url = reverse_lazy("view-config")
     api_root = "http://notifications.local/api/v1/"
 
