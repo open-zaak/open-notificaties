@@ -1,5 +1,4 @@
 from functools import partial
-from pathlib import Path
 from unittest import skip
 from unittest.mock import patch
 from urllib.parse import urlparse
@@ -7,17 +6,14 @@ from urllib.parse import urlparse
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-import vcr
 from django_webtest import WebTest
 from maykin_2fa.test import disable_admin_mfa
+from maykin_common.vcr import VCRMixin
 from mozilla_django_oidc_db.models import OpenIDConnectConfig
 
 from nrc.accounts.models import User
 from nrc.accounts.tests.factories import StaffUserFactory
 from nrc.utils.tests.keycloak import keycloak_login, mock_oidc_db_config
-
-TEST_FILES = (Path(__file__).parent / "keycloak_cassets").resolve()
-
 
 mock_admin_oidc_config = partial(
     mock_oidc_db_config,
@@ -30,7 +26,7 @@ mock_admin_oidc_config = partial(
 
 
 @disable_admin_mfa()
-class OIDCLoginButtonTestCase(WebTest):
+class OIDCLoginButtonTestCase(VCRMixin, WebTest):
     def test_oidc_button_disabled(self):
         config = OpenIDConnectConfig.get_solo()
         config.enabled = False
@@ -67,8 +63,7 @@ class OIDCLoginButtonTestCase(WebTest):
         )
 
 
-class OIDCFLowTests(WebTest):
-    @vcr.use_cassette(str(TEST_FILES / "duplicate_email.yaml"))
+class OIDCFLowTests(VCRMixin, WebTest):
     @mock_admin_oidc_config()
     def test_duplicate_email_unique_constraint_violated(self):
         # this user collides on the email address
@@ -105,7 +100,6 @@ class OIDCFLowTests(WebTest):
             self.assertEqual(staff_user.email, "admin@example.com")
             self.assertTrue(staff_user.is_staff)
 
-    @vcr.use_cassette(str(TEST_FILES / "happy_flow.yaml"))
     @mock_admin_oidc_config()
     def test_happy_flow(self):
         login_page = self.app.get(reverse("admin:login"))
@@ -126,7 +120,6 @@ class OIDCFLowTests(WebTest):
         user = User.objects.get()
         self.assertEqual(user.username, "admin")
 
-    @vcr.use_cassette(str(TEST_FILES / "happy_flow_existing_user.yaml"))
     @mock_admin_oidc_config(make_users_staff=False)
     def test_happy_flow_existing_user(self):
         staff_user = StaffUserFactory.create(username="admin", email="update-me")
