@@ -2,6 +2,59 @@
 Changes
 =======
 
+1.12.0 (2025-09-02)
+===================
+
+.. warning::
+
+  This version of Open Notificaties increases the default values of the notification retry
+  parameters, leading to tasks that are scheduled further in the future. In order for this
+  to work correctly, it is required to increase the ``consumer_timeout`` in RabbitMQ,
+  see :ref:`delivery_guarantees_rabbitmq_config` for more information.
+
+**New features**
+
+* [:open-notificaties:`290`] Add configurable base factor exponential backoff for retry mechanism (see :ref:`delivery_guarantees`).
+  This parameter is also configurable with ``setup_configuration`` via ``notification_delivery_base_factor`` (see :ref:`installation_env_config` > Configuration for Notificaties API).
+* [:open-notificaties:`290`] Changed default values of retry mechanism parameters to make sure the retries cover a period of approximately 24 hours:
+
+  * **Notification delivery max retries**: 7
+  * **Notification delivery retry backoff**: 25
+  * **Notification delivery retry backoff max**: 52000 seconds
+  * **Notification delivery base factor**: 4
+
+**Project maintenance**
+
+* Use db connection pooling settings from OAF
+* [:open-api-framework:`179`] Monkeypatch requests to set default timeout
+* Upgrade python dependencies:
+
+  * [:open-api-framework:`128`] ``celery`` to 5.5.3 to fix connection issues with Redis
+  * ``notifications-api-common`` to 0.8.0
+  * ``django-privates`` to 3.1.1
+  * ``open-api-framework`` to 0.12.0
+  * ``bleach`` to 6.2.0
+  * ``commonground-api-common`` to 2.9.0
+  * ``django-cors-headers`` to 4.7.0
+  * ``django-markup`` to 1.10
+  * ``django-redis`` to 6.0.0
+  * ``redis`` to 6.4.0
+  * ``djangorestframework-gis`` to 1.2.0
+  * ``humanize`` to 4.12.3
+  * ``zgw-consumers`` to 1.0.0
+  * ``uwsgi`` to 2.0.30
+  * ``pytz`` to 2025.2
+  * ``billiard`` to 4.2.1
+
+* Remove unused ``coreapi`` dependency
+
+**Documentation**
+
+* Fix incorrect default in docs for ``DB_CONN_MAX_AGE``
+* [:open-api-framework:`118`] Remove deployment tooling/documentation
+* [:open-api-framework:`148`] Add prerequisites docs page (including supported PostgreSQL, Redis and RabbitMQ versions)
+* [:open-api-framework:`159`] Add UML diagrams for data models (see :ref:`uml_diagrams`)
+
 1.11.0 (2025-07-04)
 ===================
 

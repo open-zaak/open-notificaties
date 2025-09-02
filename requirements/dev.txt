@@ -54,12 +54,12 @@ beautifulsoup4==4.12.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   webtest
-billiard==4.2.0
+billiard==4.2.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   celery
-bleach==6.1.0
+bleach==6.2.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -80,7 +80,7 @@ cbor2==5.6.4
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   webauthn
-celery==5.4.0
+celery==5.5.3
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -200,6 +200,7 @@ django==5.2.3
     #   django-two-factor-auth
     #   django-upgrade-check
     #   djangorestframework
+    #   djangorestframework-gis
     #   djangorestframework-inclusions
     #   drf-nested-routers
     #   drf-spectacular
@@ -227,7 +228,7 @@ django-axes==6.5.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-cors-headers==4.4.0
+django-cors-headers==4.7.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -244,6 +245,7 @@ django-filter==24.3
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   commonground-api-common
+    #   djangorestframework-gis
     #   open-api-framework
 django-formtools==2.5.1
     # via
@@ -266,7 +268,7 @@ django-log-outgoing-requests==0.6.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-django-markup==1.8.1
+django-markup==1.10
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -290,7 +292,7 @@ django-privates==3.1.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-simple-certmanager
-django-redis==5.4.0
+django-redis==6.0.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -368,7 +370,7 @@ djangorestframework-camel-case==1.4.2
     #   -r requirements/ci.txt
     #   commonground-api-common
     #   notifications-api-common
-djangorestframework-gis==1.0
+djangorestframework-gis==1.2.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -456,7 +458,7 @@ httpcore==1.0.9
     # via httpx
 httpx==0.28.1
     # via bump-my-version
-humanize==4.10.0
+humanize==4.12.3
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -575,7 +577,7 @@ oyaml==1.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   commonground-api-common
-packaging==24.1
+packaging==25.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -594,7 +596,7 @@ platformdirs==4.3.8
     # via virtualenv
 pre-commit==4.2.0
     # via -r requirements/dev.in
-prometheus-client==0.20.0
+prometheus-client==0.22.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -697,7 +699,7 @@ python-ipware==3.0.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-ipware
-pytz==2024.1
+pytz==2025.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -723,7 +725,7 @@ recommonmark==0.7.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-redis==5.0.8
+redis==6.4.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -797,7 +799,6 @@ six==1.16.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-    #   bleach
     #   furl
     #   orderedmultidict
     #   python-dateutil
@@ -887,7 +888,7 @@ tblib==1.7.0
     #   -r requirements/ci.txt
 tomlkit==0.13.2
     # via bump-my-version
-tornado==6.5
+tornado==6.5.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -911,7 +912,6 @@ tzdata==2025.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-    #   celery
     #   faker
     #   kombu
 uritemplate==4.1.1
@@ -927,7 +927,7 @@ urllib3==2.5.0
     #   requests
     #   sentry-sdk
     #   vcrpy
-uwsgi==2.0.26
+uwsgi==2.0.30
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt

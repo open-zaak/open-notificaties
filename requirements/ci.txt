@@ -43,12 +43,12 @@ babel==2.16.0
     # via sphinx
 beautifulsoup4==4.12.2
     # via webtest
-billiard==4.2.0
+billiard==4.2.1
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   celery
-bleach==6.1.0
+bleach==6.2.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -63,7 +63,7 @@ cbor2==5.6.4
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   webauthn
-celery==5.4.0
+celery==5.5.3
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -162,6 +162,7 @@ django==5.2.3
     #   django-two-factor-auth
     #   django-upgrade-check
     #   djangorestframework
+    #   djangorestframework-gis
     #   djangorestframework-inclusions
     #   drf-nested-routers
     #   drf-spectacular
@@ -189,7 +190,7 @@ django-axes==6.5.1
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   open-api-framework
-django-cors-headers==4.4.0
+django-cors-headers==4.7.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -202,6 +203,7 @@ django-filter==24.3
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   commonground-api-common
+    #   djangorestframework-gis
     #   open-api-framework
 django-formtools==2.5.1
     # via
@@ -224,7 +226,7 @@ django-log-outgoing-requests==0.6.1
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   open-api-framework
-django-markup==1.8.1
+django-markup==1.10
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -248,7 +250,7 @@ django-privates==3.1.1
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   django-simple-certmanager
-django-redis==5.4.0
+django-redis==6.0.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -324,7 +326,7 @@ djangorestframework-camel-case==1.4.2
     #   -r requirements/base.txt
     #   commonground-api-common
     #   notifications-api-common
-djangorestframework-gis==1.0
+djangorestframework-gis==1.2.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -394,7 +396,7 @@ glom==23.5.0
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   mozilla-django-oidc-db
-humanize==4.10.0
+humanize==4.12.3
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -488,14 +490,14 @@ oyaml==1.0
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   commonground-api-common
-packaging==24.1
+packaging==25.0
     # via sphinx
 phonenumberslite==8.13.43
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   django-two-factor-auth
-prometheus-client==0.20.0
+prometheus-client==0.22.1
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -586,7 +588,7 @@ python-ipware==3.0.0
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   django-ipware
-pytz==2024.1
+pytz==2025.2
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -607,7 +609,7 @@ qrcode==7.4.2
     #   django-two-factor-auth
 recommonmark==0.7.1
     # via -r requirements/docs.in
-redis==5.0.8
+redis==6.4.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -669,7 +671,6 @@ six==1.16.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
-    #   bleach
     #   furl
     #   orderedmultidict
     #   python-dateutil
@@ -716,7 +717,7 @@ structlog==25.3.0
     #   django-structlog
 tblib==1.7.0
     # via -r requirements/test-tools.in
-tornado==6.5
+tornado==6.5.2
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -738,7 +739,6 @@ tzdata==2025.2
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
-    #   celery
     #   faker
     #   kombu
 uritemplate==4.1.1
@@ -754,7 +754,7 @@ urllib3==2.5.0
     #   requests
     #   sentry-sdk
     #   vcrpy
-uwsgi==2.0.26
+uwsgi==2.0.30
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
