@@ -63,13 +63,15 @@ practice, Open Notificaties will consider any ``2xx`` response status code as
    they received a message correctly but failed to reply with a success response, Open
    Notificaties will deliver the same message again.
 
-**Retry mechanism**
+Retry mechanism
+~~~~~~~~~~~~~~~
 
 By default, sending notifications to subscribers has automatic retry behaviour, i.e. if the notification
 publishing task has failed, it will automatically be rescheduled/tried again until the maximum
 retry limit has been reached.
 
-**Autoretry explanation and configuration**
+Autoretry explanation and configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Retry behaviour is implemented using binary exponential backoff with a delay factor,
 the formula to calculate the time to wait until the next retry is as follows:
@@ -110,7 +112,25 @@ tasks schedule with the default configurations:
 So if the subscribed webhooks is up after 1 min of downtime the default configuration can handle it
 automatically.
 
-**Open Notificaties message broker**
+.. _delivery_guarantees_rabbitmq_config:
+
+Required RabbitMQ configuration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to make sure RabbitMQ supports tasks with a long delay, ``consumer_timeout`` (`see documentation <https://www.rabbitmq.com/docs/consumers#acknowledgement-timeout>`_).
+must be set to a value greater than the longest expected delay in milliseconds. To support
+the default retry parameters, it is advised to set a timeout of at least ``52000000`` ms.
+
+The ``consumer_timeout`` cannot be set via an environment variable unfortunately, so the easiest
+way to override this in a containerized deployment is to mount a ``rabbitmq.conf`` file
+to ``/etc/rabbitmq/rabbitmq.conf:ro`` to make sure it is used by RabbitMQ.
+
+.. code-block::
+
+  consumer_timeout = 52000000
+
+Open Notificaties message broker
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Under the hood, notifications are distributed by background workers to ensure API
 endpoint availability. For this we rely on RabbitMQ_ as internal message broker between
