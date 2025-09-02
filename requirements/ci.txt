@@ -43,7 +43,7 @@ babel==2.16.0
     # via sphinx
 beautifulsoup4==4.12.2
     # via webtest
-billiard==4.2.0
+billiard==4.2.1
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -63,7 +63,7 @@ cbor2==5.6.4
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   webauthn
-celery==5.4.0
+celery==5.5.3
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -646,6 +646,11 @@ ruamel-yaml==0.18.10
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   django-setup-configuration
+ruamel-yaml-clib==0.2.12
+    # via
+    #   -c requirements/base.txt
+    #   -r requirements/base.txt
+    #   ruamel-yaml
 ruff==0.11.10
     # via -r requirements/test-tools.in
 self-certifi==1.0.0
@@ -722,9 +727,11 @@ typing-extensions==4.12.2
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   mozilla-django-oidc-db
+    #   psycopg
     #   psycopg-pool
     #   pydantic
     #   pydantic-core
+    #   pyopenssl
     #   qrcode
     #   zgw-consumers
     #   zgw-consumers-oas
@@ -732,7 +739,6 @@ tzdata==2025.2
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
-    #   celery
     #   faker
     #   kombu
 uritemplate==4.1.1

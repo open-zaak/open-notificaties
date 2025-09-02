@@ -54,7 +54,7 @@ beautifulsoup4==4.12.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   webtest
-billiard==4.2.0
+billiard==4.2.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -80,7 +80,7 @@ cbor2==5.6.4
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   webauthn
-celery==5.4.0
+celery==5.5.3
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -770,6 +770,11 @@ ruamel-yaml==0.18.10
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-setup-configuration
+ruamel-yaml-clib==0.2.12
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   ruamel-yaml
 ruff==0.11.10
     # via
     #   -c requirements/ci.txt
@@ -892,10 +897,13 @@ typing-extensions==4.12.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
+    #   anyio
     #   mozilla-django-oidc-db
+    #   psycopg
     #   psycopg-pool
     #   pydantic
     #   pydantic-core
+    #   pyopenssl
     #   qrcode
     #   rich-click
     #   zgw-consumers
@@ -904,7 +912,6 @@ tzdata==2025.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-    #   celery
     #   faker
     #   kombu
 uritemplate==4.1.1
