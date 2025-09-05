@@ -2,8 +2,8 @@ from pathlib import Path
 
 import structlog
 from celery.schedules import crontab
+from maykin_common.config_helpers import config
 from open_api_framework.conf.base import *  # noqa
-from open_api_framework.conf.utils import config
 
 from .api import *  # noqa
 
