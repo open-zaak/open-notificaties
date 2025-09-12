@@ -5,4 +5,4 @@ class UtilsConfig(AppConfig):
     name = "nrc.utils"
 
     def ready(self):
-        from . import checks, oas_extensions  # noqa
+        from . import oas_extensions  # noqa
