@@ -13,7 +13,7 @@ from vng_api_common.views import ViewConfigView
 
 from nrc.accounts.views import QRGeneratorView
 
-handler500 = "nrc.utils.views.server_error"
+handler500 = "maykin_common.views.server_error"
 
 admin.site.enable_nav_sidebar = False
 
