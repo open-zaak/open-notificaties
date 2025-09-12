@@ -3,7 +3,7 @@
 {% load i18n %}
 
 
-{% block page_title %}{{ settings.PROJECT_NAME }} startpunt{% endblock %}
+{% block page_title %}{{ settings.PROJECT_NAME }}{% endblock %}
 {% block page_subtitle %}{{ settings.SITE_TITLE }}{% endblock page_subtitle %}
 
 
@@ -29,3 +29,27 @@
 {% endblock content_en %}
 
 {% block license_link %}https://github.com/maykinmedia/referentielijsten/blob/master/LICENSE.md{% endblock %}
+
+
+
+{% block api_links %}
+{% comment %} # TODO check these links {% endcomment %}
+{% url 'schema-redoc' version=version as api_docs_link %}
+{% url 'vng_api_common:scopes' as api_schema_link %}
+
+{% with api_docs_link=api_docs_link api_schema_link=api_schema_link %}
+{{ block.super }}
+{% endwith %}
+<br>
+{% endblock %}
+
+{% block admin_button_group %}
+    {{ block.super }}
+
+    <div class="button-group">
+        <a href="{% url 'view-config' %}" class="button button--secondary">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            {% trans "View configuration" %}
+        </a>
+    </div>
+{% endblock %}
