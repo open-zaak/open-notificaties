@@ -9,6 +9,7 @@ furl
 
 # Django libraries
 django-structlog[celery]
+django-capture-tag
 django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
 commonground-api-common[setup-configuration]
