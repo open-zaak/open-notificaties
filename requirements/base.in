@@ -1,6 +1,4 @@
-open-api-framework[celery,cors,markup,geo,csp,commonground,inclusions,sanitization,server,redis]
-
-django-csp~=3.8
+open-api-framework[celery,cors,markup,geo,csp,commonground,inclusions,sanitization,server,redis, structlog-celery]
 
 # Core python libraries
 markdown
@@ -8,7 +6,6 @@ self-certifi
 furl
 
 # Django libraries
-django-structlog[celery]
 django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
 notifications-api-common[setup-configuration]
