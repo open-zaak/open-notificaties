@@ -60,10 +60,8 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==2.9.0
-    # via
-    #   -r requirements/base.in
-    #   open-api-framework
+commonground-api-common==2.10.0
+    # via open-api-framework
 cryptography==44.0.2
     # via
     #   django-simple-certmanager
@@ -123,10 +121,8 @@ django-axes==6.5.1
     #   open-api-framework
 django-cors-headers==4.7.0
     # via open-api-framework
-django-csp==3.8
-    # via
-    #   -r requirements/base.in
-    #   open-api-framework
+django-csp==4.0
+    # via open-api-framework
 django-filter==24.3
     # via
     #   commonground-api-common
@@ -165,7 +161,6 @@ django-sessionprofile==3.0.0
 django-setup-configuration==0.9.0
     # via
     #   -r requirements/base.in
-    #   commonground-api-common
     #   mozilla-django-oidc-db
     #   notifications-api-common
     #   open-api-framework
@@ -180,7 +175,7 @@ django-solo==2.3.0
     #   notifications-api-common
     #   zgw-consumers
 django-structlog==9.1.1
-    # via -r requirements/base.in
+    # via open-api-framework
 django-two-factor-auth==1.16.0
     # via maykin-2fa
 django-upgrade-check==1.1.0
@@ -261,12 +256,14 @@ notifications-api-common==0.8.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
-open-api-framework==0.12.0
+open-api-framework==0.13.0
     # via -r requirements/base.in
 orderedmultidict==1.0.1
     # via furl
 oyaml==1.0
     # via commonground-api-common
+packaging==25.0
+    # via django-csp
 phonenumberslite==8.13.43
     # via django-two-factor-auth
 prometheus-client==0.22.1
@@ -357,8 +354,10 @@ six==1.16.0
     #   python-dateutil
 sqlparse==0.5.1
     # via django
-structlog==25.3.0
-    # via django-structlog
+structlog==25.4.0
+    # via
+    #   django-structlog
+    #   open-api-framework
 tornado==6.5.2
     # via flower
 typing-extensions==4.12.2
