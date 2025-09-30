@@ -1,12 +1,11 @@
 from django.urls import include, path, re_path
 
 from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularJSONAPIView,
     SpectacularRedocView,
 )
 from vng_api_common import routers
 
+from ..utils.views import SpectacularJSONAPIView, SpectacularYAMLAPIView
 from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
 
 router = routers.DefaultRouter()
@@ -21,11 +20,9 @@ urlpatterns = [
         include(
             [
                 # API documentation
+                path("openapi.yaml", SpectacularYAMLAPIView.as_view(), name="schema"),
                 path(
-                    "schema/openapi.yaml", SpectacularAPIView.as_view(), name="schema"
-                ),
-                path(
-                    "schema/openapi.json",
+                    "openapi.json",
                     SpectacularJSONAPIView.as_view(),
                     name="schema-json",
                 ),
