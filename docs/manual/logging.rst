@@ -114,6 +114,58 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
+.. _manual_logging_exceptions:
+
+Exceptions
+----------
+
+Handled exceptions follow a standardized JSON format to ensure consistency and improve error tracking.
+Most fields are standard and include:
+``title``, ``code``, ``status``, ``event``, ``source``, ``user_id``, ``request_id``, ``timestamp``, ``logger`` and ``level``.
+
+A new field ``invalid_params`` has been added to provide detailed information about which input parameters caused the error in API calls:
+
+.. code-block:: json
+
+    {
+        "title": "'Je hebt geen toestemming om deze actie uit te voeren.'",
+        "code": "permission_denied",
+        "status": 403,
+        "invalid_params": [
+            {
+                "name": "",
+                "code": "permission_denied",
+                "reason": "Je hebt geen toestemming om deze actie uit te voeren."
+            }
+        ],
+        "event": "api.handled_exception",
+        "request_id": "70fa58c1-2d89-4a57-a347-209bfb3cc846",
+        "exception_id": "aabcf29e-d339-4983-8cef-061f740ed46b",
+        "source": "app",
+        "user_id": null,
+        "timestamp": "2025-10-06T12:48:10.353372Z",
+        "logger": "vng_api_common.exception_handling",
+        "level": "error"
+    }
+    
+Uncaught exceptions that occur via the API are logged as ``api.uncaught_exception`` events
+and contain the traceback of the exception.
+
+.. code-block:: json
+    
+    {
+        "message": "division by zero",
+        "event": "api.uncaught_exception",
+        "request_id": "455f4e5e-cf96-48f5-a280-0dbbc3b6d38c",
+        "source": "app",
+        "user_id": null,
+        "timestamp": "2025-10-06T12:52:23.070282Z",
+        "logger": "vng_api_common.views",
+        "level": "error",
+        "exception": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/site-packages/rest_framework/views.py\", line 506, in dispatch\n    response = handler(request, *args, **kwargs)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/src/nrc/api/viewsets.py\", line 93, in list\n    1 / 0\n    ~~^~~\nZeroDivisionError: division by zero"
+    }
+
+
 Setup configuration
 ~~~~~~~~~~~~~~~~~~~
 
