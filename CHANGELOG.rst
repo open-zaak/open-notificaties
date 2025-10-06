@@ -2,6 +2,42 @@
 Changes
 =======
 
+1.13.0 (2025-10-06)
+===================
+
+.. warning::
+
+     The default number of ``UWSGI_THREADS`` and ``UWSGI_PROCESSES`` has been increased from 2 to 4.
+
+**New features**
+
+* [:open-notificaties:`328`] Changes to logging of handled and unhandled exceptions (see :ref:`manual_logging_exceptions`)
+
+  * Log events for handled API exceptions (e.g. HTTP 400) now include ``invalid_params``
+  * Log events for unhandled API exceptions (e.g. HTTP 500) now include the traceback via ``exception``
+
+* [:open-api-framework:`184`] ``setup_configuration`` now supports pulling values from
+  environment variables in YAML configuration by using ``value_from`` (see `setup_configuration documentation`_ for more information)
+
+.. TODO should be reference to readthedocs
+.. _setup_configuration documentation: https://github.com/maykinmedia/django-setup-configuration/blob/main/README.rst#environment-variable-substitution
+
+**Project maintenance**
+
+* Upgrade python dependencies:
+
+  * ``Django`` to 5.2.7
+  * ``pip`` to 25.2 in dev dependencies
+  * ``commonground-api-common`` to 2.10.1
+  * ``django-csp`` to 4.0
+  * ``open-api-framework`` to 0.13.1
+  * ``structlog`` to 25.4.0
+  * ``django-setup-configuration`` to 0.9.0
+
+* [:open-notificaties:`328`] Use logging settings from ``open-api-framework``
+* [:open-api-framework:`85`] Increase uwsgi worker numbers
+
+
 1.12.0 (2025-09-02)
 ===================
 
