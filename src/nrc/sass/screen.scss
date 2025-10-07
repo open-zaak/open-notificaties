@@ -1,2 +1,7 @@
-@import "components/all";
-@import "views/all";
+// vendor
+@use "vendor";
+// own styles
+@use "app";
+@use "views";
+@use "settings";
+@use "components";
