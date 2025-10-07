@@ -9,7 +9,8 @@ from django.views.generic import TemplateView
 from maykin_2fa import monkeypatch_admin
 from maykin_2fa.urls import urlpatterns, webauthn_urlpatterns
 from mozilla_django_oidc_db.views import AdminLoginFailure
-from vng_api_common.views import ViewConfigView
+from rest_framework.settings import api_settings
+from vng_api_common.views import ScopesView, ViewConfigView
 
 from nrc.accounts.views import QRGeneratorView
 
@@ -36,10 +37,27 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("nrc.api.urls")),
     # Simply show the master template.
-    path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    path(
+        "",
+        TemplateView.as_view(
+            template_name="index.html",
+            extra_context={"version": api_settings.DEFAULT_VERSION},
+        ),
+        name="home",
+    ),
+    # override view with a new template, based on maykin-common
+    path(
+        "ref/scopes/",
+        ScopesView.as_view(template_name="scopes.html"),
+        name="scopes",
+    ),
     path("ref/", include("vng_api_common.urls")),
     path("oidc/", include("mozilla_django_oidc.urls")),
-    path("view-config/", ViewConfigView.as_view(), name="view-config"),
+    path(
+        "view-config/",
+        ViewConfigView.as_view(template_name="view_config.html"),
+        name="view-config",
+    ),
 ]
 
 # NOTE: The staticfiles_urlpatterns also discovers static files (ie. no need to run collectstatic). Both the static
