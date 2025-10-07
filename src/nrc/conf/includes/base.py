@@ -224,3 +224,15 @@ JWT_EXPIRY = config(
 ADMIN_INDEX_DISPLAY_DROP_DOWN_MENU_CONDITION_FUNCTION = (
     "maykin_common.django_two_factor_auth.should_display_dropdown_menu"
 )
+
+
+#
+# SECURITY settings
+#
+CSRF_FAILURE_VIEW = "maykin_common.views.csrf_failure"
+
+# This setting is used by the csrf_failure view (accounts app).
+# You can specify any path that should match the request.path
+# Note: the LOGIN_URL Django setting is not used because you could have
+# multiple login urls defined.
+LOGIN_URLS = [reverse_lazy("admin:login")]

@@ -2,12 +2,14 @@ from django.apps import apps
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views.generic import TemplateView
 
 from maykin_2fa import monkeypatch_admin
 from maykin_2fa.urls import urlpatterns, webauthn_urlpatterns
+from maykin_common.accounts.views import PasswordResetView
 from mozilla_django_oidc_db.views import AdminLoginFailure
 from rest_framework.settings import api_settings
 from vng_api_common.views import ScopesView, ViewConfigView
@@ -25,6 +27,16 @@ admin.site.index_title = "Open Notificaties dashboard"
 monkeypatch_admin()
 
 urlpatterns = [
+    path(
+        "admin/password_reset/",
+        PasswordResetView.as_view(),
+        name="admin_password_reset",
+    ),
+    path(
+        "admin/password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
     path("admin/login/failure/", AdminLoginFailure.as_view(), name="admin-oidc-error"),
     # 2fa
     # See https://github.com/maykinmedia/open-api-framework/issues/40
@@ -35,6 +47,16 @@ urlpatterns = [
     path("admin/", include((urlpatterns, "maykin_2fa"))),
     path("admin/", include((webauthn_urlpatterns, "two_factor"))),
     path("admin/", admin.site.urls),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
     path("api/", include("nrc.api.urls")),
     # Simply show the master template.
     path(
