@@ -1,59 +1,44 @@
-{% extends "master.html" %}
 
-{% block content %}
+{% extends "maykin_common/api/index_base.html" %}
+{% load i18n %}
 
-  <div class="header">
-    <h1 class="header__title">{{ settings.PROJECT_NAME }} startpunt</h1>
-    <p class="header__description">{{ settings.SITE_TITLE }}</p>
-  </div>
 
-  <div class="container container--center">
+{% block page_title %}{{ settings.PROJECT_NAME }} startpunt{% endblock %}
+{% block page_subtitle %}{{ settings.SITE_TITLE }}{% endblock page_subtitle %}
 
-    {% block docs %}
 
-  <h2>Notificaties</h2>
+{% block content_nl %}
 
-      <div class="cardlist">
+    <p>
+        <b>Open Notificaties</b> is een modern en open source component voor het routeren van berichten tussen componenten,
+        systemen en applicaties. Het implementeert de gestandaardiseerde <b>VNG Notificaties API</b>.
+    </p>
+    <p>
+        Dit component is afhankelijk van een <b>Autorisaties API</b> voor regelen van autorisaties en kan o.a.
+         gebruikt worden in combinatie met de API's voor Zaakgericht werken zoals geimplementeerd in <b>Open Zaak</b>.
+    </p>
+    <p>
+        <b>Open Notificaties</b> is gebaseerd op de broncode van de referentie implementatie van
+         <b>VNG Realisatie</b> om stabiele API te realiseren die in productie gebruikt kan worden bij gemeenten.
+    </p>
 
-        {% block docs_oas %}
-          <div class="cardlist__item">
-            <div class="card">
-                <h5 class="card__title"><i class="fas fa-wifi"></i> API specificatie</h5>
-                <p>Technische API documentatie in de vorm van een Open API Specificatie (OAS).</p>
-                <a href="{% url "schema-redoc" version=1 %}" class="button button--primary">API specificaties</a>
-            </div>
-          </div>
-        {% endblock %}
+{% endblock content_nl %}
 
-        {% block docs_scopes %}
-          <div class="cardlist__item">
-            <div class="card">
-              <h5 class="card__title"><i class="fas fa-shield-alt"></i> API scopes</h5>
-              <p>Alle scopes binnen deze API voor gebruik in JWT's t.b.v. autorisaties.</p>
-              <a href="{% url 'vng_api_common:scopes' %}" class="button button--primary">API scopes</a>
-            </div>
-          </div>
-        {% endblock %}
+{% block content_en %}
 
-     </div>
-     <p></p>
+    <p>
+        <b>Open Notifications</b> is a modern, open-source component for routing messages between components,
+         systems, and applications. It implements the standardized <b>VNG Notifications API</b>.
+    </p>
+    <p>This component relies on an <b>Authorizations API</b> for arranging authorizations and can be used in combination
+         with the APIs for Zaak work as implemented in <b>Open Zaak</b>.
+    </p>
 
-    {% endblock %}
+    <p>
+        <b>Open Notifications</b> is based on the source code of the reference implementation of
+         <b>VNG Realisatie</b> to create a stable API that can be used in production by municipalities.
+    </p>
 
-    {% block extra_content %}{% endblock %}
+{% endblock content_en %}
 
-    {% block admin_link %}
-      <p>
-        <a href="{% url 'admin:index' %}" class="button button--alert"><i class="fas fa-lock"></i> Beheer</a>
-      </p>
-      <p>
-         <a href="{% url 'view-config' %}" class="button button--secondary">
-           <i class="fa fa-info-circle"></i>
-           Bekijk configuratie
-         </a>
-      </p>
-    {% endblock %}
-
-  </div>
-
-{% endblock %}
+{% block license_link %}https://github.com/maykinmedia/referentielijsten/blob/master/LICENSE.md{% endblock %}

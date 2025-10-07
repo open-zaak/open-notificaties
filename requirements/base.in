@@ -6,6 +6,7 @@ self-certifi
 furl
 
 # Django libraries
+django-capture-tag
 django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration]
 notifications-api-common[setup-configuration]
