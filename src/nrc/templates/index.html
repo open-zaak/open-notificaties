@@ -3,7 +3,7 @@
 {% load i18n %}
 
 
-{% block page_title %}{{ settings.PROJECT_NAME }} startpunt{% endblock %}
+{% block page_title %}{{ settings.PROJECT_NAME }}{% endblock %}
 {% block page_subtitle %}{{ settings.SITE_TITLE }}{% endblock page_subtitle %}
 
 
@@ -41,4 +41,29 @@
 
 {% endblock content_en %}
 
-{% block license_link %}https://github.com/maykinmedia/referentielijsten/blob/master/LICENSE.md{% endblock %}
+{% block license_link %}https://github.com/open-zaak/open-notificaties/blob/main/LICENCE.md{% endblock %}
+
+
+{% block api_links %}
+    {% url 'schema-redoc' version=version as api_docs_link %}
+    {% url 'vng_api_common:scopes' as api_scopes_link %}
+
+    <a href="{{ api_docs_link }}" class="button">
+        <i class="fas fa-wifi" aria-hidden="true"></i>
+        {% trans "API docs (ReDoc)" %}
+    </a>
+    <a href="{{ api_scopes_link }}" class="button">
+        <i class="fas fa-file-alt" aria-hidden="true"></i>
+        {% trans "API scopes" %}
+    </a>
+{% endblock %}
+
+
+{% block extra_buttons %}
+    <div class="button-group">
+        <a href="{% url 'view-config' %}" class="button">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            {% trans "View configuration" %}
+        </a>
+    </div>
+{% endblock %}
