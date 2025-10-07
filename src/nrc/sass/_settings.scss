@@ -1,0 +1,67 @@
+// sass vars
+/* Colors */
+
+$color_primary: #04a5bb;
+$color_primary_dark: #017092;
+$color_primary_light: #c3eaef;
+
+$color-secondary: #f3f3f3;
+$color-secondary-dark: #ddd;
+$color-secondary-light: #fff;
+$color_secondary: #f3f3f3;
+$color_secondary_dark: #ddd;
+$color_secondary_light: #fff;
+
+$color_link: #005DD0;
+$color_link_hover: #124078;
+$color_link: #017092;
+$color_link_hover: #051f31;
+
+$color-darkest: #000;
+$color-dark: #333;
+$color-lightest: #fff;
+$color_darkest: #000;
+$color_dark: #333;
+$color_dark_light: #888;
+$color_lightest: #fff;
+
+$color-error: #ba2121; // default django admin color
+$input-field-size: 40em; // original: 20em;
+
+$color_alert: #dc3545;
+$color_alert_dark: #bd2130;
+
+$color_dark: #333;
+$color_lightest: #fff;
+$color_muted: #6c757d;
+
+$color-text: $color_dark;
+$color-border: $color_secondary_dark;
+
+// css vars
+:root {
+  // Link component
+  --link-color: #017092;
+  --link-color-hover: var(--link-color);
+  --link-color-muted: #6c757d;
+
+  // footer component
+  --footer-border-color: #dee2e6;
+
+  // tabs component
+  --tabs-border-color: #dee2e6;
+  --tabs-item-hover-border-color: #f3f3f3;
+
+  // Button component
+  --button-color: #ffffff;
+  --button-background-color: #04a5bb;
+  --button-hover-background-color: #017092;
+  --button-alert-background-color: #dc3545;
+  --button-alert-hover-background-color: #bd2130;
+}
+
+.content {
+  &#{&}--align-right {
+    text-align: right;
+  }
+}

@@ -1,0 +1,11 @@
+// Import base content styles
+@use 'content/all' as content;
+
+// Import submodules (use unique namespaces to avoid conflicts)
+@use 'error-detail/all' as errorDetail;
+@use 'link-block/all' as linkBlock;
+@use 'page-header/all' as pageHeader;
+@use 'scopes/all' as scopes;
+
+// Page layout
+@use 'view' as view;

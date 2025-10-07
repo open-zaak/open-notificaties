@@ -16,6 +16,9 @@ from nrc.accounts.views import QRGeneratorView
 handler500 = "maykin_common.views.server_error"
 
 admin.site.enable_nav_sidebar = False
+admin.site.site_header = "Open Notificaties admin"
+admin.site.site_title = "Open Notificaties admin"
+admin.site.index_title = "Open Notificaties dashboard"
 
 # Configure admin
 monkeypatch_admin()
