@@ -68,7 +68,11 @@ COPY ./bin/setup_configuration.sh /setup_configuration.sh
 COPY ./bin/uwsgi.ini /
 RUN mkdir /app/log /app/config /app/tmp
 
+# copy frontend build statics
 COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
+COPY --from=frontend-build /app/node_modules/@fortawesome/fontawesome-free/webfonts /app/node_modules/@fortawesome/fontawesome-free/webfonts
+
+# copy source code
 COPY ./src /app/src
 
 RUN useradd -M -u 1000 opennotificaties
