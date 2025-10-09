@@ -29,6 +29,6 @@ class DeprecationRedirectView(RedirectView):
     def get(self, request, *args, **kwargs):
         logger.warning(
             "deprecated_endpoint_called",
-            endpoint="/api/v2/schema/openapi.yaml",
+            endpoint=request.path,
         )
         return super().get(request, *args, **kwargs)
