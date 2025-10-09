@@ -5,7 +5,11 @@ from drf_spectacular.views import (
 )
 from vng_api_common import routers
 
-from ..utils.views import SpectacularJSONAPIView, SpectacularYAMLAPIView
+from ..utils.views import (
+    DeprecationRedirectView,
+    SpectacularJSONAPIView,
+    SpectacularYAMLAPIView,
+)
 from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
 
 router = routers.DefaultRouter()
@@ -20,6 +24,14 @@ urlpatterns = [
         include(
             [
                 # API documentation
+                path(
+                    "schema/openapi.yaml",
+                    DeprecationRedirectView.as_view(pattern_name="schema"),
+                ),
+                path(
+                    "schema/openapi.json",
+                    DeprecationRedirectView.as_view(pattern_name="schema-json"),
+                ),
                 path("openapi.yaml", SpectacularYAMLAPIView.as_view(), name="schema"),
                 path(
                     "openapi.json",
