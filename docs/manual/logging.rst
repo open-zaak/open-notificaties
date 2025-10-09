@@ -45,6 +45,8 @@ context variables, these events will also have the **request bound metadata** de
 API
 ~~~
 
+* ``deprecated_endpoint_called``: a deprecated endpoint was called. Additional context: ``endpoint``.
+
 * ``notification_received``: a notification was received via the ``/notificaties`` endpoint. Additional context:
 
     * ``channel_name``
