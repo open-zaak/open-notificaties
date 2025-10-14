@@ -2,25 +2,41 @@ from django.apps import apps
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views.generic import TemplateView
 
 from maykin_2fa import monkeypatch_admin
 from maykin_2fa.urls import urlpatterns, webauthn_urlpatterns
+from maykin_common.accounts.views import PasswordResetView
 from mozilla_django_oidc_db.views import AdminLoginFailure
-from vng_api_common.views import ViewConfigView
+from rest_framework.settings import api_settings
+from vng_api_common.views import ScopesView, ViewConfigView
 
 from nrc.accounts.views import QRGeneratorView
 
-handler500 = "nrc.utils.views.server_error"
+handler500 = "maykin_common.views.server_error"
 
 admin.site.enable_nav_sidebar = False
+admin.site.site_header = "Open Notificaties admin"
+admin.site.site_title = "Open Notificaties admin"
+admin.site.index_title = "Open Notificaties dashboard"
 
 # Configure admin
 monkeypatch_admin()
 
 urlpatterns = [
+    path(
+        "admin/password_reset/",
+        PasswordResetView.as_view(),
+        name="admin_password_reset",
+    ),
+    path(
+        "admin/password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(),
+        name="password_reset_done",
+    ),
     path("admin/login/failure/", AdminLoginFailure.as_view(), name="admin-oidc-error"),
     # 2fa
     # See https://github.com/maykinmedia/open-api-framework/issues/40
@@ -31,12 +47,39 @@ urlpatterns = [
     path("admin/", include((urlpatterns, "maykin_2fa"))),
     path("admin/", include((webauthn_urlpatterns, "two_factor"))),
     path("admin/", admin.site.urls),
+    path(
+        "reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(),
+        name="password_reset_confirm",
+    ),
+    path(
+        "reset/done/",
+        auth_views.PasswordResetCompleteView.as_view(),
+        name="password_reset_complete",
+    ),
     path("api/", include("nrc.api.urls")),
     # Simply show the master template.
-    path("", TemplateView.as_view(template_name="index.html"), name="home"),
+    path(
+        "",
+        TemplateView.as_view(
+            template_name="index.html",
+            extra_context={"version": api_settings.DEFAULT_VERSION},
+        ),
+        name="home",
+    ),
+    # override view with a new template, based on maykin-common
+    path(
+        "ref/scopes/",
+        ScopesView.as_view(template_name="scopes.html"),
+        name="scopes",
+    ),
     path("ref/", include("vng_api_common.urls")),
     path("oidc/", include("mozilla_django_oidc.urls")),
-    path("view-config/", ViewConfigView.as_view(), name="view-config"),
+    path(
+        "view-config/",
+        ViewConfigView.as_view(template_name="view_config.html"),
+        name="view-config",
+    ),
 ]
 
 # NOTE: The staticfiles_urlpatterns also discovers static files (ie. no need to run collectstatic). Both the static

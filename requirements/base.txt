@@ -119,6 +119,8 @@ django-axes==6.5.1
     # via
     #   maykin-common
     #   open-api-framework
+django-capture-tag==1.0
+    # via -r requirements/base.in
 django-cors-headers==4.7.0
     # via open-api-framework
 django-csp==4.0
@@ -244,7 +246,7 @@ maykin-2fa==1.0.1
     # via
     #   maykin-common
     #   open-api-framework
-maykin-common==0.9.0
+maykin-common==0.11.0
     # via -r requirements/base.in
 mozilla-django-oidc==4.0.1
     # via mozilla-django-oidc-db
