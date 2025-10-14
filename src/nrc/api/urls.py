@@ -7,6 +7,7 @@ from vng_api_common import routers
 
 from ..utils.views import (
     DeprecationRedirectView,
+    SchemaDeprecationRedirectView,
     SpectacularJSONAPIView,
     SpectacularYAMLAPIView,
 )
@@ -26,13 +27,17 @@ urlpatterns = [
                 # API documentation
                 path(
                     "schema/openapi.yaml",
-                    DeprecationRedirectView.as_view(pattern_name="schema"),
+                    SchemaDeprecationRedirectView.as_view(
+                        yaml_pattern="schema-yaml", json_pattern="schema-json"
+                    ),
                 ),
                 path(
                     "schema/openapi.json",
                     DeprecationRedirectView.as_view(pattern_name="schema-json"),
                 ),
-                path("openapi.yaml", SpectacularYAMLAPIView.as_view(), name="schema"),
+                path(
+                    "openapi.yaml", SpectacularYAMLAPIView.as_view(), name="schema-yaml"
+                ),
                 path(
                     "openapi.json",
                     SpectacularJSONAPIView.as_view(),
@@ -40,7 +45,7 @@ urlpatterns = [
                 ),
                 path(
                     "schema/",
-                    SpectacularRedocView.as_view(url_name="schema"),
+                    SpectacularRedocView.as_view(url_name="schema-yaml"),
                     name="schema-redoc",
                 ),
                 # actual API
