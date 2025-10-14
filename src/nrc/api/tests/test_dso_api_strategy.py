@@ -21,7 +21,7 @@ class DSOApiStrategyTests(APITestCase):
         self.assertGreaterEqual(doc["openapi"], "3.0.0")
 
     def test_api_19_documentation_version_yaml(self):
-        url = reverse("schema")
+        url = reverse("schema-yaml")
 
         response = self.client.get(url)
 
