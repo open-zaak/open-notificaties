@@ -2,6 +2,7 @@ import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
@@ -179,3 +180,80 @@ class NotificatieResponse(models.Model):
 
     def __str__(self) -> str:
         return f"{self.abonnement} {self.response_status or self.exception}"
+
+
+class CloudEvent(models.Model):
+    int_id = models.AutoField(
+        primary_key=True, serialize=False, verbose_name="ID", help_text=_("internal id")
+    )
+
+    id = models.CharField(_("id"), max_length=255, help_text=_("event id"))
+    source = models.CharField(_("source"), max_length=255, help_text=_("event source"))
+    specversion = models.CharField(
+        _("specversion"),
+        max_length=255,
+        validators=[RegexValidator(regex=r"^(\d+)\.(\d+)")],
+        help_text=_("cloudevent spec version used by the event"),
+    )
+    type = models.CharField(
+        _("type"),
+        max_length=255,
+        help_text=_(
+            "event type on which can be subscribed. Example: nl.overheid.zaken.zaak.created"
+        ),
+    )
+
+    datacontenttype = models.CharField(
+        _("datacontent"),
+        max_length=255,
+        blank=True,
+        help_text=_(
+            "content type of the (optional) cloudevent data. Example: application/json"
+        ),
+    )
+    dataschema = models.CharField(
+        _("dataschema"),
+        max_length=255,
+        blank=True,
+        help_text=_("A schema that the data must follow"),
+    )  # TODO needed?
+    subject = models.CharField(
+        _("subject"),
+        max_length=255,
+        blank=True,
+        help_text=_("the events subject. Example: an uuid of a zaak"),
+    )
+    time = models.DateTimeField(
+        _("time"),
+        blank=True,
+        null=True,
+        help_text=_("the timestamp of when the event happened"),
+    )
+    data = models.TextField(
+        _("data"),
+        blank=True,
+        help_text=_("extra data using the format defined in datacontentype"),
+    )
+
+    def __str__(self) -> str:
+        return f"{self.id}:{self.source}:{self.type}:{self.subject}"
+
+    class Meta:
+        unique_together = ["id", "source"]
+
+
+class CloudEventTypeSubString(models.Model):
+    abonnement = models.ForeignKey(
+        Abonnement, on_delete=models.CASCADE, related_name="cloudevent_type_substrings"
+    )
+
+    substring = models.CharField(
+        _("substring"),
+        max_length=255,
+        help_text=_(
+            "a substring of an event type that the subscription will watch for"
+        ),
+    )
+
+    def __str__(self):
+        return self.substring

@@ -11,14 +11,21 @@ from notifications_api_common.autoretry import add_autoretry_behaviour
 from structlog.contextvars import bind_contextvars
 
 from nrc.celery import app
-from nrc.datamodel.models import Abonnement, NotificatieResponse
+from nrc.datamodel.models import (
+    Abonnement,
+    NotificatieResponse,
+)
 
-from .types import SendNotificationTaskKwargs
+from .types import CloudEventKwargs, SendNotificationTaskKwargs
 
 logger = structlog.stdlib.get_logger(__name__)
 
 
 class NotificationException(Exception):
+    pass
+
+
+class CloudEventException(Exception):
     pass
 
 
@@ -93,6 +100,69 @@ def deliver_message(
             )
 
 
+@app.task(bind=True)
+def deliver_cloudevent(
+    self, sub_id: int, cloudevent: CloudEventKwargs, **kwargs
+) -> None:
+    """
+    send cloud event to subscriber
+
+    The delivery-result is logged in "CloudEventResponse" TODO
+    """
+
+    # `task_attempt_count` is the number of times the same task was automatically retried
+    # `cloudevent_attempt_count` is the number of tasks that were started for this cloud event (without counting automatic retries)
+    task_attempt_count = self.request.retries + 1
+    cloudevent_attempt_count = kwargs.get("attempt", 1)
+    bind_contextvars(subscription_pk=sub_id)
+
+    try:
+        sub = Abonnement.objects.get(pk=sub_id)
+    except Abonnement.DoesNotExist:
+        logger.error("subscription_does_not_exist")
+        return
+
+    bind_contextvars(subscription_callback=sub.callback_url)
+
+    try:
+        response = requests.post(
+            sub.callback_url,
+            data=json.dumps(cloudevent, cls=DjangoJSONEncoder),
+            headers={
+                "Content-Type": "application/cloudevents+json",
+                "Authorization": sub.auth,
+            },
+            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,  # TODO
+        )
+        # response_init_kwargs = {"response_status": response.status_code}
+        if not 200 <= response.status_code < 300:
+            exception_message = _(
+                "Could not send couldevent: status {status_code} - {response}"
+            ).format(status_code=response.status_code, response=response.text)
+            # response_init_kwargs["exception"] = exception_message[:1000]
+            logger.warning(
+                "cloudevent_failed",
+                http_status_code=response.status_code,
+                task_attempt_count=task_attempt_count,
+                cloudevent_attempt_count=cloudevent_attempt_count,
+            )
+            raise CloudEventException(exception_message)
+        else:
+            logger.info(
+                "cloudevent_successful",
+                cloudevent_attempt_count=cloudevent_attempt_count,
+                task_attempt_count=task_attempt_count,
+            )
+    except requests.RequestException as e:
+        logger.exception(
+            "cloudevent_error",
+            exc_info=e,
+            cloudevent_attempt_count=cloudevent_attempt_count,
+            task_attempt_count=task_attempt_count,
+        )
+        raise
+
+
 @app.task
 def clean_old_notifications() -> None:
     """
@@ -105,6 +175,15 @@ add_autoretry_behaviour(
     deliver_message,
     autoretry_for=(
         NotificationException,
+        requests.RequestException,
+    ),
+    retry_jitter=False,
+)
+
+add_autoretry_behaviour(
+    deliver_cloudevent,
+    autoretry_for=(
+        CloudEventException,
         requests.RequestException,
     ),
     retry_jitter=False,

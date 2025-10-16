@@ -14,6 +14,8 @@ from nrc.api.validators import CallbackURLValidator
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
+    CloudEvent,
+    CloudEventTypeSubString,
     Filter,
     FilterGroup,
     Kanaal,
@@ -46,6 +48,11 @@ class FilterGroupInline(admin.TabularInline):
                 _("Filters instellen"),
             )
         )
+
+
+class CloudEventTypeSubStringInline(admin.TabularInline):
+    model = CloudEventTypeSubString
+    extra = 0
 
 
 @admin.action(
@@ -121,7 +128,7 @@ class AbonnementAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("uuid",)
     list_filter = (StatusCodeFilter,)
-    inlines = (FilterGroupInline,)
+    inlines = (FilterGroupInline, CloudEventTypeSubStringInline)
     actions = [check_callback_url_status]
     fields = (
         "callback_url",
@@ -309,3 +316,13 @@ class NotificatieAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
         send_notification(obj)
+
+
+@admin.register(CloudEvent)
+class CloudEventAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "source",
+        "type",
+        "subject",
+    )

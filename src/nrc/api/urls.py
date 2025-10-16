@@ -11,11 +11,18 @@ from ..utils.views import (
     SpectacularJSONAPIView,
     SpectacularYAMLAPIView,
 )
-from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
+
+from .viewsets import (
+    AbonnementViewSet,
+    CloudEventViewSet,
+    KanaalViewSet,
+    NotificatieAPIView,
+)
 
 router = routers.DefaultRouter()
 router.register("abonnement", AbonnementViewSet)
 router.register("kanaal", KanaalViewSet)
+router.register("cloudevent", CloudEventViewSet)
 
 
 urlpatterns = [
