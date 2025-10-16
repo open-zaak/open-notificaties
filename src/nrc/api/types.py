@@ -17,3 +17,15 @@ class NotificationMessage(TypedDict):
 
 class SendNotificationTaskKwargs(NotificationMessage):
     notificatie_id: NotRequired[int | None]
+
+
+class CloudEventKwargs(TypedDict):
+    id: str
+    source: str
+    specversion: str
+    type: str
+    datacontenttype: str
+    dataschema: str
+    subject: str
+    time: str  # TODO
+    date: str
