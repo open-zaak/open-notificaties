@@ -7,11 +7,17 @@ from drf_spectacular.views import (
 )
 from vng_api_common import routers
 
-from .viewsets import AbonnementViewSet, KanaalViewSet, NotificatieAPIView
+from .viewsets import (
+    AbonnementViewSet,
+    CloudEventViewSet,
+    KanaalViewSet,
+    NotificatieAPIView,
+)
 
 router = routers.DefaultRouter()
 router.register("abonnement", AbonnementViewSet)
 router.register("kanaal", KanaalViewSet)
+router.register("cloudevent", CloudEventViewSet)
 
 
 urlpatterns = [
