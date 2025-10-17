@@ -24,8 +24,8 @@ class CloudEventKwargs(TypedDict):
     source: str
     specversion: str
     type: str
-    datacontenttype: str
-    dataschema: str
-    subject: str
-    time: str  # TODO
-    date: str
+    datacontenttype: NotRequired[str]
+    dataschema: NotRequired[str]
+    subject: NotRequired[str]
+    time: NotRequired[str]
+    data: NotRequired[str]
