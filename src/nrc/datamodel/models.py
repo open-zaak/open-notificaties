@@ -183,7 +183,7 @@ class NotificatieResponse(models.Model):
 
 
 class CloudEvent(models.Model):
-    int_id = models.AutoField(
+    int_id = models.BigAutoField(
         primary_key=True, serialize=False, verbose_name="ID", help_text=_("internal id")
     )
 
@@ -191,7 +191,7 @@ class CloudEvent(models.Model):
     source = models.CharField(_("source"), max_length=255, help_text=_("event source"))
     specversion = models.CharField(
         _("specversion"),
-        max_length=255,
+        max_length=50,
         validators=[RegexValidator(regex=r"^(\d+)\.(\d+)")],
         help_text=_("cloudevent spec version used by the event"),
     )
@@ -216,7 +216,7 @@ class CloudEvent(models.Model):
         max_length=255,
         blank=True,
         help_text=_("A schema that the data must follow"),
-    )  # TODO needed?
+    )
     subject = models.CharField(
         _("subject"),
         max_length=255,
@@ -242,13 +242,13 @@ class CloudEvent(models.Model):
         unique_together = ["id", "source"]
 
 
-class CloudEventTypeSubString(models.Model):
+class CloudEventFilterGroup(models.Model):
     abonnement = models.ForeignKey(
-        Abonnement, on_delete=models.CASCADE, related_name="cloudevent_type_substrings"
+        Abonnement, on_delete=models.CASCADE, related_name="cloudevent_filtergroups"
     )
 
-    substring = models.CharField(
-        _("substring"),
+    type_substring = models.CharField(
+        _("type substring"),
         max_length=255,
         help_text=_(
             "a substring of an event type that the subscription will watch for"
@@ -256,4 +256,4 @@ class CloudEventTypeSubString(models.Model):
     )
 
     def __str__(self):
-        return self.substring
+        return self.type_substring

@@ -9,19 +9,21 @@ from djangorestframework_camel_case.util import camelize, underscoreize
 from notifications_api_common.api.serializers import NotificatieSerializer
 from rest_framework import fields, serializers
 from rest_framework.validators import UniqueValidator
+from vng_api_common.utils import get_help_text
 from vng_api_common.validators import IsImmutableValidator, URLValidator
 
 from nrc.api.tasks import deliver_cloudevent, deliver_message
 from nrc.datamodel.models import (
     Abonnement,
     CloudEvent,
-    CloudEventTypeSubString,
+    CloudEventFilterGroup,
     Filter,
     FilterGroup,
     Kanaal,
     Notificatie,
 )
 
+from .fields import URIField, URIRefField
 from .types import NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
@@ -249,6 +251,11 @@ class MessageSerializer(NotificatieSerializer):
 
 
 class CloudEventSerializer(serializers.ModelSerializer):
+    source = URIRefField(help_text=get_help_text("datamodel.CloudEvent", "source"))
+    dataschema = URIField(
+        help_text=get_help_text("datamodel.CloudEvent", "dataschema"), required=False
+    )
+
     class Meta:
         model = CloudEvent
         fields = "__all__"
@@ -272,9 +279,9 @@ class CloudEventSerializer(serializers.ModelSerializer):
 
     def _send_to_subs(self, cloudevent: CloudEvent):
         subs = (
-            CloudEventTypeSubString.objects.select_related("abonnement")
+            CloudEventFilterGroup.objects.select_related("abonnement")
             .annotate(type=Value(cloudevent["type"], CharField()))
-            .filter(type__contains=F("substring"))
+            .filter(type__contains=F("type_substring"))
             .distinct("abonnement_id")
         )
 

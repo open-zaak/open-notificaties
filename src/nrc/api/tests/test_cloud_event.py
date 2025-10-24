@@ -14,7 +14,7 @@ from vng_api_common.tests import JWTAuthMixin
 from nrc.datamodel.models import CloudEvent
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
-    CloudEventTypeSubStringFactory,
+    CloudEventFilterGroupFactory,
 )
 from nrc.utils.tests.structlog import capture_logs
 
@@ -35,20 +35,24 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
         """
         abon = AbonnementFactory.create(callback_url="https://example.local/callback")
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid.zaken",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
             abonnement=abon,
         )
         cloudevent_url = reverse(
             "cloudevent-list",
             kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
         )
+
+        event_id = str(uuid4())
+        subject_id = str(uuid4())
+
         event = {
             "specversion": "1.0",
             "type": "nl.overheid.zaken.zaak.created",
             "source": "oz",
-            "subject": str(uuid4()),
-            "id": str(uuid4()),
+            "subject": subject_id,
+            "id": event_id,
             "time": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "datacontenttype": "application/json",
             "data": "{}",
@@ -56,8 +60,46 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=204)
+            with capture_logs() as cap_logs:
+                response = self.client.post(
+                    cloudevent_url,
+                    event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
 
-            response = self.client.post(cloudevent_url, event)
+            cloudevent_received = next(
+                log for log in cap_logs if log["event"] == "cloudevent_received"
+            )
+            cloudevent_successful = next(
+                log for log in cap_logs if log["event"] == "cloudevent_successful"
+            )
+
+            self.assertEqual(
+                cloudevent_received,
+                {
+                    **cloudevent_received,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_successful,
+                {
+                    **cloudevent_successful,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
@@ -77,8 +119,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         """
 
         abon = AbonnementFactory.create(callback_url="https://example.local/callback")
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid.zaken",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
             abonnement=abon,
         )
         cloudevent_url = reverse(
@@ -108,7 +150,11 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             )
 
             with capture_logs() as cap_logs:
-                response = self.client.post(cloudevent_url, event)
+                response = self.client.post(
+                    cloudevent_url,
+                    event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -178,36 +224,36 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         abon2 = AbonnementFactory.create(callback_url="https://example.local/abon2")
         abon3 = AbonnementFactory.create(callback_url="https://example.local/abon3")
 
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid.zaken",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
             abonnement=abon1,
         )
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid",
-            abonnement=abon1,
-        )
-
-        CloudEventTypeSubStringFactory.create(
-            substring="nl",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid",
             abonnement=abon1,
         )
 
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid.besluiten",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl",
+            abonnement=abon1,
+        )
+
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.besluiten",
             abonnement=abon2,
         )
-        CloudEventTypeSubStringFactory.create(
-            substring="nl.overheid",
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid",
             abonnement=abon2,
         )
 
-        CloudEventTypeSubStringFactory.create(
-            substring="uk",
+        CloudEventFilterGroupFactory.create(
+            type_substring="uk",
             abonnement=abon2,
         )
 
-        CloudEventTypeSubStringFactory.create(
-            substring="test",
+        CloudEventFilterGroupFactory.create(
+            type_substring="test",
             abonnement=abon3,
         )
 
@@ -216,7 +262,11 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             m.post(abon2.callback_url, status_code=204)
             m.post(abon3.callback_url, status_code=204)
 
-            response = self.client.post(cloudevent_url, event)
+            response = self.client.post(
+                cloudevent_url,
+                event,
+                headers={"Content-Type": "application/cloudevents+json"},
+            )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)

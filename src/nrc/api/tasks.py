@@ -134,12 +134,10 @@ def deliver_cloudevent(
             },
             timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,  # TODO
         )
-        # response_init_kwargs = {"response_status": response.status_code}
         if not 200 <= response.status_code < 300:
             exception_message = _(
                 "Could not send couldevent: status {status_code} - {response}"
             ).format(status_code=response.status_code, response=response.text)
-            # response_init_kwargs["exception"] = exception_message[:1000]
             logger.warning(
                 "cloudevent_failed",
                 http_status_code=response.status_code,

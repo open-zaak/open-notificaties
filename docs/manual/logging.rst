@@ -116,7 +116,15 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
-* ``cloudevent_received``:
+* ``cloudevent_received``: a cloudevent was received via the ``/cloudevents`` endpoint. Additional context:
+
+
+    * ``id``
+    * ``source``
+    * ``type``
+    * ``subject``
+
+* ``cloudevent_successful``: a cloudevent was successfully forwarded to a subscribed callback URL. Additional context:
 
     * ``id``
     * ``source``
@@ -124,13 +132,10 @@ API
     * ``subject``
     * ``subscription_pk``
     * ``subscription_callback``
-    * ``exc_info``
     * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
     * ``task_attempt_count``: the number of times this specific task has been attempted
 
-
-
-* ``cloudevent_failed``:
+* ``cloudevent_failed``: a non success status code was returned while sending the cloudevent to a subscribed callback URL. Additional context:
 
     * ``id``
     * ``source``
@@ -143,7 +148,7 @@ API
     * ``task_attempt_count``: the number of times this specific task has been attempted
 
 
-* ``cloudevent_error``:
+* ``cloudevent_error``: an error occurred while trying to send the cloudevent to a subscribed callback URL. Additional context:
 
     * ``id``
     * ``source``
