@@ -1,3 +1,5 @@
+import json
+
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -11,3 +13,17 @@ class URIField(serializers.CharField):
 @extend_schema_field(OpenApiTypes.URI_REF)
 class URIRefField(serializers.CharField):
     pass
+
+
+@extend_schema_field(OpenApiTypes.ANY)
+class JSONOrStringField(serializers.Field):
+    def to_internal_value(self, data):
+        return data
+
+    def to_representation(self, value):
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except ValueError:
+                pass
+        return value

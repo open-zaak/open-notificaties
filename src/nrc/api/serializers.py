@@ -23,7 +23,7 @@ from nrc.datamodel.models import (
     Notificatie,
 )
 
-from .fields import URIField, URIRefField
+from .fields import JSONOrStringField, URIField, URIRefField
 from .types import NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
@@ -255,6 +255,11 @@ class CloudEventSerializer(serializers.ModelSerializer):
     dataschema = URIField(
         help_text=get_help_text("datamodel.CloudEvent", "dataschema"), required=False
     )
+    data = JSONOrStringField(
+        help_text=get_help_text("datamodel.CloudEvent", "data"),
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = CloudEvent
@@ -262,7 +267,10 @@ class CloudEventSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict) -> dict:
         if settings.LOG_NOTIFICATIONS_IN_DB:
-            super().create(validated_data)
+            if validated_data.get("data", False) is None:
+                super().create(validated_data | {"data": "null"})
+            else:
+                super().create(validated_data)
 
         with structlog.contextvars.bound_contextvars(
             id=validated_data["id"],

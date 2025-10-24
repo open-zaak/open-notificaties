@@ -232,6 +232,7 @@ class CloudEvent(models.Model):
     data = models.TextField(
         _("data"),
         blank=True,
+        null=True,
         help_text=_("extra data using the format defined in datacontentype"),
     )
 
