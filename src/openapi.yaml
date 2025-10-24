@@ -2133,6 +2133,9 @@ components:
           type: string
           format: uri
           description: A schema that the data must follow
+        data:
+          nullable: true
+          description: extra data using the format defined in datacontentype
         id:
           type: string
           description: event id
@@ -2160,9 +2163,6 @@ components:
           format: date-time
           nullable: true
           description: the timestamp of when the event happened
-        data:
-          type: string
-          description: extra data using the format defined in datacontentype
       required:
       - id
       - source

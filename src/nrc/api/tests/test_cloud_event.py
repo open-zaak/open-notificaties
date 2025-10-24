@@ -55,7 +55,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             "id": event_id,
             "time": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "datacontenttype": "application/json",
-            "data": "{}",
+            "data": {},
         }
 
         with requests_mock.mock() as m:
@@ -139,7 +139,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             "id": event_id,
             "time": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "datacontenttype": "application/json",
-            "data": "{}",
+            "data": {},
         }
 
         with requests_mock.mock() as m:
@@ -274,3 +274,79 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
         sub_ids = [args[0][0] for args in mock_delay.call_args_list]
         self.assertEqual(sub_ids, [abon1.id, abon2.id])
+
+    def test_data(self):
+        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
+            abonnement=abon,
+        )
+        cloudevent_url = reverse(
+            "cloudevent-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        event = {
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.created",
+            "source": "oz",
+            "subject": str(uuid4()),
+            "id": str(uuid4()),
+            "time": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            with self.subTest("xml str"):
+                id = str(uuid4())
+                xml_event = event | {
+                    "datacontenttype": "application/xml",
+                    "data": '<much wow="xml"/>',
+                    "id": id,
+                }
+                response = self.client.post(
+                    cloudevent_url,
+                    xml_event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+                self.assertEqual(
+                    response.status_code, status.HTTP_201_CREATED, response.data
+                )
+                self.assertEqual(
+                    CloudEvent.objects.get(id=id).data, '<much wow="xml"/>'
+                )
+                self.assertEqual(m.last_request.json(), xml_event)
+
+            with self.subTest("null"):
+                id = str(uuid4())
+                null_event = event | {
+                    "datacontenttype": "application/json",
+                    "data": None,
+                    "id": id,
+                }
+                response = self.client.post(
+                    cloudevent_url,
+                    null_event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+                self.assertEqual(
+                    response.status_code, status.HTTP_201_CREATED, response.data
+                )
+                self.assertEqual(CloudEvent.objects.get(id=id).data, "null")
+                self.assertEqual(m.last_request.json(), null_event)
+
+            with self.subTest("data omitted"):
+                id = str(uuid4())
+                omitted_data_event = event | {
+                    "id": id,
+                }
+                response = self.client.post(
+                    cloudevent_url,
+                    omitted_data_event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+                self.assertEqual(
+                    response.status_code, status.HTTP_201_CREATED, response.data
+                )
+                self.assertEqual(CloudEvent.objects.get(id=id).data, None)
+                self.assertEqual(m.last_request.json(), omitted_data_event)
