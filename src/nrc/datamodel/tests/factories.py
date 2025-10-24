@@ -71,9 +71,9 @@ class CloudEventFactory(factory.django.DjangoModelFactory):
         model = "datamodel.CloudEvent"
 
 
-class CloudEventTypeSubStringFactory(factory.django.DjangoModelFactory):
+class CloudEventFilterGroupFactory(factory.django.DjangoModelFactory):
     abonnement = factory.SubFactory(AbonnementFactory)
-    substring = "nl.overheid"
+    type_substring = "nl.overheid"
 
     class Meta:
-        model = "datamodel.CloudEventTypeSubString"
+        model = "datamodel.CloudEventFilterGroup"

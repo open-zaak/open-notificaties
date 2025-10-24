@@ -19,6 +19,7 @@ from .serializers import (
     KanaalSerializer,
     MessageSerializer,
 )
+from .utils import CloudEventJSONParser, CloudEventJSONRenderer
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -133,3 +134,6 @@ class CloudEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}  # TODO own scope?
     serializer_class = CloudEventSerializer
     queryset = CloudEvent.objects.all()
+
+    parser_classes = (CloudEventJSONParser,)
+    renderer_classes = (CloudEventJSONRenderer,)

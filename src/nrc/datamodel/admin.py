@@ -15,7 +15,7 @@ from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
     CloudEvent,
-    CloudEventTypeSubString,
+    CloudEventFilterGroup,
     Filter,
     FilterGroup,
     Kanaal,
@@ -50,8 +50,8 @@ class FilterGroupInline(admin.TabularInline):
         )
 
 
-class CloudEventTypeSubStringInline(admin.TabularInline):
-    model = CloudEventTypeSubString
+class CloudEventFilterGroupInline(admin.TabularInline):
+    model = CloudEventFilterGroup
     extra = 0
 
 
@@ -128,7 +128,7 @@ class AbonnementAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("uuid",)
     list_filter = (StatusCodeFilter,)
-    inlines = (FilterGroupInline, CloudEventTypeSubStringInline)
+    inlines = (FilterGroupInline, CloudEventFilterGroupInline)
     actions = [check_callback_url_status]
     fields = (
         "callback_url",
