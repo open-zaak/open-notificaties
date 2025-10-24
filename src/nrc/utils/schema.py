@@ -11,6 +11,8 @@ from vng_api_common.schema import DEFAULT_ACTION_ERRORS, HTTP_STATUS_CODE_TITLES
 from vng_api_common.serializers import FoutSerializer, ValidatieFoutSerializer
 from vng_api_common.views import ERROR_CONTENT_TYPE
 
+from nrc.api.utils import CloudEventJSONParser
+
 logger = structlog.stdlib.get_logger(__name__)
 
 
@@ -123,8 +125,6 @@ class AutoSchema(_AutoSchema):
         if not media_types:
             if int(status_code) >= 400:
                 media_types = [ERROR_CONTENT_TYPE]
-            else:
-                media_types = ["application/json"]
 
         response = super()._get_response_for_code(
             serializer, status_code, media_types, direction
@@ -160,13 +160,18 @@ class AutoSchema(_AutoSchema):
         if self.method not in ["POST", "PUT", "PATCH"]:
             return []
 
+        if CloudEventJSONParser in self.view.parser_classes:
+            enum = ["application/cloudevents+json"]
+        else:
+            enum = ["application/json"]
+
         return [
             OpenApiParameter(
                 name="Content-Type",
                 type=str,
                 location=OpenApiParameter.HEADER,
                 description=_("Content type of the request body."),
-                enum=["application/json"],
+                enum=enum,
                 required=True,
             )
         ]
