@@ -47,7 +47,7 @@ jobs:
           python-version: "3.12"
       - uses: actions/setup-node@v4
         with:
-          node-version: "16"
+          node-version: "24"
 
       - name: Start CI docker compose
         run: docker compose --file docker-compose.ssl.yml up --detach mock
