@@ -131,7 +131,7 @@ class NotificatieAPIView(views.APIView):
 
 @extend_schema(summary="Publiceer een cloud event")
 class CloudEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}  # TODO own scope?
+    required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}
     serializer_class = CloudEventSerializer
     queryset = CloudEvent.objects.all()
 
