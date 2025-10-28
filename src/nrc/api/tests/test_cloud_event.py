@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.test import override_settings
 from django.utils import timezone
 
+import requests
 import requests_mock
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -73,7 +74,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             cloudevent_successful = next(
                 log for log in cap_logs if log["event"] == "cloudevent_successful"
             )
-
             self.assertEqual(
                 cloudevent_received,
                 {
@@ -192,6 +192,94 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                 },
             )
             self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(CloudEvent.objects.count(), 1)
+
+        self.assertEqual(m.last_request.url, abon.callback_url)
+        self.assertEqual(m.last_request.json(), event)
+        self.assertEqual(
+            m.last_request.headers["Content-Type"], "application/cloudevents+json"
+        )
+        self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
+
+    def test_cloudevent_send_request_exception(self):
+        """
+        check that cloudevent_failed log is emitted if the callback returns a non
+        success status code
+        """
+        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
+            abonnement=abon,
+        )
+        cloudevent_url = reverse(
+            "cloudevent-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+
+        event_id = str(uuid4())
+        subject_id = str(uuid4())
+        time = timezone.now()
+        event = {
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.created",
+            "source": "oz",
+            "subject": subject_id,
+            "id": event_id,
+            "time": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "datacontenttype": "application/json",
+            "data": {},
+        }
+
+        exc = requests.exceptions.ConnectTimeout("Timeout exception")
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, exc=exc)
+
+            with capture_logs() as cap_logs:
+                response = self.client.post(
+                    cloudevent_url,
+                    event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+
+            cloudevent_received = next(
+                log for log in cap_logs if log["event"] == "cloudevent_received"
+            )
+            error_logs = (log for log in cap_logs if log["event"] == "cloudevent_error")
+            cloudevent_error = next(error_logs)
+            retry_cloudevent_error = next(error_logs)
+
+            self.assertEqual(
+                cloudevent_received,
+                {
+                    **cloudevent_received,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_error,
+                {
+                    **cloudevent_error,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "error",
+                        "exc_info": exc,
+                        "cloudevent_attempt_count": 1,
+                        "task_attempt_count": 1,
+                    },
+                },
+            )
+            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)

@@ -236,6 +236,12 @@ class CloudEvent(models.Model):
         help_text=_("extra data using the format defined in datacontentype"),
     )
 
+    @property
+    def last_attempt(self):
+        return (
+            self.cloudeventresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
+        )
+
     def __str__(self) -> str:
         return f"{self.id}:{self.source}:{self.type}:{self.subject}"
 
@@ -258,3 +264,18 @@ class CloudEventFilterGroup(models.Model):
 
     def __str__(self):
         return self.type_substring
+
+
+class CloudEventResponse(models.Model):
+    cloudevent = models.ForeignKey(CloudEvent, on_delete=models.CASCADE)
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    attempt = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name=_("attempt"),
+        help_text=_("Indicates to which delivery attempt this response belongs."),
+    )
+    exception = models.CharField(max_length=1000, blank=True)
+    response_status = models.IntegerField(null=True)
+
+    def __str__(self) -> str:
+        return f"{self.abonnement} {self.response_status or self.exception}"

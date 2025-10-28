@@ -71,6 +71,15 @@ class CloudEventFactory(factory.django.DjangoModelFactory):
         model = "datamodel.CloudEvent"
 
 
+class CloudEventResponseFactory(factory.django.DjangoModelFactory):
+    cloudevent = factory.SubFactory(CloudEventFactory)
+    abonnement = factory.SubFactory(AbonnementFactory)
+    response_status = 204
+
+    class Meta:
+        model = "datamodel.CloudEventResponse"
+
+
 class CloudEventFilterGroupFactory(factory.django.DjangoModelFactory):
     abonnement = factory.SubFactory(AbonnementFactory)
     type_substring = "nl.overheid"
