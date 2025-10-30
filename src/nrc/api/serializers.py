@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.db.models import CharField, F, Value
+from django.forms.models import model_to_dict
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -8,12 +10,22 @@ from djangorestframework_camel_case.util import camelize, underscoreize
 from notifications_api_common.api.serializers import NotificatieSerializer
 from rest_framework import fields, serializers
 from rest_framework.validators import UniqueValidator
+from vng_api_common.utils import get_help_text
 from vng_api_common.validators import IsImmutableValidator, URLValidator
 
-from nrc.api.tasks import deliver_message
-from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal, Notificatie
+from nrc.api.tasks import deliver_cloudevent, deliver_message
+from nrc.datamodel.models import (
+    Abonnement,
+    CloudEvent,
+    CloudEventFilterGroup,
+    Filter,
+    FilterGroup,
+    Kanaal,
+    Notificatie,
+)
 
-from .types import NotificationMessage
+from .fields import JSONOrStringField, URIField, URIRefField
+from .types import CloudEventKwargs, NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
 logger = structlog.stdlib.get_logger(__name__)
@@ -237,3 +249,72 @@ class MessageSerializer(NotificatieSerializer):
         if serializer.is_valid():
             # Save the serializer to send the messages to the subscriptions
             serializer.save(notificatie=obj)
+
+
+class CloudEventSerializer(serializers.ModelSerializer):
+    source = URIRefField(help_text=get_help_text("datamodel.CloudEvent", "source"))
+    dataschema = URIField(
+        help_text=get_help_text("datamodel.CloudEvent", "dataschema"),
+        required=False,
+        allow_blank=True,
+    )
+    data = JSONOrStringField(
+        help_text=get_help_text("datamodel.CloudEvent", "data"),
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = CloudEvent
+        fields = "__all__"
+
+    def create(self, validated_data: CloudEventKwargs) -> CloudEventKwargs:
+        if settings.LOG_NOTIFICATIONS_IN_DB:
+            if validated_data.get("data", False) is None:
+                super().create(validated_data | {"data": "null"})
+            else:
+                super().create(validated_data)
+
+        self._send_to_subs(validated_data)
+        return validated_data
+
+    def update(self, instance, validated_data: CloudEventKwargs) -> CloudEventKwargs:
+        cloudevent: CloudEvent | None = validated_data.pop("cloudevent", None)
+        self._send_to_subs(validated_data, cloudevent=cloudevent)
+        return validated_data
+
+    def _send_to_subs(
+        self, msg: CloudEventKwargs, cloudevent: CloudEvent | None = None
+    ):
+        subs = (
+            CloudEventFilterGroup.objects.select_related("abonnement")
+            .annotate(type=Value(msg["type"], CharField()))
+            .filter(type__contains=F("type_substring"))
+            .distinct("abonnement_id")
+        )
+        task_kwargs = {}
+        if cloudevent:
+            task_kwargs.update(
+                {
+                    "cloudevent_id": cloudevent.id,
+                    "attempt": cloudevent.last_attempt + 1,
+                }
+            )
+
+        with structlog.contextvars.bound_contextvars(
+            id=msg["id"],
+            source=msg["source"],
+            type=msg["type"],
+            subject=msg["subject"],
+        ):
+            logger.info("cloudevent_received")
+
+            for sub in subs:
+                deliver_cloudevent.delay(sub.abonnement.id, msg, **task_kwargs)
+
+    @classmethod
+    def send_cloudevent(cls, obj: CloudEvent):
+        serializer = cls(instance=obj, data=model_to_dict(obj))
+        if serializer.is_valid():
+            # Save the serializer to send the messages to the subscriptions
+            serializer.save(cloudevent=obj)

@@ -116,6 +116,50 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
+* ``cloudevent_received``: a cloudevent was received via the ``/cloudevents`` endpoint. Additional context:
+
+
+    * ``id``
+    * ``source``
+    * ``type``
+    * ``subject``
+
+* ``cloudevent_successful``: a cloudevent was successfully forwarded to a subscribed callback URL. Additional context:
+
+    * ``id``
+    * ``source``
+    * ``type``
+    * ``subject``
+    * ``subscription_pk``
+    * ``subscription_callback``
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
+
+* ``cloudevent_failed``: a non success status code was returned while sending the cloudevent to a subscribed callback URL. Additional context:
+
+    * ``id``
+    * ``source``
+    * ``type``
+    * ``subject``
+    * ``subscription_pk``
+    * ``subscription_callback``
+    * ``http_status_code``
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
+
+
+* ``cloudevent_error``: an error occurred while trying to send the cloudevent to a subscribed callback URL. Additional context:
+
+    * ``id``
+    * ``source``
+    * ``type``
+    * ``subject``
+    * ``subscription_pk``
+    * ``subscription_callback``
+    * ``exc_info``
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
+
 .. _manual_logging_exceptions:
 
 Exceptions
@@ -149,12 +193,12 @@ A new field ``invalid_params`` has been added to provide detailed information ab
         "logger": "vng_api_common.exception_handling",
         "level": "error"
     }
-    
+
 Uncaught exceptions that occur via the API are logged as ``api.uncaught_exception`` events
 and contain the traceback of the exception.
 
 .. code-block:: json
-    
+
     {
         "message": "division by zero",
         "event": "api.uncaught_exception",
