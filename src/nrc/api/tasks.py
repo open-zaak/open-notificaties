@@ -13,6 +13,7 @@ from structlog.contextvars import bind_contextvars
 from nrc.celery import app
 from nrc.datamodel.models import (
     Abonnement,
+    CloudEvent,
     CloudEventResponse,
     NotificatieResponse,
 )
@@ -168,7 +169,7 @@ def deliver_cloudevent(
         # Only log if a top-level object is provided
         if cloudevent_id:
             CloudEventResponse.objects.create(
-                cloudevent_id=cloudevent_id,
+                cloudevent=CloudEvent.objects.get(id=cloudevent_id),
                 abonnement=sub,
                 attempt=cloudevent_attempt_count,
                 **response_init_kwargs,

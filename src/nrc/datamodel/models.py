@@ -83,6 +83,14 @@ class Abonnement(models.Model):
         help_text=_("Client ID extracted from Auth header"),
     )
 
+    send_cloudevents = models.BooleanField(
+        _("Send cloudevents"),
+        help_text=_(
+            "Whether to send notifications as cloudevents and cloudevents themselves"
+        ),
+        default=False,
+    )
+
     class Meta:
         verbose_name = _("abonnement")
         verbose_name_plural = _("abonnementen")

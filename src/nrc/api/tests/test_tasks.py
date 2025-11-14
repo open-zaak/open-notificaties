@@ -33,6 +33,7 @@ class NotifCeleryTests(APITestCase):
 
         request_data: SendNotificationTaskKwargs = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -91,6 +92,7 @@ class NotifCeleryTests(APITestCase):
 
         request_data: SendNotificationTaskKwargs = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -143,6 +145,7 @@ class NotifCeleryTests(APITestCase):
 
         request_data: SendNotificationTaskKwargs = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -180,6 +183,7 @@ class NotifCeleryTests(APITestCase):
 
         request_data: SendNotificationTaskKwargs = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",

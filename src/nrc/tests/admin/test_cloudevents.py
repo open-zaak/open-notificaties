@@ -34,7 +34,7 @@ class CloudEventAdminWebTest(WebTest):
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory.create()
-        cls.abonnement = AbonnementFactory.create()
+        cls.abonnement = AbonnementFactory.create(send_cloudevents=True)
         CloudEventFilterGroupFactory(abonnement=cls.abonnement)
 
         cls.event = {

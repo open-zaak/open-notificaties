@@ -35,7 +35,9 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         check if message was send to subscribers callbackUrls
 
         """
-        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,
@@ -118,7 +120,9 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         success status code
         """
 
-        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,
@@ -208,7 +212,9 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         check that cloudevent_failed log is emitted if the callback returns a non
         success status code
         """
-        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,
@@ -308,9 +314,15 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             "data": "{}",
         }
 
-        abon1 = AbonnementFactory.create(callback_url="https://example.local/abon1")
-        abon2 = AbonnementFactory.create(callback_url="https://example.local/abon2")
-        abon3 = AbonnementFactory.create(callback_url="https://example.local/abon3")
+        abon1 = AbonnementFactory.create(
+            callback_url="https://example.local/abon1", send_cloudevents=True
+        )
+        abon2 = AbonnementFactory.create(
+            callback_url="https://example.local/abon2", send_cloudevents=True
+        )
+        abon3 = AbonnementFactory.create(
+            callback_url="https://example.local/abon3", send_cloudevents=True
+        )
 
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
@@ -361,10 +373,12 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         self.assertEqual(mock_delay.call_count, 2)
 
         sub_ids = [args[0][0] for args in mock_delay.call_args_list]
-        self.assertEqual(sub_ids, [abon1.id, abon2.id])
+        self.assertCountEqual(sub_ids, [abon1.id, abon2.id])
 
     def test_data(self):
-        abon = AbonnementFactory.create(callback_url="https://example.local/callback")
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,

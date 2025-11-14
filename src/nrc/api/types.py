@@ -6,6 +6,7 @@ from nrc.datamodel.models import Notificatie
 
 class NotificationMessage(TypedDict):
     aanmaakdatum: datetime
+    source: str
     actie: str
     hoofdObject: str
     kanaal: str
@@ -28,4 +29,4 @@ class CloudEventKwargs(TypedDict):
     dataschema: NotRequired[str]
     subject: NotRequired[str]
     time: NotRequired[str]
-    data: NotRequired[str]
+    data: NotRequired[str | dict]

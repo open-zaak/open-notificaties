@@ -40,6 +40,7 @@ class NotificationAdminWebTest(WebTest):
         cls.forwarded_msg = {
             "actie": "create",
             "kanaal": cls.kanaal.naam,
+            "source": "demo.maykin.nl",
             "resource": "demo",
             "kenmerken": OrderedDict({"objectType": "https://example.com"}),
             "hoofdObject": "https://example.com",

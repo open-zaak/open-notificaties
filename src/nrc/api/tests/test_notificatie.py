@@ -53,6 +53,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -154,6 +155,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -265,6 +267,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -372,6 +375,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -414,6 +418,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         request_data = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -454,6 +459,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -514,6 +520,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "objecten",
+            "source": "objecten.maykin.nl",
             "hoofdObject": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
             "resource": "object",
             "resourceUrl": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
@@ -572,6 +579,7 @@ class NotificatieRetryTests(TestCase):
         )
         msg = {
             "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
             "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",

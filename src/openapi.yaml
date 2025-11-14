@@ -2303,6 +2303,11 @@ components:
             maxLength: 1000
           description: Mapping van kenmerken (sleutel/waarde) van de notificatie.
             De publicerende API specificeert de toegestane kenmerken.
+        source:
+          type: string
+          description: De identifier van de oorsprong van de notificatie, een systeem
+            of organisatie.
+          maxLength: 100
       required:
       - aanmaakdatum
       - actie
@@ -2310,6 +2315,7 @@ components:
       - kanaal
       - resource
       - resourceUrl
+      - source
     PatchedAbonnement:
       type: object
       properties:
