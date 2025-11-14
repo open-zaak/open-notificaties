@@ -551,6 +551,328 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
         self.assertEqual(m.last_request.headers["Authorization"], abon1.auth)
 
+    def test_notificatie_send_success_as_cloudevent(self):
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+
+        msg = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2025-01-01T12:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            with capture_logs() as cap_logs:
+                response = self.client.post(notificatie_url, msg)
+
+            notification_received = next(
+                log for log in cap_logs if log["event"] == "notification_received"
+            )
+            cloudevent_successful = next(
+                log for log in cap_logs if log["event"] == "cloudevent_successful"
+            )
+
+            self.assertFalse(
+                any(log["event"] == "notification_successful" for log in cap_logs)
+            )
+
+            self.assertEqual(
+                notification_received,
+                {
+                    **notification_received,
+                    **{
+                        "action": "create",
+                        "additional_attributes": {
+                            "bron": "082096752011",
+                            "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                            "vertrouwelijkheidaanduiding": "openbaar",
+                        },
+                        "channel_name": "zaken",
+                        "creation_date": "2025-01-01T12:00:00Z",
+                        "event": "notification_received",
+                        "log_level": "info",
+                        "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
+                        "resource": "status",
+                        "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "user_id": None,
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_successful,
+                {
+                    **cloudevent_successful,
+                    **{
+                        "source": "zaken.maykin.nl",
+                        "type": "zaken:status:create",
+                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "log_level": "info",
+                    },
+                },
+            )
+
+            self.assertEqual(
+                response.status_code, status.HTTP_201_CREATED, response.data
+            )
+            self.assertEqual(Notificatie.objects.count(), 1)
+
+            self.assertEqual(m.last_request.url, abon.callback_url)
+            expected_cloudevent = {
+                "id": m.last_request.json()["id"],
+                "source": "zaken.maykin.nl",
+                "specversion": "1.0",
+                "type": "zaken:status:create",
+                "datacontenttype": "application/json",
+                "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                "time": "2025-01-01T12:00:00Z",
+                "data": {
+                    "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+                    "bron": "082096752011",
+                    "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                    "vertrouwelijkheidaanduiding": "openbaar",
+                },
+            }
+            self.assertEqual(m.last_request.json(), expected_cloudevent)
+            self.assertEqual(
+                m.last_request.headers["Content-Type"], "application/cloudevents+json"
+            )
+            self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
+
+    def test_notificatie_send_failure_as_cloudevent(self):
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2025-01-01T12:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(
+                abon.callback_url,
+                status_code=400,
+                json={"error": "Something went wrong"},
+            )
+
+            with capture_logs() as cap_logs:
+                response = self.client.post(notificatie_url, msg)
+
+            notification_received = next(
+                log for log in cap_logs if log["event"] == "notification_received"
+            )
+            error_logs = (
+                log for log in cap_logs if log["event"] == "cloudevent_failed"
+            )
+            cloudevent_failed = next(error_logs)
+            retry_cloudevent_failed = next(error_logs)
+
+            self.assertEqual(
+                notification_received,
+                {
+                    **notification_received,
+                    **{
+                        "action": "create",
+                        "additional_attributes": {
+                            "bron": "082096752011",
+                            "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                            "vertrouwelijkheidaanduiding": "openbaar",
+                        },
+                        "channel_name": "zaken",
+                        "creation_date": "2025-01-01T12:00:00Z",
+                        "event": "notification_received",
+                        "log_level": "info",
+                        "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
+                        "resource": "status",
+                        "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "user_id": None,
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_failed,
+                {
+                    **cloudevent_failed,
+                    **{
+                        "source": "zaken.maykin.nl",
+                        "type": "zaken:status:create",
+                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "log_level": "warning",
+                    },
+                },
+            )
+            self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+
+        self.assertEqual(m.last_request.url, abon.callback_url)
+        expected_cloudevent = {
+            "id": m.last_request.json()["id"],
+            "source": "zaken.maykin.nl",
+            "specversion": "1.0",
+            "type": "zaken:status:create",
+            "datacontenttype": "application/json",
+            "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "time": "2025-01-01T12:00:00Z",
+            "data": {
+                "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+        self.assertEqual(m.last_request.json(), expected_cloudevent)
+        self.assertEqual(
+            m.last_request.headers["Content-Type"], "application/cloudevents+json"
+        )
+        self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
+
+    def test_notificatie_send_request_exception_as_cloudevent(self):
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+        msg = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2025-01-01T12:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        exc = requests.exceptions.ConnectTimeout("Timeout exception")
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, exc=exc)
+
+            with capture_logs() as cap_logs:
+                response = self.client.post(notificatie_url, msg)
+
+            notification_received = next(
+                log for log in cap_logs if log["event"] == "notification_received"
+            )
+            error_logs = (log for log in cap_logs if log["event"] == "cloudevent_error")
+            cloudevent_error = next(error_logs)
+            retry_cloudevent_error = next(error_logs)
+
+            self.assertEqual(
+                notification_received,
+                {
+                    **notification_received,
+                    **{
+                        "action": "create",
+                        "additional_attributes": {
+                            "bron": "082096752011",
+                            "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                            "vertrouwelijkheidaanduiding": "openbaar",
+                        },
+                        "channel_name": "zaken",
+                        "creation_date": "2025-01-01T12:00:00Z",
+                        "event": "notification_received",
+                        "log_level": "info",
+                        "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
+                        "resource": "status",
+                        "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "user_id": None,
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_error,
+                {
+                    **cloudevent_error,
+                    **{
+                        "source": "zaken.maykin.nl",
+                        "type": "zaken:status:create",
+                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "log_level": "error",
+                        "exc_info": exc,
+                        "cloudevent_attempt_count": 1,
+                        "task_attempt_count": 1,
+                    },
+                },
+            )
+            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(Notificatie.objects.count(), 1)
+
+        self.assertEqual(m.last_request.url, abon.callback_url)
+        expected_cloudevent = {
+            "id": m.last_request.json()["id"],
+            "source": "zaken.maykin.nl",
+            "specversion": "1.0",
+            "type": "zaken:status:create",
+            "datacontenttype": "application/json",
+            "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "time": "2025-01-01T12:00:00Z",
+            "data": {
+                "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+        self.assertEqual(m.last_request.json(), expected_cloudevent)
+
+        self.assertEqual(
+            m.last_request.headers["Content-Type"], "application/cloudevents+json"
+        )
+        self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
+
 
 @patch("notifications_api_common.autoretry.get_exponential_backoff_interval")
 @patch("notifications_api_common.autoretry.NotificationsConfig.get_solo")

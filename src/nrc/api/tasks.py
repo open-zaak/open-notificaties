@@ -167,7 +167,7 @@ def deliver_cloudevent(
         raise
     finally:
         # Only log if a top-level object is provided
-        if cloudevent_id:
+        if cloudevent_id:  # TODO should this be created from notificatie
             CloudEventResponse.objects.create(
                 cloudevent=CloudEvent.objects.get(id=cloudevent_id),
                 abonnement=sub,

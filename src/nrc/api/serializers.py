@@ -291,20 +291,18 @@ class MessageSerializer(NotificatieSerializer):
     def update(
         self, instance, validated_data: NotificationMessage
     ) -> NotificationMessage:
-        notificatie: Notificatie | None = validated_data.pop("notificatie", None)
-
         subs = self._get_subs(validated_data)
         self._send_to_subs(
             {sub for sub in subs if not sub.send_cloudevents},
             validated_data,
-            notificatie,
+            instance,
         )
 
         # Send notificatie as cloudevent.
         CloudEventSerializer.send_to_subs(
             {sub for sub in subs if sub.send_cloudevents},
             self._transform_to_cloudevent(validated_data),
-            notificatie=notificatie,
+            notificatie=instance,
         )
         return validated_data
 
@@ -314,7 +312,7 @@ class MessageSerializer(NotificatieSerializer):
         serializer = cls(instance=obj, data={"kanaal": obj.kanaal, **transformed})
         if serializer.is_valid():
             # Save the serializer to send the messages to the subscriptions
-            serializer.save(notificatie=obj)
+            serializer.save()
 
 
 class CloudEventSerializer(serializers.ModelSerializer):
@@ -394,9 +392,8 @@ class CloudEventSerializer(serializers.ModelSerializer):
         return validated_data
 
     def update(self, instance, validated_data: CloudEventKwargs) -> CloudEventKwargs:
-        cloudevent: CloudEvent | None = validated_data.pop("cloudevent", None)
         subs = self._get_subs(validated_data)
-        self.send_to_subs(subs, validated_data, cloudevent=cloudevent)
+        self.send_to_subs(subs, validated_data, cloudevent=instance)
         return validated_data
 
     @classmethod
@@ -404,4 +401,4 @@ class CloudEventSerializer(serializers.ModelSerializer):
         serializer = cls(instance=obj, data=model_to_dict(obj))
         if serializer.is_valid():
             # Save the serializer to send the messages to the subscriptions
-            serializer.save(cloudevent=obj)
+            serializer.save()
