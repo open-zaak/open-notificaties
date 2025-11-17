@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     # history of existing installs. See #1139 for more context.
     dependencies = [
         ("accounts", "0003_add_adfs_admin_index"),
-        ("mozilla_django_oidc_db", "0008_auto_20220422_0849"),
+        ("mozilla_django_oidc_db", "0001_initial_to_v023"),
     ]
 
     operations = []
