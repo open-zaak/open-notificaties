@@ -254,7 +254,7 @@ mozilla-django-oidc-db==0.22.0
     # via
     #   -r requirements/base.in
     #   open-api-framework
-notifications-api-common==0.8.0
+notifications-api-common @ git+https://github.com/maykinmedia/notifications-api-common.git@504603a970df9e7291ec125c2199fce49f767319#egg=notifications-api-common
     # via
     #   -r requirements/base.in
     #   commonground-api-common

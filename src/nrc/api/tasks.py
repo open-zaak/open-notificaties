@@ -112,6 +112,7 @@ def deliver_cloudevent(
     The delivery-result is logged in "CloudEventResponse"
     """
     cloudevent_id: int = kwargs.pop("cloudevent_id", None)
+    notificatie_id: int = kwargs.pop("notificatie_id", None)
 
     # `task_attempt_count` is the number of times the same task was automatically retried
     # `cloudevent_attempt_count` is the number of tasks that were started for this cloud event (without counting automatic retries)
@@ -167,9 +168,16 @@ def deliver_cloudevent(
         raise
     finally:
         # Only log if a top-level object is provided
-        if cloudevent_id:  # TODO should this be created from notificatie
+        if cloudevent_id:
             CloudEventResponse.objects.create(
                 cloudevent=CloudEvent.objects.get(id=cloudevent_id),
+                abonnement=sub,
+                attempt=cloudevent_attempt_count,
+                **response_init_kwargs,
+            )
+        elif notificatie_id:
+            NotificatieResponse.objects.create(
+                notificatie_id=notificatie_id,
                 abonnement=sub,
                 attempt=cloudevent_attempt_count,
                 **response_init_kwargs,

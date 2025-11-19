@@ -172,15 +172,6 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MessageSerializer(NotificatieSerializer):
-    # TODO move to package
-    source = serializers.CharField(
-        label=_("source"),
-        max_length=100,
-        help_text=_(
-            "De identifier van de oorsprong van de notificatie, een systeem of organisatie."
-        ),
-    )
-
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
         # check if exchange exists
@@ -252,7 +243,7 @@ class MessageSerializer(NotificatieSerializer):
         return {
             "id": str(uuid.uuid4()),
             "source": notif["source"],
-            "specversion": "1.0",  # TODO setting?
+            "specversion": settings.CLOUDEVENT_SPECVERSION,
             "type": f"{notif['kanaal']}:{notif['resource']}:{notif['actie']}",
             "datacontenttype": "application/json",
             "subject": notif["resourceUrl"],
@@ -359,7 +350,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
                     "attempt": cloudevent.last_attempt + 1,
                 }
             )
-        elif notificatie:  # TODO
+        elif notificatie:
             task_kwargs.update(
                 {
                     "notificatie_id": notificatie.id,
