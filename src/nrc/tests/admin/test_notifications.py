@@ -56,7 +56,7 @@ class NotificationAdminWebTest(WebTest):
 
         cls.expected_cloudevent = {
             "source": "demo.maykin.nl",
-            "type": f"{cls.kanaal.naam}:demo:create",
+            "type": f"nl.overheid.{cls.kanaal.naam}.demo.create",
             "specversion": "1.0",
             "time": cls.forwarded_msg["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
             "subject": "https://example.com",

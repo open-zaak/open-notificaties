@@ -2113,10 +2113,18 @@ components:
             $ref: '#/components/schemas/FilterGroup'
           description: Een lijst van kanalen en filters waarop het ABONNEMENT wordt
             afgenomen.
+        sendCloudevents:
+          type: boolean
+          description: Whether to send notifications as cloudevents and cloudevents
+            themselves
+        cloudeventFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEventFilterGroup'
+          description: Een lijst van cloudevent type substrings waarop gefilterd wordt
       required:
       - auth
       - callbackUrl
-      - kanalen
     CloudEvent:
       type: object
       properties:
@@ -2168,6 +2176,16 @@ components:
       - source
       - specversion
       - type
+    CloudEventFilterGroup:
+      type: object
+      properties:
+        typeSubstring:
+          type: string
+          description: a substring of an event type that the subscription will watch
+            for
+          maxLength: 255
+      required:
+      - typeSubstring
     FieldValidationError:
       type: object
       description: Formaat van validatiefouten.
@@ -2271,6 +2289,11 @@ components:
           description: De naam van het kanaal (`KANAAL.naam`) waar het bericht op
             moet worden gepubliceerd.
           maxLength: 50
+        source:
+          type: string
+          description: De identifier van de oorsprong van de notificatie, een systeem
+            of organisatie.
+          maxLength: 100
         hoofdObject:
           type: string
           format: uri
@@ -2303,11 +2326,6 @@ components:
             maxLength: 1000
           description: Mapping van kenmerken (sleutel/waarde) van de notificatie.
             De publicerende API specificeert de toegestane kenmerken.
-        source:
-          type: string
-          description: De identifier van de oorsprong van de notificatie, een systeem
-            of organisatie.
-          maxLength: 100
       required:
       - aanmaakdatum
       - actie
@@ -2347,6 +2365,15 @@ components:
             $ref: '#/components/schemas/FilterGroup'
           description: Een lijst van kanalen en filters waarop het ABONNEMENT wordt
             afgenomen.
+        sendCloudevents:
+          type: boolean
+          description: Whether to send notifications as cloudevents and cloudevents
+            themselves
+        cloudeventFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEventFilterGroup'
+          description: Een lijst van cloudevent type substrings waarop gefilterd wordt
     PatchedKanaal:
       type: object
       properties:

@@ -19,6 +19,7 @@ from nrc.api.tasks import deliver_cloudevent, deliver_message
 from nrc.datamodel.models import (
     Abonnement,
     CloudEvent,
+    CloudEventFilterGroup,
     Filter,
     FilterGroup,
     Kanaal,
@@ -90,6 +91,12 @@ class FilterGroupSerializer(serializers.ModelSerializer):
         extra_kwargs = {"naam": {"validators": []}}
 
 
+class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CloudEventFilterGroup
+        fields = ("type_substring",)
+
+
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     kanalen = FilterGroupSerializer(
         label=_("kanalen"),
@@ -98,11 +105,27 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         help_text=_(
             "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen."
         ),
+        required=False,
+    )
+
+    cloudevent_filters = CloudEventFilterGroupSerializer(
+        label=_("cloudevent_filters"),
+        source="cloudevent_filtergroups",
+        many=True,
+        help_text=_("Een lijst van cloudevent type substrings waarop gefilterd wordt"),
+        required=False,
     )
 
     class Meta:
         model = Abonnement
-        fields = ("url", "callback_url", "auth", "kanalen")
+        fields = (
+            "url",
+            "callback_url",
+            "auth",
+            "kanalen",
+            "send_cloudevents",
+            "cloudevent_filters",
+        )
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
             "callback_url": {"validators": [CallbackURLAuthValidator()]},
@@ -151,23 +174,34 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                 filter.filter_group = filter_group
                 filter.save()
 
+    def _create_cloudevent_filters(self, abonnement, validated_data):
+        for ce_filter in validated_data:
+            CloudEventFilterGroup.objects.create(
+                abonnement=abonnement, type_substring=ce_filter["type_substring"]
+            )
+
     @transaction.atomic
     def create(self, validated_data):
-        groups = validated_data.pop("filter_groups")
+        groups = validated_data.pop("filter_groups", [])
+        cloudevent_filters = validated_data.pop("cloudevent_filtergroups", [])
         abonnement = super().create(validated_data)
         self._create_kanalen_filters(abonnement, groups)
+        self._create_cloudevent_filters(abonnement, cloudevent_filters)
         return abonnement
 
     @transaction.atomic
     def update(self, instance, validated_data):
         groups = validated_data.pop("filter_groups", [])
+        cloudevent_filters = validated_data.pop("cloudevent_filtergroups", [])
         abonnement = super().update(instance, validated_data)
 
         # in case of update - delete all related kanalen and filters
         # and create them from request data
         abonnement.filter_groups.all().delete()
+        abonnement.cloudevent_filtergroups.all().delete()
 
         self._create_kanalen_filters(abonnement, groups)
+        self._create_cloudevent_filters(abonnement, cloudevent_filters)
         return abonnement
 
 
@@ -244,7 +278,7 @@ class MessageSerializer(NotificatieSerializer):
             "id": str(uuid.uuid4()),
             "source": notif["source"],
             "specversion": settings.CLOUDEVENT_SPECVERSION,
-            "type": f"{notif['kanaal']}:{notif['resource']}:{notif['actie']}",
+            "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
             "datacontenttype": "application/json",
             "subject": notif["resourceUrl"],
             "time": notif["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
