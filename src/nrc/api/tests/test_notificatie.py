@@ -626,7 +626,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     **{
                         "source": "zaken.maykin.nl",
                         "type": "nl.overheid.zaken.status.create",
-                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "subject": "721c9",
                         "log_level": "info",
                     },
                 },
@@ -644,7 +644,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                 "specversion": "1.0",
                 "type": "nl.overheid.zaken.status.create",
                 "datacontenttype": "application/json",
-                "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                "subject": "721c9",
                 "time": "2025-01-01T12:00:00Z",
                 "data": {
                     "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -735,7 +735,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     **{
                         "source": "zaken.maykin.nl",
                         "type": "nl.overheid.zaken.status.create",
-                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "subject": "721c9",
                         "log_level": "warning",
                     },
                 },
@@ -752,7 +752,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "specversion": "1.0",
             "type": "nl.overheid.zaken.status.create",
             "datacontenttype": "application/json",
-            "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "subject": "721c9",
             "time": "2025-01-01T12:00:00Z",
             "data": {
                 "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
@@ -837,7 +837,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     **{
                         "source": "zaken.maykin.nl",
                         "type": "nl.overheid.zaken.status.create",
-                        "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                        "subject": "721c9",
                         "log_level": "error",
                         "exc_info": exc,
                         "cloudevent_attempt_count": 1,
@@ -857,7 +857,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             "specversion": "1.0",
             "type": "nl.overheid.zaken.status.create",
             "datacontenttype": "application/json",
-            "subject": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "subject": "721c9",
             "time": "2025-01-01T12:00:00Z",
             "data": {
                 "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",

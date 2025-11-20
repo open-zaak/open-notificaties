@@ -280,7 +280,7 @@ class MessageSerializer(NotificatieSerializer):
             "specversion": settings.CLOUDEVENT_SPECVERSION,
             "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
             "datacontenttype": "application/json",
-            "subject": notif["resourceUrl"],
+            "subject": notif["resourceUrl"].rsplit("/", 1)[1],
             "time": notif["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
             "data": {
                 **notif["kenmerken"],

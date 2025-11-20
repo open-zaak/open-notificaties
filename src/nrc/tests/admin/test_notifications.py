@@ -48,9 +48,13 @@ class NotificationAdminWebTest(WebTest):
             "kanaal": cls.kanaal.naam,
             "source": "demo.maykin.nl",
             "resource": "demo",
-            "kenmerken": OrderedDict({"objectType": "https://example.com"}),
-            "hoofdObject": "https://example.com",
-            "resourceUrl": "https://example.com",
+            "kenmerken": OrderedDict(
+                {
+                    "objectType": "https://example.com/07bc4aee-db88-48b4-97a7-2f3fb3f2e3b2"
+                }
+            ),
+            "hoofdObject": "https://example.com/016e3122-0c70-4f9c-9781-f17a51287b38",
+            "resourceUrl": "https://example.com/7a0ca37f-3d02-484c-b8e7-1092ebafcbae",
             "aanmaakdatum": now(),
         }
 
@@ -59,11 +63,11 @@ class NotificationAdminWebTest(WebTest):
             "type": f"nl.overheid.{cls.kanaal.naam}.demo.create",
             "specversion": "1.0",
             "time": cls.forwarded_msg["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "subject": "https://example.com",
+            "subject": "7a0ca37f-3d02-484c-b8e7-1092ebafcbae",
             "datacontenttype": "application/json",
             "data": {
-                "objectType": "https://example.com",
-                "hoofdObject": "https://example.com",
+                "objectType": "https://example.com/07bc4aee-db88-48b4-97a7-2f3fb3f2e3b2",
+                "hoofdObject": "https://example.com/016e3122-0c70-4f9c-9781-f17a51287b38",
             },
         }
 
