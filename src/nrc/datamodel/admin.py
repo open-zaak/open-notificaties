@@ -135,6 +135,7 @@ class AbonnementAdmin(admin.ModelAdmin):
         "callback_url",
         "auth",
         "uuid",
+        "send_cloudevents",
     )
 
     def changelist_view(self, request, extra_context=None):

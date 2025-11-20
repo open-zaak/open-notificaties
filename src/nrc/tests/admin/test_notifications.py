@@ -219,7 +219,7 @@ class NotificationAdminWebTest(WebTest):
         # Verify that no new Notificatie was created
         self.assertEqual(Notificatie.objects.count(), 1)
 
-        # TODO self.assertEqual(CloudEventResponse.objects.count(), 1)
+        self.assertEqual(NotificatieResponse.objects.count(), 1)
 
     def test_resend_notification_action_as_cloudevent(self, mock_deliver_cloudevent, _):
         notificatie1 = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)

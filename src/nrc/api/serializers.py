@@ -398,7 +398,8 @@ class CloudEventSerializer(serializers.ModelSerializer):
             type=msg["type"],
             subject=msg["subject"],
         ):
-            logger.info("cloudevent_received")
+            if cloudevent:
+                logger.info("cloudevent_received")
 
             for sub in subs:
                 deliver_cloudevent.delay(sub.id, msg, **task_kwargs)
