@@ -6,7 +6,7 @@ from opentelemetry import metrics
 
 from .models import User
 
-meter = metrics.get_meter("openzaak.accounts")
+meter = metrics.get_meter("nrc.accounts")
 
 
 def count_users(options: metrics.CallbackOptions) -> Collection[metrics.Observation]:
@@ -32,32 +32,32 @@ def count_users(options: metrics.CallbackOptions) -> Collection[metrics.Observat
 
 
 meter.create_observable_gauge(
-    name="opennotificaties.auth.user_count",
+    name="nrc.auth.user_count",
     description="The number of application users in the database.",
     unit=r"{user}",  # no unit so that the _ratio suffix is not added
     callbacks=[count_users],
 )
 
 logins = meter.create_counter(
-    "opennotificaties.auth.logins",
+    "nrc.auth.logins",
     unit="1",  # unitless count
     description="The number of successful user logins.",
 )
 
 logouts = meter.create_counter(
-    "opennotificaties.auth.logouts",
+    "nrc.auth.logouts",
     unit="1",  # unitless count
     description="The number of user logouts.",
 )
 
 login_failures = meter.create_counter(
-    "opennotificaties.auth.login_failures",
+    "nrc.auth.login_failures",
     unit="1",  # unitless count
     description="The number of failed logins by users, including the admin.",
 )
 
 user_lockouts = meter.create_counter(
-    "opennotificaties.auth.user_lockouts",
+    "nrc.auth.user_lockouts",
     unit="1",  # unitless count
     description="The number of user lockouts because of failed logins.",
 )
