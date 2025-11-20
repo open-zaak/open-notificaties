@@ -17,6 +17,9 @@ os.environ.setdefault("DB_NAME", "opennotificaties")
 os.environ.setdefault("DB_USER", "opennotificaties")
 os.environ.setdefault("DB_PASSWORD", "opennotificaties")
 
+os.environ.setdefault("OTEL_SDK_DISABLED", "true")
+os.environ.setdefault("OTEL_EXPORTER_OTLP_METRICS_INSECURE", "true")
+
 from .includes.base import *  # noqa isort:skip
 
 #

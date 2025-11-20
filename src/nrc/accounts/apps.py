@@ -25,5 +25,8 @@ class AccountsConfig(AppConfig):
     name = "nrc.accounts"
 
     def ready(self):
+        from . import metrics  # noqa
+        from . import signals  # noqa
+
         # enforce some fixtures after migrating
         post_migrate.connect(update_admin_index, sender=self)
