@@ -39,6 +39,7 @@ Guides
    prerequisites
    deployment/kubernetes
    configuration/index
+   observability/index
    self_signed
 
 Post-install checklist

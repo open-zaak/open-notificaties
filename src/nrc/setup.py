@@ -42,7 +42,7 @@ def setup_env():
             RuntimeWarning,
             stacklevel=2,
         )
-        os.environ.setdefault("OTEL_SERVICE_NAME", "openzaak")
+        os.environ.setdefault("OTEL_SERVICE_NAME", "opennotificaties")
 
     setup_otel()
 
