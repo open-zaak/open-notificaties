@@ -474,7 +474,7 @@ mozilla-django-oidc-db==1.1.0
     #   open-api-framework
 multidict==6.0.5
     # via yarl
-notifications-api-common==0.8.0
+notifications-api-common @ git+https://github.com/maykinmedia/notifications-api-common.git@6dddd7fef8576bedeaf4e8d78ab6d3b47967f2cc#egg=notifications-api-common
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt

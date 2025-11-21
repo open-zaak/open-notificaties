@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-02 08:16+0000\n"
+"POT-Creation-Date: 2025-10-23 14:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,43 +18,43 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: nrc/accounts/models.py:16
+#: accounts/models.py:16
 msgid "username"
 msgstr "gebruikersnaam"
 
-#: nrc/accounts/models.py:19
+#: accounts/models.py:19
 msgid "Required. 150 characters or fewer."
 msgstr "Vereist. 150 of minder karakters."
 
-#: nrc/accounts/models.py:20
+#: accounts/models.py:20
 msgid "A user with that username already exists."
 msgstr "Een gebruiker met deze gebruikersnaam bestaat al."
 
-#: nrc/accounts/models.py:22
+#: accounts/models.py:22
 msgid "first name"
 msgstr "voornaam"
 
-#: nrc/accounts/models.py:23
+#: accounts/models.py:23
 msgid "last name"
 msgstr "achternaam"
 
-#: nrc/accounts/models.py:24
+#: accounts/models.py:24
 msgid "email address"
 msgstr "e-mailadres"
 
-#: nrc/accounts/models.py:26
+#: accounts/models.py:26
 msgid "staff status"
 msgstr "stafstatus"
 
-#: nrc/accounts/models.py:28
+#: accounts/models.py:28
 msgid "Designates whether the user can log into this admin site."
 msgstr "Bepaalt of de gebruiker zich op deze beheerwebsite kan aanmelden."
 
-#: nrc/accounts/models.py:31
+#: accounts/models.py:31
 msgid "active"
 msgstr "actief"
 
-#: nrc/accounts/models.py:34
+#: accounts/models.py:34
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -62,115 +62,119 @@ msgstr ""
 "Bepaalt of deze gebruiker als actief dient te worden behandeld. U kunt dit "
 "uitvinken in plaats van een gebruiker te verwijderen."
 
-#: nrc/accounts/models.py:38
+#: accounts/models.py:38
 msgid "date joined"
 msgstr "datum toegetreden"
 
-#: nrc/accounts/models.py:46
+#: accounts/models.py:46
 msgid "user"
 msgstr "gebruiker"
 
-#: nrc/accounts/models.py:47
+#: accounts/models.py:47
 msgid "users"
 msgstr "gebruikers"
 
-#: nrc/accounts/tests/test_admin.py:38
+#: accounts/tests/test_admin.py:38
 msgid "Use a recovery token"
 msgstr ""
 
-#: nrc/accounts/tests/test_oidc.py:38 nrc/accounts/tests/test_oidc.py:56
-#: nrc/accounts/tests/test_oidc.py:75 nrc/accounts/tests/test_oidc.py:107
-#: nrc/accounts/tests/test_oidc.py:128 nrc/templates/admin/login.html:11
-#: nrc/templates/maykin_2fa/login.html:9
+#: accounts/tests/test_oidc.py:38 accounts/tests/test_oidc.py:56
+#: accounts/tests/test_oidc.py:75 accounts/tests/test_oidc.py:107
+#: accounts/tests/test_oidc.py:128 templates/admin/login.html:11
+#: templates/maykin_2fa/login.html:9
 msgid "Login with organization account"
 msgstr "Inloggen met organisatieaccount"
 
-#: nrc/api/admin.py:23
+#: api/admin.py:23
 msgid "Gebruik het JWT-token nooit direct in een applicatie."
 msgstr ""
 
-#: nrc/api/serializers.py:24
+#: api/serializers.py:35
 msgid "kenmerk"
 msgstr ""
 
-#: nrc/api/serializers.py:26
+#: api/serializers.py:37
 msgid "Een waarde behorende bij de sleutel."
 msgstr ""
 
-#: nrc/api/serializers.py:58
+#: api/serializers.py:69
 msgid ""
 "De naam van het KANAAL (`KANAAL.naam`) waarop een abonnement is of wordt "
 "genomen."
 msgstr ""
 
-#: nrc/api/serializers.py:65
+#: api/serializers.py:76
 msgid ""
 "Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd worden. "
 "Alleen notificaties waarvan de kenmerken voldoen aan het filter worden "
 "doorgestuurd naar de afnemer van het ABONNEMENT."
 msgstr ""
 
-#: nrc/api/serializers.py:82 nrc/datamodel/admin.py:162
-#: nrc/datamodel/models.py:43
+#: api/serializers.py:93 datamodel/admin.py:169 datamodel/models.py:44
 msgid "kanalen"
 msgstr ""
 
-#: nrc/api/serializers.py:86
+#: api/serializers.py:97
 msgid "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen."
 msgstr ""
 
-#: nrc/api/serializers.py:110 nrc/api/serializers.py:169
+#: api/serializers.py:121 api/serializers.py:180
 msgid "Kanaal met deze naam bestaat niet."
 msgstr ""
 
-#: nrc/api/serializers.py:120
+#: api/serializers.py:131
 msgid "abonnement filters aren't consistent with kanaal filters"
 msgstr "De abonnementfilters komen niet overeen met de kanaalfilters"
 
-#: nrc/api/serializers.py:177
+#: api/serializers.py:188
 msgid "Kenmerken aren't consistent with kanaal filters"
 msgstr "De kenmerken komen niet overeen met de kanaalfilters"
 
-#: nrc/api/tasks.py:60 nrc/api/tests/test_tasks.py:76
+#: api/tasks.py:67 api/tests/test_tasks.py:76
 #, python-brace-format
 msgid "Could not send notification: status {status_code} - {response}"
 msgstr "Notificatie versturen is gefaald: status {status_code} - {response}"
 
-#: nrc/api/tests/test_dso_api_strategy.py:156
+#: api/tasks.py:139
+#, fuzzy, python-brace-format
+#| msgid "Could not send notification: status {status_code} - {response}"
+msgid "Could not send couldevent: status {status_code} - {response}"
+msgstr "Notificatie versturen is gefaald: status {status_code} - {response}"
+
+#: api/tests/test_dso_api_strategy.py:156
 msgid "The resource is gone"
 msgstr "De resource is niet (meer) beschikbaar"
 
-#: nrc/api/tests/test_dso_api_strategy.py:167
+#: api/tests/test_dso_api_strategy.py:167
 msgid "Precondition failed"
 msgstr "Er is niet voldaan een bepaalde voorwaarde"
 
-#: nrc/api/validators.py:13
+#: api/validators.py:13
 msgid "De opgegeven callback URL kan geen notificaties ontvangen."
 msgstr ""
 
-#: nrc/api/validators.py:46
+#: api/validators.py:46
 msgid "De opgegeven callback URL is niet beveiligd met autorisatie."
 msgstr ""
 
-#: nrc/datamodel/admin.py:37 nrc/datamodel/models.py:32
-#: nrc/datamodel/models.py:111
+#: datamodel/admin.py:39 datamodel/models.py:33 datamodel/models.py:112
 msgid "filters"
 msgstr ""
 
-#: nrc/datamodel/admin.py:41
+#: datamodel/admin.py:43
 msgid "acties"
 msgstr ""
 
-#: nrc/datamodel/admin.py:46
+#: datamodel/admin.py:48
 msgid "Filters instellen"
 msgstr ""
 
-#: nrc/datamodel/admin.py:52
+#: datamodel/admin.py:59
 msgid "Check the status of the callback URLs of selected Subscriptions"
 msgstr ""
 "Haal de status op van de callback URLs van de geselecteerde Abonnementen"
 
-#: nrc/datamodel/admin.py:80
+#: datamodel/admin.py:87
 msgid ""
 "Retrieve status for selected subscriptions. All previous results have been "
 "reset."
@@ -178,83 +182,83 @@ msgstr ""
 "Haal de status op voor de geselecteerde abonnementen. Alle voorgaande "
 "resultaten zullen gereset worden."
 
-#: nrc/datamodel/admin.py:140
+#: datamodel/admin.py:147
 msgid "Checked status of all callback URLs"
 msgstr "Status opgehaald voor alle callback URLs"
 
-#: nrc/datamodel/admin.py:154
+#: datamodel/admin.py:161
 msgid "callback URL reachable?"
 msgstr "callback URL bereikbaar?"
 
-#: nrc/datamodel/admin.py:212 nrc/datamodel/admin_filters.py:42
+#: datamodel/admin.py:219 datamodel/admin_filters.py:42
 msgid "result"
 msgstr "resultaat"
 
-#: nrc/datamodel/admin.py:216
+#: datamodel/admin.py:223
 msgid "Notificatie created date"
 msgstr "Aanmaakdatum"
 
-#: nrc/datamodel/admin.py:225
+#: datamodel/admin.py:232
 msgid "Re-send the selected notifications to all subscriptions"
 msgstr "Verstuur de geselecteerde notificaties opnieuw naar alle abonnees"
 
-#: nrc/datamodel/admin.py:233
+#: datamodel/admin.py:240
 msgid "Selected notifications have been scheduled."
 msgstr ""
 "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: nrc/datamodel/admin.py:285
+#: datamodel/admin.py:292
 msgid "Result"
 msgstr "Resultaat"
 
-#: nrc/datamodel/admin.py:291
+#: datamodel/admin.py:298
 msgid "Action"
 msgstr "Actie"
 
-#: nrc/datamodel/admin.py:295
+#: datamodel/admin.py:302
 msgid "Resource"
 msgstr "Resource"
 
-#: nrc/datamodel/admin_filters.py:30
+#: datamodel/admin_filters.py:30
 msgid "action"
 msgstr "actie"
 
-#: nrc/datamodel/admin_filters.py:36
+#: datamodel/admin_filters.py:36
 msgid "resource"
 msgstr "resource"
 
-#: nrc/datamodel/admin_filters.py:47
+#: datamodel/admin_filters.py:47
 msgid "Success"
 msgstr "Succes"
 
-#: nrc/datamodel/admin_filters.py:48
+#: datamodel/admin_filters.py:48
 msgid "Failure"
 msgstr "Mislukt"
 
-#: nrc/datamodel/models.py:17 nrc/datamodel/models.py:61
+#: datamodel/models.py:18 datamodel/models.py:62
 msgid "Unique resource identifier (UUID4)"
 msgstr "Unieke resource identificatie (UUID4)"
 
-#: nrc/datamodel/models.py:20
+#: datamodel/models.py:21
 msgid "Name"
 msgstr "Naam"
 
-#: nrc/datamodel/models.py:24
+#: datamodel/models.py:25
 msgid ""
 "Name of the KANAAL (also called \"Exchange\") that represents the source."
 msgstr ""
 "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron "
 "vertegenwoordigd."
 
-#: nrc/datamodel/models.py:28
+#: datamodel/models.py:29
 msgid "Documentation link"
 msgstr "Documentatie link"
 
-#: nrc/datamodel/models.py:28
+#: datamodel/models.py:29
 msgid "URL to documentation."
 msgstr "URL naar documentatie."
 
-#: nrc/datamodel/models.py:36
+#: datamodel/models.py:37
 msgid ""
 "List of possible filter attributes for a KANAAL. These filter attributes can "
 "be used when creating an ABONNEMENT"
@@ -262,15 +266,15 @@ msgstr ""
 "Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken "
 "kunnen worden gebruikt bij het aanmaken van een ABONNEMENT."
 
-#: nrc/datamodel/models.py:42
+#: datamodel/models.py:43
 msgid "kanaal"
 msgstr ""
 
-#: nrc/datamodel/models.py:64
+#: datamodel/models.py:65
 msgid "Callback URL"
 msgstr ""
 
-#: nrc/datamodel/models.py:66
+#: datamodel/models.py:67
 msgid ""
 "The URL to which notifications should be sent. This URL should point to an "
 "API that is suitable to receive notifications."
@@ -278,11 +282,11 @@ msgstr ""
 "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient "
 "uit te komen bij een API die geschikt is om notificaties op te ontvangen."
 
-#: nrc/datamodel/models.py:71
+#: datamodel/models.py:72
 msgid "Authorisation header"
 msgstr "Autorisatie header"
 
-#: nrc/datamodel/models.py:74
+#: datamodel/models.py:75
 msgid ""
 "Content of the Authorization header when sending notifications to the "
 "\"Callback URL\", for example: Bearer a4daa31..."
@@ -290,98 +294,189 @@ msgstr ""
 "Autorisatie header invulling voor het vesturen naar de \"Callback URL\". "
 "Voorbeeld: Bearer a4daa31..."
 
-#: nrc/datamodel/models.py:79
+#: datamodel/models.py:80
 msgid "Client ID"
 msgstr ""
 
-#: nrc/datamodel/models.py:82
+#: datamodel/models.py:83
 msgid "Client ID extracted from Auth header"
 msgstr "Client ID uit de Auth header"
 
-#: nrc/datamodel/models.py:86
+#: datamodel/models.py:87
 msgid "abonnement"
 msgstr ""
 
-#: nrc/datamodel/models.py:87
+#: datamodel/models.py:88
 msgid "abonnementen"
 msgstr ""
 
-#: nrc/datamodel/models.py:110
+#: datamodel/models.py:111
 msgid "filter"
 msgstr ""
 
-#: nrc/datamodel/models.py:131
+#: datamodel/models.py:132
 msgid "Sleutel"
 msgstr ""
 
-#: nrc/datamodel/models.py:132
+#: datamodel/models.py:133
 msgid "Waarde"
 msgstr ""
 
-#: nrc/datamodel/models.py:142
+#: datamodel/models.py:143
 msgid "filter-onderdeel"
 msgstr ""
 
-#: nrc/datamodel/models.py:143
+#: datamodel/models.py:144
 msgid "filter-onderdelen"
 msgstr ""
 
-#: nrc/datamodel/models.py:174
+#: datamodel/models.py:175
 msgid "attempt"
 msgstr "poging"
 
-#: nrc/datamodel/models.py:175
+#: datamodel/models.py:176
 msgid "Indicates to which delivery attempt this response belongs."
 msgstr "Geeft aan bij de hoeveelste afleverpoging dit antwoord hoort."
 
-#: nrc/templates/admin/base_site.html:22
+#: datamodel/models.py:187
+msgid "internal id"
+msgstr ""
+
+#: datamodel/models.py:190
+msgid "id"
+msgstr ""
+
+#: datamodel/models.py:190
+msgid "event id"
+msgstr ""
+
+#: datamodel/models.py:191
+#, fuzzy
+#| msgid "Resource"
+msgid "source"
+msgstr "Resource"
+
+#: datamodel/models.py:191
+#, fuzzy
+#| msgid "Resource"
+msgid "event source"
+msgstr "Resource"
+
+#: datamodel/models.py:193
+msgid "specversion"
+msgstr ""
+
+#: datamodel/models.py:196
+msgid "cloudevent spec version used by the event"
+msgstr ""
+
+#: datamodel/models.py:199
+msgid "type"
+msgstr ""
+
+#: datamodel/models.py:202
+msgid ""
+"event type on which can be subscribed. Example: nl.overheid.zaken.zaak."
+"created"
+msgstr ""
+
+#: datamodel/models.py:207
+msgid "datacontent"
+msgstr ""
+
+#: datamodel/models.py:211
+msgid ""
+"content type of the (optional) cloudevent data. Example: application/json"
+msgstr ""
+
+#: datamodel/models.py:215
+msgid "dataschema"
+msgstr ""
+
+#: datamodel/models.py:218
+msgid "A schema that the data must follow"
+msgstr ""
+
+#: datamodel/models.py:221
+msgid "subject"
+msgstr ""
+
+#: datamodel/models.py:224
+msgid "the events subject. Example: an uuid of a zaak"
+msgstr ""
+
+#: datamodel/models.py:227
+msgid "time"
+msgstr ""
+
+#: datamodel/models.py:230
+msgid "the timestamp of when the event happened"
+msgstr ""
+
+#: datamodel/models.py:233
+msgid "data"
+msgstr ""
+
+#: datamodel/models.py:235
+msgid "extra data using the format defined in datacontentype"
+msgstr ""
+
+#: datamodel/models.py:251
+msgid "substring"
+msgstr ""
+
+#: datamodel/models.py:254
+msgid "a substring of an event type that the subscription will watch for"
+msgstr ""
+
+#: templates/admin/base_site.html:22
 msgid "Ingelogd als"
 msgstr ""
 
-#: nrc/templates/admin/base_site.html:31
+#: templates/admin/base_site.html:31
 msgid "Change password"
 msgstr "Wachtwoord wijzigen"
 
-#: nrc/templates/admin/base_site.html:35
+#: templates/admin/base_site.html:35
 msgid "Manage two-factor auth"
 msgstr "Tweefactorauthenticatie beheren"
 
-#: nrc/templates/admin/base_site.html:39
+#: templates/admin/base_site.html:39
 msgid "Log out"
 msgstr "Uitloggen"
 
-#: nrc/templates/admin/datamodel/abonnement/change_list.html:6
+#: templates/admin/datamodel/abonnement/change_list.html:6
 msgid "Check status of callback URLs"
 msgstr "Haal status op van callback URLs"
 
-#: nrc/templates/maykin_2fa/login.html:7
+#: templates/maykin_2fa/login.html:7
 msgid "or"
 msgstr "of"
 
-#: nrc/templates/maykin_2fa/login.html:16
+#: templates/maykin_2fa/login.html:16
 msgid "Contact support to start the account recovery process"
 msgstr "Neem contact op met support om je toegang te herstellen"
 
-#: nrc/utils/help_text.py:5
+#: utils/help_text.py:5
 msgid "**EXPERIMENTEEL** {}"
 msgstr ""
 
-#: nrc/utils/oas_extensions/hyperlink_identity.py:18
+#: utils/oas_extensions/hyperlink_identity.py:18
 msgid ""
 "URL-referentie naar dit object. Dit is de unieke identificatie en locatie "
 "van dit object."
 msgstr ""
 
-#: nrc/utils/schema.py:152
+#: utils/schema.py:152
 msgid ""
 "Geeft een specifieke API-versie aan in de context van een specifieke "
 "aanroep. Voorbeeld: 1.2.1."
 msgstr ""
 
-#: nrc/utils/schema.py:168
+#: utils/schema.py:173
 msgid "Content type of the request body."
 msgstr "Inhoudstype van de request body."
 
-#: nrc/utils/schema.py:182
+#: utils/schema.py:187
 msgid "URL waar de resource leeft."
 msgstr ""

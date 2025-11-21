@@ -20,6 +20,7 @@ Een nieuw notificatie aanmaken in de admininterface van Open Notificaties gaat a
          {
             "actie": "create",
             "kanaal": "objecten",
+            "source": "objecten.maykin.nl",
             "resource": "object",
             "kenmerken": {"objectType": "https://example.com"},
             "hoofdObject": "https://example.com",

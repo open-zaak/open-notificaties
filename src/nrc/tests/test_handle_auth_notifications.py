@@ -40,6 +40,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
         }
         data = {
             "kanaal": "autorisaties",
+            "source": "autorisaties.maykin.nl",
             "hoofdObject": applicatie_url,
             "resource": "applicatie",
             "resourceUrl": applicatie_url,
@@ -96,6 +97,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
         }
         data = {
             "kanaal": "autorisaties",
+            "source": "autorisaties.maykin.nl",
             "hoofdObject": applicatie_url,
             "resource": "applicatie",
             "resourceUrl": applicatie_url,
@@ -138,6 +140,7 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
         )
         data = {
             "kanaal": "autorisaties",
+            "source": "autorisaties.maykin.nl",
             "hoofdObject": applicatie_url,
             "resource": "applicatie",
             "resourceUrl": applicatie_url,
