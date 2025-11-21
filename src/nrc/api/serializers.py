@@ -291,14 +291,14 @@ class MessageSerializer(NotificatieSerializer):
         }
 
     def create(self, validated_data: NotificationMessage) -> NotificationMessage:
-        if settings.LOG_NOTIFICATIONS_IN_DB:
+        notificatie: Notificatie | None = validated_data.pop("notificatie", None)
+
+        if not notificatie and settings.LOG_NOTIFICATIONS_IN_DB:
             # creation of the notification
             kanaal = Kanaal.objects.get(naam=validated_data["kanaal"])
             notificatie = Notificatie.objects.create(
                 forwarded_msg=validated_data, kanaal=kanaal
             )
-        else:
-            notificatie = None
 
         subs = self._get_subs(validated_data)
         self._send_to_subs(
@@ -312,34 +312,17 @@ class MessageSerializer(NotificatieSerializer):
             {sub for sub in subs if sub.send_cloudevents},
             self._transform_to_cloudevent(validated_data),
             notificatie=notificatie,
-        )
-        return validated_data
-
-    def update(
-        self, instance, validated_data: NotificationMessage
-    ) -> NotificationMessage:
-        subs = self._get_subs(validated_data)
-        self._send_to_subs(
-            {sub for sub in subs if not sub.send_cloudevents},
-            validated_data,
-            instance,
-        )
-
-        # Send notificatie as cloudevent.
-        CloudEventSerializer.send_to_subs(
-            {sub for sub in subs if sub.send_cloudevents},
-            self._transform_to_cloudevent(validated_data),
-            notificatie=instance,
+            from_notificatie=True,
         )
         return validated_data
 
     @classmethod
     def send_notification(cls, obj: Notificatie):
         transformed = underscoreize(obj.forwarded_msg)
-        serializer = cls(instance=obj, data={"kanaal": obj.kanaal, **transformed})
+        serializer = cls(data={"kanaal": obj.kanaal, **transformed})
         if serializer.is_valid():
             # Save the serializer to send the messages to the subscriptions
-            serializer.save()
+            serializer.save(notificatie=obj)
 
 
 class CloudEventSerializer(serializers.ModelSerializer):
@@ -377,6 +360,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
         msg: CloudEventKwargs,
         cloudevent: CloudEvent | None = None,
         notificatie: Notificatie | None = None,
+        from_notificatie: bool = False,
     ):
         task_kwargs = {}
         if cloudevent:
@@ -400,7 +384,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
             type=msg["type"],
             subject=msg["subject"],
         ):
-            if cloudevent:
+            if not from_notificatie:
                 logger.info("cloudevent_received")
 
             for sub in subs:
