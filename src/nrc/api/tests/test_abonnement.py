@@ -148,6 +148,9 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         self.assertEqual(CloudEventFilterGroup.objects.count(), 1)
         self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
         self.assertTrue(abon.send_cloudevents)
+        self.assertEqual(
+            CloudEventFilterGroup.objects.get().type_substring, "nl.overheid"
+        )
 
     def test_abonnement_update_kanalen(self):
         """

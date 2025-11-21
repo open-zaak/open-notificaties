@@ -86,7 +86,7 @@ class Abonnement(models.Model):
     send_cloudevents = models.BooleanField(
         _("Send cloudevents"),
         help_text=_(
-            "Whether to send notifications as cloudevents and cloudevents themselves"
+            "Whether to send notifications as cloudevents to the subscribed callback (default: `false`)."
         ),
         default=False,
     )
@@ -212,7 +212,7 @@ class CloudEvent(models.Model):
     )
 
     datacontenttype = models.CharField(
-        _("datacontent"),
+        _("data content type"),
         max_length=255,
         blank=True,
         help_text=_(

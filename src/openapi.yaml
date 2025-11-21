@@ -239,7 +239,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       tags:
       - abonnement
@@ -536,7 +537,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       - in: path
         name: uuid
@@ -704,7 +706,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       - in: path
         name: uuid
@@ -1005,7 +1008,8 @@ paths:
           type: string
           enum:
           - application/cloudevents+json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       tags:
       - cloudevents
@@ -1307,7 +1311,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       tags:
       - kanaal
@@ -1608,7 +1613,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       - in: path
         name: uuid
@@ -1778,7 +1784,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       - in: path
         name: uuid
@@ -1946,7 +1953,8 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       tags:
       - notificaties
@@ -2115,8 +2123,8 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          description: Whether to send notifications as cloudevents and cloudevents
-            themselves
+          description: 'Whether to send notifications as cloudevents to the subscribed
+            callback (default: `false`).'
         cloudeventFilters:
           type: array
           items:
@@ -2136,6 +2144,7 @@ components:
         source:
           type: string
           format: uri-reference
+          example: https://openzaak.maykin.nl
           description: event source
         dataschema:
           type: string
@@ -2159,7 +2168,7 @@ components:
           maxLength: 255
         datacontenttype:
           type: string
-          title: Datacontent
+          title: Data content type
           description: 'content type of the (optional) cloudevent data. Example: application/json'
           maxLength: 255
         subject:
@@ -2333,7 +2342,6 @@ components:
       - kanaal
       - resource
       - resourceUrl
-      - source
     PatchedAbonnement:
       type: object
       properties:
@@ -2367,8 +2375,8 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          description: Whether to send notifications as cloudevents and cloudevents
-            themselves
+          description: 'Whether to send notifications as cloudevents to the subscribed
+            callback (default: `false`).'
         cloudeventFilters:
           type: array
           items:

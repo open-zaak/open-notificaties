@@ -10,7 +10,13 @@ class URIField(serializers.CharField):
     pass
 
 
-@extend_schema_field(OpenApiTypes.URI_REF)
+@extend_schema_field(
+    {
+        "type": "string",
+        "format": "uri-reference",
+        "example": "https://openzaak.maykin.nl",
+    }
+)
 class URIRefField(serializers.CharField):
     pass
 

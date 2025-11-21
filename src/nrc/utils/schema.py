@@ -170,7 +170,9 @@ class AutoSchema(_AutoSchema):
                 name="Content-Type",
                 type=str,
                 location=OpenApiParameter.HEADER,
-                description=_("Content type of the request body."),
+                description=_(
+                    "Content type of the request body. Only ``application/cloudevents+json`` is supported."
+                ),
                 enum=enum,
                 required=True,
             )
