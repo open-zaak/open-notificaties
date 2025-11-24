@@ -89,19 +89,19 @@ Accounts
 Notificaties
 --------------
 
-``nrc.api.notificaties.published``
+``nrc.notificaties.published``
     Reports the number of notificaties published via the API.
 
 Abonnementen
 --------------
 
-``nrc.api.abonnement.create``
+``nrc.abonnement.create``
     Reports the number of abonnementen created via the API.
 
 Kanalen
 --------------
 
-``nrc.api.kanaal.create``
+``nrc.kanaal.create``
     Reports the number of kanalen created via the API.
 
 These metrics show how many entities are created, updated, or deleted via the API,
@@ -111,12 +111,12 @@ Sample PromQL queries:
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_api_notificaties_published_total)
+    sum by (otel_scope_name) (otel_nrc_notificaties_published_total)
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_api_abonnement_create_total)
+    sum by (otel_scope_name) (otel_nrc_abonnement_create_total)
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_api_kanaal_create_total)
+    sum by (otel_scope_name) (otel_nrc_kanaal_create_total)
