@@ -26,6 +26,7 @@ from nrc.datamodel.models import (
     Notificatie,
 )
 
+from ..utils.help_text import mark_experimental
 from .fields import JSONOrStringField, URIField, URIRefField
 from .types import CloudEventKwargs, NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
@@ -112,7 +113,9 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         label=_("cloudevent_filters"),
         source="cloudevent_filtergroups",
         many=True,
-        help_text=_("Een lijst van cloudevent type substrings waarop gefilterd wordt"),
+        help_text=mark_experimental(
+            "Een lijst van cloudevent type substrings waarop gefilterd wordt"
+        ),
         required=False,
     )
 
@@ -290,6 +293,22 @@ class MessageSerializer(NotificatieSerializer):
             },
         }
 
+    def _validate_source(self, validated_data, cloudevent_subs) -> None:
+        if not validated_data.get("source"):
+            if any(cloudevent_subs):
+                logger.error(
+                    "no_notification_source",
+                    action=validated_data["actie"],
+                    channel_name=validated_data["kanaal"],
+                    resource=validated_data["resource"],
+                    resource_url=validated_data["resourceUrl"],
+                )
+                raise serializers.ValidationError(
+                    _(
+                        "Notification does not have a source, cannot transform message to a cloudevent"
+                    )
+                )
+
     def create(self, validated_data: NotificationMessage) -> NotificationMessage:
         notificatie: Notificatie | None = validated_data.pop("notificatie", None)
 
@@ -301,19 +320,26 @@ class MessageSerializer(NotificatieSerializer):
             )
 
         subs = self._get_subs(validated_data)
+
+        cloudevent_subs = {sub for sub in subs if sub.send_cloudevents}
+        notification_subs = {sub for sub in subs if not sub.send_cloudevents}
+
+        self._validate_source(validated_data, cloudevent_subs)
+
         self._send_to_subs(
-            {sub for sub in subs if not sub.send_cloudevents},
+            notification_subs,
             validated_data,
             notificatie,
         )
 
-        # Send notificatie as cloudevent.
-        CloudEventSerializer.send_to_subs(
-            {sub for sub in subs if sub.send_cloudevents},
-            self._transform_to_cloudevent(validated_data),
-            notificatie=notificatie,
-            from_notificatie=True,
-        )
+        if cloudevent_subs:
+            # Send notificatie as cloudevent.
+            CloudEventSerializer.send_to_subs(
+                cloudevent_subs,
+                self._transform_to_cloudevent(validated_data),
+                notificatie=notificatie,
+                from_notificatie=True,
+            )
         return validated_data
 
     @classmethod

@@ -873,6 +873,81 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    def test_notificatie_without_source(self):
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=False
+        )
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2025-01-01T12:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            with self.subTest("no cloudevent sub"):
+                with capture_logs() as cap_logs:
+                    response = self.client.post(notificatie_url, msg)
+
+                self.assertFalse(any(log["event"] == "no_source" for log in cap_logs))
+
+                self.assertEqual(
+                    response.status_code, status.HTTP_201_CREATED, response.data
+                )
+                self.assertEqual(Notificatie.objects.count(), 1)
+
+                self.assertEqual(m.last_request.url, abon.callback_url)
+
+            with self.subTest("with cloudevent sub"):
+                abon.send_cloudevents = True
+                abon.save()
+
+                with capture_logs() as cap_logs:
+                    response = self.client.post(notificatie_url, msg)
+
+                no_notification_source = next(
+                    log for log in cap_logs if log["event"] == "no_notification_source"
+                )
+
+                self.assertEqual(
+                    no_notification_source,
+                    {
+                        **no_notification_source,
+                        **{
+                            "action": "create",
+                            "channel_name": "zaken",
+                            "event": "no_notification_source",
+                            "log_level": "error",
+                            "resource": "status",
+                            "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+                            "user_id": None,
+                        },
+                    },
+                )
+
+                self.assertEqual(
+                    response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+                )
+
 
 @patch("notifications_api_common.autoretry.get_exponential_backoff_interval")
 @patch("notifications_api_common.autoretry.NotificationsConfig.get_solo")

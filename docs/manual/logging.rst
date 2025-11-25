@@ -116,6 +116,14 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
+* ``no_notification_source``: notification did not have a source and cannot be transformed into a cloudevent. Additional context:
+
+    * ``channel_name``
+    * ``resource``
+    * ``resource_url``
+    * ``action``
+
+
 * ``cloudevent_received``: a cloudevent was received via the ``/cloudevents`` endpoint. Additional context:
 
 

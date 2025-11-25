@@ -129,7 +129,7 @@ class NotificatieAPIView(views.APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@extend_schema(summary="Publiceer een cloud event")
+@extend_schema(summary=mark_experimental("Publiceer een cloud event"))
 class CloudEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}
     serializer_class = CloudEventSerializer

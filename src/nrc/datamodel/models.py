@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 from djangorestframework_camel_case.util import camelize
 from rest_framework.fields import DateTimeField
 
+from nrc.utils.help_text import mark_experimental
+
 
 class Kanaal(models.Model):
     uuid = models.UUIDField(
@@ -85,7 +87,7 @@ class Abonnement(models.Model):
 
     send_cloudevents = models.BooleanField(
         _("Send cloudevents"),
-        help_text=_(
+        help_text=mark_experimental(
             "Whether to send notifications as cloudevents to the subscribed callback (default: `false`)."
         ),
         default=False,

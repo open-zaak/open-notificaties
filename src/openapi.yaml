@@ -1000,7 +1000,7 @@ paths:
   /cloudevents:
     post:
       operationId: cloudevent_create
-      summary: Publiceer een cloud event
+      summary: '**EXPERIMENTEEL** Publiceer een cloud event'
       parameters:
       - in: header
         name: Content-Type
@@ -2123,13 +2123,14 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          description: 'Whether to send notifications as cloudevents to the subscribed
-            callback (default: `false`).'
+          description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
+            to the subscribed callback (default: `false`).'
         cloudeventFilters:
           type: array
           items:
             $ref: '#/components/schemas/CloudEventFilterGroup'
-          description: Een lijst van cloudevent type substrings waarop gefilterd wordt
+          description: '**EXPERIMENTEEL** Een lijst van cloudevent type substrings
+            waarop gefilterd wordt'
       required:
       - auth
       - callbackUrl
@@ -2375,13 +2376,14 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          description: 'Whether to send notifications as cloudevents to the subscribed
-            callback (default: `false`).'
+          description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
+            to the subscribed callback (default: `false`).'
         cloudeventFilters:
           type: array
           items:
             $ref: '#/components/schemas/CloudEventFilterGroup'
-          description: Een lijst van cloudevent type substrings waarop gefilterd wordt
+          description: '**EXPERIMENTEEL** Een lijst van cloudevent type substrings
+            waarop gefilterd wordt'
     PatchedKanaal:
       type: object
       properties:
