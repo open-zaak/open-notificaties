@@ -16,3 +16,10 @@ notifications_abonnementen_config:
     auth: Token bar
     kanalen:
     - naam: documenten
+  - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
+    callback_url: http://localhost:8000/api/v1/other-callback
+    auth: Token bar
+    send_cloudevents: true
+    cloudevent_filters:
+      - zaak.created
+      - nl.overheid

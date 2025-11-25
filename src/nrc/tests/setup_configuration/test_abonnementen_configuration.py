@@ -5,13 +5,19 @@ from django.test import TestCase
 from django_setup_configuration.exceptions import ConfigurationRunFailed
 from django_setup_configuration.test_utils import execute_single_step
 
-from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
+from nrc.datamodel.models import (
+    Abonnement,
+    CloudEventFilterGroup,
+    Filter,
+    FilterGroup,
+    Kanaal,
+)
 from nrc.setup_configuration.abonnementen import AbonnementConfigurationStep
 
 TEST_FILES = (Path(__file__).parent / "files").resolve()
 CONFIG_FILE_PATH = str(TEST_FILES / "setup_config_abonnementen_config.yaml")
-CONFIG_FILE_PATH_EMPTY_KANALEN = str(
-    TEST_FILES / "setup_config_abonnementen_empty_kanalen.yaml"
+CONFIG_FILE_PATH_NO_FILTERS = str(
+    TEST_FILES / "setup_config_abonnementen_no_filters.yaml"
 )
 
 
@@ -33,11 +39,13 @@ class AbonnementenConfigurationTests(TestCase):
     def test_execute_configuration_step_success(self):
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEqual(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 3)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
-        abonnement_zaken, abonnement_documenten = Abonnement.objects.order_by("pk")
+        abonnement_zaken, abonnement_documenten, abonnement_cloudevent = (
+            Abonnement.objects.order_by("pk")
+        )
 
         self.assertEqual(
             str(abonnement_zaken.uuid), "ff5a9438-6512-4c2d-b69e-6c512c466fb8"
@@ -55,6 +63,23 @@ class AbonnementenConfigurationTests(TestCase):
             abonnement_documenten.callback_url,
             "http://localhost:8000/api/v1/other-callback",
         )
+
+        self.assertEqual(
+            str(abonnement_cloudevent.uuid), "482a09ff-286b-4d0f-a1b8-9b99c1eac0f8"
+        )
+        self.assertEqual(abonnement_cloudevent.auth, "Token bar")
+        self.assertEqual(
+            abonnement_cloudevent.callback_url,
+            "http://localhost:8000/api/v1/other-callback",
+        )
+
+        cloudevent_filter_group1, cloudevent_filter_group2 = (
+            CloudEventFilterGroup.objects.order_by("pk")
+        )
+        self.assertEqual(cloudevent_filter_group1.abonnement, abonnement_cloudevent)
+        self.assertEqual(cloudevent_filter_group2.abonnement, abonnement_cloudevent)
+        self.assertEqual(cloudevent_filter_group1.type_substring, "zaak.created")
+        self.assertEqual(cloudevent_filter_group2.type_substring, "nl.overheid")
 
         filter_group1, filter_group2 = FilterGroup.objects.order_by("pk")
 
@@ -89,7 +114,7 @@ class AbonnementenConfigurationTests(TestCase):
 
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEqual(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 3)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
@@ -119,13 +144,13 @@ class AbonnementenConfigurationTests(TestCase):
     def test_execute_configuration_step_idempotent(self):
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEqual(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 3)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
         execute_single_step(AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH)
 
-        self.assertEqual(Abonnement.objects.count(), 2)
+        self.assertEqual(Abonnement.objects.count(), 3)
         self.assertEqual(FilterGroup.objects.count(), 2)
         self.assertEqual(Filter.objects.count(), 2)
 
@@ -138,14 +163,14 @@ class AbonnementenConfigurationTests(TestCase):
             )
         self.assertEqual(str(cm.exception), "No Kanaal with name zaken exists")
 
-    def test_execute_configuration_step_fails_if_no_kanalen_are_specified(self):
+    def test_execute_configuration_step_fails_if_no_filters_are_specified(self):
         self.kanaal_zaken.delete()
 
         with self.assertRaises(ConfigurationRunFailed) as cm:
             execute_single_step(
-                AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH_EMPTY_KANALEN
+                AbonnementConfigurationStep, yaml_source=CONFIG_FILE_PATH_NO_FILTERS
             )
         self.assertEqual(
             str(cm.exception),
-            "Abonnement 03baec5a-93ef-4ba6-bb73-c548c12009a2 must have `kanalen` specified",
+            "Abonnement 03baec5a-93ef-4ba6-bb73-c548c12009a2 must either have `kanalen` of `cloudevent_filters` specified",
         )
