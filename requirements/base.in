@@ -15,5 +15,3 @@ mozilla-django-oidc-db[setup-configuration]
 psycopg[pool]
 
 maykin-common[axes,mfa]
-
-git+https://github.com/maykinmedia/notifications-api-common.git@feature/61-support-cloudevents#egg=notifications-api-common[setup-configuration] #TODO

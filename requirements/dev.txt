@@ -562,7 +562,7 @@ multidict==6.0.5
     #   yarl
 nodeenv==1.9.1
     # via pre-commit
-notifications-api-common @ git+https://github.com/maykinmedia/notifications-api-common.git@6dddd7fef8576bedeaf4e8d78ab6d3b47967f2cc#egg=notifications-api-common
+notifications-api-common==0.10.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
