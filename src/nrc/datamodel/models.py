@@ -2,12 +2,15 @@ import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
 from rest_framework.fields import DateTimeField
+
+from nrc.utils.help_text import mark_experimental
 
 
 class Kanaal(models.Model):
@@ -80,6 +83,14 @@ class Abonnement(models.Model):
         max_length=100,
         blank=True,
         help_text=_("Client ID extracted from Auth header"),
+    )
+
+    send_cloudevents = models.BooleanField(
+        _("Send cloudevents"),
+        help_text=mark_experimental(
+            "Whether to send notifications as cloudevents to the subscribed callback (default: `false`)."
+        ),
+        default=False,
     )
 
     class Meta:
@@ -168,6 +179,105 @@ class Notificatie(models.Model):
 
 class NotificatieResponse(models.Model):
     notificatie = models.ForeignKey(Notificatie, on_delete=models.CASCADE)
+    abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
+    attempt = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name=_("attempt"),
+        help_text=_("Indicates to which delivery attempt this response belongs."),
+    )
+    exception = models.CharField(max_length=1000, blank=True)
+    response_status = models.IntegerField(null=True)
+
+    def __str__(self) -> str:
+        return f"{self.abonnement} {self.response_status or self.exception}"
+
+
+class CloudEvent(models.Model):
+    int_id = models.BigAutoField(
+        primary_key=True, serialize=False, verbose_name="ID", help_text=_("internal id")
+    )
+
+    id = models.CharField(_("id"), max_length=255, help_text=_("event id"))
+    source = models.CharField(_("source"), max_length=255, help_text=_("event source"))
+    specversion = models.CharField(
+        _("specversion"),
+        max_length=50,
+        validators=[RegexValidator(regex=r"^(\d+)\.(\d+)")],
+        help_text=_("cloudevent spec version used by the event"),
+    )
+    type = models.CharField(
+        _("type"),
+        max_length=255,
+        help_text=_(
+            "event type on which can be subscribed. Example: nl.overheid.zaken.zaak.created"
+        ),
+    )
+
+    datacontenttype = models.CharField(
+        _("data content type"),
+        max_length=255,
+        blank=True,
+        help_text=_(
+            "content type of the (optional) cloudevent data. Example: application/json"
+        ),
+    )
+    dataschema = models.CharField(
+        _("dataschema"),
+        max_length=255,
+        blank=True,
+        help_text=_("A schema that the data must follow"),
+    )
+    subject = models.CharField(
+        _("subject"),
+        max_length=255,
+        blank=True,
+        help_text=_("the events subject. Example: an uuid of a zaak"),
+    )
+    time = models.DateTimeField(
+        _("time"),
+        blank=True,
+        null=True,
+        help_text=_("the timestamp of when the event happened"),
+    )
+    data = models.TextField(
+        _("data"),
+        blank=True,
+        null=True,
+        help_text=_("extra data using the format defined in datacontentype"),
+    )
+
+    @property
+    def last_attempt(self):
+        return (
+            self.cloudeventresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
+        )
+
+    def __str__(self) -> str:
+        return f"{self.id}:{self.source}:{self.type}:{self.subject}"
+
+    class Meta:
+        unique_together = ["id", "source"]
+
+
+class CloudEventFilterGroup(models.Model):
+    abonnement = models.ForeignKey(
+        Abonnement, on_delete=models.CASCADE, related_name="cloudevent_filtergroups"
+    )
+
+    type_substring = models.CharField(
+        _("type substring"),
+        max_length=255,
+        help_text=_(
+            "a substring of an event type that the subscription will watch for"
+        ),
+    )
+
+    def __str__(self):
+        return self.type_substring
+
+
+class CloudEventResponse(models.Model):
+    cloudevent = models.ForeignKey(CloudEvent, on_delete=models.CASCADE)
     abonnement = models.ForeignKey(Abonnement, on_delete=models.CASCADE)
     attempt = models.PositiveSmallIntegerField(
         default=1,

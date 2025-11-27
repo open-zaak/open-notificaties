@@ -5,12 +5,21 @@ from rest_framework.response import Response
 from vng_api_common.permissions import AuthScopesRequired, ClientIdRequired
 from vng_api_common.viewsets import CheckQueryParamsMixin
 
-from nrc.datamodel.models import Abonnement, Kanaal
+from nrc.datamodel.models import Abonnement, CloudEvent, Kanaal
 from nrc.utils.help_text import mark_experimental
 
 from .filters import KanaalFilter
-from .scopes import SCOPE_NOTIFICATIES_CONSUMEREN, SCOPE_NOTIFICATIES_PUBLICEREN
-from .serializers import AbonnementSerializer, KanaalSerializer, MessageSerializer
+from .scopes import (
+    SCOPE_NOTIFICATIES_CONSUMEREN,
+    SCOPE_NOTIFICATIES_PUBLICEREN,
+)
+from .serializers import (
+    AbonnementSerializer,
+    CloudEventSerializer,
+    KanaalSerializer,
+    MessageSerializer,
+)
+from .utils import CloudEventJSONParser, CloudEventJSONRenderer
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -118,3 +127,13 @@ class NotificatieAPIView(views.APIView):
 
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@extend_schema(summary=mark_experimental("Publiceer een cloud event"))
+class CloudEventViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    required_scopes = {"create": SCOPE_NOTIFICATIES_PUBLICEREN}
+    serializer_class = CloudEventSerializer
+    queryset = CloudEvent.objects.all()
+
+    parser_classes = (CloudEventJSONParser,)
+    renderer_classes = (CloudEventJSONRenderer,)

@@ -994,6 +994,157 @@ paths:
               schema:
                 $ref: '#/components/schemas/Fout'
           description: Internal server error
+  /cloudevents:
+    post:
+      operationId: cloudevent_create
+      summary: '**EXPERIMENTEEL** Publiceer een cloud event'
+      parameters:
+      - in: header
+        name: Content-Type
+        schema:
+          type: string
+          enum:
+          - application/cloudevents+json
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
+        required: true
+      tags:
+      - cloudevents
+      requestBody:
+        content:
+          application/cloudevents+json:
+            schema:
+              $ref: '#/components/schemas/CloudEvent'
+        required: true
+      security:
+      - JWT-Claims:
+        - notificaties.publiceren
+      responses:
+        '201':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: URL waar de resource leeft.
+          content:
+            application/cloudevents+json:
+              schema:
+                $ref: '#/components/schemas/CloudEvent'
+          description: Created
+        '400':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ValidatieFout'
+          description: Bad request
+        '401':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Unauthorized
+        '403':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Forbidden
+        '406':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Not acceptable
+        '409':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Conflict
+        '410':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Gone
+        '415':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Unsupported media type
+        '429':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Too many requests
+        '500':
+          headers:
+            API-version:
+              schema:
+                type: string
+              description: 'Geeft een specifieke API-versie aan in de context van
+                een specifieke aanroep. Voorbeeld: 1.2.1.'
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Fout'
+          description: Internal server error
   /kanaal:
     get:
       operationId: kanaal_list
@@ -1963,10 +2114,81 @@ components:
             $ref: '#/components/schemas/FilterGroup'
           description: Een lijst van kanalen en filters waarop het ABONNEMENT wordt
             afgenomen.
+        sendCloudevents:
+          type: boolean
+          description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
+            to the subscribed callback (default: `false`).'
+        cloudeventFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEventFilterGroup'
+          description: '**EXPERIMENTEEL** Een lijst van cloudevent type substrings
+            waarop gefilterd wordt'
       required:
       - auth
       - callbackUrl
-      - kanalen
+    CloudEvent:
+      type: object
+      properties:
+        intId:
+          type: integer
+          readOnly: true
+          title: ID
+          description: internal id
+        source:
+          type: string
+          format: uri-reference
+          example: https://openzaak.maykin.nl
+          description: event source
+        dataschema:
+          type: string
+          format: uri
+          description: A schema that the data must follow
+        data:
+          nullable: true
+          description: extra data using the format defined in datacontentype
+        id:
+          type: string
+          description: event id
+          maxLength: 255
+        specversion:
+          type: string
+          description: cloudevent spec version used by the event
+          pattern: ^(\d+)\.(\d+)
+          maxLength: 50
+        type:
+          type: string
+          description: 'event type on which can be subscribed. Example: nl.overheid.zaken.zaak.created'
+          maxLength: 255
+        datacontenttype:
+          type: string
+          title: Data content type
+          description: 'content type of the (optional) cloudevent data. Example: application/json'
+          maxLength: 255
+        subject:
+          type: string
+          description: 'the events subject. Example: an uuid of a zaak'
+          maxLength: 255
+        time:
+          type: string
+          format: date-time
+          nullable: true
+          description: the timestamp of when the event happened
+      required:
+      - id
+      - source
+      - specversion
+      - type
+    CloudEventFilterGroup:
+      type: object
+      properties:
+        typeSubstring:
+          type: string
+          description: a substring of an event type that the subscription will watch
+            for
+          maxLength: 255
+      required:
+      - typeSubstring
     FieldValidationError:
       type: object
       description: Formaat van validatiefouten.
@@ -2070,6 +2292,11 @@ components:
           description: De naam van het kanaal (`KANAAL.naam`) waar het bericht op
             moet worden gepubliceerd.
           maxLength: 50
+        source:
+          type: string
+          description: De identifier van de oorsprong van de notificatie, een systeem
+            of organisatie.
+          maxLength: 100
         hoofdObject:
           type: string
           format: uri
@@ -2140,6 +2367,16 @@ components:
             $ref: '#/components/schemas/FilterGroup'
           description: Een lijst van kanalen en filters waarop het ABONNEMENT wordt
             afgenomen.
+        sendCloudevents:
+          type: boolean
+          description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
+            to the subscribed callback (default: `false`).'
+        cloudeventFilters:
+          type: array
+          items:
+            $ref: '#/components/schemas/CloudEventFilterGroup'
+          description: '**EXPERIMENTEEL** Een lijst van cloudevent type substrings
+            waarop gefilterd wordt'
     PatchedKanaal:
       type: object
       properties:

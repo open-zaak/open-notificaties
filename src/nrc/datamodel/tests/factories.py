@@ -59,3 +59,30 @@ class NotificatieResponseFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "datamodel.NotificatieResponse"
+
+
+class CloudEventFactory(factory.django.DjangoModelFactory):
+    id = factory.sequence(lambda n: f"cloudevent_{n}")
+    source = factory.Sequence(lambda n: f"source_{n}")
+    specversion = "1.0"
+    type = "nl.overheid.notificaties.notificatie.created"
+
+    class Meta:
+        model = "datamodel.CloudEvent"
+
+
+class CloudEventResponseFactory(factory.django.DjangoModelFactory):
+    cloudevent = factory.SubFactory(CloudEventFactory)
+    abonnement = factory.SubFactory(AbonnementFactory)
+    response_status = 204
+
+    class Meta:
+        model = "datamodel.CloudEventResponse"
+
+
+class CloudEventFilterGroupFactory(factory.django.DjangoModelFactory):
+    abonnement = factory.SubFactory(AbonnementFactory)
+    type_substring = "nl.overheid"
+
+    class Meta:
+        model = "datamodel.CloudEventFilterGroup"

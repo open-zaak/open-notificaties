@@ -253,7 +253,7 @@ mozilla-django-oidc-db==1.1.0
     # via
     #   -r requirements/base.in
     #   open-api-framework
-notifications-api-common==0.8.0
+notifications-api-common==0.10.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common

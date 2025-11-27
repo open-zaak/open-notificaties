@@ -8,12 +8,15 @@ from django.utils.translation import gettext_lazy as _
 from requests.exceptions import RequestException
 from rest_framework.exceptions import ValidationError
 
-from nrc.api.utils import send_notification
+from nrc.api.utils import send_cloudevent, send_notification
 from nrc.api.validators import CallbackURLValidator
 
 from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
+    CloudEvent,
+    CloudEventFilterGroup,
+    CloudEventResponse,
     Filter,
     FilterGroup,
     Kanaal,
@@ -46,6 +49,11 @@ class FilterGroupInline(admin.TabularInline):
                 _("Filters instellen"),
             )
         )
+
+
+class CloudEventFilterGroupInline(admin.TabularInline):
+    model = CloudEventFilterGroup
+    extra = 0
 
 
 @admin.action(
@@ -121,12 +129,13 @@ class AbonnementAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("uuid",)
     list_filter = (StatusCodeFilter,)
-    inlines = (FilterGroupInline,)
+    inlines = (FilterGroupInline, CloudEventFilterGroupInline)
     actions = [check_callback_url_status]
     fields = (
         "callback_url",
         "auth",
         "uuid",
+        "send_cloudevents",
     )
 
     def changelist_view(self, request, extra_context=None):
@@ -309,3 +318,103 @@ class NotificatieAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
         send_notification(obj)
+
+
+@admin.register(CloudEventResponse)
+class CloudEventResponseAdmin(admin.ModelAdmin):
+    list_display = (
+        "cloudevent",
+        "get_cloud_event_time",
+        "abonnement",
+        "get_result_display",
+    )
+    raw_id_fields = ["cloudevent", "abonnement"]
+    list_filter = ("abonnement", "response_status")
+    search_fields = ("abonnement__callback_url",)
+
+    @admin.display(description=_("result"))
+    def get_result_display(self, obj):
+        return obj.response_status or obj.exception
+
+    @admin.display(description=_("Cloud Event time"))
+    def get_cloud_event_time(self, obj):
+        return obj.cloudevent.time
+
+
+class CloudEventResponseInline(admin.TabularInline):
+    model = CloudEventResponse
+
+
+@admin.action(description=_("Re-send the selected cloudevents to all subscriptions"))
+def resend_cloudevents(modeladmin, request, queryset):
+    # Save all the selected notifications via the modeladmin, triggering
+    # the notification mechanism
+    for cloudevent in queryset:
+        send_cloudevent(cloudevent)
+
+    messages.add_message(
+        request, messages.SUCCESS, _("Selected cloudevents have been scheduled.")
+    )
+
+
+@admin.register(CloudEvent)
+class CloudEventAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "source",
+        "type",
+        "subject",
+        "result",
+    )
+
+    list_filter = (
+        "type",
+        "source",
+    )
+    search_fields = (
+        "source",
+        "type",
+        "subject",
+    )
+
+    inlines = (CloudEventResponseInline,)
+    actions = [resend_cloudevents]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        latest_attempts = (
+            CloudEventResponse.objects.filter(cloudevent=OuterRef(OuterRef("pk")))
+            .order_by("abonnement", "-attempt")
+            .distinct("abonnement")
+            .values("pk")
+        )
+
+        failed_attempts = (
+            CloudEventResponse.objects.filter(pk__in=Subquery(latest_attempts))
+            .filter(Q(response_status__lt=200) | Q(response_status__gte=300))
+            .values("pk")
+        )
+
+        qs = qs.annotate(
+            failed_responses_count=Count(
+                "cloudeventresponse",
+                filter=Q(cloudeventresponse__pk__in=Subquery(failed_attempts)),
+            ),
+        )
+        return qs
+
+    @admin.display(
+        description=_("Result"),
+        boolean=True,
+    )
+    def result(self, obj):
+        return obj.failed_responses_count == 0
+
+    def get_inline_instances(self, request, obj=None):
+        if obj is None:
+            return []
+        return super().get_inline_instances(request, obj)
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        send_cloudevent(obj)

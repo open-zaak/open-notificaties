@@ -5,7 +5,13 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from vng_api_common.tests import JWTAuthMixin, get_operation_url, get_validation_errors
 
-from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
+from nrc.datamodel.models import (
+    Abonnement,
+    CloudEventFilterGroup,
+    Filter,
+    FilterGroup,
+    Kanaal,
+)
 from nrc.datamodel.tests.factories import AbonnementFactory, KanaalFactory
 
 
@@ -110,6 +116,42 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
         )
 
+    def test_abonnementen_create_cloudevent(self):
+        """
+        test /abonnementen POST:
+        create abonnement with cloudevent filters via POST request
+        check if data were parsed to models correctly
+        """
+        abonnement_create_url = get_operation_url("abonnement_create")
+
+        data = {
+            "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
+            "send_cloudevents": True,
+            "cloudevent_filters": [{"type_substring": "nl.overheid"}],
+        }
+
+        with requests_mock.mock() as m:
+            m.register_uri(
+                "POST",
+                "https://example.com/zrc/api/v1/callbacks",
+                status_code=204,
+            )
+            response = self.client.post(abonnement_create_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+
+        # check parsing to models
+        abon = Abonnement.objects.get()
+
+        self.assertEqual(Abonnement.objects.count(), 1)
+        self.assertEqual(CloudEventFilterGroup.objects.count(), 1)
+        self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
+        self.assertTrue(abon.send_cloudevents)
+        self.assertEqual(
+            CloudEventFilterGroup.objects.get().type_substring, "nl.overheid"
+        )
+
     def test_abonnement_update_kanalen(self):
         """
         test /abonnementen PUT:
@@ -154,6 +196,38 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(len(kanalen), 1)
         self.assertEqual(kanalen.pop().naam, "zaken")
+
+    def test_abonnement_update_cloudevent_filters(self):
+        """
+        test /abonnementen PUT:
+        update existent abonnement
+        check if relation between abonnement and previous filter was removed
+        check if relation between abonnement and new filter was created
+        """
+        abonnement = AbonnementFactory.create(client_id="testsuite")
+        CloudEventFilterGroup.objects.create(
+            abonnement=abonnement, type_substring="nl.overheid"
+        )
+        data = {
+            "callbackUrl": "https://other.url/callbacks",
+            "auth": "Bearer YWRtaW46YWRtaW4K",
+            "send_cloudevents": True,
+            "cloudevent_filters": [{"type_substring": "nl.overheid.test"}],
+        }
+        abonnement_update_url = get_operation_url(
+            "abonnement_update", uuid=abonnement.uuid
+        )
+
+        with requests_mock.mock() as m:
+            m.register_uri("POST", "https://other.url/callbacks", status_code=204)
+            response = self.client.put(abonnement_update_url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
+        self.assertEqual(abonnement.cloudevent_filtergroups.count(), 1)
+        self.assertEqual(
+            abonnement.cloudevent_filtergroups.get().type_substring, "nl.overheid.test"
+        )
 
     def test_abonnementen_create_inconsistent_filters(self):
         """

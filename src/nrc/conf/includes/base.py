@@ -64,6 +64,9 @@ NOTIFICATION_REQUESTS_TIMEOUT = config(
 )
 
 
+CLOUDEVENT_SPECVERSION = "1.0"
+
+
 # Default (connection timeout, read timeout) for the requests library (in seconds)
 REQUESTS_DEFAULT_TIMEOUT = (10, 30)
 

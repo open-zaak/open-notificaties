@@ -73,6 +73,14 @@
             [
                 "datamodel",
                 "notificatieresponse"
+            ],
+            [
+                "datamodel",
+                "cloudevent"
+            ],
+            [
+                "datamodel",
+                "cloudeventresponse"
             ]
         ]
     }
