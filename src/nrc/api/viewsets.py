@@ -9,6 +9,11 @@ from nrc.datamodel.models import Abonnement, CloudEvent, Kanaal
 from nrc.utils.help_text import mark_experimental
 
 from .filters import KanaalFilter
+from .metrics import (
+    abonnement_create_counter,
+    kanaal_create_counter,
+    notificaties_publish_counter,
+)
 from .scopes import (
     SCOPE_NOTIFICATIES_CONSUMEREN,
     SCOPE_NOTIFICATIES_PUBLICEREN,
@@ -58,6 +63,7 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
     def perform_create(self, serializer):
         client_id = self.request.jwt_auth.client_id
         serializer.save(client_id=client_id)
+        abonnement_create_counter.add(1)
 
 
 @extend_schema_view(
@@ -98,6 +104,11 @@ class KanaalViewSet(
         "partial_update": SCOPE_NOTIFICATIES_PUBLICEREN,
     }
 
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        kanaal_create_counter.add(1)
+        return instance
+
 
 @extend_schema(summary="Publiceer een notificatie.")
 class NotificatieAPIView(views.APIView):
@@ -124,6 +135,8 @@ class NotificatieAPIView(views.APIView):
             # post to message queue
             # send to abonnement
             serializer.save()
+
+            notificaties_publish_counter.add(1)
 
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

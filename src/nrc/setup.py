@@ -12,12 +12,14 @@ they are available for Django settings initialization.
 
 import os
 import tempfile
+import warnings
 from pathlib import Path
 
 from django.conf import settings
 
 import structlog
 from dotenv import load_dotenv
+from maykin_common.otel import setup_otel
 from self_certifi import load_self_signed_certs as _load_self_signed_certs
 
 _certs_initialized = False
@@ -33,6 +35,16 @@ def setup_env():
     structlog.contextvars.bind_contextvars(source="app")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nrc.conf.dev")
+    if "OTEL_SERVICE_NAME" not in os.environ:
+        warnings.warn(
+            "No OTEL_SERVICE_NAME environment variable set, using a default. "
+            "You should set a (distinct) value for each component (web, worker...)",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+        os.environ.setdefault("OTEL_SERVICE_NAME", "opennotificaties")
+
+    setup_otel()
 
     load_self_signed_certs()
 
