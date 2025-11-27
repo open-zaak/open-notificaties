@@ -162,17 +162,18 @@ class AutoSchema(_AutoSchema):
 
         if CloudEventJSONParser in self.view.parser_classes:
             enum = ["application/cloudevents+json"]
+            desc = _(
+                "Content type of the request body. Only ``application/cloudevents+json`` is supported."
+            )
         else:
             enum = ["application/json"]
-
+            desc = _("Content type of the request body.")
         return [
             OpenApiParameter(
                 name="Content-Type",
                 type=str,
                 location=OpenApiParameter.HEADER,
-                description=_(
-                    "Content type of the request body. Only ``application/cloudevents+json`` is supported."
-                ),
+                description=desc,
                 enum=enum,
                 required=True,
             )

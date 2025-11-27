@@ -418,10 +418,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: CloudEventKwargs) -> CloudEventKwargs:
         if settings.LOG_NOTIFICATIONS_IN_DB:
-            if validated_data.get("data", False) is None:
-                cloudevent = super().create(validated_data | {"data": "null"})
-            else:
-                cloudevent = super().create(validated_data)
+            cloudevent = super().create(validated_data)
         else:
             cloudevent = None
 

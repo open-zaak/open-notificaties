@@ -419,7 +419,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                 )
                 self.assertEqual(m.last_request.json(), xml_event)
 
-            with self.subTest("null"):
+            with self.subTest("none"):
                 id = str(uuid4())
                 null_event = event | {
                     "datacontenttype": "application/json",
@@ -434,7 +434,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                 self.assertEqual(
                     response.status_code, status.HTTP_201_CREATED, response.data
                 )
-                self.assertEqual(CloudEvent.objects.get(id=id).data, "null")
+                self.assertEqual(CloudEvent.objects.get(id=id).data, None)
                 self.assertEqual(m.last_request.json(), null_event)
 
             with self.subTest("data omitted"):

@@ -239,8 +239,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - abonnement
@@ -537,8 +536,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
@@ -706,8 +704,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
@@ -1311,8 +1308,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - kanaal
@@ -1613,8 +1609,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
@@ -1784,8 +1779,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       - in: path
         name: uuid
@@ -1953,8 +1947,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body.
         required: true
       tags:
       - notificaties
