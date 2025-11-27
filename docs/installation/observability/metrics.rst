@@ -43,7 +43,7 @@ Application specific
 Accounts
 --------
 
-``nrc.auth.user_count``
+``opennotificaties.auth.user_count``
     Reports the number of users in the database. This is a global metric, you must take
     care in de-duplicating results. Additional attributes are:
 
@@ -55,18 +55,18 @@ Accounts
     .. code-block:: promql
 
         max by (type) (last_over_time(
-          otel_nrc_auth_user_count{scope="global"}
+          otel_opennotificaties_auth_user_count{scope="global"}
           [1m]
         ))
 
-``nrc.auth.login_failures``
+``opennotificaties.auth.login_failures``
     A counter incremented every time a user login fails (typically because of invalid
     credentials). Does not include the second factor, if enabled. Additional attributes:
 
     - ``http_target`` - the request path where the login failure occurred, if this
       happened in a request context.
 
-``nrc.auth.user_lockouts``
+``opennotificaties.auth.user_lockouts``
     A counter incremented every time a user is locked out because they reached the
     maximum number of failed attempts. Additional attributes:
 
@@ -74,14 +74,14 @@ Accounts
       happened in a request context.
     - ``username`` - username of the user trying to log in.
 
-``nrc.auth.logins``
+``opennotificaties.auth.logins``
     Counter incrementing on every successful login by a user. Additional attributes:
 
     - ``http_target`` - the request path where the login failure occurred, if this
       happened in a request context.
     - ``username`` - username of the user trying to log in.
 
-``nrc.auth.logouts``
+``opennotificaties.auth.logouts``
     Counter incrementing every time a user logs out. Additional attributes:
 
     - ``username`` - username of the user who logged out.
@@ -89,19 +89,19 @@ Accounts
 Notificaties
 --------------
 
-``nrc.notificaties.published``
+``opennotificaties.notificatie.publishes``
     Reports the number of notificaties published via the API.
 
 Abonnementen
 --------------
 
-``nrc.abonnement.create``
+``opennotificaties.abonnement.creates``
     Reports the number of abonnementen created via the API.
 
 Kanalen
 --------------
 
-``nrc.kanaal.create``
+``opennotificaties.kanaal.creates``
     Reports the number of kanalen created via the API.
 
 These metrics show how many entities are created, updated, or deleted via the API,
@@ -111,12 +111,12 @@ Sample PromQL queries:
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_notificaties_published_total)
+    sum by (otel_scope_name) (otel_opennotificaties_notificatie_publishes_total)
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_abonnement_create_total)
+    sum by (otel_scope_name) (otel_opennotificaties_abonnement_creates_total)
 
 .. code-block:: promql
 
-    sum by (otel_scope_name) (otel_nrc_kanaal_create_total)
+    sum by (otel_scope_name) (otel_opennotificaties_kanaal_creates_total)
