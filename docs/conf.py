@@ -134,6 +134,10 @@ extlinks = {
         "https://github.com/open-zaak/open-zaak/issues/%s",
         "#%s",
     ),
+    "commonground-api-common": (
+        "https://github.com/maykinmedia/commonground-api-common/issues/%s",
+        "#%s",
+    ),
 }
 
 django_structlog_version = _version("django-structlog")
