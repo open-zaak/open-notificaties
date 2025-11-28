@@ -69,7 +69,7 @@ cryptography==44.0.2
     #   mozilla-django-oidc
     #   pyopenssl
     #   webauthn
-django==5.2.7
+django==5.2.8
     # via
     #   commonground-api-common
     #   django-admin-index
@@ -265,7 +265,7 @@ notifications-api-common==0.10.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
-open-api-framework==0.13.1
+open-api-framework==0.13.2
     # via -r requirements/base.in
 opentelemetry-api==1.38.0
     # via
