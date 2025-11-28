@@ -40,12 +40,13 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                 defaults={
                     "callback_url": item.callback_url,
                     "auth": item.auth,
+                    "send_cloudevents": item.send_cloudevents,
                 },
             )
 
             if not item.kanalen and not item.cloudevent_filters:
                 raise ConfigurationRunFailed(
-                    f"Abonnement {item.uuid} must either have `kanalen` of `cloudevent_filters` specified"
+                    f"Abonnement {item.uuid} must either have `kanalen` or `cloudevent_filters` specified"
                 )
 
             # TODO should we apply the same validation as in the serializer here?

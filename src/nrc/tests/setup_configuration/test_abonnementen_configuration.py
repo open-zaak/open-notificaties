@@ -68,6 +68,7 @@ class AbonnementenConfigurationTests(TestCase):
             str(abonnement_cloudevent.uuid), "482a09ff-286b-4d0f-a1b8-9b99c1eac0f8"
         )
         self.assertEqual(abonnement_cloudevent.auth, "Token bar")
+        self.assertEqual(abonnement_cloudevent.send_cloudevents, True)
         self.assertEqual(
             abonnement_cloudevent.callback_url,
             "http://localhost:8000/api/v1/other-callback",
@@ -172,5 +173,5 @@ class AbonnementenConfigurationTests(TestCase):
             )
         self.assertEqual(
             str(cm.exception),
-            "Abonnement 03baec5a-93ef-4ba6-bb73-c548c12009a2 must either have `kanalen` of `cloudevent_filters` specified",
+            "Abonnement 03baec5a-93ef-4ba6-bb73-c548c12009a2 must either have `kanalen` or `cloudevent_filters` specified",
         )
