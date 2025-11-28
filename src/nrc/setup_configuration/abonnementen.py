@@ -2,7 +2,13 @@ import structlog
 from django_setup_configuration.configuration import BaseConfigurationStep
 from django_setup_configuration.exceptions import ConfigurationRunFailed
 
-from nrc.datamodel.models import Abonnement, Filter, FilterGroup, Kanaal
+from nrc.datamodel.models import (
+    Abonnement,
+    CloudEventFilterGroup,
+    Filter,
+    FilterGroup,
+    Kanaal,
+)
 
 from .models import AbonnementConfigurationModel
 
@@ -34,12 +40,13 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                 defaults={
                     "callback_url": item.callback_url,
                     "auth": item.auth,
+                    "send_cloudevents": item.send_cloudevents,
                 },
             )
 
-            if not item.kanalen:
+            if not item.kanalen and not item.cloudevent_filters:
                 raise ConfigurationRunFailed(
-                    f"Abonnement {item.uuid} must have `kanalen` specified"
+                    f"Abonnement {item.uuid} must either have `kanalen` or `cloudevent_filters` specified"
                 )
 
             # TODO should we apply the same validation as in the serializer here?
@@ -60,6 +67,11 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                     Filter.objects.update_or_create(
                         key=key, filter_group=filter_group, defaults={"value": value}
                     )
+
+            for type_substring in item.cloudevent_filters:
+                CloudEventFilterGroup.objects.update_or_create(
+                    type_substring=type_substring, abonnement=abonnement
+                )
 
             logger.debug(
                 "subscription_created" if created else "subscription_updated",

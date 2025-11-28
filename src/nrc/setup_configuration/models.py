@@ -67,8 +67,13 @@ class KanalenFilterConfigurationModel(ConfigurationModel):
 
 class AbonnementConfigurationItem(ConfigurationModel):
     uuid: UUID4 = Field(description="The UUID for this Abonnement.")
-    kanalen: list[KanalenFilterConfigurationModel] = Field(
-        description="A list of channels which are subscribed to"
+    kanalen: Optional[list[KanalenFilterConfigurationModel]] = Field(
+        default=[], description="A list of channels which are subscribed to"
+    )
+    cloudevent_filters: Optional[list[str]] = Field(
+        default=[],
+        description="A list of cloudevent type substrings that the subscription will watch for",
+        examples=[["nl.overheid.zaken"]],
     )
 
     class Meta:
@@ -76,6 +81,7 @@ class AbonnementConfigurationItem(ConfigurationModel):
             Abonnement: [
                 "callback_url",
                 "auth",
+                "send_cloudevents",
             ]
         }
         extra_kwargs = {
