@@ -1005,8 +1005,8 @@ paths:
           type: string
           enum:
           - application/cloudevents+json
-        description: Content type of the request body. Only ``application/cloudevents+json``
-          is supported.
+        description: Inhoudstype van de request body. Alleen ``application/cloudevents+json``
+          wordt ondersteund.
         required: true
       tags:
       - cloudevents
@@ -2116,6 +2116,7 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
+          title: Verstuur cloudevents
           description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
             to the subscribed callback (default: `false`).'
         cloudeventFilters:
@@ -2369,6 +2370,7 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
+          title: Verstuur cloudevents
           description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
             to the subscribed callback (default: `false`).'
         cloudeventFilters:
