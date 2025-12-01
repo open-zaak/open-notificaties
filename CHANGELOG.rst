@@ -144,6 +144,13 @@ Changes
 
 * [maykinmedia/objects-api#607] Add DB_CONN_MAX_AGE environment variable (see :ref:`installation_env_config`)
 
+.. warning::
+
+    **Experimental:** — connection pooling is *not yet recommended for production use*.
+    It may not behave as expected when running uWSGI with multiple processes or threads.
+    Use this feature cautiously and test thoroughly before deployment.
+    See the :ref:`documentation <database_connections>` for details.
+
 **Project maintenance**
 
 * Upgrade dependencies
