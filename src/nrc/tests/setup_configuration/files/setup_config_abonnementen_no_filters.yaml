@@ -4,4 +4,3 @@ notifications_abonnementen_config:
   - uuid: 03baec5a-93ef-4ba6-bb73-c548c12009a2
     callback_url: http://localhost:8000/api/v1/other-callback
     auth: Token bar
-    kanalen: []
