@@ -100,7 +100,6 @@ class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     kanalen = FilterGroupSerializer(
-        label=_("kanalen"),
         source="filter_groups",
         many=True,
         help_text=_(
@@ -110,7 +109,6 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     cloudevent_filters = CloudEventFilterGroupSerializer(
-        label=_("cloudevent_filters"),
         source="cloudevent_filtergroups",
         many=True,
         help_text=mark_experimental(

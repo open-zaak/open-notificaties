@@ -2,8 +2,8 @@
 Changes
 =======
 
-1.14.0 (TBD)
-------------
+1.14.0 (2025-12-02)
+-------------------
 
 .. warning::
 
@@ -25,6 +25,7 @@ Changes
         providers:
           - identifier: example-provider
             # other provider settings
+
         clients:
           - identifier: admin-oidc
             oidc_provider_identifier: example-provider
@@ -33,6 +34,53 @@ Changes
     For detailed configuration, see :ref:`Admin OIDC Configuration Step  <ref_step_mozilla_django_oidc_db.setup_configuration.steps.AdminOIDCConfigurationStep>`.
     Make sure to check which fields are marked as ``DEPRECATED`` and replace them with the fields that are mentioned as replacements.
 
+
+**New features**
+
+    * [:open-api-framework:`152`] Add Open Telemetry support
+
+    .. note::
+        The OpenTelemetry SDK is **enabled by default**.
+        If you do not have an endpoint to send system telemetry to, update your deployment to **disable it** by setting the environment variable:
+
+        .. code-block:: bash
+
+            OTEL_SDK_DISABLED=true
+
+        If this is not done, warnings will be emitted to the container logs. The application will continue to function normally.
+        All available metrics and details can be found in the :ref:`Observability documentation <installation_observability_index>`.
+
+**Experimental features**
+
+    * [:open-notificaties:`333`] Add support for cloudevents
+
+        * Add cloudevent endpoint to pass cloudevents to subscriptions directly.
+        * Add ``send_cloudevents`` field to ``Abonnement`` to be able to receive cloudevents on callback url and to transform incomming notifications to cloudevents.
+        * Add optional field ``source`` to ``Notificatie`` needed to transform notifcations to cloudevents.
+        * Add ``CloudeventFilterGroup`` to subscribe on substrings of cloudevent types.
+
+**Project maintenance**
+
+    * Upgrade python dependencies:
+
+        * ``Django`` to 5.2.8
+        * ``pip`` to 25.4 in dev dependencies
+        * ``notifications-api-common`` to 0.10.0
+        * ``open-api-framework`` to 0.13.2
+        * [:open-api-framework:`85`] ``mozilla-django-oidc-db`` to 1.1.0
+        * [:open-api-framework:`85`] ``django-setup-configuration`` to 0.11.0
+        * [:commonground-api-common:`134`] commonground-api-common to 2.10.5
+        * [:open-api-framework:`163`] ``maykin-common`` to 0.11.0
+
+    * [:open-api-framework:`191`] Upgrade ``NodeJS`` to 24
+    * [:open-api-framework:`163`] Integrate ``maykin-common``
+
+        * New template for the landing page
+        * Remove duplicate classes and functions that are already exists in the library
+
+    * [:open-api-workflows:`31`] Update CI workflows
+    * [:open-api-workflows:`30`] Use API Design Rules linter for api spec validation
+    * [:commonground-api-common:`134`] Ensure API errors are sent to Sentry
 
 1.13.0 (2025-10-06)
 ===================
