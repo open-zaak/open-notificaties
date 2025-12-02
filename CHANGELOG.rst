@@ -2,7 +2,7 @@
 Changes
 =======
 
-1.14.0 (2025-12-01)
+1.14.0 (2025-12-02)
 -------------------
 
 .. warning::
@@ -42,8 +42,11 @@ Changes
     .. note::
         The OpenTelemetry SDK is **enabled by default**.
         If you do not have an endpoint to send system telemetry to, update your deployment to **disable it** by setting the environment variable:
+
         .. code-block:: bash
+
             OTEL_SDK_DISABLED=true
+
         If this is not done, warnings will be emitted to the container logs. The application will continue to function normally.
         All available metrics and details can be found in the :ref:`Observability documentation <installation_observability_index>`.
 
@@ -71,8 +74,9 @@ Changes
 
     * [:open-api-framework:`191`] Upgrade ``NodeJS`` to 24
     * [:open-api-framework:`163`] Integrate ``maykin-common``
-    * New template for the landing page
-    * Remove duplicate classes and functions that are already exists in the library
+
+        * New template for the landing page
+        * Remove duplicate classes and functions that are already exists in the library
 
     * [:open-api-workflows:`31`] Update CI workflows
     * [:open-api-workflows:`30`] Use API Design Rules linter for api spec validation
