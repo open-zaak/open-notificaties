@@ -1,5 +1,5 @@
 from django.contrib import admin, messages
-from django.db.models import Count, OuterRef, Q, Subquery
+from django.db.models import Count, Exists, OuterRef, Q, Subquery
 from django.http import HttpResponseRedirect
 from django.urls import path, reverse
 from django.utils.safestring import mark_safe
@@ -269,25 +269,19 @@ class NotificatieAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+
         latest_attempts = (
-            NotificatieResponse.objects.filter(notificatie=OuterRef(OuterRef("pk")))
+            NotificatieResponse.objects.filter(
+                notificatie=OuterRef("pk"),
+            )
             .order_by("abonnement", "-attempt")
             .distinct("abonnement")
             .values("pk")
-        )
-
-        failed_attempts = (
-            NotificatieResponse.objects.filter(pk__in=Subquery(latest_attempts))
             .filter(Q(response_status__lt=200) | Q(response_status__gte=300))
-            .values("pk")
         )
 
-        qs = qs.annotate(
-            failed_responses_count=Count(
-                "notificatieresponse",
-                filter=Q(notificatieresponse__pk__in=Subquery(failed_attempts)),
-            ),
-        )
+        qs = qs.annotate(has_failure=Exists(latest_attempts))
+
         return qs
 
     @admin.display(
@@ -295,7 +289,7 @@ class NotificatieAdmin(admin.ModelAdmin):
         boolean=True,
     )
     def result(self, obj):
-        return obj.failed_responses_count == 0
+        return not obj.has_failure
 
     @admin.display(description=_("Action"))
     def action(self, obj):

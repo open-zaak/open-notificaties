@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Count, Q
 from django.utils.translation import gettext_lazy as _
 
 
@@ -52,13 +51,7 @@ class ResultFilter(admin.SimpleListFilter):
         if not self.value():
             return queryset
 
-        annotated = queryset.annotate(
-            num_responses=Count(
-                "notificatieresponse",
-                filter=~Q(notificatieresponse__response_status=204),
-            )
-        )
         if self.value() == "success":
-            return annotated.filter(num_responses=0)
+            return queryset.filter(has_failure=False)
         elif self.value() == "failure":
-            return annotated.filter(num_responses__gte=1)
+            return queryset.filter(has_failure=True)
