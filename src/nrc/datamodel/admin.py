@@ -134,6 +134,11 @@ class AbonnementAdmin(admin.ModelAdmin):
     fields = (
         "callback_url",
         "auth",
+        "auth_type",
+        "auth_client_id",
+        "secret",
+        "oauth2_token_url",
+        "oauth2_scope",
         "uuid",
         "send_cloudevents",
     )

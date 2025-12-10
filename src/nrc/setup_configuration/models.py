@@ -81,12 +81,22 @@ class AbonnementConfigurationItem(ConfigurationModel):
             Abonnement: [
                 "callback_url",
                 "auth",
+                "auth_type",
+                "auth_client_id",
+                "secret",
+                "oauth2_token_url",
+                "oauth2_scope",
                 "send_cloudevents",
             ]
         }
         extra_kwargs = {
             "callback_url": {"examples": ["https://example.com/api/webhook/"]},
             "auth": {"examples": ["Token po4T8YpTZmeKXVWJAQCZ"]},
+            "auth_type": {"examples": ["oauth2_client_credentials"]},
+            "auth_client_id": {"examples": ["client-id"]},
+            "secret": {"examples": ["my-secret"]},
+            "oauth2_token_url": {"examples": ["https://auth.example.com/token"]},
+            "oauth2_scope": {"examples": ["read write"]},
         }
 
 

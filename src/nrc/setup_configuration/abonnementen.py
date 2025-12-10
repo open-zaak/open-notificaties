@@ -40,6 +40,11 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                 defaults={
                     "callback_url": item.callback_url,
                     "auth": item.auth,
+                    "auth_type": item.auth_type,
+                    "auth_client_id": item.auth_client_id,
+                    "secret": item.secret,
+                    "oauth2_token_url": item.oauth2_token_url,
+                    "oauth2_scope": item.oauth2_scope,
                     "send_cloudevents": item.send_cloudevents,
                 },
             )
