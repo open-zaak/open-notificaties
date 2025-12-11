@@ -495,6 +495,11 @@ notifications-api-common==0.10.0
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   commonground-api-common
+oauthlib==3.3.1
+    # via
+    #   -c requirements/base.txt
+    #   -r requirements/base.txt
+    #   requests-oauthlib
 open-api-framework==0.13.2
     # via
     #   -c requirements/base.txt
@@ -740,10 +745,15 @@ requests==2.32.4
     #   open-api-framework
     #   opentelemetry-exporter-otlp-proto-http
     #   requests-mock
+    #   requests-oauthlib
     #   sphinx
     #   zgw-consumers
 requests-mock==1.12.1
     # via -r requirements/test-tools.in
+requests-oauthlib==2.0.0
+    # via
+    #   -c requirements/base.txt
+    #   -r requirements/base.txt
 rpds-py==0.20.0
     # via
     #   -c requirements/base.txt
@@ -913,7 +923,7 @@ wrapt==1.16.0
     #   vcrpy
 yarl==1.9.4
     # via vcrpy
-zgw-consumers==1.0.0
+zgw-consumers==1.1.1
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt

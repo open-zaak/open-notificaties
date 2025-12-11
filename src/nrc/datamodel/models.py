@@ -9,10 +9,9 @@ from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
 from rest_framework.fields import DateTimeField
+from zgw_consumers.constants import AuthTypes
 
 from nrc.utils.help_text import mark_experimental
-
-from .constants import AuthTypes
 
 
 class Kanaal(models.Model):

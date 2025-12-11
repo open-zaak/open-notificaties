@@ -265,6 +265,8 @@ notifications-api-common==0.10.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
+oauthlib==3.3.1
+    # via requests-oauthlib
 open-api-framework==0.13.2
     # via -r requirements/base.in
 opentelemetry-api==1.38.0
@@ -399,7 +401,10 @@ requests==2.32.4
     #   mozilla-django-oidc
     #   open-api-framework
     #   opentelemetry-exporter-otlp-proto-http
+    #   requests-oauthlib
     #   zgw-consumers
+requests-oauthlib==2.0.0
+    # via zgw-consumers
 rpds-py==0.20.0
     # via
     #   jsonschema
@@ -471,7 +476,7 @@ wrapt==1.16.0
     # via
     #   elastic-apm
     #   opentelemetry-instrumentation
-zgw-consumers==1.0.0
+zgw-consumers==1.1.1
     # via
     #   -r requirements/base.in
     #   commonground-api-common
