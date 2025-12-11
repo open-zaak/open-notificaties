@@ -74,6 +74,7 @@ class Abonnement(models.Model):
     auth = models.CharField(
         _("Authorisation header"),
         max_length=1000,
+        blank=True,
         help_text=_(
             "Content of the Authorization header when sending notifications to "
             'the "Callback URL", for example: Bearer a4daa31...'
@@ -90,8 +91,16 @@ class Abonnement(models.Model):
         max_length=30,
         blank=True,
         choices=AuthTypes.choices,
+        default=AuthTypes.api_key,
         help_text=mark_experimental(
-            _("The type of authorization to use for this service.")
+            _(
+                """
+                Required fields per auth type:
+                * `api_key`: `auth`
+                * `zgw`: `client_id`, `secret`
+                * `oauth2_client_credentials`: `client_id`, `secret`, `oauth2_token_url`
+                """
+            )
         ),
     )
     auth_client_id = models.CharField(

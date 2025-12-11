@@ -130,7 +130,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
             "callback_url": {"validators": [CallbackURLAuthValidator()]},
-            "auth": {"write_only": True},
+            "auth": {"write_only": True, "required": True},
         }
         validators = [CallbackURLValidator("callback_url", "auth")]
 

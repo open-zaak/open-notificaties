@@ -39,8 +39,8 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                 uuid=item.uuid,
                 defaults={
                     "callback_url": item.callback_url,
-                    "auth": item.auth,
                     "auth_type": item.auth_type,
+                    "auth": item.auth,
                     "auth_client_id": item.auth_client_id,
                     "secret": item.secret,
                     "oauth2_token_url": item.oauth2_token_url,

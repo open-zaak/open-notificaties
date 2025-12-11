@@ -80,8 +80,8 @@ class AbonnementConfigurationItem(ConfigurationModel):
         django_model_refs = {
             Abonnement: [
                 "callback_url",
-                "auth",
                 "auth_type",
+                "auth",
                 "auth_client_id",
                 "secret",
                 "oauth2_token_url",
@@ -91,8 +91,8 @@ class AbonnementConfigurationItem(ConfigurationModel):
         }
         extra_kwargs = {
             "callback_url": {"examples": ["https://example.com/api/webhook/"]},
+            "auth_type": {"examples": ["api_key"]},
             "auth": {"examples": ["Token po4T8YpTZmeKXVWJAQCZ"]},
-            "auth_type": {"examples": ["oauth2_client_credentials"]},
             "auth_client_id": {"examples": ["client-id"]},
             "secret": {"examples": ["my-secret"]},
             "oauth2_token_url": {"examples": ["https://auth.example.com/token"]},
