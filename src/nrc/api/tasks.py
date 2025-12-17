@@ -9,7 +9,6 @@ import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
 from structlog.contextvars import bind_contextvars
 from zgw_consumers.client import build_client
-from zgw_consumers.constants import AuthTypes
 from zgw_consumers.models import Service
 
 from nrc.celery import app
@@ -38,9 +37,7 @@ def service_from_abonnement(abonnement: Abonnement) -> Service:
         api_root=abonnement.callback_url,
         auth_type=abonnement.auth_type,
         header_key="Authorization",
-        header_value=(
-            abonnement.auth if abonnement.auth_type == AuthTypes.api_key else ""
-        ),
+        header_value=abonnement.auth,
         client_id=abonnement.client_id,
         secret=abonnement.secret,
         oauth2_token_url=abonnement.oauth2_token_url,
