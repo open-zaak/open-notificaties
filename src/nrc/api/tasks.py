@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
@@ -75,11 +76,12 @@ def deliver_message(
         client = build_client(service)
 
         response = client.post(
-            "",
+            sub.callback_url,
             data=json.dumps(msg, cls=DjangoJSONEncoder),
             headers={
                 "Content-Type": "application/json",
             },
+            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,
         )
         response_init_kwargs = {"response_status": response.status_code}
 
@@ -152,11 +154,12 @@ def deliver_cloudevent(
         client = build_client(service)
 
         response = client.post(
-            "",
+            sub.callback_url,
             data=json.dumps(cloudevent, cls=DjangoJSONEncoder),
             headers={
                 "Content-Type": "application/cloudevents+json",
             },
+            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,
         )
         response_init_kwargs = {"response_status": response.status_code}
 
