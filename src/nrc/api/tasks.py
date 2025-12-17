@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +8,9 @@ import requests
 import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
 from structlog.contextvars import bind_contextvars
+from zgw_consumers.client import build_client
+from zgw_consumers.constants import AuthTypes
+from zgw_consumers.models import Service
 
 from nrc.celery import app
 from nrc.datamodel.models import (
@@ -29,6 +31,21 @@ class NotificationException(Exception):
 
 class CloudEventException(Exception):
     pass
+
+
+def service_from_abonnement(abonnement: Abonnement) -> Service:
+    return Service(
+        api_root=abonnement.callback_url,
+        auth_type=abonnement.auth_type,
+        header_key="Authorization",
+        header_value=(
+            abonnement.auth if abonnement.auth_type == AuthTypes.api_key else ""
+        ),
+        client_id=abonnement.client_id,
+        secret=abonnement.secret,
+        oauth2_token_url=abonnement.oauth2_token_url,
+        oauth2_scope=abonnement.oauth2_scope,
+    )
 
 
 @app.task(bind=True)
@@ -57,13 +74,18 @@ def deliver_message(
     bind_contextvars(subscription_callback=sub.callback_url)
 
     try:
-        response = requests.post(
-            sub.callback_url,
+        service = service_from_abonnement(sub)
+        client = build_client(service)
+
+        response = client.post(
+            "",
             data=json.dumps(msg, cls=DjangoJSONEncoder),
-            headers={"Content-Type": "application/json", "Authorization": sub.auth},
-            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,
+            headers={
+                "Content-Type": "application/json",
+            },
         )
         response_init_kwargs = {"response_status": response.status_code}
+
         if not 200 <= response.status_code < 300:
             exception_message = _(
                 "Could not send notification: status {status_code} - {response}"
@@ -129,16 +151,18 @@ def deliver_cloudevent(
     bind_contextvars(subscription_callback=sub.callback_url)
 
     try:
-        response = requests.post(
-            sub.callback_url,
+        service = service_from_abonnement(sub)
+        client = build_client(service)
+
+        response = client.post(
+            "",
             data=json.dumps(cloudevent, cls=DjangoJSONEncoder),
             headers={
                 "Content-Type": "application/cloudevents+json",
-                "Authorization": sub.auth,
             },
-            timeout=settings.NOTIFICATION_REQUESTS_TIMEOUT,
         )
         response_init_kwargs = {"response_status": response.status_code}
+
         if not 200 <= response.status_code < 300:
             exception_message = _(
                 "Could not send couldevent: status {status_code} - {response}"
