@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 import requests
 import structlog
 from notifications_api_common.autoretry import add_autoretry_behaviour
+from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from structlog.contextvars import bind_contextvars
 from zgw_consumers.client import build_client
 from zgw_consumers.models import Service
@@ -103,7 +104,7 @@ def deliver_message(
                 notification_attempt_count=notification_attempt_count,
                 task_attempt_count=task_attempt_count,
             )
-    except requests.RequestException as e:
+    except (requests.RequestException, OAuth2Error) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "notification_error",
@@ -181,7 +182,7 @@ def deliver_cloudevent(
                 cloudevent_attempt_count=cloudevent_attempt_count,
                 task_attempt_count=task_attempt_count,
             )
-    except requests.RequestException as e:
+    except (requests.RequestException, OAuth2Error) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "cloudevent_error",
@@ -221,6 +222,7 @@ add_autoretry_behaviour(
     autoretry_for=(
         NotificationException,
         requests.RequestException,
+        OAuth2Error,
     ),
     retry_jitter=False,
 )
@@ -230,6 +232,7 @@ add_autoretry_behaviour(
     autoretry_for=(
         CloudEventException,
         requests.RequestException,
+        OAuth2Error,
     ),
     retry_jitter=False,
 )
