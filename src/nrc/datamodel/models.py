@@ -94,12 +94,10 @@ class Abonnement(models.Model):
         default=AuthTypes.api_key,
         help_text=mark_experimental(
             _(
-                """
-                Required fields per auth type:
-                * `api_key`: `auth`
-                * `zgw`: `client_id`, `secret`
-                * `oauth2_client_credentials`: `client_id`, `secret`, `oauth2_token_url`
-                """
+                "Required fields per auth type:\n"
+                "* `api_key`: `auth`\n"
+                "* `zgw`: `client_id`, `secret`\n"
+                "* `oauth2_client_credentials`: `client_id`, `secret`, `oauth2_token_url`"
             )
         ),
     )
