@@ -133,7 +133,12 @@ class AbonnementAdmin(admin.ModelAdmin):
     actions = [check_callback_url_status]
     fields = (
         "callback_url",
+        "auth_type",
         "auth",
+        "auth_client_id",
+        "secret",
+        "oauth2_token_url",
+        "oauth2_scope",
         "uuid",
         "send_cloudevents",
     )

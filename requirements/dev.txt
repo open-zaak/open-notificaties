@@ -582,6 +582,11 @@ notifications-api-common==0.10.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   commonground-api-common
+oauthlib==3.3.1
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   requests-oauthlib
 open-api-framework==0.13.2
     # via
     #   -c requirements/ci.txt
@@ -853,9 +858,14 @@ requests==2.32.4
     #   open-api-framework
     #   opentelemetry-exporter-otlp-proto-http
     #   requests-mock
+    #   requests-oauthlib
     #   sphinx
     #   zgw-consumers
 requests-mock==1.12.1
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+requests-oauthlib==2.0.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -1103,7 +1113,7 @@ yarl==1.9.4
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   vcrpy
-zgw-consumers==1.0.0
+zgw-consumers==1.1.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt

@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
 from rest_framework.fields import DateTimeField
+from zgw_consumers.constants import AuthTypes
 
 from nrc.utils.help_text import mark_experimental
 
@@ -73,6 +74,7 @@ class Abonnement(models.Model):
     auth = models.CharField(
         _("Authorisation header"),
         max_length=1000,
+        blank=True,
         help_text=_(
             "Content of the Authorization header when sending notifications to "
             'the "Callback URL", for example: Bearer a4daa31...'
@@ -83,6 +85,47 @@ class Abonnement(models.Model):
         max_length=100,
         blank=True,
         help_text=_("Client ID extracted from Auth header"),
+    )
+    auth_type = models.CharField(
+        _("authorization type"),
+        max_length=30,
+        blank=True,
+        choices=AuthTypes.choices,
+        default=AuthTypes.api_key,
+        help_text=mark_experimental(
+            _(
+                "Required fields per auth type: * `api_key`: `auth`, * `zgw`: `client_id`, `secret`, "
+                "* `oauth2_client_credentials`: `client_id`, `secret`, `oauth2_token_url`"
+            )
+        ),
+    )
+    auth_client_id = models.CharField(
+        _("Client Id"),
+        max_length=255,
+        blank=True,
+        help_text=mark_experimental(
+            _("The client ID used to construct the JSON Web Token")
+        ),
+    )
+    secret = models.CharField(
+        _("Client Secret"),
+        max_length=255,
+        blank=True,
+        help_text=mark_experimental(_("OAuth2 client secret, if applicable")),
+    )
+    oauth2_token_url = models.URLField(
+        _("OAuth2 Token URL"),
+        max_length=1000,
+        blank=True,
+        help_text=mark_experimental(
+            _("OAuth2 token endpoint for client credentials flow. ")
+        ),
+    )
+    oauth2_scope = models.CharField(
+        _("OAuth2 Scope"),
+        max_length=255,
+        blank=True,
+        help_text=mark_experimental(_("Optional scope for OAuth2 token requests")),
     )
 
     send_cloudevents = models.BooleanField(

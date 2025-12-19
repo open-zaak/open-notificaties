@@ -8,7 +8,7 @@ furl
 # Django libraries
 django-capture-tag
 django-setup-configuration>=0.7.0
-zgw-consumers[setup-configuration]
+zgw-consumers[setup-configuration,oauth2]
 notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
 

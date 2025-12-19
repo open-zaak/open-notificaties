@@ -4,6 +4,11 @@ notifications_abonnementen_config:
   - uuid: ff5a9438-6512-4c2d-b69e-6c512c466fb8
     callback_url: http://localhost:8000/api/v1/callback
     auth: Token foo
+    auth_type: api_key
+    auth_client_id: client-id
+    secret: my-secret
+    oauth2_token_url: https://auth.example.com/token
+    oauth2_scope: read write
     kanalen:
     - filters:
         zaaktype: http://open-zaak.local/catalogi/api/v1/zaaktypen/d0b3a90d-7959-4699-8bdb-bf228aef5e21

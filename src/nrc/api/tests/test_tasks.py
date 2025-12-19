@@ -8,8 +8,10 @@ from django.utils.translation import gettext as _
 import celery
 import requests
 import requests_mock
+from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from rest_framework.test import APITestCase
 from structlog.testing import capture_logs
+from zgw_consumers.constants import AuthTypes
 
 from nrc.api.tasks import NotificationException
 from nrc.datamodel.models import NotificatieResponse
@@ -211,6 +213,167 @@ class NotifCeleryTests(APITestCase):
 
         self.assertEqual(NotificatieResponse.objects.count(), 0)
 
+    @patch("nrc.api.tasks.deliver_message.retry")
+    def test_notificatie_oauth2_exception_retry(self, retry_mock):
+        """
+        Verify that a retry is called when the sending fails due to an OAuth2 error
+        """
+        retry_mock.side_effect = celery.exceptions.Retry
+
+        abon = AbonnementFactory.create()
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        exc = OAuth2Error("invalid_client")
+        with requests_mock.Mocker() as m:
+            m.post(abon.oauth2_token_url, exc=exc)
+
+            with capture_logs() as cap_logs:
+                with self.assertRaises(celery.exceptions.Retry):
+                    deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+                self.assertEqual(
+                    cap_logs,
+                    [
+                        {
+                            "event": "notification_error",
+                            "notification_attempt_count": 1,
+                            "task_attempt_count": 1,
+                            "log_level": "error",
+                            "exc_info": exc,
+                        }
+                    ],
+                )
+
+        self.assertEqual(NotificatieResponse.objects.count(), 1)
+        notif_response = NotificatieResponse.objects.get()
+        self.assertEqual(notif_response.exception, str(exc))
+
+    def test_deliver_message_api_key_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+            self.assertTrue(m.called)
+            self.assertEqual(m.call_count, 1)
+
+            last_request = m.last_request
+            self.assertEqual(last_request.headers.get("Authorization"), abon.auth)
+
+    def test_deliver_message_zgw_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.zgw,
+            client_id="client-id",
+            secret="super-secret",
+        )
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+            self.assertTrue(m.called)
+            self.assertEqual(m.call_count, 1)
+
+            last_request = m.last_request
+            self.assertTrue(
+                last_request.headers.get("Authorization", "").startswith("Bearer ")
+            )
+
+    def test_deliver_message_oauth2_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.oauth2_client_credentials,
+            client_id="client-id",
+            secret="secret",
+            oauth2_token_url="https://auth.example/token",
+            oauth2_scope="scope",
+        )
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.Mocker() as m:
+            token = m.post(
+                abon.oauth2_token_url,
+                json={"access_token": "mock-token", "expires_in": 3600},
+            )
+            callback = m.post(abon.callback_url, status_code=204)
+
+            deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+            self.assertTrue(token.called)
+            self.assertTrue(callback.called)
+
+            self.assertTrue(
+                callback.last_request.headers["Authorization"] == "Bearer mock-token"
+            )
+            self.assertEqual(len(m.request_history), 2)
+
 
 class CloudEventCeleryTests(APITestCase):
     @patch("nrc.api.tasks.deliver_cloudevent.retry")
@@ -319,3 +482,127 @@ class CloudEventCeleryTests(APITestCase):
                     }
                 ],
             )
+
+    @patch("nrc.api.tasks.deliver_cloudevent.retry")
+    def test_cloudevent_oauth2_exception_retry(self, retry_mock):
+        """
+        Verify that a retry is called when the sending fails due to an OAuth2 error
+        """
+        retry_mock.side_effect = celery.exceptions.Retry
+
+        abon = AbonnementFactory.create()
+
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        exc = OAuth2Error("invalid_client")
+
+        with requests_mock.Mocker() as m:
+            m.post(abon.oauth2_token_url, exc=exc)
+
+            with capture_logs() as cap_logs:
+                with self.assertRaises(celery.exceptions.Retry):
+                    deliver_cloudevent(abon.id, cloudevent_data)
+
+                self.assertEqual(
+                    cap_logs,
+                    [
+                        {
+                            "event": "cloudevent_error",
+                            "cloudevent_attempt_count": 1,
+                            "task_attempt_count": 1,
+                            "log_level": "error",
+                            "exc_info": exc,
+                        }
+                    ],
+                )
+
+    def test_deliver_cloudevent_api_key_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        with requests_mock.Mocker() as m:
+            callback = m.post(abon.callback_url, status_code=204)
+            deliver_cloudevent(abon.id, cloudevent_data)
+
+            self.assertTrue(callback.called)
+            self.assertEqual(callback.call_count, 1)
+
+            last_request = callback.last_request
+            self.assertEqual(last_request.headers.get("Authorization"), abon.auth)
+            self.assertEqual(
+                last_request.headers.get("Content-Type"), "application/cloudevents+json"
+            )
+
+    def test_deliver_cloudevent_zgw_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.zgw,
+            client_id="client-id",
+            secret="super-secret",
+        )
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        with requests_mock.Mocker() as m:
+            callback = m.post(abon.callback_url, status_code=204)
+            deliver_cloudevent(abon.id, cloudevent_data)
+
+            self.assertTrue(callback.called)
+            self.assertEqual(callback.call_count, 1)
+
+            last_request = callback.last_request
+            self.assertTrue(
+                last_request.headers.get("Authorization", "").startswith("Bearer ")
+            )
+            self.assertEqual(
+                last_request.headers.get("Content-Type"), "application/cloudevents+json"
+            )
+
+    def test_deliver_cloudevent_oauth2_auth(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.oauth2_client_credentials,
+            client_id="client-id",
+            secret="secret",
+            oauth2_token_url="https://auth.example/token",
+            oauth2_scope="scope",
+        )
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        with requests_mock.Mocker() as m:
+            token = m.post(
+                abon.oauth2_token_url,
+                json={"access_token": "mock-token", "expires_in": 3600},
+            )
+            callback = m.post(abon.callback_url, status_code=204)
+            deliver_cloudevent(abon.id, cloudevent_data)
+
+            self.assertTrue(token.called)
+            self.assertTrue(callback.called)
+
+            last_request = callback.last_request
+            self.assertEqual(last_request.headers["Authorization"], "Bearer mock-token")
+            self.assertEqual(
+                last_request.headers.get("Content-Type"), "application/cloudevents+json"
+            )
+            self.assertEqual(len(m.request_history), 2)

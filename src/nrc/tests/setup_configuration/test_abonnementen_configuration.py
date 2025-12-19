@@ -55,6 +55,14 @@ class AbonnementenConfigurationTests(TestCase):
             abonnement_zaken.callback_url, "http://localhost:8000/api/v1/callback"
         )
 
+        self.assertEqual(abonnement_zaken.auth_type, "api_key")
+        self.assertEqual(abonnement_zaken.auth_client_id, "client-id")
+        self.assertEqual(abonnement_zaken.secret, "my-secret")
+        self.assertEqual(
+            abonnement_zaken.oauth2_token_url, "https://auth.example.com/token"
+        )
+        self.assertEqual(abonnement_zaken.oauth2_scope, "read write")
+
         self.assertEqual(
             str(abonnement_documenten.uuid), "03baec5a-93ef-4ba6-bb73-c548c12009a2"
         )
@@ -128,6 +136,13 @@ class AbonnementenConfigurationTests(TestCase):
         self.assertEqual(
             abonnement_zaken.callback_url, "http://localhost:8000/api/v1/callback"
         )
+        self.assertEqual(abonnement_zaken.auth_type, "api_key")
+        self.assertEqual(abonnement_zaken.auth_client_id, "client-id")
+        self.assertEqual(abonnement_zaken.secret, "my-secret")
+        self.assertEqual(
+            abonnement_zaken.oauth2_token_url, "https://auth.example.com/token"
+        )
+        self.assertEqual(abonnement_zaken.oauth2_scope, "read write")
 
         filter_group.refresh_from_db()
 
