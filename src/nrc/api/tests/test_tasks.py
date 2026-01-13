@@ -9,6 +9,7 @@ import celery
 import requests
 import requests_mock
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
+from privates.test import temp_private_root
 from rest_framework.test import APITestCase
 from structlog.testing import capture_logs
 from zgw_consumers.constants import AuthTypes
@@ -21,6 +22,7 @@ from ..tasks import deliver_cloudevent, deliver_message
 from ..types import CloudEventKwargs, SendNotificationTaskKwargs
 
 
+@temp_private_root()
 class NotifCeleryTests(APITestCase):
     @patch("nrc.api.tasks.deliver_message.retry")
     def test_notificatie_invalid_response_retry(self, retry_mock):
@@ -374,7 +376,82 @@ class NotifCeleryTests(APITestCase):
             )
             self.assertEqual(len(m.request_history), 2)
 
+    def test_deliver_message_no_cert_specified(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        notif = NotificatieFactory.create()
 
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+            self.assertTrue(m.called)
+            self.assertEqual(m.call_count, 1)
+
+            last_request = m.last_request
+
+            self.assertTrue(last_request.verify)
+            self.assertIsNone(last_request.cert)
+
+    def test_deliver_message_client_and_server_cert_specified(self):
+        abon = AbonnementFactory.create(
+            with_server_cert=True,
+            with_client_cert=True,
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+
+            deliver_message(abon.id, request_data, notificatie_id=notif.id)
+
+            self.assertTrue(m.called)
+            self.assertEqual(m.call_count, 1)
+
+            last_request = m.last_request
+
+            self.assertEqual(
+                last_request.cert,
+                abon.client_certificate.public_certificate.path,
+            )
+
+
+@temp_private_root()
 class CloudEventCeleryTests(APITestCase):
     @patch("nrc.api.tasks.deliver_cloudevent.retry")
     def test_cloudevent_invalid_response_retry(self, retry_mock):
@@ -606,3 +683,55 @@ class CloudEventCeleryTests(APITestCase):
                 last_request.headers.get("Content-Type"), "application/cloudevents+json"
             )
             self.assertEqual(len(m.request_history), 2)
+
+    def test_deliver_cloudevent_no_cert_specified(self):
+        abon = AbonnementFactory.create(
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        with requests_mock.Mocker() as m:
+            callback = m.post(abon.callback_url, status_code=204)
+            deliver_cloudevent(abon.id, cloudevent_data)
+
+            self.assertTrue(callback.called)
+            self.assertEqual(callback.call_count, 1)
+
+            last_request = callback.last_request
+
+            self.assertTrue(last_request.verify)
+            self.assertIsNone(last_request.cert)
+
+    def test_deliver_cloudevent_client_and_server_cert_specified(self):
+        abon = AbonnementFactory.create(
+            with_server_cert=True,
+            with_client_cert=True,
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        cloudevent_data: CloudEventKwargs = {
+            "id": "123",
+            "source": "oz",
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.updated",
+        }
+
+        with requests_mock.Mocker() as m:
+            callback = m.post(abon.callback_url, status_code=204)
+            deliver_cloudevent(abon.id, cloudevent_data)
+
+            self.assertTrue(callback.called)
+            self.assertEqual(callback.call_count, 1)
+
+            last_request = callback.last_request
+
+            self.assertEqual(
+                last_request.cert,
+                abon.client_certificate.public_certificate.path,
+            )

@@ -44,6 +44,8 @@ def service_from_abonnement(abonnement: Abonnement) -> Service:
         secret=abonnement.secret,
         oauth2_token_url=abonnement.oauth2_token_url,
         oauth2_scope=abonnement.oauth2_scope,
+        client_certificate=abonnement.client_certificate,
+        server_certificate=abonnement.server_certificate,
     )
 
 
