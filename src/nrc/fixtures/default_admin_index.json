@@ -123,6 +123,10 @@
             [
                 "sites",
                 "site"
+            ],
+            [
+                "simple_certmanager",
+                "certificate"
             ]
         ]
     }

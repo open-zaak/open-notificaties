@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
 from rest_framework.fields import DateTimeField
+from simple_certmanager.models import Certificate
 from zgw_consumers.constants import AuthTypes
 
 from nrc.utils.help_text import mark_experimental
@@ -86,6 +87,12 @@ class Abonnement(models.Model):
         blank=True,
         help_text=_("Client ID extracted from Auth header"),
     )
+    # TODO (next major release):
+    # from nrc.api.tasks impoort service_from_abonnement
+    #
+    # Refactor Abonnement to reference a Service directly instead of instantiating
+    # a temporary Service from Abonnement data.
+
     auth_type = models.CharField(
         _("authorization type"),
         max_length=30,
@@ -127,7 +134,22 @@ class Abonnement(models.Model):
         blank=True,
         help_text=mark_experimental(_("Optional scope for OAuth2 token requests")),
     )
-
+    client_certificate = models.ForeignKey(
+        Certificate,
+        blank=True,
+        null=True,
+        help_text=_("The SSL/TLS certificate of the client"),
+        on_delete=models.PROTECT,
+        related_name="abonnement_service_client",
+    )
+    server_certificate = models.ForeignKey(
+        Certificate,
+        blank=True,
+        null=True,
+        help_text=_("The SSL/TLS certificate of the server"),
+        on_delete=models.PROTECT,
+        related_name="abonnement_service_server",
+    )
     send_cloudevents = models.BooleanField(
         _("Send cloudevents"),
         help_text=mark_experimental(

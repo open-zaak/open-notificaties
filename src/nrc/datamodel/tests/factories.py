@@ -17,6 +17,20 @@ class AbonnementFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = "datamodel.Abonnement"
 
+    class Params:
+        with_server_cert = factory.Trait(
+            server_certificate=factory.SubFactory(
+                "simple_certmanager.test.factories.CertificateFactory",
+                public_certificate__filename="server.cert",
+            ),
+        )
+        with_client_cert = factory.Trait(
+            client_certificate=factory.SubFactory(
+                "simple_certmanager.test.factories.CertificateFactory",
+                public_certificate__filename="client.cert",
+            ),
+        )
+
 
 class KanaalFactory(factory.django.DjangoModelFactory):
     naam = factory.Sequence(lambda n: f"kanaal_{n}")

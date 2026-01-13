@@ -140,6 +140,8 @@ class AbonnementAdmin(admin.ModelAdmin):
         "oauth2_token_url",
         "oauth2_scope",
         "uuid",
+        "client_certificate",
+        "server_certificate",
         "send_cloudevents",
     )
 
