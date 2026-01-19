@@ -2188,6 +2188,16 @@ components:
           description: a substring of an event type that the subscription will watch
             for
           maxLength: 255
+        filters:
+          type: object
+          additionalProperties:
+            type: string
+            title: kenmerk
+            description: Een waarde behorende bij de sleutel.
+            maxLength: 1000
+          description: Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd
+            worden. Alleen notificaties waarvan de kenmerken voldoen aan het filter
+            worden doorgestuurd naar de afnemer van het ABONNEMENT.
       required:
       - typeSubstring
     FieldValidationError:
