@@ -128,7 +128,13 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             "callbackUrl": "https://example.com/zrc/api/v1/callbacks",
             "auth": "Bearer YWRtaW46YWRtaW4K",
             "send_cloudevents": True,
-            "cloudevent_filters": [{"type_substring": "nl.overheid"}],
+            "cloudevent_filters": [
+                {"type_substring": "nl.overheid"},
+                {
+                    "type_substring": "zaak-gemuteerd",
+                    "filters": {"vertrouwelijkheidaanduiding": "zeer_geheim"},
+                },
+            ],
         }
 
         with requests_mock.mock() as m:
@@ -145,12 +151,18 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         abon = Abonnement.objects.get()
 
         self.assertEqual(Abonnement.objects.count(), 1)
-        self.assertEqual(CloudEventFilterGroup.objects.count(), 1)
+        self.assertEqual(CloudEventFilterGroup.objects.count(), 2)
         self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
         self.assertTrue(abon.send_cloudevents)
-        self.assertEqual(
-            CloudEventFilterGroup.objects.get().type_substring, "nl.overheid"
-        )
+
+        filter_group1, filter_group2 = CloudEventFilterGroup.objects.order_by("pk")
+        cloudevent_filter = filter_group2.filters.get()
+
+        self.assertEqual(filter_group1.type_substring, "nl.overheid")
+        self.assertFalse(filter_group1.filters.exists())
+        self.assertEqual(filter_group2.type_substring, "zaak-gemuteerd")
+        self.assertEqual(cloudevent_filter.key, "vertrouwelijkheidaanduiding")
+        self.assertEqual(cloudevent_filter.value, "zeer_geheim")
 
     def test_abonnement_update_kanalen(self):
         """
@@ -212,7 +224,13 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             "callbackUrl": "https://other.url/callbacks",
             "auth": "Bearer YWRtaW46YWRtaW4K",
             "send_cloudevents": True,
-            "cloudevent_filters": [{"type_substring": "nl.overheid.test"}],
+            "cloudevent_filters": [
+                {"type_substring": "nl.overheid.test"},
+                {
+                    "type_substring": "zaak-gemuteerd",
+                    "filters": {"vertrouwelijkheidaanduiding": "zeer_geheim"},
+                },
+            ],
         }
         abonnement_update_url = get_operation_url(
             "abonnement_update", uuid=abonnement.uuid
@@ -224,10 +242,16 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 
-        self.assertEqual(abonnement.cloudevent_filtergroups.count(), 1)
-        self.assertEqual(
-            abonnement.cloudevent_filtergroups.get().type_substring, "nl.overheid.test"
-        )
+        self.assertEqual(CloudEventFilterGroup.objects.count(), 2)
+
+        filter_group1, filter_group2 = CloudEventFilterGroup.objects.order_by("pk")
+        cloudevent_filter = filter_group2.filters.get()
+
+        self.assertEqual(filter_group1.type_substring, "nl.overheid.test")
+        self.assertFalse(filter_group1.filters.exists())
+        self.assertEqual(filter_group2.type_substring, "zaak-gemuteerd")
+        self.assertEqual(cloudevent_filter.key, "vertrouwelijkheidaanduiding")
+        self.assertEqual(cloudevent_filter.value, "zeer_geheim")
 
     def test_abonnementen_create_inconsistent_filters(self):
         """

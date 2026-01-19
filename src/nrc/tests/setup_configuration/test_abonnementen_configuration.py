@@ -82,13 +82,31 @@ class AbonnementenConfigurationTests(TestCase):
             "http://localhost:8000/api/v1/other-callback",
         )
 
-        cloudevent_filter_group1, cloudevent_filter_group2 = (
-            CloudEventFilterGroup.objects.order_by("pk")
-        )
+        (
+            cloudevent_filter_group1,
+            cloudevent_filter_group2,
+            cloudevent_filter_group3,
+            cloudevent_filter_group4,
+        ) = CloudEventFilterGroup.objects.order_by("pk")
         self.assertEqual(cloudevent_filter_group1.abonnement, abonnement_cloudevent)
         self.assertEqual(cloudevent_filter_group2.abonnement, abonnement_cloudevent)
+        self.assertEqual(cloudevent_filter_group4.abonnement, abonnement_cloudevent)
+        self.assertEqual(cloudevent_filter_group4.abonnement, abonnement_cloudevent)
         self.assertEqual(cloudevent_filter_group1.type_substring, "zaak.created")
         self.assertEqual(cloudevent_filter_group2.type_substring, "nl.overheid")
+        self.assertEqual(cloudevent_filter_group3.type_substring, "zaak-gemuteerd")
+        self.assertEqual(cloudevent_filter_group4.type_substring, "zaak-geopend")
+
+        cloudevent_filter1 = cloudevent_filter_group3.filters.get()
+        cloudevent_filter2 = cloudevent_filter_group4.filters.get()
+
+        self.assertEqual(cloudevent_filter1.key, "zaaktype")
+        self.assertEqual(
+            cloudevent_filter1.value,
+            "http://open-zaak.local/catalogi/api/v1/zaaktypen/bd0a0bd4-f4df-4dfb-a9ff-4a39cd6955ce",
+        )
+        self.assertEqual(cloudevent_filter2.key, "vertrouwelijkheidaanduiding")
+        self.assertEqual(cloudevent_filter2.value, "zeer_geheim")
 
         filter_group1, filter_group2 = FilterGroup.objects.order_by("pk")
 
