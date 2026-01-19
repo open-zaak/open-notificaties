@@ -260,8 +260,12 @@ class MessageSerializer(NotificatieSerializer):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
-        filter_groups = FilterGroup.objects.filter(
-            kanaal__naam=msg["kanaal"],
+        filter_groups = (
+            FilterGroup.objects.filter(
+                kanaal__naam=msg["kanaal"],
+            )
+            .select_related("abonnement")
+            .prefetch_related("filters")
         )
         for group in filter_groups:
             if group.match_pattern(msg_filters):
@@ -397,7 +401,8 @@ class CloudEventSerializer(serializers.ModelSerializer):
         msg_filters = msg.get("data", {})
         subs: set[Abonnement] = set()
         filter_groups = (
-            CloudEventFilterGroup.objects.prefetch_related("abonnement")
+            CloudEventFilterGroup.objects.select_related("abonnement")
+            .prefetch_related("filters")
             .annotate(type=Value(msg["type"], CharField()))
             .filter(
                 type__contains=F("type_substring"), abonnement__send_cloudevents=True
