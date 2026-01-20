@@ -170,8 +170,11 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                     code="kanaal_naam",
                 )
 
+            if not (filters := group_data.get("filters")):
+                continue
+
             # check abonnement filters are consistent with kanaal filters
-            abon_filter_names = [f.key for f in group_data["filters"]]
+            abon_filter_names = [f.key for f in filters]
             if not kanaal.match_filter_names(abon_filter_names):
                 raise serializers.ValidationError(
                     {
@@ -187,7 +190,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     def _create_kanalen_filters(self, abonnement, validated_data):
         for group_data in validated_data:
             kanaal_data = group_data.pop("kanaal")
-            filters = group_data.pop("filters")
+            filters: list[Filter] = group_data.pop("filters", [])
 
             kanaal = Kanaal.objects.get(naam=kanaal_data["naam"])
             filter_group = FilterGroup.objects.create(

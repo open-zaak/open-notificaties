@@ -36,6 +36,7 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
         )
         KanaalFactory.create(naam="informatieobjecten", filters=[])
+        KanaalFactory.create(naam="besluiten", filters=[])
         abonnement_create_url = get_operation_url("abonnement_create")
 
         data = {
@@ -51,6 +52,8 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
                     },
                 },
                 {"naam": "informatieobjecten", "filters": {"bron": "082096752011"}},
+                # subscription without filters
+                {"naam": "besluiten"},
             ],
         }
 
@@ -72,8 +75,8 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
         filters_str = [str(f) for f in filters]
 
         self.assertEqual(Abonnement.objects.count(), 1)
-        self.assertEqual(Kanaal.objects.count(), 2)
-        self.assertEqual(FilterGroup.objects.count(), 2)
+        self.assertEqual(Kanaal.objects.count(), 3)
+        self.assertEqual(FilterGroup.objects.count(), 3)
         self.assertEqual(Filter.objects.count(), 4)
         self.assertEqual(abon.callback_url, "https://example.com/zrc/api/v1/callbacks")
         self.assertEqual(filter_group.kanaal.naam, "zaken")
