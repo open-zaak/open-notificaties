@@ -9,3 +9,4 @@ Configuration
    env_config
    opennotifs_config_cli
    opennotifs_config
+   cloud_events_mijn_overheid
