@@ -75,7 +75,7 @@ def receiver_setup_logging(
                     "handlers": ["console"],
                     "level": "INFO",
                 },
-                "objects": {
+                "nrc": {
                     "handlers": ["console"],
                     "level": "INFO",
                 },
