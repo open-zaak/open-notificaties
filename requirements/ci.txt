@@ -923,7 +923,7 @@ wrapt==1.16.0
     #   vcrpy
 yarl==1.9.4
     # via vcrpy
-zgw-consumers==1.1.1
+zgw-consumers==1.1.2
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
