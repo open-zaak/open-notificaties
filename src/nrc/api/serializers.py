@@ -19,6 +19,7 @@ from nrc.api.tasks import deliver_cloudevent, deliver_message
 from nrc.datamodel.models import (
     Abonnement,
     CloudEvent,
+    CloudEventFilter,
     CloudEventFilterGroup,
     Filter,
     FilterGroup,
@@ -46,7 +47,15 @@ class FiltersField(fields.DictField):
         return dict(qs.values_list("key", "value"))
 
     def to_internal_value(self, data):
-        return [Filter(key=k, value=v) for k, v in data.items()]
+        return [self.Meta.model(key=k, value=v) for k, v in data.items()]
+
+    class Meta:
+        model = Filter
+
+
+class CloudEventFiltersField(FiltersField):
+    class Meta:
+        model = CloudEventFilter
 
 
 class KanaalSerializer(serializers.ModelSerializer):
@@ -93,9 +102,22 @@ class FilterGroupSerializer(serializers.ModelSerializer):
 
 
 class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
+    filters = CloudEventFiltersField(
+        required=False,
+        help_text=_(
+            "Map van kenmerken (sleutel/waarde) waarop notificaties "
+            "gefilterd worden. Alleen notificaties waarvan de "
+            "kenmerken voldoen aan het filter worden doorgestuurd naar "
+            "de afnemer van het ABONNEMENT."
+        ),
+    )
+
     class Meta:
         model = CloudEventFilterGroup
-        fields = ("type_substring",)
+        fields = (
+            "type_substring",
+            "filters",
+        )
 
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
@@ -148,8 +170,11 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
                     code="kanaal_naam",
                 )
 
+            if not (filters := group_data.get("filters")):
+                continue
+
             # check abonnement filters are consistent with kanaal filters
-            abon_filter_names = [f.key for f in group_data["filters"]]
+            abon_filter_names = [f.key for f in filters]
             if not kanaal.match_filter_names(abon_filter_names):
                 raise serializers.ValidationError(
                     {
@@ -165,7 +190,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     def _create_kanalen_filters(self, abonnement, validated_data):
         for group_data in validated_data:
             kanaal_data = group_data.pop("kanaal")
-            filters = group_data.pop("filters")
+            filters: list[Filter] = group_data.pop("filters", [])
 
             kanaal = Kanaal.objects.get(naam=kanaal_data["naam"])
             filter_group = FilterGroup.objects.create(
@@ -177,9 +202,14 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
     def _create_cloudevent_filters(self, abonnement, validated_data):
         for ce_filter in validated_data:
-            CloudEventFilterGroup.objects.create(
+            filters = ce_filter.pop("filters", {})
+
+            filter_group = CloudEventFilterGroup.objects.create(
                 abonnement=abonnement, type_substring=ce_filter["type_substring"]
             )
+            for filter in filters:
+                filter.cloud_event_filter_group = filter_group
+                filter.save()
 
     @transaction.atomic
     def create(self, validated_data):
@@ -233,8 +263,12 @@ class MessageSerializer(NotificatieSerializer):
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
-        filter_groups = FilterGroup.objects.filter(
-            kanaal__naam=msg["kanaal"],
+        filter_groups = (
+            FilterGroup.objects.filter(
+                kanaal__naam=msg["kanaal"],
+            )
+            .select_related("abonnement")
+            .prefetch_related("filters")
         )
         for group in filter_groups:
             if group.match_pattern(msg_filters):
@@ -367,15 +401,20 @@ class CloudEventSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def _get_subs(self, msg: CloudEventKwargs) -> set[Abonnement]:
-        return set(
-            Abonnement.objects.prefetch_related("cloudevent_filtergroups")
+        msg_filters = msg.get("data", {})
+        subs: set[Abonnement] = set()
+        filter_groups = (
+            CloudEventFilterGroup.objects.select_related("abonnement")
+            .prefetch_related("filters")
             .annotate(type=Value(msg["type"], CharField()))
             .filter(
-                type__contains=F("cloudevent_filtergroups__type_substring"),
-                send_cloudevents=True,
+                type__contains=F("type_substring"), abonnement__send_cloudevents=True
             )
-            .distinct()
         )
+        for group in filter_groups:
+            if group.match_pattern(msg_filters):
+                subs.add(group.abonnement)
+        return subs
 
     @classmethod
     def send_to_subs(

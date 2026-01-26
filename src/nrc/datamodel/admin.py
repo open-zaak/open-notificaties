@@ -15,6 +15,7 @@ from .admin_filters import ActionFilter, ResourceFilter, ResultFilter
 from .models import (
     Abonnement,
     CloudEvent,
+    CloudEventFilter,
     CloudEventFilterGroup,
     CloudEventResponse,
     Filter,
@@ -52,8 +53,30 @@ class FilterGroupInline(admin.TabularInline):
 
 
 class CloudEventFilterGroupInline(admin.TabularInline):
+    fields = (
+        "type_substring",
+        "get_filters_display",
+        "get_object_actions",
+    )
     model = CloudEventFilterGroup
+    readonly_fields = (
+        "get_filters_display",
+        "get_object_actions",
+    )
     extra = 0
+
+    @admin.display(description=_("filters"))
+    def get_filters_display(self, obj: CloudEventFilterGroup):
+        return ", ".join([f"{f.key}={f.value}" for f in obj.filters.all()])
+
+    @admin.display(description=_("acties"))
+    def get_object_actions(self, obj: CloudEventFilterGroup):
+        return mark_safe(
+            '<a href="{}">{}</a>'.format(
+                reverse("admin:datamodel_cloudeventfiltergroup_change", args=(obj.pk,)),
+                _("Filters instellen"),
+            )
+        )
 
 
 @admin.action(
@@ -207,10 +230,21 @@ class FilterInline(admin.TabularInline):
     extra = 0
 
 
+class CloudEventFilterInline(admin.TabularInline):
+    model = CloudEventFilter
+    extra = 0
+
+
 @admin.register(FilterGroup)
-class FilterGroup(admin.ModelAdmin):
+class FilterGroupAdmin(admin.ModelAdmin):
     list_display = ("abonnement", "kanaal")
     inlines = (FilterInline,)
+
+
+@admin.register(CloudEventFilterGroup)
+class CloudEventFilterGroupAdmin(admin.ModelAdmin):
+    list_display = ("abonnement", "type_substring")
+    inlines = (CloudEventFilterInline,)
 
 
 @admin.register(NotificatieResponse)

@@ -1,5 +1,4 @@
 import factory
-import factory.fuzzy
 
 
 class AbonnementFactory(factory.django.DjangoModelFactory):
@@ -100,3 +99,12 @@ class CloudEventFilterGroupFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "datamodel.CloudEventFilterGroup"
+
+
+class CloudEventFilterFactory(factory.django.DjangoModelFactory):
+    key = factory.Faker("word")
+    value = factory.Faker("word")
+    cloud_event_filter_group = factory.SubFactory(CloudEventFilterGroupFactory)
+
+    class Meta:
+        model = "datamodel.CloudEventFilter"

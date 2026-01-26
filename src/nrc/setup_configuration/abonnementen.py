@@ -4,13 +4,14 @@ from django_setup_configuration.exceptions import ConfigurationRunFailed
 
 from nrc.datamodel.models import (
     Abonnement,
+    CloudEventFilter,
     CloudEventFilterGroup,
     Filter,
     FilterGroup,
     Kanaal,
 )
 
-from .models import AbonnementConfigurationModel
+from .models import AbonnementConfigurationModel, CloudEventFilterConfigurationModel
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -73,10 +74,27 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                         key=key, filter_group=filter_group, defaults={"value": value}
                     )
 
-            for type_substring in item.cloudevent_filters:
-                CloudEventFilterGroup.objects.update_or_create(
-                    type_substring=type_substring, abonnement=abonnement
+            for cloudevent_filter in item.cloudevent_filters:
+                if isinstance(cloudevent_filter, CloudEventFilterConfigurationModel):
+                    type_substring = cloudevent_filter.type_substring
+                else:
+                    type_substring = cloudevent_filter
+
+                cloud_event_filter_group, _ = (
+                    CloudEventFilterGroup.objects.update_or_create(
+                        type_substring=type_substring, abonnement=abonnement
+                    )
                 )
+
+                if isinstance(cloudevent_filter, CloudEventFilterConfigurationModel):
+                    for key, value in cloudevent_filter.filters.items():
+                        # key is used for update_or_create, because multiple filters in the
+                        # same filter_group with the same key doesn't work
+                        CloudEventFilter.objects.update_or_create(
+                            key=key,
+                            cloud_event_filter_group=cloud_event_filter_group,
+                            defaults={"value": value},
+                        )
 
             logger.debug(
                 "subscription_created" if created else "subscription_updated",

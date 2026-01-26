@@ -28,3 +28,15 @@ notifications_abonnementen_config:
     cloudevent_filters:
       - zaak.created
       - nl.overheid
+  - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
+    callback_url: http://localhost:8000/api/v1/other-callback
+    auth: Token bar
+    send_cloudevents: true
+    # Alternative format for `cloudevent_filters` to specify data filters
+    cloudevent_filters:
+      - type_substring: zaak-gemuteerd
+        filters:
+          zaaktype: http://open-zaak.local/catalogi/api/v1/zaaktypen/bd0a0bd4-f4df-4dfb-a9ff-4a39cd6955ce
+      - type_substring: zaak-geopend
+        filters:
+          vertrouwelijkheidaanduiding: zeer_geheim

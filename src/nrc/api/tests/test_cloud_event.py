@@ -7,7 +7,7 @@ from django.utils import timezone
 import requests
 import requests_mock
 from rest_framework import status
-from rest_framework.reverse import reverse
+from rest_framework.reverse import reverse_lazy
 from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
@@ -15,6 +15,7 @@ from vng_api_common.tests import JWTAuthMixin
 from nrc.datamodel.models import CloudEvent
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
+    CloudEventFilterFactory,
     CloudEventFilterGroupFactory,
 )
 from nrc.utils.tests.structlog import capture_logs
@@ -28,12 +29,14 @@ from nrc.utils.tests.structlog import capture_logs
 class CloudEventTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
     maxDiff = None
+    cloudevent_url = reverse_lazy(
+        "cloudevent-list",
+        kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+    )
 
     def test_cloudevent_send_success(self):
         """
-        test /notificatie POST:
         check if message was send to subscribers callbackUrls
-
         """
         abon = AbonnementFactory.create(
             callback_url="https://example.local/callback", send_cloudevents=True
@@ -41,10 +44,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,
-        )
-        cloudevent_url = reverse(
-            "cloudevent-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
         )
 
         event_id = str(uuid4())
@@ -65,7 +64,211 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             m.post(abon.callback_url, status_code=204)
             with capture_logs() as cap_logs:
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
+                    event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+
+            cloudevent_received = next(
+                log for log in cap_logs if log["event"] == "cloudevent_received"
+            )
+            cloudevent_successful = next(
+                log for log in cap_logs if log["event"] == "cloudevent_successful"
+            )
+            self.assertEqual(
+                cloudevent_received,
+                {
+                    **cloudevent_received,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_successful,
+                {
+                    **cloudevent_successful,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(CloudEvent.objects.count(), 1)
+
+        self.assertEqual(m.last_request.url, abon.callback_url)
+        self.assertEqual(m.last_request.json(), event)
+        self.assertEqual(
+            m.last_request.headers["Content-Type"], "application/cloudevents+json"
+        )
+
+        self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
+
+    def test_cloudevent_send_to_subscriptions_with_additional_filters(self):
+        """
+        check if message was send to subscribers callbackUrls, based on configured filters
+        """
+        abon_no_filters = AbonnementFactory.create(
+            callback_url="https://example.local/callback1", send_cloudevents=True
+        )
+        CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
+            abonnement=abon_no_filters,
+        )
+
+        abon_matching_filter = AbonnementFactory.create(
+            callback_url="https://example.local/callback2", send_cloudevents=True
+        )
+        CloudEventFilterFactory.create(
+            cloud_event_filter_group__type_substring="nl.overheid.zaken",
+            cloud_event_filter_group__abonnement=abon_matching_filter,
+            key="vertrouwelijkheidaanduiding",
+            value="zeer_geheim",
+        )
+
+        abon_non_matching_filter = AbonnementFactory.create(
+            callback_url="https://example.local/callback3", send_cloudevents=True
+        )
+        filter_group = CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
+            abonnement=abon_non_matching_filter,
+        )
+        CloudEventFilterFactory.create(
+            cloud_event_filter_group=filter_group,
+            key="vertrouwelijkheidaanduiding",
+            value="openbaar",
+        )
+        CloudEventFilterFactory.create(
+            cloud_event_filter_group=filter_group,
+            key="other_key",
+            value="no_match",
+        )
+
+        event_id = str(uuid4())
+        subject_id = str(uuid4())
+
+        event = {
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.created",
+            "source": "oz",
+            "subject": subject_id,
+            "id": event_id,
+            "time": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "datacontenttype": "application/json",
+            "data": {"vertrouwelijkheidaanduiding": "zeer_geheim"},
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon_no_filters.callback_url, status_code=204)
+            m.post(abon_matching_filter.callback_url, status_code=204)
+            with capture_logs() as cap_logs:
+                response = self.client.post(
+                    self.cloudevent_url,
+                    event,
+                    headers={"content-type": "application/cloudevents+json"},
+                )
+
+            cloudevent_received = next(
+                log for log in cap_logs if log["event"] == "cloudevent_received"
+            )
+            cloudevent_successful = next(
+                log for log in cap_logs if log["event"] == "cloudevent_successful"
+            )
+            self.assertEqual(
+                cloudevent_received,
+                {
+                    **cloudevent_received,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+            self.assertEqual(
+                cloudevent_successful,
+                {
+                    **cloudevent_successful,
+                    **{
+                        "id": event_id,
+                        "source": "oz",
+                        "type": "nl.overheid.zaken.zaak.created",
+                        "subject": subject_id,
+                        "log_level": "info",
+                    },
+                },
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(CloudEvent.objects.count(), 1)
+
+        # Requests must be sent to abonnementen that have no explicit filters defined
+        # and to abonnement for which the defined filters match
+        self.assertEqual(len(m.request_history), 2)
+
+        request1, request2 = m.request_history
+
+        self.assertEqual(request1.url, abon_no_filters.callback_url)
+        self.assertEqual(request1.json(), event)
+        self.assertEqual(
+            request1.headers["Content-Type"], "application/cloudevents+json"
+        )
+        self.assertEqual(request1.headers["Authorization"], abon_no_filters.auth)
+        self.assertEqual(request2.url, abon_matching_filter.callback_url)
+        self.assertEqual(request2.json(), event)
+        self.assertEqual(
+            request2.headers["Content-Type"], "application/cloudevents+json"
+        )
+        self.assertEqual(request2.headers["Authorization"], abon_matching_filter.auth)
+
+    def test_cloudevent_subscription_with_filters_but_no_data_defined_on_event(self):
+        """
+        if a subscription has filters defined, but the incoming event does not have
+        values in `data`, the event will still be forwarded to the subscription
+        """
+        abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback", send_cloudevents=True
+        )
+        filter_group = CloudEventFilterGroupFactory.create(
+            type_substring="nl.overheid.zaken",
+            abonnement=abon,
+        )
+        CloudEventFilterFactory.create(
+            cloud_event_filter_group=filter_group,
+            key="vertrouwelijkheidaanduiding",
+            value="openbaar",
+        )
+
+        event_id = str(uuid4())
+        subject_id = str(uuid4())
+
+        event = {
+            "specversion": "1.0",
+            "type": "nl.overheid.zaken.zaak.created",
+            "source": "oz",
+            "subject": subject_id,
+            "id": event_id,
+            "time": timezone.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "datacontenttype": "application/json",
+            "data": {},
+        }
+
+        with requests_mock.mock() as m:
+            m.post(abon.callback_url, status_code=204)
+            with capture_logs() as cap_logs:
+                response = self.client.post(
+                    self.cloudevent_url,
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
@@ -127,10 +330,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             type_substring="nl.overheid.zaken",
             abonnement=abon,
         )
-        cloudevent_url = reverse(
-            "cloudevent-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
-        )
 
         event_id = str(uuid4())
         subject_id = str(uuid4())
@@ -155,7 +354,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
@@ -219,10 +418,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             type_substring="nl.overheid.zaken",
             abonnement=abon,
         )
-        cloudevent_url = reverse(
-            "cloudevent-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
-        )
 
         event_id = str(uuid4())
         subject_id = str(uuid4())
@@ -244,7 +439,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
@@ -299,10 +494,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
     @patch("nrc.api.tasks.deliver_cloudevent.delay")
     def test_correct_subs_get_cloudevent(self, mock_delay):
-        cloudevent_url = reverse(
-            "cloudevent-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
-        )
         event = {
             "specversion": "1.0",
             "type": "nl.overheid.zaken.zaak.created",
@@ -363,7 +554,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
             m.post(abon3.callback_url, status_code=204)
 
             response = self.client.post(
-                cloudevent_url,
+                self.cloudevent_url,
                 event,
                 headers={"Content-Type": "application/cloudevents+json"},
             )
@@ -382,10 +573,6 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         CloudEventFilterGroupFactory.create(
             type_substring="nl.overheid.zaken",
             abonnement=abon,
-        )
-        cloudevent_url = reverse(
-            "cloudevent-list",
-            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
         )
         event = {
             "specversion": "1.0",
@@ -407,7 +594,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     "id": id,
                 }
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
                     xml_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
@@ -427,7 +614,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     "id": id,
                 }
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
                     null_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
@@ -443,7 +630,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     "id": id,
                 }
                 response = self.client.post(
-                    cloudevent_url,
+                    self.cloudevent_url,
                     omitted_data_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )

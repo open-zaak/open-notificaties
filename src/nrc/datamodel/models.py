@@ -4,7 +4,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import Max
+from django.db.models import Max, QuerySet
 from django.utils.translation import gettext_lazy as _
 
 from djangorestframework_camel_case.util import camelize
@@ -187,20 +187,7 @@ class FilterGroup(models.Model):
         verbose_name_plural = _("filters")
 
     def match_pattern(self, msg_filters: dict) -> bool:
-        abon_filters = {
-            abon_filter.key: abon_filter.value for abon_filter in self.filters.all()
-        }
-        # to ignore case during matching let's camelize abon filter keys
-        # msg filters are already camelized in MessageSerializer.validate
-        abon_filters = camelize(abon_filters)
-        for abon_filter_key, abon_filter_value in abon_filters.items():
-            if abon_filter_key in msg_filters:
-                if not (
-                    abon_filter_value == "*"
-                    or abon_filter_value == msg_filters[abon_filter_key]
-                ):
-                    return False
-        return True
+        return match_pattern(self.filters, msg_filters)
 
 
 class Filter(models.Model):
@@ -340,6 +327,26 @@ class CloudEventFilterGroup(models.Model):
     def __str__(self):
         return self.type_substring
 
+    def match_pattern(self, msg_filters: dict) -> bool:
+        return match_pattern(self.filters, msg_filters)
+
+
+class CloudEventFilter(models.Model):
+    key = models.CharField(_("Sleutel"), max_length=100)
+    value = models.CharField(_("Waarde"), max_length=1000)
+    cloud_event_filter_group = models.ForeignKey(
+        CloudEventFilterGroup, on_delete=models.CASCADE, related_name="filters"
+    )
+
+    def __str__(self) -> str:
+        return f"{self.key}: {self.value}"
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = _("filter-onderdeel")
+        verbose_name_plural = _("filter-onderdelen")
+        unique_together = ["cloud_event_filter_group", "key"]
+
 
 class CloudEventResponse(models.Model):
     cloudevent = models.ForeignKey(CloudEvent, on_delete=models.CASCADE)
@@ -354,3 +361,20 @@ class CloudEventResponse(models.Model):
 
     def __str__(self) -> str:
         return f"{self.abonnement} {self.response_status or self.exception}"
+
+
+def match_pattern(
+    filters: QuerySet[Filter | CloudEventFilter], msg_filters: dict[str, str]
+) -> bool:
+    abon_filters = {abon_filter.key: abon_filter.value for abon_filter in filters.all()}
+    # to ignore case during matching let's camelize abon filter keys
+    # msg filters are already camelized in MessageSerializer.validate
+    abon_filters: dict[str, str] = camelize(abon_filters)
+    for abon_filter_key, abon_filter_value in abon_filters.items():
+        if abon_filter_key in msg_filters:
+            if not (
+                abon_filter_value == "*"
+                or abon_filter_value == msg_filters[abon_filter_key]
+            ):
+                return False
+    return True
