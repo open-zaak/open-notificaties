@@ -1,7 +1,6 @@
 from datetime import datetime
-from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from nrc.datamodel.models import Abonnement
 from nrc.datamodel.tests.factories import (
@@ -16,9 +15,9 @@ from nrc.datamodel.tests.factories import (
 from ..serializers import CloudEventSerializer, MessageSerializer
 
 
-@patch("nrc.api.serializers.deliver_message.delay")
+@override_settings(LOG_NOTIFICATIONS_IN_DB=False)
 class MessageSerializerQueryTests(TestCase):
-    def test_create_queries(self, mock_deliver):
+    def test_create_queries(self):
         """
         Verify that the number of queries performed when running `MessageSerializer.create`
         is constant, regardless of the number of subscriptions in the database
@@ -44,7 +43,6 @@ class MessageSerializerQueryTests(TestCase):
 
         for num_subscriptions in (1, 10, 100):
             with self.subTest(num_subscriptions=num_subscriptions):
-                mock_deliver.reset_mock()
                 Abonnement.objects.all().delete()
 
                 AbonnementFactory.create_batch(num_subscriptions)
@@ -64,21 +62,19 @@ class MessageSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(2):
+                with self.assertNumQueries(3):
                     """
-                    Expected two queries:
-
+                    Expected three queries:
                     (1) SELECT datamodel_filtergroup based on kanaal
                     (2) SELECT datamodel_filter for the results from query 1
+                    (3) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(msg)
 
-                self.assertEqual(mock_deliver.call_count, 11)
 
-
-@patch("nrc.api.serializers.deliver_cloudevent.delay")
+@override_settings(LOG_NOTIFICATIONS_IN_DB=False)
 class CloudEventSerializerQueryTests(TestCase):
-    def test_create_queries(self, mock_deliver):
+    def test_create_queries(self):
         """
         Verify that the number of queries performed when running `CloudEventSerializer.create`
         is constant, regardless of the number of subscriptions in the database
@@ -89,7 +85,7 @@ class CloudEventSerializerQueryTests(TestCase):
             "source": "oz",
             "subject": "1234",
             "id": "1234",
-            "time": "2025-01-01T12:00:00Z",
+            "time": datetime(2025, 1, 1, 12, 0, 0),
             "datacontenttype": "application/json",
             "data": {
                 "vertrouwelijkheidaanduiding": "zeer_geheim",
@@ -100,7 +96,6 @@ class CloudEventSerializerQueryTests(TestCase):
 
         for num_subscriptions in (1, 10, 100):
             with self.subTest(num_subscriptions=num_subscriptions):
-                mock_deliver.reset_mock()
                 Abonnement.objects.all().delete()
 
                 AbonnementFactory.create_batch(num_subscriptions, send_cloudevents=True)
@@ -126,14 +121,10 @@ class CloudEventSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(2):
+                with self.assertNumQueries(1):
                     """
-                    Expected two queries:
+                    Expected one query:
 
-                    (1) SELECT datamodel_cloudeventfiltergroup based on type_substring
-                        and send_cloudevents=true for the related Abonnement
-                    (2) SELECT datamodel_cloudeventfilter for the results from query 1
+                    (1) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(event)
-
-                self.assertEqual(mock_deliver.call_count, 11)
