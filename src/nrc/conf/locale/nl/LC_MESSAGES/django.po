@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-02 11:00+0000\n"
+"POT-Creation-Date: 2026-01-26 14:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,55 +89,55 @@ msgstr "Inloggen met organisatieaccount"
 msgid "Gebruik het JWT-token nooit direct in een applicatie."
 msgstr ""
 
-#: api/serializers.py:39
+#: api/serializers.py:40
 msgid "kenmerk"
 msgstr ""
 
-#: api/serializers.py:41
+#: api/serializers.py:42
 msgid "Een waarde behorende bij de sleutel."
 msgstr ""
 
-#: api/serializers.py:73
+#: api/serializers.py:82
 msgid ""
 "De naam van het KANAAL (`KANAAL.naam`) waarop een abonnement is of wordt "
 "genomen."
 msgstr ""
 
-#: api/serializers.py:80
+#: api/serializers.py:89 api/serializers.py:108
 msgid ""
 "Map van kenmerken (sleutel/waarde) waarop notificaties gefilterd worden. "
 "Alleen notificaties waarvan de kenmerken voldoen aan het filter worden "
 "doorgestuurd naar de afnemer van het ABONNEMENT."
 msgstr ""
 
-#: api/serializers.py:106
+#: api/serializers.py:128
 msgid "Een lijst van kanalen en filters waarop het ABONNEMENT wordt afgenomen."
 msgstr ""
 
-#: api/serializers.py:147 api/serializers.py:217
+#: api/serializers.py:169 api/serializers.py:247
 msgid "Kanaal met deze naam bestaat niet."
 msgstr ""
 
-#: api/serializers.py:157
+#: api/serializers.py:182
 msgid "abonnement filters aren't consistent with kanaal filters"
 msgstr "De abonnementfilters komen niet overeen met de kanaalfilters"
 
-#: api/serializers.py:225
+#: api/serializers.py:255
 msgid "Kenmerken aren't consistent with kanaal filters"
 msgstr "De kenmerken komen niet overeen met de kanaalfilters"
 
-#: api/serializers.py:306
+#: api/serializers.py:340
 msgid ""
 "Notification does not have a source, cannot transform message to a cloudevent"
 msgstr ""
 "Notificatie heeft geen source en kan niet worden omgezet naar een cloudevent"
 
-#: api/tasks.py:69 api/tests/test_tasks.py:77
+#: api/tasks.py:93 api/tests/test_tasks.py:81
 #, python-brace-format
 msgid "Could not send notification: status {status_code} - {response}"
 msgstr "Notificatie versturen is gefaald: status {status_code} - {response}"
 
-#: api/tasks.py:144
+#: api/tasks.py:171
 #, fuzzy, python-brace-format
 #| msgid "Could not send notification: status {status_code} - {response}"
 msgid "Could not send couldevent: status {status_code} - {response}"
@@ -159,24 +159,25 @@ msgstr ""
 msgid "De opgegeven callback URL is niet beveiligd met autorisatie."
 msgstr ""
 
-#: datamodel/admin.py:40 datamodel/models.py:35 datamodel/models.py:122
+#: datamodel/admin.py:41 datamodel/admin.py:68 datamodel/models.py:37
+#: datamodel/models.py:187
 msgid "filters"
 msgstr ""
 
-#: datamodel/admin.py:44
+#: datamodel/admin.py:45 datamodel/admin.py:72
 msgid "acties"
 msgstr ""
 
-#: datamodel/admin.py:49
+#: datamodel/admin.py:50 datamodel/admin.py:77
 msgid "Filters instellen"
 msgstr ""
 
-#: datamodel/admin.py:60
+#: datamodel/admin.py:83
 msgid "Check the status of the callback URLs of selected Subscriptions"
 msgstr ""
 "Haal de status op van de callback URLs van de geselecteerde Abonnementen"
 
-#: datamodel/admin.py:88
+#: datamodel/admin.py:111
 msgid ""
 "Retrieve status for selected subscriptions. All previous results have been "
 "reset."
@@ -184,56 +185,56 @@ msgstr ""
 "Haal de status op voor de geselecteerde abonnementen. Alle voorgaande "
 "resultaten zullen gereset worden."
 
-#: datamodel/admin.py:149
+#: datamodel/admin.py:179
 msgid "Checked status of all callback URLs"
 msgstr "Status opgehaald voor alle callback URLs"
 
-#: datamodel/admin.py:163
+#: datamodel/admin.py:193
 msgid "callback URL reachable?"
 msgstr "callback URL bereikbaar?"
 
-#: datamodel/admin.py:171 datamodel/models.py:46
+#: datamodel/admin.py:201 datamodel/models.py:48
 msgid "kanalen"
 msgstr ""
 
-#: datamodel/admin.py:221 datamodel/admin.py:335 datamodel/admin_filters.py:42
+#: datamodel/admin.py:262 datamodel/admin.py:376 datamodel/admin_filters.py:42
 msgid "result"
 msgstr "resultaat"
 
-#: datamodel/admin.py:225
+#: datamodel/admin.py:266
 msgid "Notificatie created date"
 msgstr "Aanmaakdatum"
 
-#: datamodel/admin.py:234
+#: datamodel/admin.py:275
 msgid "Re-send the selected notifications to all subscriptions"
 msgstr "Verstuur de geselecteerde notificaties opnieuw naar alle abonnees"
 
-#: datamodel/admin.py:242
+#: datamodel/admin.py:283
 msgid "Selected notifications have been scheduled."
 msgstr ""
 "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: datamodel/admin.py:294 datamodel/admin.py:407
+#: datamodel/admin.py:335 datamodel/admin.py:448
 msgid "Result"
 msgstr "Resultaat"
 
-#: datamodel/admin.py:300
+#: datamodel/admin.py:341
 msgid "Action"
 msgstr "Actie"
 
-#: datamodel/admin.py:304
+#: datamodel/admin.py:345
 msgid "Resource"
 msgstr "Resource"
 
-#: datamodel/admin.py:339
+#: datamodel/admin.py:380
 msgid "Cloud Event time"
 msgstr ""
 
-#: datamodel/admin.py:348
+#: datamodel/admin.py:389
 msgid "Re-send the selected cloudevents to all subscriptions"
 msgstr "Verstuur de geselecteerde cloudevents opnieuw naar alle abonnees"
 
-#: datamodel/admin.py:356
+#: datamodel/admin.py:397
 #, fuzzy
 #| msgid "Selected notifications have been scheduled."
 msgid "Selected cloudevents have been scheduled."
@@ -256,30 +257,30 @@ msgstr "Succes"
 msgid "Failure"
 msgstr "Mislukt"
 
-#: datamodel/models.py:20 datamodel/models.py:64
+#: datamodel/models.py:22 datamodel/models.py:66
 msgid "Unique resource identifier (UUID4)"
 msgstr "Unieke resource identificatie (UUID4)"
 
-#: datamodel/models.py:23
+#: datamodel/models.py:25
 msgid "Name"
 msgstr "Naam"
 
-#: datamodel/models.py:27
+#: datamodel/models.py:29
 msgid ""
 "Name of the KANAAL (also called \"Exchange\") that represents the source."
 msgstr ""
 "Naam van het KANAAL (ook wel \"Exchange\" genoemd) dat de bron "
 "vertegenwoordigd."
 
-#: datamodel/models.py:31
+#: datamodel/models.py:33
 msgid "Documentation link"
 msgstr "Documentatie link"
 
-#: datamodel/models.py:31
+#: datamodel/models.py:33
 msgid "URL to documentation."
 msgstr "URL naar documentatie."
 
-#: datamodel/models.py:39
+#: datamodel/models.py:41
 msgid ""
 "List of possible filter attributes for a KANAAL. These filter attributes can "
 "be used when creating an ABONNEMENT"
@@ -287,15 +288,15 @@ msgstr ""
 "Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter kenmerken "
 "kunnen worden gebruikt bij het aanmaken van een ABONNEMENT."
 
-#: datamodel/models.py:45
+#: datamodel/models.py:47
 msgid "kanaal"
 msgstr ""
 
-#: datamodel/models.py:67
+#: datamodel/models.py:69
 msgid "Callback URL"
 msgstr ""
 
-#: datamodel/models.py:69
+#: datamodel/models.py:71
 msgid ""
 "The URL to which notifications should be sent. This URL should point to an "
 "API that is suitable to receive notifications."
@@ -303,11 +304,11 @@ msgstr ""
 "De URL waar notificaties naar toe gestuurd dienen te worden. Deze URL dient "
 "uit te komen bij een API die geschikt is om notificaties op te ontvangen."
 
-#: datamodel/models.py:74
+#: datamodel/models.py:76
 msgid "Authorisation header"
 msgstr "Autorisatie header"
 
-#: datamodel/models.py:77
+#: datamodel/models.py:80
 msgid ""
 "Content of the Authorization header when sending notifications to the "
 "\"Callback URL\", for example: Bearer a4daa31..."
@@ -315,142 +316,195 @@ msgstr ""
 "Autorisatie header invulling voor het vesturen naar de \"Callback URL\". "
 "Voorbeeld: Bearer a4daa31..."
 
-#: datamodel/models.py:82
+#: datamodel/models.py:85
 msgid "Client ID"
 msgstr ""
 
-#: datamodel/models.py:85
+#: datamodel/models.py:88
 msgid "Client ID extracted from Auth header"
 msgstr "Client ID uit de Auth header"
 
-#: datamodel/models.py:89
-msgid "Send cloudevents"
-msgstr "Verstuur cloudevents"
-
 #: datamodel/models.py:97
-msgid "abonnement"
+#, fuzzy
+#| msgid "Authorisation header"
+msgid "authorization type"
+msgstr "Autorisatie header"
+
+#: datamodel/models.py:104
+msgid ""
+"Required fields per auth type: * `api_key`: `auth`, * `zgw`: `client_id`, "
+"`secret`, * `oauth2_client_credentials`: `client_id`, `secret`, "
+"`oauth2_token_url`"
 msgstr ""
 
-#: datamodel/models.py:98
-msgid "abonnementen"
+#: datamodel/models.py:110
+msgid "Client Id"
+msgstr ""
+
+#: datamodel/models.py:114
+msgid "The client ID used to construct the JSON Web Token"
+msgstr ""
+
+#: datamodel/models.py:118
+msgid "Client Secret"
 msgstr ""
 
 #: datamodel/models.py:121
-msgid "filter"
+msgid "OAuth2 client secret, if applicable"
 msgstr ""
 
-#: datamodel/models.py:142
-msgid "Sleutel"
+#: datamodel/models.py:124
+msgid "OAuth2 Token URL"
 msgstr ""
 
-#: datamodel/models.py:143
-msgid "Waarde"
+#: datamodel/models.py:128
+msgid "OAuth2 token endpoint for client credentials flow. "
 msgstr ""
 
-#: datamodel/models.py:153
-msgid "filter-onderdeel"
+#: datamodel/models.py:132
+msgid "OAuth2 Scope"
+msgstr ""
+
+#: datamodel/models.py:135
+msgid "Optional scope for OAuth2 token requests"
+msgstr ""
+
+#: datamodel/models.py:141
+msgid "The SSL/TLS certificate of the client"
+msgstr ""
+
+#: datamodel/models.py:149
+msgid "The SSL/TLS certificate of the server"
 msgstr ""
 
 #: datamodel/models.py:154
+msgid "Send cloudevents"
+msgstr "Verstuur cloudevents"
+
+#: datamodel/models.py:162
+msgid "abonnement"
+msgstr ""
+
+#: datamodel/models.py:163
+msgid "abonnementen"
+msgstr ""
+
+#: datamodel/models.py:186
+msgid "filter"
+msgstr ""
+
+#: datamodel/models.py:194 datamodel/models.py:335
+msgid "Sleutel"
+msgstr ""
+
+#: datamodel/models.py:195 datamodel/models.py:336
+msgid "Waarde"
+msgstr ""
+
+#: datamodel/models.py:205 datamodel/models.py:346
+msgid "filter-onderdeel"
+msgstr ""
+
+#: datamodel/models.py:206 datamodel/models.py:347
 msgid "filter-onderdelen"
 msgstr ""
 
-#: datamodel/models.py:185 datamodel/models.py:284
+#: datamodel/models.py:237 datamodel/models.py:356
 msgid "attempt"
 msgstr "poging"
 
-#: datamodel/models.py:186 datamodel/models.py:285
+#: datamodel/models.py:238 datamodel/models.py:357
 msgid "Indicates to which delivery attempt this response belongs."
 msgstr "Geeft aan bij de hoeveelste afleverpoging dit antwoord hoort."
 
-#: datamodel/models.py:197
+#: datamodel/models.py:249
 msgid "internal id"
 msgstr ""
 
-#: datamodel/models.py:200
+#: datamodel/models.py:252
 msgid "id"
 msgstr ""
 
-#: datamodel/models.py:200
+#: datamodel/models.py:252
 msgid "event id"
 msgstr ""
 
-#: datamodel/models.py:201
+#: datamodel/models.py:253
 #, fuzzy
 #| msgid "Resource"
 msgid "source"
 msgstr "Resource"
 
-#: datamodel/models.py:201
+#: datamodel/models.py:253
 #, fuzzy
 #| msgid "Resource"
 msgid "event source"
 msgstr "Resource"
 
-#: datamodel/models.py:203
+#: datamodel/models.py:255
 msgid "specversion"
 msgstr ""
 
-#: datamodel/models.py:206
+#: datamodel/models.py:258
 msgid "cloudevent spec version used by the event"
 msgstr ""
 
-#: datamodel/models.py:209
+#: datamodel/models.py:261
 msgid "type"
 msgstr ""
 
-#: datamodel/models.py:212
+#: datamodel/models.py:264
 msgid ""
 "event type on which can be subscribed. Example: nl.overheid.zaken.zaak."
 "created"
 msgstr ""
 
-#: datamodel/models.py:217
+#: datamodel/models.py:269
 msgid "data content type"
 msgstr ""
 
-#: datamodel/models.py:221
+#: datamodel/models.py:273
 msgid ""
 "content type of the (optional) cloudevent data. Example: application/json"
 msgstr ""
 
-#: datamodel/models.py:225
+#: datamodel/models.py:277
 msgid "dataschema"
 msgstr ""
 
-#: datamodel/models.py:228
+#: datamodel/models.py:280
 msgid "A schema that the data must follow"
 msgstr ""
 
-#: datamodel/models.py:231
+#: datamodel/models.py:283
 msgid "subject"
 msgstr ""
 
-#: datamodel/models.py:234
+#: datamodel/models.py:286
 msgid "the events subject. Example: an uuid of a zaak"
 msgstr ""
 
-#: datamodel/models.py:237
+#: datamodel/models.py:289
 msgid "time"
 msgstr ""
 
-#: datamodel/models.py:240
+#: datamodel/models.py:292
 msgid "the timestamp of when the event happened"
 msgstr ""
 
-#: datamodel/models.py:243
+#: datamodel/models.py:295
 msgid "data"
 msgstr ""
 
-#: datamodel/models.py:246
+#: datamodel/models.py:298
 msgid "extra data using the format defined in datacontentype"
 msgstr ""
 
-#: datamodel/models.py:268
+#: datamodel/models.py:320
 msgid "type substring"
 msgstr ""
 
-#: datamodel/models.py:271
+#: datamodel/models.py:323
 msgid "a substring of an event type that the subscription will watch for"
 msgstr ""
 
