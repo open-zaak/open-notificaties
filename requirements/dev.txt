@@ -24,7 +24,7 @@ ape-pie==0.2.0
     #   commonground-api-common
     #   notifications-api-common
     #   zgw-consumers
-asgiref==3.8.1
+asgiref==3.11.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -75,7 +75,7 @@ build==1.0.3
     # via pip-tools
 bump-my-version==0.32.1
     # via -r requirements/dev.in
-cbor2==5.6.4
+cbor2==5.8.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -138,7 +138,7 @@ codecov==2.1.13
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-commonground-api-common==2.10.5
+commonground-api-common==2.10.7
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -431,7 +431,7 @@ faker==37.1.0
     #   -r requirements/ci.txt
     #   factory-boy
     #   zgw-consumers-oas
-filelock==3.18.0
+filelock==3.20.3
     # via virtualenv
 flower==2.0.1
     # via
@@ -587,7 +587,7 @@ oauthlib==3.3.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   requests-oauthlib
-open-api-framework==0.13.2
+open-api-framework==0.13.4
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -687,12 +687,13 @@ packaging==25.0
     #   django-csp
     #   opentelemetry-instrumentation
     #   sphinx
+    #   wheel
 phonenumberslite==8.13.43
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-two-factor-auth
-pip==25.3
+pip==26.0.1
     # via pip-tools
 pip-tools==7.3.0
     # via -r requirements/dev.in
@@ -711,7 +712,7 @@ prompt-toolkit==3.0.47
     #   -r requirements/ci.txt
     #   click-repl
     #   questionary
-protobuf==6.33.1
+protobuf==6.33.5
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -1042,7 +1043,7 @@ uritemplate==4.1.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   drf-spectacular
-urllib3==2.5.0
+urllib3==2.6.3
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -1065,7 +1066,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-virtualenv==20.31.2
+virtualenv==20.36.1
     # via pre-commit
 waitress==3.0.1
     # via
@@ -1099,7 +1100,7 @@ webtest==3.0.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-webtest
-wheel==0.41.3
+wheel==0.46.3
     # via pip-tools
 wrapt==1.16.0
     # via
