@@ -2,6 +2,50 @@
 Changes
 =======
 
+1.15.0 (2026-02-06)
+===================
+
+
+**New features**
+
+* [:open-notificaties:`351`] Add support for **OAuth2** authentication when sending notifications and cloud events to subscribers.
+  New fields added to the **Abonnement** model to enable sending events to subscribed webhooks using OAuth2.
+* [:open-notificaties:`353`] Support mutual **TLS** for sending notifications and cloud events to subscriptions.
+* [:zgw-consumers:`128`] Make necessary **OAuth2** attributes configurable via setup_configuration
+
+.. note::
+
+    The **configuration step** for subscriptions now also supports these new fields.
+    For detailed configuration, see :ref:`Abonnement Configuration Step <ref_step_nrc.setup_configuration.abonnementen.AbonnementConfigurationStep>`.
+
+* [:open-notificaties:`356`] Extend cloud event filtering for Abonnement with additional attribute filters.
+
+    * Allow configuring cloud event filters via setup config, see :ref:`Abonnement Configuration Step <ref_step_nrc.setup_configuration.abonnementen.AbonnementConfigurationStep>`.
+    * Improve performance by adding missing ``select_related`` and ``prefetch_related``.
+
+**Bugfixes**
+
+* Fix 500 error when not specifying Abonnement.filters in API calls to ``/abonnementen``
+
+**Project maintenance**
+
+* Avoid using ``event`` key in uwsgi logs.
+* Upgrade python dependencies
+
+    * ``commonground-api-common`` to 2.10.7
+    * ``notifications-api-common`` to 0.10.1
+    * ``open-api-framework`` to 0.13.4
+    * ``zgw-consumers`` to 1.1.2
+    * ``asgiref`` to 3.11.0
+    * ``cbor2`` to 5.8.0
+    * ``django`` to 5.2.11
+    * ``urllib3`` to 2.6.3
+
+**Documentation**
+
+* [:open-zaak:`2233`] Add docs for configuring cloud events for Mijn Overheid.
+  See :ref:`cloud_events_configuration_mijn_overheid` for more informations.
+
 1.14.0 (2025-12-02)
 ===================
 
