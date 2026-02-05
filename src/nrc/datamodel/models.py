@@ -363,6 +363,44 @@ class CloudEventResponse(models.Model):
         return f"{self.abonnement} {self.response_status or self.exception}"
 
 
+class NotificationTypes(models.TextChoices):
+    notification = "notification", _("notification")
+    cloudevent = "cloudevent", _("cloudevent")
+
+
+class ScheduledNotification(models.Model):
+    id = models.BigAutoField(
+        primary_key=True,
+        serialize=False,
+        verbose_name="ID",
+    )
+    type = models.CharField(_("type"), max_length=255, choices=NotificationTypes)
+    task_args = models.JSONField(_("task args"))
+    execute_at = models.DateTimeField(_("execute_at"))
+    attempt = models.PositiveSmallIntegerField(_("attempt"))
+    sub = models.ForeignKey(
+        Abonnement,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+    )
+    notificatie = models.ForeignKey(
+        Notificatie,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+    )
+    cloudevent = models.ForeignKey(
+        CloudEvent,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+    )
+
+
 def match_pattern(
     filters: QuerySet[Filter | CloudEventFilter], msg_filters: dict[str, str]
 ) -> bool:
