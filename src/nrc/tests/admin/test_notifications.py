@@ -1,6 +1,5 @@
 import json
 from collections import OrderedDict
-from unittest.mock import patch
 
 from django.test import override_settings
 from django.urls import reverse
@@ -11,7 +10,7 @@ from freezegun import freeze_time
 from maykin_2fa.test import disable_admin_mfa
 
 from nrc.accounts.tests.factories import SuperUserFactory
-from nrc.datamodel.models import Notificatie, NotificatieResponse
+from nrc.datamodel.models import Notificatie, NotificatieResponse, ScheduledNotification
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
     FilterGroupFactory,
@@ -26,8 +25,6 @@ from nrc.datamodel.tests.factories import (
 @override_settings(
     LOG_NOTIFICATIONS_IN_DB=True,
 )
-@patch("nrc.api.serializers.deliver_message.delay")
-@patch("nrc.api.serializers.deliver_cloudevent.delay")
 class NotificationAdminWebTest(WebTest):
     maxdiff = None
 
@@ -71,7 +68,7 @@ class NotificationAdminWebTest(WebTest):
             },
         }
 
-    def test_create_notification(self, _, mock_deliver_message):
+    def test_create_notification(self):
         """
         Verify that a notification is sent when it is created via the admin
         """
@@ -88,17 +85,12 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Notification should be sent
-        mock_deliver_message.assert_called_once_with(
-            self.abonnement.id,
-            self.forwarded_msg,
-            notificatie_id=Notificatie.objects.get().id,
-            attempt=1,
-        )
         # Verify that only one Notificatie was created (via the admin)
         self.assertEqual(Notificatie.objects.count(), 1)
 
-    def test_resend_notification(self, _, mock_deliver_message):
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
+
+    def test_resend_notification(self):
         """
         Verify that a notification is scheduled when it is saved via the admin
         """
@@ -117,19 +109,14 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Notification should be scheduled
-        mock_deliver_message.assert_called_once_with(
-            self.abonnement.id,
-            self.forwarded_msg,
-            notificatie_id=notificatie.id,
-            attempt=2,
-        )
         # Verify that no new Notificatie was created
         self.assertEqual(Notificatie.objects.count(), 1)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
         # Verify that previous NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 
-    def test_resend_notification_action(self, _, mock_deliver_message):
+    def test_resend_notification_action(self):
         """
         Verify that a notification is scheduled when it is saved via the admin
         """
@@ -159,10 +146,11 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Two notifications should be scheduled
-        self.assertEqual(mock_deliver_message.call_count, 2)
         # Verify that no new Notificaties were created
         self.assertEqual(Notificatie.objects.count(), 3)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
+
         # Verify that old NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 3)
 
@@ -170,7 +158,7 @@ class NotificationAdminWebTest(WebTest):
         notificatie3.refresh_from_db()
         self.assertEqual(notificatie3.notificatieresponse_set.count(), 1)
 
-    def test_create_notification_as_cloudevent(self, mock_deliver_cloudevent, _):
+    def test_create_notification_as_cloudevent(self):
         response = self.app.get(
             reverse("admin:datamodel_notificatie_add"), user=self.user
         )
@@ -184,19 +172,12 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Cloudevent should be sent
-        mock_deliver_cloudevent.assert_called_once_with(
-            self.cloudevent_abonnement.id,
-            self.expected_cloudevent
-            | {"id": mock_deliver_cloudevent.call_args[0][1]["id"]},
-            notificatie_id=Notificatie.objects.get().id,
-            attempt=1,
-        )
-
         # Verify that only one Notificatie was created (via the admin)
         self.assertEqual(Notificatie.objects.count(), 1)
 
-    def test_resend_notification_as_cloudevent(self, mock_deliver_cloudevent, _):
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
+
+    def test_resend_notification_as_cloudevent(self):
         notificatie = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
         NotificatieResponseFactory.create(
             notificatie=notificatie, abonnement=self.abonnement
@@ -212,20 +193,14 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Cloudevent should be sent
-        mock_deliver_cloudevent.assert_called_once_with(
-            self.cloudevent_abonnement.id,
-            self.expected_cloudevent
-            | {"id": mock_deliver_cloudevent.call_args[0][1]["id"]},
-            notificatie_id=Notificatie.objects.get().id,
-            attempt=2,
-        )
         # Verify that no new Notificatie was created
         self.assertEqual(Notificatie.objects.count(), 1)
 
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
+
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 
-    def test_resend_notification_action_as_cloudevent(self, mock_deliver_cloudevent, _):
+    def test_resend_notification_action_as_cloudevent(self):
         notificatie1 = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
         NotificatieResponseFactory.create(
             notificatie=notificatie1, abonnement=self.cloudevent_abonnement
@@ -252,10 +227,11 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Two notifications should be scheduled
-        self.assertEqual(mock_deliver_cloudevent.call_count, 2)
         # Verify that no new Notificaties were created
         self.assertEqual(Notificatie.objects.count(), 3)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
+
         # Verify that old NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 3)
 
