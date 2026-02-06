@@ -13,7 +13,7 @@ from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
-from nrc.api.tasks import deliver_message
+from nrc.api.tasks import deliver_message, execute_notifications
 from nrc.datamodel.models import Notificatie, NotificatieResponse
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -71,6 +71,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -123,7 +124,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
                         "subscription_pk": abon.pk,
-                        "user_id": None,
                     },
                 },
             )
@@ -177,6 +177,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -226,7 +228,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_failed",
                         "http_status_code": 400,
                         "notification_attempt_count": 1,
-                        "task_attempt_count": 1,
                         "log_level": "warning",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -234,11 +235,10 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
                         "subscription_pk": abon.pk,
-                        "user_id": None,
                     },
                 },
             )
-            self.assertEqual(retry_notification_failed["task_attempt_count"], 2)
+            self.assertEqual(retry_notification_failed["notification_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -286,6 +286,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -335,7 +337,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_error",
                         "exc_info": exc,
                         "notification_attempt_count": 1,
-                        "task_attempt_count": 1,
                         "log_level": "error",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -343,11 +344,10 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "resource_url": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
                         "subscription_callback": abon.callback_url,
                         "subscription_pk": abon.pk,
-                        "user_id": None,
                     },
                 },
             )
-            self.assertEqual(retry_notification_error["task_attempt_count"], 2)
+            self.assertEqual(retry_notification_error["notification_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -476,6 +476,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             m.post(abon.callback_url, status_code=204)
 
             response = self.client.post(notificatie_url, msg)
+            execute_notifications.run()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -535,6 +536,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             m.post(abon1.callback_url, status_code=204)
 
             response = self.client.post(notificatie_url, msg)
+            execute_notifications.run()
 
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 
@@ -585,6 +587,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -696,6 +699,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -740,7 +745,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_failed["cloudevent_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -800,6 +805,8 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
             with capture_logs() as cap_logs:
                 response = self.client.post(notificatie_url, msg)
+                execute_notifications.run()
+                execute_notifications.run()
 
             notification_received = next(
                 log for log in cap_logs if log["event"] == "notification_received"
@@ -841,11 +848,10 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "log_level": "error",
                         "exc_info": exc,
                         "cloudevent_attempt_count": 1,
-                        "task_attempt_count": 1,
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_error["cloudevent_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -907,6 +913,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             with self.subTest("no cloudevent sub"):
                 with capture_logs() as cap_logs:
                     response = self.client.post(notificatie_url, msg)
+                    execute_notifications.run()
 
                 self.assertFalse(any(log["event"] == "no_source" for log in cap_logs))
 
@@ -923,6 +930,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
                 with capture_logs() as cap_logs:
                     response = self.client.post(notificatie_url, msg)
+                    execute_notifications.run()
 
                 no_notification_source = next(
                     log for log in cap_logs if log["event"] == "no_notification_source"
