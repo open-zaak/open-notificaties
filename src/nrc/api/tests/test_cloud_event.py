@@ -6,6 +6,7 @@ from django.utils import timezone
 
 import requests
 import requests_mock
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 from rest_framework.test import APITestCase
@@ -27,6 +28,7 @@ from nrc.utils.tests.structlog import capture_logs
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
 )
+@freeze_time("2025-01-01T12:00:00")
 class CloudEventTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
     maxDiff = None

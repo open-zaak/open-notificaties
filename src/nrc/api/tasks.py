@@ -1,6 +1,7 @@
 import json
 import uuid
 from contextlib import contextmanager
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.management import call_command
@@ -12,6 +13,9 @@ from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
+from notifications_api_common.exponential_backoff import (
+    get_exponential_backoff_interval,
+)
 from notifications_api_common.models import NotificationsConfig
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from structlog.contextvars import bind_contextvars
@@ -257,7 +261,9 @@ def _context(msg: NotificationMessage | CloudEventKwargs, is_cloudevent: bool = 
             yield
 
 
-def _send_to_subs(scheduled_notif: ScheduledNotification, subs):
+def _send_to_subs(
+    scheduled_notif: ScheduledNotification, subs, config: NotificationsConfig
+):
     task_kwargs = {
         "attempt": scheduled_notif.attempt,
     }
@@ -302,6 +308,10 @@ def _send_to_subs(scheduled_notif: ScheduledNotification, subs):
                 """
                 create new ScheduledNotification with the failed subscription.
                 """
+
+                if scheduled_notif.attempt >= config.notification_delivery_max_retries:
+                    continue
+
                 data = model_to_dict(
                     scheduled_notif, exclude=("id", "notificatie", "cloudevent", "sub")
                 )
@@ -309,6 +319,13 @@ def _send_to_subs(scheduled_notif: ScheduledNotification, subs):
                 data["cloudevent_id"] = scheduled_notif.cloudevent_id
                 data["sub_id"] = sub.id
                 data["attempt"] += 1
+                data["execute_at"] = timezone.now() +  timedelta(get_exponential_backoff_interval(
+                    factor=config.notification_delivery_retry_backoff,
+                    retries=data["attempt"],
+                    maximum=config.notification_delivery_retry_backoff_max,
+                    base=config.notification_delivery_base_factor,
+                    # full_jitter=retry_jitter, TODO
+                ))
                 ScheduledNotification.objects.create(**data)
 
 
@@ -339,9 +356,6 @@ def execute_notifications() -> None:
     )
 
     for scheduled_notif in scheduled_notifications.filter().iterator():
-        if scheduled_notif.attempt >= config.notification_delivery_max_retries:  # TODO
-            return
-
         if scheduled_notif.sub:
             subs = [scheduled_notif.sub]
         else:
@@ -351,6 +365,6 @@ def execute_notifications() -> None:
                 else _get_cloudevent_subs(scheduled_notif.task_args)
             )
 
-        _send_to_subs(scheduled_notif, subs)
+        _send_to_subs(scheduled_notif, subs, config)
 
         scheduled_notif.delete()
