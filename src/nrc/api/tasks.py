@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CharField, F, Value
-from django.forms import model_to_dict
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -245,7 +244,7 @@ def _context(msg: NotificationMessage | CloudEventKwargs, is_cloudevent: bool = 
             id=msg["id"],
             source=msg["source"],
             type=msg["type"],
-            subject=msg["subject"],
+            subject=msg.get("subject"),
         ):
             yield
     else:
@@ -262,7 +261,7 @@ def _context(msg: NotificationMessage | CloudEventKwargs, is_cloudevent: bool = 
 
 
 def _send_to_subs(
-    scheduled_notif: ScheduledNotification, subs, config: NotificationsConfig
+    scheduled_notif: ScheduledNotification, subs: set, config: NotificationsConfig
 ):
     task_kwargs = {
         "attempt": scheduled_notif.attempt,
@@ -280,6 +279,8 @@ def _send_to_subs(
             }
         )
 
+    failed_subs = []
+
     with _context(
         scheduled_notif.task_args, scheduled_notif.type == NotificationTypes.cloudevent
     ):
@@ -294,7 +295,7 @@ def _send_to_subs(
                             id=cloudevent["id"],
                             source=cloudevent["source"],
                             type=cloudevent["type"],
-                            subject=cloudevent["subject"],
+                            subject=cloudevent.get("subject"),
                         )
 
                     deliver_cloudevent(
@@ -305,28 +306,23 @@ def _send_to_subs(
                 else:
                     deliver_message(sub, scheduled_notif.task_args, **task_kwargs)
             except Exception:
-                """
-                create new ScheduledNotification with the failed subscription.
-                """
+                failed_subs.append(sub)
 
-                if scheduled_notif.attempt >= config.notification_delivery_max_retries:
-                    continue
-
-                data = model_to_dict(
-                    scheduled_notif, exclude=("id", "notificatie", "cloudevent", "sub")
-                )
-                data["notificatie_id"] = scheduled_notif.notificatie_id
-                data["cloudevent_id"] = scheduled_notif.cloudevent_id
-                data["sub_id"] = sub.id
-                data["attempt"] += 1
-                data["execute_at"] = timezone.now() +  timedelta(get_exponential_backoff_interval(
-                    factor=config.notification_delivery_retry_backoff,
-                    retries=data["attempt"],
-                    maximum=config.notification_delivery_retry_backoff_max,
-                    base=config.notification_delivery_base_factor,
-                    # full_jitter=retry_jitter, TODO
-                ))
-                ScheduledNotification.objects.create(**data)
+    if failed_subs:
+        scheduled_notif.execute_after = timezone.now() + timedelta(
+            get_exponential_backoff_interval(
+                factor=config.notification_delivery_retry_backoff,
+                retries=scheduled_notif.attempt,
+                maximum=config.notification_delivery_retry_backoff_max,
+                base=config.notification_delivery_base_factor,
+                full_jitter=False,
+            )
+        )
+        scheduled_notif.attempt += 1
+        scheduled_notif.subs.set(failed_subs)
+        scheduled_notif.save()
+    else:
+        scheduled_notif.delete()
 
 
 def _transform_to_cloudevent(notif: NotificationMessage) -> CloudEventKwargs:
@@ -352,12 +348,16 @@ def execute_notifications() -> None:
     config = NotificationsConfig.get_solo()
 
     scheduled_notifications = ScheduledNotification.objects.filter(
-        execute_at__lte=timezone.now()
+        execute_after__lte=timezone.now()
     )
 
     for scheduled_notif in scheduled_notifications.filter().iterator():
-        if scheduled_notif.sub:
-            subs = [scheduled_notif.sub]
+        if scheduled_notif.attempt >= config.notification_delivery_max_retries:
+            scheduled_notif.delete()
+            continue
+
+        if scheduled_notif.subs.exists():
+            subs = set(scheduled_notif.subs.all())
         else:
             subs = (
                 _get_notification_subs(scheduled_notif.task_args)
@@ -366,5 +366,3 @@ def execute_notifications() -> None:
             )
 
         _send_to_subs(scheduled_notif, subs, config)
-
-        scheduled_notif.delete()

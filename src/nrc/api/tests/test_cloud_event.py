@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
 from django.test import override_settings
@@ -24,7 +24,6 @@ from nrc.utils.tests.structlog import capture_logs
 
 
 @override_settings(
-    CELERY_TASK_ALWAYS_EAGER=True,
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
 )
@@ -323,6 +322,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_cloudevent_send_failure(self):
         """
         check that cloudevent_failed log is emitted if the callback returns a non
@@ -414,6 +414,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_cloudevent_send_request_exception(self):
         """
         check that cloudevent_failed log is emitted if the callback returns a non

@@ -375,15 +375,12 @@ class ScheduledNotification(models.Model):
         verbose_name="ID",
     )
     type = models.CharField(_("type"), max_length=255, choices=NotificationTypes)
-    task_args = models.JSONField(_("task args"))
-    execute_at = models.DateTimeField(_("execute_at"))
+    task_args = models.JSONField(_("task args"), encoder=DjangoJSONEncoder)
+    execute_after = models.DateTimeField(_("execute_after"))
     attempt = models.PositiveSmallIntegerField(_("attempt"))
-    sub = models.ForeignKey(
+    subs = models.ManyToManyField(
         Abonnement,
-        on_delete=models.CASCADE,
         related_name="scheduled_notifications",
-        null=True,
-        blank=True,
     )
     notificatie = models.ForeignKey(
         Notificatie,

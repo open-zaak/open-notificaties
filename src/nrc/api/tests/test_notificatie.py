@@ -1,11 +1,11 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from django.utils.timezone import now
 
 import requests
 import requests_mock
-from celery.exceptions import Retry
 from notifications_api_common.models import NotificationsConfig
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -13,8 +13,13 @@ from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
-from nrc.api.tasks import deliver_message, execute_notifications
-from nrc.datamodel.models import Notificatie, NotificatieResponse
+from nrc.api.tasks import execute_notifications
+from nrc.datamodel.models import (
+    Notificatie,
+    NotificatieResponse,
+    NotificationTypes,
+    ScheduledNotification,
+)
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
     FilterFactory,
@@ -25,7 +30,6 @@ from nrc.utils.tests.structlog import capture_logs
 
 
 @override_settings(
-    CELERY_TASK_ALWAYS_EAGER=True,
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
 )
@@ -136,6 +140,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_notificatie_send_failure(self):
         """
         check that notification_failed log is emitted if the callback returns a non
@@ -248,6 +253,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         self.assertEqual(m.last_request.headers["Content-Type"], "application/json")
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_notificatie_send_request_exception(self):
         """
         check that notification_failed log is emitted if the callback returns a non
@@ -662,6 +668,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
             )
             self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_notificatie_send_failure_as_cloudevent(self):
         kanaal = KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
@@ -772,6 +779,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_notificatie_send_request_exception_as_cloudevent(self):
         kanaal = KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
@@ -957,13 +965,11 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                 )
 
 
-@patch("notifications_api_common.autoretry.get_exponential_backoff_interval")
-@patch("notifications_api_common.autoretry.NotificationsConfig.get_solo")
-@patch("nrc.api.serializers.deliver_message.retry")
-@override_settings(CELERY_TASK_ALWAYS_EAGER=True)
+@patch("nrc.api.tasks.get_exponential_backoff_interval")
+@patch("nrc.api.tasks.NotificationsConfig.get_solo")
 class NotificatieRetryTests(TestCase):
     def test_notificatie_retry_use_global_config(
-        self, mock_retry, mock_config, mock_get_exponential_backoff
+        self, mock_config, mock_get_exponential_backoff
     ):
         """
         Verify that retry variables configured on `NotificationsConfig` override the
@@ -974,6 +980,9 @@ class NotificatieRetryTests(TestCase):
             notification_delivery_retry_backoff=4,
             notification_delivery_retry_backoff_max=28,
         )
+
+        mock_get_exponential_backoff.return_value = 0
+
         kanaal = KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
         )
@@ -996,18 +1005,82 @@ class NotificatieRetryTests(TestCase):
                 "vertrouwelijkheidaanduiding": "openbaar",
             },
         }
+        scheduled_notif = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=msg,
+            execute_after=timezone.now(),
+            attempt=1,
+        )
+        scheduled_notif.subs.add(abon)
 
-        mock_retry.side_effect = Retry()
         with requests_mock.Mocker() as m:
             m.post(abon.callback_url, status_code=404)
-            with self.assertRaises(Retry):
-                deliver_message(abon.id, msg)
+            execute_notifications.run()
 
         mock_get_exponential_backoff.assert_called_once_with(
             factor=4,
-            retries=0,
+            retries=1,
             maximum=28,
             base=4,
             full_jitter=False,
         )
-        self.assertEqual(deliver_message.max_retries, 4)
+        self.assertEqual(scheduled_notif.attempt, 1)
+
+    def test_notificatie_retry_loop(self, mock_config, mock_get_exponential_backoff):
+        mock_config.return_value = NotificationsConfig(
+            notification_delivery_max_retries=4,
+            notification_delivery_retry_backoff=4,
+            notification_delivery_retry_backoff_max=28,
+        )
+
+        mock_get_exponential_backoff.return_value = 0
+
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
+        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        FilterFactory.create(
+            filter_group=filter_group, key="bron", value="082096752011"
+        )
+        msg = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://ref.tst.vng.cloud/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://ref.tst.vng.cloud/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": now(),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+        scheduled_notif = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=msg,
+            execute_after=timezone.now(),
+            attempt=1,
+        )
+        scheduled_notif.subs.add(abon)
+
+        with requests_mock.Mocker() as m:
+            m.post(abon.callback_url, status_code=404)
+
+            for i in range(1, 4):
+                execute_notifications.run()
+
+                mock_get_exponential_backoff.assert_any_call(
+                    factor=4,
+                    retries=i,
+                    maximum=28,
+                    base=4,
+                    full_jitter=False,
+                )
+                scheduled_notif.refresh_from_db()
+                self.assertEqual(scheduled_notif.attempt, i + 1)
+                print(scheduled_notif.execute_after - timezone.now())
+
+            execute_notifications.run()
+            self.assertEqual(ScheduledNotification.objects.count(), 0)
