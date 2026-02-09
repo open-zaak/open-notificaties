@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.test import TestCase, override_settings
 
+from rest_framework.exceptions import ValidationError
+
 from nrc.datamodel.models import Abonnement
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -62,14 +64,67 @@ class MessageSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(3):
+                with self.assertNumQueries(1):
                     """
-                    Expected three queries:
-                    (1) SELECT datamodel_filtergroup based on kanaal
-                    (2) SELECT datamodel_filter for the results from query 1
-                    (3) INSERT INTO datamodel_schedulednotification
+                    Expected one query:
+                    (1) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(msg)
+
+    def test_create_queries_send_cloudevents_no_source(self):
+        """
+        Verify that the number of queries performed when running `MessageSerializer.create`
+        is constant, regardless of the number of subscriptions in the database
+        """
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": datetime(2025, 1, 1, 12, 0, 0),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "zeer_geheim",
+            },
+        }
+        serializer = MessageSerializer()
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+
+        for num_subscriptions in (1, 10, 100):
+            with self.subTest(num_subscriptions=num_subscriptions):
+                Abonnement.objects.all().delete()
+
+                AbonnementFactory.create_batch(num_subscriptions)
+                # Should receive the event
+                FilterGroupFactory.create_batch(
+                    10, kanaal=kanaal, abonnement__send_cloudevents=True
+                )
+                # Should not receive the event
+                FilterGroupFactory.create_batch(30)
+
+                # Should receive the event
+                matching_sub = AbonnementFactory.create(send_cloudevents=True)
+                filter_group = FilterGroupFactory.create(
+                    abonnement=matching_sub, kanaal=kanaal
+                )
+                FilterFactory.create(
+                    filter_group=filter_group,
+                    key="vertrouwelijkheidaanduiding",
+                    value="zeer_geheim",
+                )
+
+                with self.assertNumQueries(2):
+                    """
+                    Expected two queries:
+                    (1) SELECT datamodel_filtergroup based on kanaal
+                    (2) SELECT datamodel_filter for the results from query 1
+                    """
+                    with self.assertRaises(ValidationError):
+                        serializer.create(msg)
 
 
 @override_settings(LOG_NOTIFICATIONS_IN_DB=False)
