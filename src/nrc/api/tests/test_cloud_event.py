@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
 from django.test import override_settings
@@ -6,12 +6,14 @@ from django.utils import timezone
 
 import requests
 import requests_mock
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 from rest_framework.test import APITestCase
 from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
+from nrc.api.tasks import execute_notifications
 from nrc.datamodel.models import CloudEvent
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -22,10 +24,10 @@ from nrc.utils.tests.structlog import capture_logs
 
 
 @override_settings(
-    CELERY_TASK_ALWAYS_EAGER=True,
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
 )
+@freeze_time("2025-01-01T12:00:00")
 class CloudEventTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
     maxDiff = None
@@ -68,6 +70,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -176,6 +179,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -272,6 +276,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -317,6 +322,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
 
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_cloudevent_send_failure(self):
         """
         check that cloudevent_failed log is emitted if the callback returns a non
@@ -358,6 +364,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
+                execute_notifications.run()
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -394,7 +402,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_failed["cloudevent_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
@@ -406,6 +414,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
+    @patch("nrc.api.tasks.get_exponential_backoff_interval", MagicMock(return_value=0))
     def test_cloudevent_send_request_exception(self):
         """
         check that cloudevent_failed log is emitted if the callback returns a non
@@ -443,6 +452,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
+                execute_notifications.run()
 
             cloudevent_received = next(
                 log for log in cap_logs if log["event"] == "cloudevent_received"
@@ -476,11 +487,10 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                         "log_level": "error",
                         "exc_info": exc,
                         "cloudevent_attempt_count": 1,
-                        "task_attempt_count": 1,
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_error["cloudevent_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
@@ -492,8 +502,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
-    @patch("nrc.api.tasks.deliver_cloudevent.delay")
-    def test_correct_subs_get_cloudevent(self, mock_delay):
+    @patch("nrc.api.tasks._send_to_subs")
+    def test_correct_subs_get_cloudevent(self, mock_send_to_subs):
         event = {
             "specversion": "1.0",
             "type": "nl.overheid.zaken.zaak.created",
@@ -558,13 +568,13 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                 event,
                 headers={"Content-Type": "application/cloudevents+json"},
             )
+            execute_notifications.run()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
-        self.assertEqual(mock_delay.call_count, 2)
 
-        sub_ids = [args[0][0] for args in mock_delay.call_args_list]
-        self.assertCountEqual(sub_ids, [abon1.id, abon2.id])
+        subs = mock_send_to_subs.call_args_list[0][0][1]
+        self.assertCountEqual(subs, {abon1, abon2})
 
     def test_data(self):
         abon = AbonnementFactory.create(
@@ -598,6 +608,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     xml_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
+
                 self.assertEqual(
                     response.status_code, status.HTTP_201_CREATED, response.data
                 )
@@ -618,6 +630,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     null_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
                 self.assertEqual(
                     response.status_code, status.HTTP_201_CREATED, response.data
                 )
@@ -634,6 +647,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     omitted_data_event,
                     headers={"content-type": "application/cloudevents+json"},
                 )
+                execute_notifications.run()
                 self.assertEqual(
                     response.status_code, status.HTTP_201_CREATED, response.data
                 )

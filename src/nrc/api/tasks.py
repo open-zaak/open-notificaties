@@ -1,13 +1,21 @@
 import json
+import uuid
+from contextlib import contextmanager
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import CharField, F, Value
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
-from notifications_api_common.autoretry import add_autoretry_behaviour
+from notifications_api_common.exponential_backoff import (
+    get_exponential_backoff_interval,
+)
+from notifications_api_common.models import NotificationsConfig
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from structlog.contextvars import bind_contextvars
 from zgw_consumers.client import build_client
@@ -17,11 +25,15 @@ from nrc.celery import app
 from nrc.datamodel.models import (
     Abonnement,
     CloudEvent,
+    CloudEventFilterGroup,
     CloudEventResponse,
+    FilterGroup,
     NotificatieResponse,
+    NotificationTypes,
+    ScheduledNotification,
 )
 
-from .types import CloudEventKwargs, SendNotificationTaskKwargs
+from .types import CloudEventKwargs, NotificationMessage, SendNotificationTaskKwargs
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -49,10 +61,7 @@ def service_from_abonnement(abonnement: Abonnement) -> Service:
     )
 
 
-@app.task(bind=True)
-def deliver_message(
-    self, sub_id: int, msg: SendNotificationTaskKwargs, **kwargs
-) -> None:
+def deliver_message(sub: Abonnement, msg: SendNotificationTaskKwargs, **kwargs) -> None:
     """
     send msg to subscriber
 
@@ -62,15 +71,8 @@ def deliver_message(
 
     # `task_attempt_count` is the number of times the same task was automatically retried
     # `notification_attempt_count` is the number of tasks that were started for this notification (without counting automatic retries)
-    task_attempt_count = self.request.retries + 1
     notification_attempt_count = kwargs.get("attempt", 1)
-    bind_contextvars(subscription_pk=sub_id, notification_id=notificatie_id)
-
-    try:
-        sub = Abonnement.objects.get(pk=sub_id)
-    except Abonnement.DoesNotExist:
-        logger.error("subscription_does_not_exist")
-        return
+    bind_contextvars(subscription_pk=sub.id, notification_id=notificatie_id)
 
     bind_contextvars(subscription_callback=sub.callback_url)
 
@@ -96,7 +98,6 @@ def deliver_message(
             logger.warning(
                 "notification_failed",
                 http_status_code=response.status_code,
-                task_attempt_count=task_attempt_count,
                 notification_attempt_count=notification_attempt_count,
             )
             raise NotificationException(exception_message)
@@ -104,7 +105,6 @@ def deliver_message(
             logger.info(
                 "notification_successful",
                 notification_attempt_count=notification_attempt_count,
-                task_attempt_count=task_attempt_count,
             )
     except (requests.RequestException, OAuth2Error) as e:
         response_init_kwargs = {"exception": str(e)}
@@ -112,7 +112,6 @@ def deliver_message(
             "notification_error",
             exc_info=e,
             notification_attempt_count=notification_attempt_count,
-            task_attempt_count=task_attempt_count,
         )
         raise
     finally:
@@ -126,10 +125,7 @@ def deliver_message(
             )
 
 
-@app.task(bind=True)
-def deliver_cloudevent(
-    self, sub_id: int, cloudevent: CloudEventKwargs, **kwargs
-) -> None:
+def deliver_cloudevent(sub: Abonnement, cloudevent: CloudEventKwargs, **kwargs) -> None:
     """
     send cloud event to subscriber
 
@@ -138,17 +134,9 @@ def deliver_cloudevent(
     cloudevent_id: int = kwargs.pop("cloudevent_id", None)
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
-    # `task_attempt_count` is the number of times the same task was automatically retried
     # `cloudevent_attempt_count` is the number of tasks that were started for this cloud event (without counting automatic retries)
-    task_attempt_count = self.request.retries + 1
     cloudevent_attempt_count = kwargs.get("attempt", 1)
-    bind_contextvars(subscription_pk=sub_id)
-
-    try:
-        sub = Abonnement.objects.get(pk=sub_id)
-    except Abonnement.DoesNotExist:
-        logger.error("subscription_does_not_exist")
-        return
+    bind_contextvars(subscription_pk=sub.id)
 
     bind_contextvars(subscription_callback=sub.callback_url)
 
@@ -174,7 +162,6 @@ def deliver_cloudevent(
             logger.warning(
                 "cloudevent_failed",
                 http_status_code=response.status_code,
-                task_attempt_count=task_attempt_count,
                 cloudevent_attempt_count=cloudevent_attempt_count,
             )
             raise CloudEventException(exception_message)
@@ -182,7 +169,6 @@ def deliver_cloudevent(
             logger.info(
                 "cloudevent_successful",
                 cloudevent_attempt_count=cloudevent_attempt_count,
-                task_attempt_count=task_attempt_count,
             )
     except (requests.RequestException, OAuth2Error) as e:
         response_init_kwargs = {"exception": str(e)}
@@ -190,7 +176,6 @@ def deliver_cloudevent(
             "cloudevent_error",
             exc_info=e,
             cloudevent_attempt_count=cloudevent_attempt_count,
-            task_attempt_count=task_attempt_count,
         )
         raise
     finally:
@@ -219,22 +204,165 @@ def clean_old_notifications() -> None:
     call_command("clean_old_notifications")
 
 
-add_autoretry_behaviour(
-    deliver_message,
-    autoretry_for=(
-        NotificationException,
-        requests.RequestException,
-        OAuth2Error,
-    ),
-    retry_jitter=False,
-)
+def _get_notification_subs(msg) -> set[Abonnement]:
+    # define subs
+    msg_filters = msg["kenmerken"]
+    subs = set()
+    filter_groups = (
+        FilterGroup.objects.filter(
+            kanaal__naam=msg["kanaal"],
+        )
+        .select_related("abonnement")
+        .prefetch_related("filters")
+    )
+    for group in filter_groups:
+        if group.match_pattern(msg_filters):
+            subs.add(group.abonnement)
 
-add_autoretry_behaviour(
-    deliver_cloudevent,
-    autoretry_for=(
-        CloudEventException,
-        requests.RequestException,
-        OAuth2Error,
-    ),
-    retry_jitter=False,
-)
+    return subs
+
+
+def _get_cloudevent_subs(msg: CloudEventKwargs) -> set[Abonnement]:
+    msg_filters = msg.get("data", {})
+    subs: set[Abonnement] = set()
+    filter_groups = (
+        CloudEventFilterGroup.objects.select_related("abonnement")
+        .prefetch_related("filters")
+        .annotate(type=Value(msg["type"], CharField()))
+        .filter(type__contains=F("type_substring"), abonnement__send_cloudevents=True)
+    )
+    for group in filter_groups:
+        if group.match_pattern(msg_filters):
+            subs.add(group.abonnement)
+    return subs
+
+
+@contextmanager
+def _context(msg: NotificationMessage | CloudEventKwargs, is_cloudevent: bool = False):
+    if is_cloudevent:
+        with structlog.contextvars.bound_contextvars(
+            id=msg["id"],
+            source=msg["source"],
+            type=msg["type"],
+            subject=msg.get("subject"),
+        ):
+            yield
+    else:
+        with structlog.contextvars.bound_contextvars(
+            channel_name=msg["kanaal"],
+            resource=msg["resource"],
+            resource_url=msg["resourceUrl"],
+            main_object_url=msg["hoofdObject"],
+            creation_date=msg["aanmaakdatum"],
+            action=msg["actie"],
+            additional_attributes=msg.get("kenmerken"),
+        ):
+            yield
+
+
+def _send_to_subs(
+    scheduled_notif: ScheduledNotification, subs: set, config: NotificationsConfig
+):
+    task_kwargs = {
+        "attempt": scheduled_notif.attempt,
+    }
+    if scheduled_notif.cloudevent:
+        task_kwargs.update(
+            {
+                "cloudevent_id": scheduled_notif.cloudevent.id,
+            }
+        )
+    if scheduled_notif.notificatie:
+        task_kwargs.update(
+            {
+                "notificatie_id": scheduled_notif.notificatie.id,
+            }
+        )
+
+    failed_subs = []
+
+    with _context(
+        scheduled_notif.task_args, scheduled_notif.type == NotificationTypes.cloudevent
+    ):
+        for sub in list(subs):
+            try:
+                if sub.send_cloudevents:
+                    cloudevent = scheduled_notif.task_args
+                    if scheduled_notif.type == NotificationTypes.notification:
+                        "Transform cloudevent & add cloudevent log context vars"
+                        cloudevent = _transform_to_cloudevent(scheduled_notif.task_args)
+                        bind_contextvars(
+                            id=cloudevent["id"],
+                            source=cloudevent["source"],
+                            type=cloudevent["type"],
+                            subject=cloudevent.get("subject"),
+                        )
+
+                    deliver_cloudevent(
+                        sub,
+                        cloudevent,
+                        **task_kwargs,
+                    )
+                else:
+                    deliver_message(sub, scheduled_notif.task_args, **task_kwargs)
+            except Exception:
+                failed_subs.append(sub)
+
+    if failed_subs:
+        scheduled_notif.execute_after = timezone.now() + timedelta(
+            get_exponential_backoff_interval(
+                factor=config.notification_delivery_retry_backoff,
+                retries=scheduled_notif.attempt,
+                maximum=config.notification_delivery_retry_backoff_max,
+                base=config.notification_delivery_base_factor,
+                full_jitter=False,
+            )
+        )
+        scheduled_notif.attempt += 1
+        scheduled_notif.subs.set(failed_subs)
+        scheduled_notif.save()
+    else:
+        scheduled_notif.delete()
+
+
+def _transform_to_cloudevent(notif: NotificationMessage) -> CloudEventKwargs:
+    return {
+        "id": str(uuid.uuid4()),
+        "source": notif["source"],
+        "specversion": settings.CLOUDEVENT_SPECVERSION,
+        "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
+        "datacontenttype": "application/json",
+        "subject": notif["resourceUrl"].rsplit("/", 1)[
+            1
+        ],  # TODO the whole resourceUrl would make the location of the resource clearer.
+        "time": notif["aanmaakdatum"],
+        "data": {
+            **notif["kenmerken"],
+            "hoofdObject": notif["hoofdObject"],
+        },
+    }
+
+
+@app.task
+def execute_notifications() -> None:
+    config = NotificationsConfig.get_solo()
+
+    scheduled_notifications = ScheduledNotification.objects.filter(
+        execute_after__lte=timezone.now()
+    )
+
+    for scheduled_notif in scheduled_notifications.filter().iterator():
+        if scheduled_notif.attempt >= config.notification_delivery_max_retries:
+            scheduled_notif.delete()
+            continue
+
+        if scheduled_notif.subs.exists():
+            subs = set(scheduled_notif.subs.all())
+        else:
+            subs = (
+                _get_notification_subs(scheduled_notif.task_args)
+                if scheduled_notif.type == NotificationTypes.notification
+                else _get_cloudevent_subs(scheduled_notif.task_args)
+            )
+
+        _send_to_subs(scheduled_notif, subs, config)
