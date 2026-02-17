@@ -554,7 +554,9 @@ class CloudEventCeleryTests(APITestCase):
                     ],
                 )
 
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_cloudevent_request_exception_retry(self):
         """
@@ -601,7 +603,9 @@ class CloudEventCeleryTests(APITestCase):
                         }
                     ],
                 )
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_cloudevent_oauth2_exception_retry(self):
         """
@@ -645,6 +649,10 @@ class CloudEventCeleryTests(APITestCase):
                         }
                     ],
                 )
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_deliver_cloudevent_api_key_auth(self):
         abon = AbonnementFactory.create(
