@@ -57,7 +57,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -95,7 +95,7 @@ class NotifCeleryTests(APITestCase):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
         scheduled_notif = ScheduledNotification.objects.get()
-        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_notificatie_request_exception_retry(self):
@@ -127,7 +127,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -162,7 +162,7 @@ class NotifCeleryTests(APITestCase):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
         scheduled_notif = ScheduledNotification.objects.get()
-        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_too_long_exception_message(self):
@@ -193,7 +193,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -213,7 +213,7 @@ class NotifCeleryTests(APITestCase):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
         scheduled_notif = ScheduledNotification.objects.get()
-        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_notificatie_oauth2_exception_retry(self):
@@ -244,7 +244,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -273,7 +273,7 @@ class NotifCeleryTests(APITestCase):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
         scheduled_notif = ScheduledNotification.objects.get()
-        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_deliver_message_api_key_auth(self):
@@ -303,7 +303,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -346,7 +346,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -393,7 +393,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -441,7 +441,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -487,7 +487,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -530,7 +530,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -576,7 +576,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -622,7 +622,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -664,7 +664,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -700,7 +700,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -740,7 +740,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -779,7 +779,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -813,7 +813,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
