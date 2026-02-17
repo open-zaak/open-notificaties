@@ -1011,7 +1011,7 @@ class NotificatieRetryTests(TestCase):
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.add(abon)
 
@@ -1021,11 +1021,12 @@ class NotificatieRetryTests(TestCase):
 
         mock_get_exponential_backoff.assert_called_once_with(
             factor=4,
-            retries=1,
+            retries=0,
             maximum=28,
             base=4,
             full_jitter=False,
         )
+        scheduled_notif.refresh_from_db()
         self.assertEqual(scheduled_notif.attempt, 1)
 
     def test_notificatie_retry_loop(self, mock_config, mock_get_exponential_backoff):
@@ -1068,7 +1069,7 @@ class NotificatieRetryTests(TestCase):
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
         )
         scheduled_notif.subs.set([abon1, abon2])
 
@@ -1076,7 +1077,7 @@ class NotificatieRetryTests(TestCase):
             m.post(abon1.callback_url, status_code=404)
             m.post(abon2.callback_url, status_code=200)
 
-            for i in range(1, 4):
+            for i in range(0, 6):
                 execute_notifications.run()
 
                 mock_get_exponential_backoff.assert_any_call(
