@@ -287,7 +287,7 @@ class MessageSerializer(NotificatieSerializer):
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
             notificatie=notificatie,
         )
 
@@ -368,7 +368,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
             type=NotificationTypes.cloudevent,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=1,
+            attempt=0,
             cloudevent=cloudevent,
         )
 

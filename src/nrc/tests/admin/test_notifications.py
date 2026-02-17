@@ -97,7 +97,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.attempt, 0)
         self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
@@ -137,7 +137,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.attempt, 0)
         self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
@@ -212,7 +212,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.attempt, 0)
         self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
@@ -249,7 +249,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.attempt, 0)
         self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,

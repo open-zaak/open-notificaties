@@ -575,9 +575,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         self.assertEqual(CloudEvent.objects.count(), 1)
 
         signatures = list(mock_chord.call_args_list[0][0][0])
-        self.assertEqual(len(signatures), 2)
-        self.assertEqual(signatures[0].args[0], abon1.id)
-        self.assertEqual(signatures[1].args[0], abon2.id)
+        subs = [signature.args[0] for signature in signatures]
+        self.assertCountEqual(subs, [abon1.id, abon2.id])
 
     def test_data(self):
         abon = AbonnementFactory.create(

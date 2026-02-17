@@ -69,9 +69,8 @@ def deliver_message(sub: Abonnement, msg: SendNotificationTaskKwargs, **kwargs) 
     """
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
-    # `task_attempt_count` is the number of times the same task was automatically retried
-    # `notification_attempt_count` is the number of tasks that were started for this notification (without counting automatic retries)
-    notification_attempt_count = kwargs.get("attempt", 1)
+    # `notification_attempt_count` is the amount of times this notification has been attempted
+    notification_attempt_count = kwargs.get("attempt", 0) + 1
     bind_contextvars(subscription_pk=sub.id, notification_id=notificatie_id)
 
     bind_contextvars(subscription_callback=sub.callback_url)
@@ -134,8 +133,8 @@ def deliver_cloudevent(sub: Abonnement, cloudevent: CloudEventKwargs, **kwargs) 
     cloudevent_id: int = kwargs.pop("cloudevent_id", None)
     notificatie_id: int = kwargs.pop("notificatie_id", None)
 
-    # `cloudevent_attempt_count` is the number of tasks that were started for this cloud event (without counting automatic retries)
-    cloudevent_attempt_count = kwargs.get("attempt", 1)
+    # `cloudevent_attempt_count` is the amount of times this cloudevent has been attempted
+    cloudevent_attempt_count = kwargs.get("attempt", 0) + 1
     bind_contextvars(subscription_pk=sub.id)
 
     bind_contextvars(subscription_callback=sub.callback_url)
@@ -370,7 +369,7 @@ def execute_notifications() -> None:
         execute_after__lte=timezone.now()
     )
     for scheduled_notif in scheduled_notifications.iterator():
-        if scheduled_notif.attempt >= config.notification_delivery_max_retries:
+        if scheduled_notif.attempt > (config.notification_delivery_max_retries + 1):
             scheduled_notif.delete()
             continue
 
