@@ -1,6 +1,5 @@
 import json
 import uuid
-from contextlib import contextmanager
 from datetime import timedelta
 
 from django.conf import settings
@@ -12,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
+from celery import chord
 from notifications_api_common.exponential_backoff import (
     get_exponential_backoff_interval,
 )
@@ -204,113 +204,21 @@ def clean_old_notifications() -> None:
     call_command("clean_old_notifications")
 
 
-def _get_notification_subs(msg) -> set[Abonnement]:
-    # define subs
-    msg_filters = msg["kenmerken"]
-    subs = set()
-    filter_groups = (
-        FilterGroup.objects.filter(
-            kanaal__naam=msg["kanaal"],
-        )
-        .select_related("abonnement")
-        .prefetch_related("filters")
-    )
-    for group in filter_groups:
-        if group.match_pattern(msg_filters):
-            subs.add(group.abonnement)
+@app.task
+def handle_result(subs: set[int], scheduled_notif_id: int):
+    try:
+        scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
+    except ScheduledNotification.DoesNotExist:
+        logger.error("scheduled_notification_does_not_exist")
+        return
 
-    return subs
-
-
-def _get_cloudevent_subs(msg: CloudEventKwargs) -> set[Abonnement]:
-    msg_filters = msg.get("data", {})
-    subs: set[Abonnement] = set()
-    filter_groups = (
-        CloudEventFilterGroup.objects.select_related("abonnement")
-        .prefetch_related("filters")
-        .annotate(type=Value(msg["type"], CharField()))
-        .filter(type__contains=F("type_substring"), abonnement__send_cloudevents=True)
-    )
-    for group in filter_groups:
-        if group.match_pattern(msg_filters):
-            subs.add(group.abonnement)
-    return subs
-
-
-@contextmanager
-def _context(msg: NotificationMessage | CloudEventKwargs, is_cloudevent: bool = False):
-    if is_cloudevent:
-        with structlog.contextvars.bound_contextvars(
-            id=msg["id"],
-            source=msg["source"],
-            type=msg["type"],
-            subject=msg.get("subject"),
-        ):
-            yield
-    else:
-        with structlog.contextvars.bound_contextvars(
-            channel_name=msg["kanaal"],
-            resource=msg["resource"],
-            resource_url=msg["resourceUrl"],
-            main_object_url=msg["hoofdObject"],
-            creation_date=msg["aanmaakdatum"],
-            action=msg["actie"],
-            additional_attributes=msg.get("kenmerken"),
-        ):
-            yield
-
-
-def _send_to_subs(
-    scheduled_notif: ScheduledNotification, subs: set, config: NotificationsConfig
-):
-    task_kwargs = {
-        "attempt": scheduled_notif.attempt,
-    }
-    if scheduled_notif.cloudevent:
-        task_kwargs.update(
-            {
-                "cloudevent_id": scheduled_notif.cloudevent.id,
-            }
-        )
-    if scheduled_notif.notificatie:
-        task_kwargs.update(
-            {
-                "notificatie_id": scheduled_notif.notificatie.id,
-            }
-        )
-
-    failed_subs = []
-
-    with _context(
-        scheduled_notif.task_args, scheduled_notif.type == NotificationTypes.cloudevent
-    ):
-        for sub in list(subs):
-            try:
-                if sub.send_cloudevents:
-                    cloudevent = scheduled_notif.task_args
-                    if scheduled_notif.type == NotificationTypes.notification:
-                        "Transform cloudevent & add cloudevent log context vars"
-                        cloudevent = _transform_to_cloudevent(scheduled_notif.task_args)
-                        bind_contextvars(
-                            id=cloudevent["id"],
-                            source=cloudevent["source"],
-                            type=cloudevent["type"],
-                            subject=cloudevent.get("subject"),
-                        )
-
-                    deliver_cloudevent(
-                        sub,
-                        cloudevent,
-                        **task_kwargs,
-                    )
-                else:
-                    deliver_message(sub, scheduled_notif.task_args, **task_kwargs)
-            except Exception:
-                failed_subs.append(sub)
+    failed_subs = [sub for sub in subs if sub is not None]
 
     if failed_subs:
-        scheduled_notif.execute_after = timezone.now() + timedelta(
-            get_exponential_backoff_interval(
+        config = NotificationsConfig.get_solo()
+
+        scheduled_notif.execute_after += timedelta(
+            seconds=get_exponential_backoff_interval(
                 factor=config.notification_delivery_retry_backoff,
                 retries=scheduled_notif.attempt,
                 maximum=config.notification_delivery_retry_backoff_max,
@@ -344,14 +252,124 @@ def _transform_to_cloudevent(notif: NotificationMessage) -> CloudEventKwargs:
 
 
 @app.task
+def send_to_sub(sub_id: int, scheduled_notif_id: int, task_kwargs):  # TODO rename
+    try:
+        scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
+    except ScheduledNotification.DoesNotExist:
+        logger.error("scheduled_notification_does_not_exist")
+        return None
+
+    try:
+        sub = Abonnement.objects.get(id=sub_id)
+    except ScheduledNotification.DoesNotExist:
+        logger.error("subscription_does_not_exist")
+        return None
+
+    msg = scheduled_notif.task_args
+
+    if scheduled_notif.type == NotificationTypes.notification:
+        bind_contextvars(
+            channel_name=msg["kanaal"],
+            resource=msg["resource"],
+            resource_url=msg["resourceUrl"],
+            main_object_url=msg["hoofdObject"],
+            creation_date=msg["aanmaakdatum"],
+            action=msg["actie"],
+            additional_attributes=msg.get("kenmerken"),
+        )
+
+    if sub.send_cloudevents:
+        if scheduled_notif.type == NotificationTypes.notification:
+            msg = _transform_to_cloudevent(msg)
+
+        bind_contextvars(
+            id=msg["id"],
+            source=msg["source"],
+            type=msg["type"],
+            subject=msg.get("subject"),
+        )
+
+    try:
+        if sub.send_cloudevents:
+            deliver_cloudevent(
+                sub,
+                msg,
+                **task_kwargs,
+            )
+        else:
+            deliver_message(sub, msg, **task_kwargs)
+    except Exception:
+        return sub_id
+
+    return None
+
+
+def _get_notification_subs(msg: NotificationMessage) -> set[Abonnement]:
+    # define subs
+    msg_filters = msg["kenmerken"]
+    subs = set()
+    filter_groups = (
+        FilterGroup.objects.filter(
+            kanaal__naam=msg["kanaal"],
+        )
+        .select_related("abonnement")
+        .prefetch_related("filters")
+    )
+    for group in filter_groups:
+        if group.match_pattern(msg_filters):
+            subs.add(group.abonnement)
+
+    return subs
+
+
+def _get_cloudevent_subs(msg: CloudEventKwargs) -> set[Abonnement]:
+    msg_filters = msg.get("data", {})
+    subs: set[Abonnement] = set()
+    filter_groups = (
+        CloudEventFilterGroup.objects.select_related("abonnement")
+        .prefetch_related("filters")
+        .annotate(type=Value(msg["type"], CharField()))
+        .filter(type__contains=F("type_substring"), abonnement__send_cloudevents=True)
+    )
+    for group in filter_groups:
+        if group.match_pattern(msg_filters):
+            subs.add(group.abonnement)
+    return subs
+
+
+def _get_task_kwargs(scheduled_notif: ScheduledNotification) -> dict:
+    task_kwargs: dict[str, str | int] = {
+        "attempt": scheduled_notif.attempt,
+    }
+    if scheduled_notif.cloudevent:
+        task_kwargs.update(
+            {
+                "cloudevent_id": scheduled_notif.cloudevent.id,
+            }
+        )
+    if scheduled_notif.notificatie:
+        task_kwargs.update(
+            {
+                "notificatie_id": scheduled_notif.notificatie.id,
+            }
+        )
+
+    return task_kwargs
+
+
+@app.task
 def execute_notifications() -> None:
+    """
+    Starts a task for each sub of a notification that should be executed based on 'execute_after'
+
+    If a ScheduledNotification does not have subs saved they will be fetched based on the notification type.
+    """
     config = NotificationsConfig.get_solo()
 
     scheduled_notifications = ScheduledNotification.objects.filter(
         execute_after__lte=timezone.now()
     )
-
-    for scheduled_notif in scheduled_notifications.filter().iterator():
+    for scheduled_notif in scheduled_notifications.iterator():
         if scheduled_notif.attempt >= config.notification_delivery_max_retries:
             scheduled_notif.delete()
             continue
@@ -365,4 +383,8 @@ def execute_notifications() -> None:
                 else _get_cloudevent_subs(scheduled_notif.task_args)
             )
 
-        _send_to_subs(scheduled_notif, subs, config)
+        task_kwargs = _get_task_kwargs(scheduled_notif)
+
+        chord(
+            send_to_sub.s(sub.id, scheduled_notif.id, task_kwargs) for sub in list(subs)
+        )(handle_result.s(scheduled_notif.id))

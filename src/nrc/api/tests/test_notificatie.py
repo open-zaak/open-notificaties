@@ -32,6 +32,7 @@ from nrc.utils.tests.structlog import capture_logs
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
+    CELERY_TASK_ALWAYS_EAGER=True,
 )
 class NotificatieTests(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
@@ -967,6 +968,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
 
 @patch("nrc.api.tasks.get_exponential_backoff_interval")
 @patch("nrc.api.tasks.NotificationsConfig.get_solo")
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True)
 class NotificatieRetryTests(TestCase):
     def test_notificatie_retry_use_global_config(
         self, mock_config, mock_get_exponential_backoff
@@ -1038,10 +1040,15 @@ class NotificatieRetryTests(TestCase):
         kanaal = KanaalFactory.create(
             naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
         )
-        abon = AbonnementFactory.create(callback_url="https://example.com/callback")
-        filter_group = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon)
+        abon1 = AbonnementFactory.create(callback_url="https://example.com/callback")
+        abon2 = AbonnementFactory.create(callback_url="https://example2.com/callback")
+        filter_group1 = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon1)
+        filter_group2 = FilterGroupFactory.create(kanaal=kanaal, abonnement=abon2)
         FilterFactory.create(
-            filter_group=filter_group, key="bron", value="082096752011"
+            filter_group=filter_group1, key="bron", value="082096752011"
+        )
+        FilterFactory.create(
+            filter_group=filter_group2, key="bron", value="082096752011"
         )
         msg = {
             "kanaal": "zaken",
@@ -1063,10 +1070,11 @@ class NotificatieRetryTests(TestCase):
             execute_after=timezone.now(),
             attempt=1,
         )
-        scheduled_notif.subs.add(abon)
+        scheduled_notif.subs.set([abon1, abon2])
 
         with requests_mock.Mocker() as m:
-            m.post(abon.callback_url, status_code=404)
+            m.post(abon1.callback_url, status_code=404)
+            m.post(abon2.callback_url, status_code=200)
 
             for i in range(1, 4):
                 execute_notifications.run()
@@ -1080,7 +1088,7 @@ class NotificatieRetryTests(TestCase):
                 )
                 scheduled_notif.refresh_from_db()
                 self.assertEqual(scheduled_notif.attempt, i + 1)
-                print(scheduled_notif.execute_after - timezone.now())
+                self.assertEqual(scheduled_notif.subs.count(), 1)
 
             execute_notifications.run()
             self.assertEqual(ScheduledNotification.objects.count(), 0)

@@ -12,6 +12,7 @@ from nrc.accounts.tests.factories import SuperUserFactory
 from nrc.datamodel.models import (
     CloudEvent,
     CloudEventResponse,
+    NotificationTypes,
     ScheduledNotification,
 )
 from nrc.datamodel.tests.factories import (
@@ -76,6 +77,18 @@ class CloudEventAdminWebTest(WebTest):
         self.assertEqual(CloudEvent.objects.count(), 1)
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.event
+            | {
+                "time": self.event["time"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        )
+
     def test_resend_cloudevent(self):
         """
         Verify that a cloudevent is scheduled when it is saved via the admin
@@ -102,6 +115,18 @@ class CloudEventAdminWebTest(WebTest):
 
         # Verify that previous CloudeventResponses are not deleted
         self.assertEqual(CloudEventResponse.objects.count(), 1)
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.event
+            | {
+                "time": self.event["time"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        )
 
     def test_resend_cloudevent_action(self):
         """
