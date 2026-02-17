@@ -33,7 +33,11 @@ from nrc.datamodel.models import (
     ScheduledNotification,
 )
 
-from .types import CloudEventKwargs, NotificationMessage, SendNotificationTaskKwargs
+from .types import (
+    CloudEventKwargs,
+    NotificationMessageKwargs,
+    SendNotificationTaskKwargs,
+)
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -232,7 +236,7 @@ def handle_result(subs: set[int], scheduled_notif_id: int):
         scheduled_notif.delete()
 
 
-def _transform_to_cloudevent(notif: NotificationMessage) -> CloudEventKwargs:
+def _transform_to_cloudevent(notif: NotificationMessageKwargs) -> CloudEventKwargs:
     return {
         "id": str(uuid.uuid4()),
         "source": notif["source"],
@@ -303,7 +307,7 @@ def send_to_sub(sub_id: int, scheduled_notif_id: int, task_kwargs):  # TODO rena
     return None
 
 
-def _get_notification_subs(msg: NotificationMessage) -> set[Abonnement]:
+def _get_notification_subs(msg: NotificationMessageKwargs) -> set[Abonnement]:
     # define subs
     msg_filters = msg["kenmerken"]
     subs = set()
