@@ -259,6 +259,9 @@ class MessageSerializer(NotificatieSerializer):
         return camelize(validated_attrs)
 
     def _get_cloudevent_subs(self, msg) -> set[Abonnement]:
+        """
+        Fetches the notification subs that want cloudevents.
+        """
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()

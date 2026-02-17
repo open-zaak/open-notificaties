@@ -116,7 +116,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     "execute-notifications": {
         "task": "nrc.api.tasks.execute_notifications",
-        "schedule": crontab(),  # every minute
+        "schedule": crontab("*", "*", "*", "*", "*"),
     },
 }
 CELERY_RESULT_EXPIRES = config(

@@ -2,6 +2,7 @@ import json
 import random
 import string
 
+from django.test import override_settings
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -25,6 +26,7 @@ from ..types import CloudEventKwargs, SendNotificationTaskKwargs
 
 
 @temp_private_root()
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True)
 class NotifCeleryTests(APITestCase):
     def test_notificatie_invalid_response_retry(self):
         """
@@ -92,6 +94,10 @@ class NotifCeleryTests(APITestCase):
 
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+
     def test_notificatie_request_exception_retry(self):
         """
         Verify that a ScheduledNotification is created when the sending of the notification didn't
@@ -155,6 +161,10 @@ class NotifCeleryTests(APITestCase):
 
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+
     def test_too_long_exception_message(self):
         """
         Verify that an exception is called when the response of the notification didn't
@@ -201,6 +211,10 @@ class NotifCeleryTests(APITestCase):
         self.assertEqual(len(notif_response.exception), 1000)
 
         self.assertEqual(ScheduledNotification.objects.count(), 1)
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_notificatie_oauth2_exception_retry(self):
         """
@@ -257,6 +271,10 @@ class NotifCeleryTests(APITestCase):
         notif_response = NotificatieResponse.objects.get()
         self.assertEqual(notif_response.exception, str(exc))
         self.assertEqual(ScheduledNotification.objects.count(), 1)
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.attempt, 2)
+        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_deliver_message_api_key_auth(self):
         abon = AbonnementFactory.create(
@@ -490,6 +508,7 @@ class NotifCeleryTests(APITestCase):
 
 
 @temp_private_root()
+@override_settings(CELERY_TASK_ALWAYS_EAGER=True)
 class CloudEventCeleryTests(APITestCase):
     def test_cloudevent_invalid_response_retry(self):
         """

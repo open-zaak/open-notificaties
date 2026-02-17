@@ -26,6 +26,7 @@ from nrc.utils.tests.structlog import capture_logs
 @override_settings(
     LINK_FETCHER="vng_api_common.mocks.link_fetcher_200",
     LOG_NOTIFICATIONS_IN_DB=True,
+    CELERY_TASK_ALWAYS_EAGER=True,
 )
 @freeze_time("2025-01-01T12:00:00")
 class CloudEventTests(JWTAuthMixin, APITestCase):
@@ -502,8 +503,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
-    @patch("nrc.api.tasks._send_to_subs")
-    def test_correct_subs_get_cloudevent(self, mock_send_to_subs):
+    @patch("nrc.api.tasks.chord")
+    def test_correct_subs_get_cloudevent(self, mock_chord):
         event = {
             "specversion": "1.0",
             "type": "nl.overheid.zaken.zaak.created",
@@ -573,8 +574,10 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
 
-        subs = mock_send_to_subs.call_args_list[0][0][1]
-        self.assertCountEqual(subs, {abon1, abon2})
+        signatures = list(mock_chord.call_args_list[0][0][0])
+        self.assertEqual(len(signatures), 2)
+        self.assertEqual(signatures[0].args[0], abon1.id)
+        self.assertEqual(signatures[1].args[0], abon2.id)
 
     def test_data(self):
         abon = AbonnementFactory.create(

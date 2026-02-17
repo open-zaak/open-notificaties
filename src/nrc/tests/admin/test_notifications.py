@@ -10,7 +10,12 @@ from freezegun import freeze_time
 from maykin_2fa.test import disable_admin_mfa
 
 from nrc.accounts.tests.factories import SuperUserFactory
-from nrc.datamodel.models import Notificatie, NotificatieResponse, ScheduledNotification
+from nrc.datamodel.models import (
+    Notificatie,
+    NotificatieResponse,
+    NotificationTypes,
+    ScheduledNotification,
+)
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
     FilterGroupFactory,
@@ -90,6 +95,20 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.forwarded_msg
+            | {
+                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                ),
+            },
+        )
+
     def test_resend_notification(self):
         """
         Verify that a notification is scheduled when it is saved via the admin
@@ -115,6 +134,20 @@ class NotificationAdminWebTest(WebTest):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
         # Verify that previous NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 1)
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.forwarded_msg
+            | {
+                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                ),
+            },
+        )
 
     def test_resend_notification_action(self):
         """
@@ -177,6 +210,20 @@ class NotificationAdminWebTest(WebTest):
 
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.forwarded_msg
+            | {
+                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                ),
+            },
+        )
+
     def test_resend_notification_as_cloudevent(self):
         notificatie = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
         NotificatieResponseFactory.create(
@@ -199,6 +246,20 @@ class NotificationAdminWebTest(WebTest):
         self.assertEqual(ScheduledNotification.objects.count(), 1)
 
         self.assertEqual(NotificatieResponse.objects.count(), 1)
+
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
+        self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.forwarded_msg
+            | {
+                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                ),
+            },
+        )
 
     def test_resend_notification_action_as_cloudevent(self):
         notificatie1 = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
