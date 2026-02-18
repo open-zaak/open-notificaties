@@ -27,6 +27,7 @@ services:
 
   web:
     build: .
+    image: openzaak/open-notificaties:${TAG:-latest}
     environment: &app-env
       DJANGO_SETTINGS_MODULE: nrc.conf.docker
       SECRET_KEY: ${SECRET_KEY:-\(,gc7VE(#CO<zCR3e(lRtOsw5q+U2DpG5o\X#P4PVRm*=u|E%}
@@ -49,7 +50,7 @@ services:
       LOG_NOTIFICATIONS_IN_DB: ${LOG_NOTIFICATIONS_IN_DB:-yes}
       DB_CONN_MAX_AGE: "0"
       DB_POOL_ENABLED: True
-      
+
       # Enabling Open Telemetry requires the services in docker/docker-compose.observability.yaml
       # to be up and running.
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
@@ -81,7 +82,7 @@ services:
       - open-notificaties-dev
 
   web-init:
-    build: .
+    image: openzaak/open-notificaties:${TAG:-latest}
     environment:
       <<: *app-env
       #
@@ -97,7 +98,7 @@ services:
       - open-notificaties-dev
 
   celery:
-    build: .
+    image: openzaak/open-notificaties:${TAG:-latest}
     environment: *app-env
     command: /celery_worker.sh
     healthcheck:
@@ -114,7 +115,6 @@ services:
       - open-notificaties-dev
 
   celery-beat:
-    build: .
     image: openzaak/open-notificaties:${TAG:-latest}
     environment: *app-env
     command: /celery_beat.sh
@@ -127,7 +127,7 @@ services:
       - open-notificaties-dev
 
   celery-flower:
-    build: .
+    image: openzaak/open-notificaties:${TAG:-latest}
     environment: *app-env
     command: /celery_flower.sh
     ports:
