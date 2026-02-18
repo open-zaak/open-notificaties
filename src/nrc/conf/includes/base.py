@@ -114,6 +114,10 @@ CELERY_BEAT_SCHEDULE = {
         # https://docs.celeryproject.org/en/v4.4.7/userguide/periodic-tasks.html#crontab-schedules
         "schedule": crontab(0, 0, day_of_month="1"),
     },
+    "execute-notifications": {
+        "task": "nrc.api.tasks.execute_notifications",
+        "schedule": crontab("*", "*", "*", "*", "*"),
+    },
 }
 CELERY_RESULT_EXPIRES = config(
     "CELERY_RESULT_EXPIRES",
