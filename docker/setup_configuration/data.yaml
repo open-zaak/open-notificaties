@@ -119,7 +119,7 @@ notifications_abonnementen_config_enable: true
 notifications_abonnementen_config:
   items:
     - uuid: ff5a9438-6512-4c2d-b69e-6c512c466fb8
-      callback_url: http://openzaak:8000/api/v1/callback
+      callback_url: http://webhook/204
       auth: Token foo
       kanalen:
         - filters:
@@ -129,17 +129,24 @@ notifications_abonnementen_config:
             vertrouwelijkheidaanduiding: beperkt_openbaar
           naam: zaken
     - uuid: 03baec5a-93ef-4ba6-bb73-c548c12009a2
-      callback_url: http://openzaak:8000/api/v1/other-callback
+      callback_url: http://webhook/400
       auth: Token bar
       kanalen:
         - naam: zaken
     - uuid: 0f616bfd-aacc-4d85-a140-2af17a56217b
-      callback_url: http://web:8000/api/v1/callbacks
+      callback_url: http://webhook/204
       auth: Bearer foo
       kanalen:
         - naam: autorisaties
     - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
-      callback_url: http://web:8000/api/v1/other-callback
+      callback_url: http://webhook/204
+      auth: Token bar
+      send_cloudevents: true
+      cloudevent_filters:
+        - zaak.created
+        - nl.overheid
+    - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
+      callback_url: http://webhook/400
       auth: Token bar
       send_cloudevents: true
       cloudevent_filters:
