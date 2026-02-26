@@ -1,0 +1,14 @@
+services:
+  webhook:
+    image: nginx:mainline-perl
+    ports:
+      - "8080:80"
+    volumes:
+      - ./webhook/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./webhook/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - open-notificaties-dev
+
+networks:
+  open-notificaties-dev:
+    name: open-notificaties-dev
