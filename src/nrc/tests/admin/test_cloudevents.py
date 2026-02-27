@@ -1,4 +1,3 @@
-from unittest.mock import patch
 from uuid import uuid4
 
 from django.test import override_settings
@@ -13,6 +12,8 @@ from nrc.accounts.tests.factories import SuperUserFactory
 from nrc.datamodel.models import (
     CloudEvent,
     CloudEventResponse,
+    NotificationTypes,
+    ScheduledNotification,
 )
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
@@ -27,7 +28,6 @@ from nrc.datamodel.tests.factories import (
 @override_settings(
     LOG_NOTIFICATIONS_IN_DB=True,
 )
-@patch("nrc.api.serializers.deliver_cloudevent.delay")
 class CloudEventAdminWebTest(WebTest):
     maxdiff = None
 
@@ -49,7 +49,7 @@ class CloudEventAdminWebTest(WebTest):
             "data": "{}",
         }
 
-    def test_create_cloudevent(self, mock_deliver_cloudevent):
+    def test_create_cloudevent(self):
         """
         Verify that a cloudevent is sent when it is created via the admin
         """
@@ -73,17 +73,23 @@ class CloudEventAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Cloudevent should be sent
-        mock_deliver_cloudevent.assert_called_once_with(
-            self.abonnement.id,
-            self.event,
-            cloudevent_id=CloudEvent.objects.get().id,
-            attempt=1,
-        )
         # Verify that only one Cloudevent was created (via the admin)
         self.assertEqual(CloudEvent.objects.count(), 1)
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
 
-    def test_resend_cloudevent(self, mock_deliver_message):
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
+        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.event
+            | {
+                "time": self.event["time"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        )
+
+    def test_resend_cloudevent(self):
         """
         Verify that a cloudevent is scheduled when it is saved via the admin
         """
@@ -102,19 +108,27 @@ class CloudEventAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Cloudevent should be scheduled
-        mock_deliver_message.assert_called_once_with(
-            self.abonnement.id,
-            self.event,
-            cloudevent_id=cloudevent.id,
-            attempt=2,
-        )
         # Verify that no new Cloudevent was created
         self.assertEqual(CloudEvent.objects.count(), 1)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 1)
+
         # Verify that previous CloudeventResponses are not deleted
         self.assertEqual(CloudEventResponse.objects.count(), 1)
 
-    def test_resend_cloudevent_action(self, mock_deliver_message):
+        scheduled_notif = ScheduledNotification.objects.get()
+        self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
+        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.subs.count(), 0)
+        self.assertEqual(
+            scheduled_notif.task_args,
+            self.event
+            | {
+                "time": self.event["time"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        )
+
+    def test_resend_cloudevent_action(self):
         """
         Verify that a cloudevent is scheduled when it is saved via the admin
         """
@@ -144,10 +158,11 @@ class CloudEventAdminWebTest(WebTest):
 
         self.assertEqual(response.status_code, 302)
 
-        # Two cloudevents should be scheduled
-        self.assertEqual(mock_deliver_message.call_count, 2)
         # Verify that no new Cloudevents were created
         self.assertEqual(CloudEvent.objects.count(), 3)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
+
         # Verify that old CloudeventResponses are not deleted
         self.assertEqual(CloudEventResponse.objects.count(), 3)
 

@@ -1,10 +1,8 @@
-import uuid
-
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.db.models import CharField, F, Value
 from django.forms.models import model_to_dict
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import structlog
@@ -15,7 +13,6 @@ from rest_framework.validators import UniqueValidator
 from vng_api_common.utils import get_help_text
 from vng_api_common.validators import IsImmutableValidator, URLValidator
 
-from nrc.api.tasks import deliver_cloudevent, deliver_message
 from nrc.datamodel.models import (
     Abonnement,
     CloudEvent,
@@ -25,6 +22,8 @@ from nrc.datamodel.models import (
     FilterGroup,
     Kanaal,
     Notificatie,
+    NotificationTypes,
+    ScheduledNotification,
 )
 
 from ..utils.help_text import mark_experimental
@@ -259,13 +258,16 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _get_subs(self, msg) -> set[Abonnement]:
+    def _get_cloudevent_subs(self, msg) -> set[Abonnement]:
+        """
+        Fetches the notification subs that want cloudevents.
+        """
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
         filter_groups = (
             FilterGroup.objects.filter(
-                kanaal__naam=msg["kanaal"],
+                kanaal__naam=msg["kanaal"], abonnement__send_cloudevents=True
             )
             .select_related("abonnement")
             .prefetch_related("filters")
@@ -276,58 +278,22 @@ class MessageSerializer(NotificatieSerializer):
 
         return subs
 
-    def _send_to_subs(
+    def _schedule_notification(
         self,
-        subs: set[Abonnement],
         msg: NotificationMessage,
         notificatie: Notificatie | None = None,
     ):
-        task_kwargs = {}
+        ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=msg,
+            execute_after=timezone.now(),
+            attempt=0,
+            notificatie=notificatie,
+        )
 
-        if notificatie:
-            task_kwargs.update(
-                {
-                    "notificatie_id": notificatie.id,
-                    "attempt": notificatie.last_attempt + 1,
-                }
-            )
-
-        with structlog.contextvars.bound_contextvars(
-            channel_name=msg["kanaal"],
-            resource=msg["resource"],
-            resource_url=msg["resourceUrl"],
-            main_object_url=msg["hoofdObject"],
-            # Explicitly use `strftime` because `isoformat` adds a `+00:00` suffix
-            creation_date=msg["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
-            action=msg["actie"],
-            additional_attributes=msg.get("kenmerken"),
-        ):
-            logger.info("notification_received")
-
-            # send to subs
-            for sub in list(subs):
-                deliver_message.delay(sub.id, msg, **task_kwargs)
-
-    def _transform_to_cloudevent(self, notif: NotificationMessage) -> CloudEventKwargs:
-        return {
-            "id": str(uuid.uuid4()),
-            "source": notif["source"],
-            "specversion": settings.CLOUDEVENT_SPECVERSION,
-            "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
-            "datacontenttype": "application/json",
-            "subject": notif["resourceUrl"].rsplit("/", 1)[
-                1
-            ],  # TODO the whole resourceUrl would make the location of the resource clearer.
-            "time": notif["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "data": {
-                **notif["kenmerken"],
-                "hoofdObject": notif["hoofdObject"],
-            },
-        }
-
-    def _validate_source(self, validated_data, cloudevent_subs) -> None:
+    def _validate_source(self, validated_data) -> None:
         if not validated_data.get("source"):
-            if any(cloudevent_subs):
+            if any(self._get_cloudevent_subs(validated_data)):
                 logger.error(
                     "no_notification_source",
                     action=validated_data["actie"],
@@ -351,27 +317,20 @@ class MessageSerializer(NotificatieSerializer):
                 forwarded_msg=validated_data, kanaal=kanaal
             )
 
-        subs = self._get_subs(validated_data)
+        self._validate_source(validated_data)
 
-        cloudevent_subs = {sub for sub in subs if sub.send_cloudevents}
-        notification_subs = {sub for sub in subs if not sub.send_cloudevents}
-
-        self._validate_source(validated_data, cloudevent_subs)
-
-        self._send_to_subs(
-            notification_subs,
-            validated_data,
-            notificatie,
-        )
-
-        if cloudevent_subs:
-            # Send notificatie as cloudevent.
-            CloudEventSerializer.send_to_subs(
-                cloudevent_subs,
-                self._transform_to_cloudevent(validated_data),
-                notificatie=notificatie,
-                from_notificatie=True,
-            )
+        with structlog.contextvars.bound_contextvars(
+            channel_name=validated_data["kanaal"],
+            resource=validated_data["resource"],
+            resource_url=validated_data["resourceUrl"],
+            main_object_url=validated_data["hoofdObject"],
+            # Explicitly use `strftime` because `isoformat` adds a `+00:00` suffix
+            creation_date=validated_data["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            action=validated_data["actie"],
+            additional_attributes=validated_data.get("kenmerken"),
+        ):
+            logger.info("notification_received")
+        self._schedule_notification(validated_data, notificatie)
         return validated_data
 
     @classmethod
@@ -400,58 +359,27 @@ class CloudEventSerializer(serializers.ModelSerializer):
         model = CloudEvent
         fields = "__all__"
 
-    def _get_subs(self, msg: CloudEventKwargs) -> set[Abonnement]:
-        msg_filters = msg.get("data", {})
-        subs: set[Abonnement] = set()
-        filter_groups = (
-            CloudEventFilterGroup.objects.select_related("abonnement")
-            .prefetch_related("filters")
-            .annotate(type=Value(msg["type"], CharField()))
-            .filter(
-                type__contains=F("type_substring"), abonnement__send_cloudevents=True
-            )
-        )
-        for group in filter_groups:
-            if group.match_pattern(msg_filters):
-                subs.add(group.abonnement)
-        return subs
-
-    @classmethod
-    def send_to_subs(
-        cls,
-        subs: set[Abonnement],
+    def _schedule_cloudevent(
+        self,
         msg: CloudEventKwargs,
         cloudevent: CloudEvent | None = None,
-        notificatie: Notificatie | None = None,
-        from_notificatie: bool = False,
     ):
-        task_kwargs = {}
-        if cloudevent:
-            task_kwargs.update(
-                {
-                    "cloudevent_id": cloudevent.id,
-                    "attempt": cloudevent.last_attempt + 1,
-                }
-            )
-        elif notificatie:
-            task_kwargs.update(
-                {
-                    "notificatie_id": notificatie.id,
-                    "attempt": notificatie.last_attempt + 1,
-                }
-            )
+        ScheduledNotification.objects.create(
+            type=NotificationTypes.cloudevent,
+            task_args=msg,
+            execute_after=timezone.now(),
+            attempt=0,
+            cloudevent=cloudevent,
+        )
 
+    def _log(self, validated_data: CloudEventKwargs) -> None:
         with structlog.contextvars.bound_contextvars(
-            id=msg["id"],
-            source=msg["source"],
-            type=msg["type"],
-            subject=msg["subject"],
+            id=validated_data["id"],
+            source=validated_data["source"],
+            type=validated_data["type"],
+            subject=validated_data.get("subject"),
         ):
-            if not from_notificatie:
-                logger.info("cloudevent_received")
-
-            for sub in subs:
-                deliver_cloudevent.delay(sub.id, msg, **task_kwargs)
+            logger.info("cloudevent_received")
 
     def create(self, validated_data: CloudEventKwargs) -> CloudEventKwargs:
         if settings.LOG_NOTIFICATIONS_IN_DB:
@@ -459,13 +387,13 @@ class CloudEventSerializer(serializers.ModelSerializer):
         else:
             cloudevent = None
 
-        subs = self._get_subs(validated_data)
-        self.send_to_subs(subs, validated_data, cloudevent=cloudevent)
+        self._log(validated_data)
+        self._schedule_cloudevent(validated_data, cloudevent)
         return validated_data
 
     def update(self, instance, validated_data: CloudEventKwargs) -> CloudEventKwargs:
-        subs = self._get_subs(validated_data)
-        self.send_to_subs(subs, validated_data, cloudevent=instance)
+        self._log(validated_data)
+        self._schedule_cloudevent(validated_data, instance)
         return validated_data
 
     @classmethod

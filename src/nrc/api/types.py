@@ -4,8 +4,8 @@ from typing import Any, NotRequired, TypedDict
 from nrc.datamodel.models import Notificatie
 
 
-class NotificationMessage(TypedDict):
-    aanmaakdatum: datetime
+class _BaseNotificationMessage(TypedDict):
+    aanmaakdatum: datetime | str
     source: str
     actie: str
     hoofdObject: str
@@ -14,6 +14,14 @@ class NotificationMessage(TypedDict):
     resource: str
     resourceUrl: str
     notificatie: NotRequired[Notificatie | None]
+
+
+class NotificationMessage(_BaseNotificationMessage):
+    aanmaakdatum: datetime
+
+
+class NotificationMessageKwargs(_BaseNotificationMessage):
+    aanmaakdatum: str
 
 
 class SendNotificationTaskKwargs(NotificationMessage):
