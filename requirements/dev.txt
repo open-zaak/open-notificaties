@@ -96,7 +96,7 @@ certifi==2024.7.4
     #   requests
     #   self-certifi
     #   sentry-sdk
-cffi==1.17.0
+cffi==2.0.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -152,7 +152,7 @@ coverage==6.3.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   codecov
-cryptography==44.0.2
+cryptography==46.0.5
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -770,7 +770,7 @@ pyjwt==2.10.1
     #   -r requirements/ci.txt
     #   commonground-api-common
     #   zgw-consumers
-pyopenssl==25.0.0
+pyopenssl==25.3.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
