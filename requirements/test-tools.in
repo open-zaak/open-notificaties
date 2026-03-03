@@ -3,6 +3,7 @@
 
 # Dependencies only relevant for (unit) testing
 django-webtest
+django-test-migrations
 factory-boy
 freezegun
 pyquery
