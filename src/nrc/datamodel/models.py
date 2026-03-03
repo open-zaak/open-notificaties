@@ -85,7 +85,7 @@ class Abonnement(models.Model):
         _("Client ID"),
         max_length=100,
         blank=True,
-        help_text=_("Client ID extracted from Auth header"),
+        help_text=_("The client ID used to construct the JSON Web Token"),
     )
     # TODO (next major release):
     # from nrc.api.tasks impoort service_from_abonnement
@@ -104,14 +104,6 @@ class Abonnement(models.Model):
                 "Required fields per auth type: * `api_key`: `auth`, * `zgw`: `client_id`, `secret`, "
                 "* `oauth2_client_credentials`: `client_id`, `secret`, `oauth2_token_url`"
             )
-        ),
-    )
-    auth_client_id = models.CharField(
-        _("Client Id"),
-        max_length=255,
-        blank=True,
-        help_text=mark_experimental(
-            _("The client ID used to construct the JSON Web Token")
         ),
     )
     secret = models.CharField(
