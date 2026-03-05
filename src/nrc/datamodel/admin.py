@@ -158,7 +158,7 @@ class AbonnementAdmin(admin.ModelAdmin):
         "callback_url",
         "auth_type",
         "auth",
-        "auth_client_id",
+        "client_id",
         "secret",
         "oauth2_token_url",
         "oauth2_scope",

@@ -97,6 +97,7 @@ class AbonnementConfigurationItem(ConfigurationModel):
             "type substrings with additional filters."
         ),
     )
+    auth_client_id = DjangoModelRef(Abonnement, "client_id", examples=["client-id"])
 
     class Meta:
         django_model_refs = {
@@ -104,7 +105,6 @@ class AbonnementConfigurationItem(ConfigurationModel):
                 "callback_url",
                 "auth_type",
                 "auth",
-                "auth_client_id",
                 "secret",
                 "oauth2_token_url",
                 "oauth2_scope",
