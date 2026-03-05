@@ -393,9 +393,8 @@ def execute_notifications() -> None:
     config = NotificationsConfig.get_solo()
 
     # Fetches two types of scheduled notifications:
-    # - Notifications that are not currently in progress and should be executed
-    # - Notifications that are currently in progress but have been for a long time (4 * NOTIFICATION_SEC_INTERVAL) so task probably failed.
-    # TODO could it be possible task is still being executed? maybe if there are not enough workers/concurrency?
+    # 1. Notifications that are not currently in progress and should be executed
+    # 2. Notifications that are currently in progress but have been for a long time (4 * NOTIFICATION_SEC_INTERVAL) so task probably failed.
     scheduled_notifications = ScheduledNotification.objects.filter(
         Q(
             in_progress=False,
@@ -410,9 +409,11 @@ def execute_notifications() -> None:
 
     notification_ids = list(scheduled_notifications.values_list("id", flat=True))
 
+    # execute_after is updated so that if the scheduled notification failed, the timeout gets added to the time it was actually executed and not when the scheduled notification was created.
+    # It is also necessary for scheduled notifications that were stuck (type 2) so that they will not get started again on the next run.
     updated_count = ScheduledNotification.objects.filter(
         id__in=notification_ids,
-    ).update(in_progress=True, execute_after=timezone.now())  # TODO add explanation
+    ).update(in_progress=True, execute_after=timezone.now())
 
     logger.debug(
         "executing_notifications",
