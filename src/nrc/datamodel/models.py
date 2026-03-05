@@ -155,7 +155,7 @@ class Abonnement(models.Model):
         verbose_name_plural = _("abonnementen")
 
     def __str__(self) -> str:
-        return self.callback_url
+        return f"{str(self.uuid)[:8]}: {self.callback_url}"
 
     @property
     def kanalen(self):
@@ -374,6 +374,7 @@ class ScheduledNotification(models.Model):
         Abonnement,
         related_name="scheduled_notifications",
     )
+    in_progress = models.BooleanField(_("in progress"), default=False)
     notificatie = models.ForeignKey(
         Notificatie,
         on_delete=models.CASCADE,

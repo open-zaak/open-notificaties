@@ -70,7 +70,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "http_status_code": 400,
@@ -96,6 +96,7 @@ class NotifCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_notificatie_request_exception_retry(self):
@@ -142,7 +143,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "event": "notification_error",
@@ -163,6 +164,7 @@ class NotifCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_too_long_exception_message(self):
@@ -214,6 +216,7 @@ class NotifCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_notificatie_oauth2_exception_retry(self):
@@ -256,7 +259,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "event": "notification_error",
@@ -274,6 +277,7 @@ class NotifCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_deliver_message_api_key_auth(self):
@@ -317,6 +321,8 @@ class NotifCeleryTests(APITestCase):
 
             last_request = m.last_request
             self.assertEqual(last_request.headers.get("Authorization"), abon.auth)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_message_zgw_auth(self):
         abon = AbonnementFactory.create(
@@ -362,6 +368,8 @@ class NotifCeleryTests(APITestCase):
             self.assertTrue(
                 last_request.headers.get("Authorization", "").startswith("Bearer ")
             )
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_message_oauth2_auth(self):
         abon = AbonnementFactory.create(
@@ -414,6 +422,8 @@ class NotifCeleryTests(APITestCase):
             )
             self.assertEqual(len(m.request_history), 2)
 
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
+
     def test_deliver_message_no_cert_specified(self):
         abon = AbonnementFactory.create(
             auth_type=AuthTypes.api_key,
@@ -457,6 +467,8 @@ class NotifCeleryTests(APITestCase):
 
             self.assertTrue(last_request.verify)
             self.assertIsNone(last_request.cert)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_message_client_and_server_cert_specified(self):
         abon = AbonnementFactory.create(
@@ -506,6 +518,8 @@ class NotifCeleryTests(APITestCase):
                 abon.client_certificate.public_certificate.path,
             )
 
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
+
 
 @temp_private_root()
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -543,7 +557,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "http_status_code": 400,
@@ -556,6 +570,7 @@ class CloudEventCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_cloudevent_request_exception_retry(self):
@@ -593,7 +608,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "event": "cloudevent_error",
@@ -605,6 +620,7 @@ class CloudEventCeleryTests(APITestCase):
                 )
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_cloudevent_oauth2_exception_retry(self):
@@ -639,7 +655,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    cap_logs,
+                    [log for log in cap_logs if log["log_level"] != "debug"],
                     [
                         {
                             "event": "cloudevent_error",
@@ -652,6 +668,7 @@ class CloudEventCeleryTests(APITestCase):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
+        self.assertEqual(scheduled_notif.in_progress, False)
         self.assertEqual(list(scheduled_notif.subs.all()), [abon])
 
     def test_deliver_cloudevent_api_key_auth(self):
@@ -688,6 +705,8 @@ class CloudEventCeleryTests(APITestCase):
             self.assertEqual(
                 last_request.headers.get("Content-Type"), "application/cloudevents+json"
             )
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_cloudevent_zgw_auth(self):
         abon = AbonnementFactory.create(
@@ -726,6 +745,8 @@ class CloudEventCeleryTests(APITestCase):
             self.assertEqual(
                 last_request.headers.get("Content-Type"), "application/cloudevents+json"
             )
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_cloudevent_oauth2_auth(self):
         abon = AbonnementFactory.create(
@@ -770,6 +791,8 @@ class CloudEventCeleryTests(APITestCase):
             )
             self.assertEqual(len(m.request_history), 2)
 
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
+
     def test_deliver_cloudevent_no_cert_specified(self):
         abon = AbonnementFactory.create(
             auth_type=AuthTypes.api_key,
@@ -802,6 +825,8 @@ class CloudEventCeleryTests(APITestCase):
 
             self.assertTrue(last_request.verify)
             self.assertIsNone(last_request.cert)
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_deliver_cloudevent_client_and_server_cert_specified(self):
         abon = AbonnementFactory.create(
@@ -838,3 +863,5 @@ class CloudEventCeleryTests(APITestCase):
                 last_request.cert,
                 abon.client_certificate.public_certificate.path,
             )
+
+        self.assertEqual(ScheduledNotification.objects.count(), 0)

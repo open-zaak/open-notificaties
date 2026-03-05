@@ -5,12 +5,13 @@ from datetime import timedelta
 from django.conf import settings
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import CharField, F, Value
+from django.db.models import CharField, F, Q, Value
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
+import urllib3.exceptions
 from celery import chord
 from notifications_api_common.exponential_backoff import (
     get_exponential_backoff_interval,
@@ -109,7 +110,13 @@ def deliver_message(sub: Abonnement, msg: SendNotificationTaskKwargs, **kwargs) 
                 "notification_successful",
                 notification_attempt_count=notification_attempt_count,
             )
-    except (requests.RequestException, OAuth2Error) as e:
+    except (
+        requests.RequestException,
+        OAuth2Error,
+        urllib3.exceptions.MaxRetryError,
+        requests.exceptions.ConnectionError,
+        urllib3.exceptions.NameResolutionError,
+    ) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "notification_error",
@@ -173,7 +180,13 @@ def deliver_cloudevent(sub: Abonnement, cloudevent: CloudEventKwargs, **kwargs) 
                 "cloudevent_successful",
                 cloudevent_attempt_count=cloudevent_attempt_count,
             )
-    except (requests.RequestException, OAuth2Error) as e:
+    except (
+        requests.RequestException,
+        OAuth2Error,
+        urllib3.exceptions.MaxRetryError,
+        requests.exceptions.ConnectionError,
+        urllib3.exceptions.NameResolutionError,
+    ) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "cloudevent_error",
@@ -208,7 +221,8 @@ def clean_old_notifications() -> None:
 
 
 @app.task
-def handle_result(subs: set[int], scheduled_notif_id: int):
+def handle_result(subs: set[int | None], scheduled_notif_id: int):
+    logger.debug("handle_result", subs=subs, scheduled_notif=scheduled_notif_id)
     try:
         scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
     except ScheduledNotification.DoesNotExist:
@@ -230,9 +244,16 @@ def handle_result(subs: set[int], scheduled_notif_id: int):
             )
         )
         scheduled_notif.attempt += 1
+        if scheduled_notif.attempt > config.notification_delivery_max_retries:
+            logger.debug("handle_result_max_retries", scheduled_notif=scheduled_notif)
+            scheduled_notif.delete()
+            return
+
         scheduled_notif.subs.set(failed_subs)
+        scheduled_notif.in_progress = False
         scheduled_notif.save()
     else:
+        logger.debug("handle_result_success", scheduled_notif=scheduled_notif)
         scheduled_notif.delete()
 
 
@@ -255,7 +276,8 @@ def _transform_to_cloudevent(notif: NotificationMessageKwargs) -> CloudEventKwar
 
 
 @app.task
-def send_to_sub(sub_id: int, scheduled_notif_id: int, task_kwargs):  # TODO rename
+def send_to_sub(sub_id: int, scheduled_notif_id: int, task_kwargs):
+    logger.debug("send_to_sub", sub=sub_id, scheduled_notif=scheduled_notif_id)
     try:
         scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
     except ScheduledNotification.DoesNotExist:
@@ -367,13 +389,45 @@ def execute_notifications() -> None:
 
     If a ScheduledNotification does not have subs saved they will be fetched based on the notification type.
     """
+    time = timezone.now()
     config = NotificationsConfig.get_solo()
 
+    # Fetches two types of scheduled notifications:
+    # - Notifications that are not currently in progress and should be executed
+    # - Notifications that are currently in progress but have been for a long time (4 * NOTIFICATION_SEC_INTERVAL) so task probably failed.
+    # TODO could it be possible task is still being executed? maybe if there are not enough workers/concurrency?
     scheduled_notifications = ScheduledNotification.objects.filter(
-        execute_after__lte=timezone.now()
+        Q(
+            in_progress=False,
+            execute_after__lte=timezone.now(),
+        )
+        | Q(
+            in_progress=True,
+            execute_after__lte=timezone.now()
+            - timedelta(seconds=settings.NOTIFICATION_SEC_INTERVAL * 4),
+        )
     )
-    for scheduled_notif in scheduled_notifications.iterator():
-        if scheduled_notif.attempt > (config.notification_delivery_max_retries + 1):
+
+    notification_ids = list(scheduled_notifications.values_list("id", flat=True))
+
+    updated_count = ScheduledNotification.objects.filter(
+        id__in=notification_ids,
+    ).update(in_progress=True, execute_after=timezone.now())  # TODO add explanation
+
+    logger.debug(
+        "executing_notifications",
+        count=len(notification_ids),
+        new=updated_count,
+        stuck=len(notification_ids) - updated_count,
+    )
+
+    for scheduled_notif in ScheduledNotification.objects.filter(
+        id__in=notification_ids
+    ).iterator():
+        if scheduled_notif.attempt > config.notification_delivery_max_retries:
+            logger.debug(
+                "execute_notifications_max_retries", scheduled_notif=scheduled_notif
+            )
             scheduled_notif.delete()
             continue
 
@@ -391,3 +445,6 @@ def execute_notifications() -> None:
         chord(
             send_to_sub.s(sub.id, scheduled_notif.id, task_kwargs) for sub in list(subs)
         )(handle_result.s(scheduled_notif.id))
+
+    duration = timezone.now() - time
+    logger.debug("executed_notifications", duration=duration.total_seconds())

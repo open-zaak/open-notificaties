@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datamodel', '0022_cloudeventfilter'),
+        ('datamodel', '0024_remove_abonnement_auth_client_id_and_more'),
     ]
 
     operations = [

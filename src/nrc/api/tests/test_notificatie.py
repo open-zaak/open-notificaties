@@ -1077,7 +1077,7 @@ class NotificatieRetryTests(TestCase):
             m.post(abon1.callback_url, status_code=404)
             m.post(abon2.callback_url, status_code=200)
 
-            for i in range(0, 6):
+            for i in range(0, 5):
                 execute_notifications.run()
 
                 mock_get_exponential_backoff.assert_any_call(
@@ -1087,9 +1087,9 @@ class NotificatieRetryTests(TestCase):
                     base=4,
                     full_jitter=False,
                 )
-                scheduled_notif.refresh_from_db()
-                self.assertEqual(scheduled_notif.attempt, i + 1)
-                self.assertEqual(scheduled_notif.subs.count(), 1)
-
-            execute_notifications.run()
-            self.assertEqual(ScheduledNotification.objects.count(), 0)
+                if i < 4:
+                    scheduled_notif.refresh_from_db()
+                    self.assertEqual(scheduled_notif.attempt, i + 1)
+                    self.assertEqual(scheduled_notif.subs.count(), 1)
+                else:
+                    self.assertEqual(ScheduledNotification.objects.count(), 0)
