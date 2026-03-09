@@ -42,7 +42,7 @@ class TestScheduling(APITestCase):
         3: in progress and recently executed
         4: in progress and executed a 'long' time ago
         """
-        ScheduledNotification.objects.create(
+        a = ScheduledNotification.objects.create(
             in_progress=False,
             execute_after=timezone.now() - timedelta(seconds=5),
             task_args=self.data,
@@ -66,7 +66,7 @@ class TestScheduling(APITestCase):
             type=NotificationTypes.notification,
         )
 
-        ScheduledNotification.objects.create(
+        b = ScheduledNotification.objects.create(
             in_progress=True,
             execute_after=timezone.now() - timedelta(seconds=500),
             task_args=self.data,
@@ -89,7 +89,7 @@ class TestScheduling(APITestCase):
             scheduled_notif_ids = [
                 call.args[1] for call in mock_send_to_sub.s.call_args_list
             ]
-            self.assertEqual(scheduled_notif_ids, [1, 4])
+            self.assertEqual(scheduled_notif_ids, [a.id, b.id])
 
         with (
             patch("nrc.api.tasks.chord") as mock_chord,
