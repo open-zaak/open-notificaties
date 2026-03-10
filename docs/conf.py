@@ -60,6 +60,7 @@ extensions = [
     "sphinx_markdown_tables",
     "django_setup_configuration.documentation.setup_config_example",
     "django_setup_configuration.documentation.setup_config_usage",
+    "django_setup_configuration.documentation.validate_config_example",
     "vng_api_common.diagrams.uml_images",
 ]
 
