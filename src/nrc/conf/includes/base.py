@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from celery.schedules import crontab
 
@@ -108,11 +109,27 @@ CELERY_BROKER_URL = config(
     help_text="the URL of the broker that will be used to actually send the notifications",
     group="Celery",
 )
+
+NOTIFICATION_SEC_INTERVAL = config(
+    "NOTIFICATION_SEC_INTERVAL",
+    30,
+    help_text="The amount of seconds between starting the task that sends scheduled notifications.",
+    group="Celery",
+)
+
 CELERY_BEAT_SCHEDULE = {
     "clean-old-notifications": {
         "task": "nrc.api.tasks.clean_old_notifications",
         # https://docs.celeryproject.org/en/v4.4.7/userguide/periodic-tasks.html#crontab-schedules
         "schedule": crontab(0, 0, day_of_month="1"),
+    },
+    "execute-notifications": {
+        "task": "nrc.api.tasks.execute_notifications",
+        "schedule": timedelta(seconds=NOTIFICATION_SEC_INTERVAL),
+        "options": {
+            "expires": NOTIFICATION_SEC_INTERVAL
+            - 2,  # added for when worker is offline and queue gets filled with tasks
+        },
     },
 }
 CELERY_RESULT_EXPIRES = config(

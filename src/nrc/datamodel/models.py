@@ -155,7 +155,7 @@ class Abonnement(models.Model):
         verbose_name_plural = _("abonnementen")
 
     def __str__(self) -> str:
-        return self.callback_url
+        return f"{str(self.uuid)[:8]}: {self.callback_url}"
 
     @property
     def kanalen(self):
@@ -353,6 +353,42 @@ class CloudEventResponse(models.Model):
 
     def __str__(self) -> str:
         return f"{self.abonnement} {self.response_status or self.exception}"
+
+
+class NotificationTypes(models.TextChoices):
+    notification = "notification", _("notification")
+    cloudevent = "cloudevent", _("cloudevent")
+
+
+class ScheduledNotification(models.Model):
+    id = models.BigAutoField(
+        primary_key=True,
+        serialize=False,
+        verbose_name="ID",
+    )
+    type = models.CharField(_("type"), max_length=255, choices=NotificationTypes)
+    task_args = models.JSONField(_("task args"), encoder=DjangoJSONEncoder)
+    execute_after = models.DateTimeField(_("execute_after"))
+    attempt = models.PositiveSmallIntegerField(_("attempt"))
+    subs = models.ManyToManyField(
+        Abonnement,
+        related_name="scheduled_notifications",
+    )
+    in_progress = models.BooleanField(_("in progress"), default=False)
+    notificatie = models.ForeignKey(
+        Notificatie,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+    )
+    cloudevent = models.ForeignKey(
+        CloudEvent,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+    )
 
 
 def match_pattern(
