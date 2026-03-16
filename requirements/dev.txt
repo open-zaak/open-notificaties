@@ -545,7 +545,6 @@ markdown==3.10.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-    #   sphinx-markdown-tables
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.5
@@ -880,6 +879,11 @@ rich==13.9.4
     #   rich-click
 rich-click==1.8.5
     # via bump-my-version
+roman-numerals==4.1.0
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   sphinx
 rpds-py==0.20.0
     # via
     #   -c requirements/ci.txt
@@ -938,7 +942,7 @@ soupsieve==1.9.5
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   beautifulsoup4
-sphinx==8.1.3
+sphinx==9.1.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -946,11 +950,7 @@ sphinx==8.1.3
     #   sphinx-rtd-theme
     #   sphinx-tabs
     #   sphinxcontrib-jquery
-sphinx-markdown-tables==0.0.17
-    # via
-    #   -c requirements/ci.txt
-    #   -r requirements/ci.txt
-sphinx-rtd-theme==3.0.2
+sphinx-rtd-theme==3.1.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
