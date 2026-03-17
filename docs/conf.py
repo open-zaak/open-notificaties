@@ -57,7 +57,6 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx.ext.autodoc",
     "sphinx.ext.graphviz",
-    "sphinx_markdown_tables",
     "django_setup_configuration.documentation.setup_config_example",
     "django_setup_configuration.documentation.setup_config_usage",
     "django_setup_configuration.documentation.validate_config_example",

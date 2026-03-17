@@ -77,7 +77,8 @@ Retry behaviour is implemented using binary exponential backoff with a delay fac
 the formula to calculate the time to wait until the next retry is as follows:
 
 .. math::
-    t = \text{backoff_factor} * \text{base_factor}^c
+
+    t = \text{backoffFactor} * \text{baseFactor}^c
 
 where `t` is time in seconds and  `c` is the number of retries that have been performed already.
 
