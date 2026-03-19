@@ -32,7 +32,7 @@ services:
       CELERY_RESULT_EXPIRES: 3600
       CELERY_RESULT_BACKEND: redis://redis:6379/1
       CELERY_LOGLEVEL: DEBUG
-      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-4}
+      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-100}
       SUBPATH: ${SUBPATH:-/}
       OPENNOTIFICATIES_SUPERUSER_USERNAME: admin
       OPENNOTIFICATIES_SUPERUSER_EMAIL: admin@localhost
@@ -89,7 +89,10 @@ services:
 
   celery:
     image: openzaak/open-notificaties:${TAG:-latest}
-    environment: *app-env
+    environment:
+      <<: *app-env
+      DB_CONN_MAX_AGE: "60"
+      DB_POOL_ENABLED: False
     command: /celery_worker.sh
     healthcheck:
       test: ["CMD", "python", "/app/bin/check_celery_worker_liveness.py"]
