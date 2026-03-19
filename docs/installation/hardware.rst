@@ -57,5 +57,3 @@ Kubernetes recommendations
 * Preferably use 2 load balancer (like Traefik) replica's.
 * Use as many replica's as available CPU's taking into account you need to have a few
   replica's for your load balancer, and possibly other services.
-* RabbitMQ needs at least 256MB of memory - don't configure your resource limits lower
-  than that amount.
