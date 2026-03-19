@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-import os
 import json
 import logging
+import os
 import time
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from collections import defaultdict
 from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 TIMEOUT_SECONDS = int(os.environ.get("TIMEOUT_SECONDS", 15))
 
@@ -70,14 +70,17 @@ class WebhookHandler(BaseHTTPRequestHandler):
             json.dumps(parsed_body) if parsed_body is not None else "(empty)",
         )
 
-        self.send_json(200, {
-            "received": True,
-            "timestamp": now(),
-            "method": method,
-            "path": path,
-            "count": count,
-            "body": parsed_body,
-        })
+        self.send_json(
+            200,
+            {
+                "received": True,
+                "timestamp": now(),
+                "method": method,
+                "path": path,
+                "count": count,
+                "body": parsed_body,
+            },
+        )
 
     def do_GET(self):
         if self.path == "/stats":
@@ -109,18 +112,25 @@ class WebhookHandler(BaseHTTPRequestHandler):
 
     def do_timeout(self):
         counts["/timeout"] += 1
-        log.info("TIMEOUT started | count: %d | sleeping %ds", counts["/timeout"], TIMEOUT_SECONDS)
+        log.info(
+            "TIMEOUT started | count: %d | sleeping %ds",
+            counts["/timeout"],
+            TIMEOUT_SECONDS,
+        )
         time.sleep(TIMEOUT_SECONDS)
         log.info("TIMEOUT finished")
         self.send_json(200, {"message": f"Finished after {TIMEOUT_SECONDS}s"})
 
     def do_stats(self):
         log.info("STATS requested | counts: %s", dict(counts))
-        self.send_json(200, {
-            "timestamp": now(),
-            "counts": dict(counts),
-            "total": sum(counts.values()),
-        })
+        self.send_json(
+            200,
+            {
+                "timestamp": now(),
+                "counts": dict(counts),
+                "total": sum(counts.values()),
+            },
+        )
 
     def do_reset(self):
         old = dict(counts)
