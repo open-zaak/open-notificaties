@@ -13,7 +13,6 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 
 # wait for required services
 ${SCRIPTPATH}/wait_for_db.sh
-${SCRIPTPATH}/wait_for_rabbitmq.sh
 
 # build up worker options array
 worker_options=(
@@ -25,9 +24,11 @@ worker_options=(
 
 if [[ -v CELERY_WORKER_CONCURRENCY ]]; then
     echo "Using concurrency ${CELERY_WORKER_CONCURRENCY}"
-    worker_options+=( "-c${CELERY_WORKER_CONCURRENCY}" )
+    # Use threads for concurrency, because Open Notificaties is I/O bound
+    # and you can easily run a lot of threads without increasing the memory footprint
+    # of the Celery worker (which does happen when you run with prefork)
+    worker_options+=( "-c${CELERY_WORKER_CONCURRENCY}" "--pool=threads" )
 fi
-
 # Set defaults for OTEL
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-opennotificaties-worker-"${QUEUE}"}"
 
