@@ -93,15 +93,6 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # add entries from AUTHENTICATION_BACKENDS that already enforce their own two-factor
 # auth, avoiding having some set up MFA again in the project.
 
-# RabbitMQ
-# TODO is this actually used?
-BROKER_URL = config(
-    "PUBLISH_BROKER_URL",
-    "amqp://guest:guest@localhost:5672/%2F",
-    help_text="the URL of the broker that will be used to actually send the notifications",
-    group="Celery",
-)
-
 # Celery
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
@@ -110,11 +101,14 @@ CELERY_BROKER_URL = config(
     group="Celery",
 )
 
-NOTIFICATION_SEC_INTERVAL = config(
-    "NOTIFICATION_SEC_INTERVAL",
-    30,
-    help_text="The amount of seconds between starting the task that sends scheduled notifications.",
-    group="Celery",
+NOTIFICATION_SEC_INTERVAL = max(
+    5,
+    config(
+        "NOTIFICATION_SEC_INTERVAL",
+        30,
+        help_text="The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds).",
+        group="Celery",
+    ),
 )
 
 CELERY_BEAT_SCHEDULE = {
@@ -128,7 +122,7 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": timedelta(seconds=NOTIFICATION_SEC_INTERVAL),
         "options": {
             "expires": NOTIFICATION_SEC_INTERVAL
-            - 2,  # added for when worker is offline and queue gets filled with tasks
+            - 1,  # added for when worker is offline and queue gets filled with tasks
         },
     },
 }

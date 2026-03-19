@@ -1,6 +1,7 @@
 import json
 import random
 import string
+from unittest.mock import patch
 
 from django.test import override_settings
 from django.utils import timezone
@@ -14,7 +15,7 @@ from rest_framework.test import APITestCase
 from structlog.testing import capture_logs
 from zgw_consumers.constants import AuthTypes
 
-from nrc.api.tasks import execute_notifications
+from nrc.api.tasks import execute_notifications, handle_result, send_to_sub
 from nrc.datamodel.models import (
     NotificatieResponse,
     NotificationTypes,
@@ -519,6 +520,72 @@ class NotifCeleryTests(APITestCase):
             )
 
         self.assertEqual(ScheduledNotification.objects.count(), 0)
+
+    @patch("nrc.api.tasks.chord")
+    def test_delete_notif_if_max_attempts_is_reached(self, mock_chord):
+        abon = AbonnementFactory.create(
+            with_server_cert=True,
+            with_client_cert=True,
+            auth_type=AuthTypes.api_key,
+            auth="ApiKey test-key",
+        )
+        notif = NotificatieFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        scheduled_notif = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=request_data,
+            execute_after=timezone.now(),
+            notificatie=notif,
+            attempt=10,
+        )
+        scheduled_notif.subs.add(abon)
+
+        execute_notifications.run()
+
+        mock_chord.assert_not_called()
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
+
+    def test_send_to_sub_with_unknown_scheduled_notif_id(self):
+        sub = AbonnementFactory.create()
+
+        with capture_logs() as cap_logs:
+            send_to_sub.run(sub.id, 1, {})
+
+        self.assertEqual(cap_logs[0]["event"], "scheduled_notification_does_not_exist")
+
+    def test_send_to_sub_with_unknown_sub_id(self):
+        scheduled_notif = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args={},
+            execute_after=timezone.now(),
+            attempt=0,
+        )
+
+        with capture_logs() as cap_logs:
+            send_to_sub.run(1, scheduled_notif.id, {})
+
+        self.assertEqual(cap_logs[0]["event"], "subscription_does_not_exist")
+
+    def test_handle_result_with_unknown_scheduled_notif_id(self):
+        with capture_logs() as cap_logs:
+            handle_result.run([], 1)
+
+        self.assertEqual(cap_logs[1]["event"], "scheduled_notification_does_not_exist")
 
 
 @temp_private_root()

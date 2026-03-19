@@ -278,7 +278,7 @@ def resend_notifications(modeladmin, request, queryset):
     # Save all the selected notifications via the modeladmin, triggering
     # the notification mechanism
     for notification in queryset:
-        send_notification(notification)  # TODO check for existing scheduledNotification
+        send_notification(notification)
 
     messages.add_message(
         request, messages.SUCCESS, _("Selected notifications have been scheduled.")
@@ -359,7 +359,7 @@ class NotificatieAdmin(admin.ModelAdmin):
         """
         super().save_model(request, obj, form, change)
 
-        send_notification(obj)  # TODO check for existing scheduledNotification
+        send_notification(obj)
 
 
 @admin.register(CloudEventResponse)
@@ -392,7 +392,7 @@ def resend_cloudevents(modeladmin, request, queryset):
     # Save all the selected notifications via the modeladmin, triggering
     # the notification mechanism
     for cloudevent in queryset:
-        send_cloudevent(cloudevent)  # TODO check for existing scheduledNotification
+        send_cloudevent(cloudevent)
 
     messages.add_message(
         request, messages.SUCCESS, _("Selected cloudevents have been scheduled.")
@@ -459,7 +459,7 @@ class CloudEventAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
-        send_cloudevent(obj)  # TODO check for existing scheduledNotification
+        send_cloudevent(obj)
 
 
 @admin.register(ScheduledNotification)
