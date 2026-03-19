@@ -150,7 +150,7 @@ class NotifCeleryTests(APITestCase):
                             "event": "notification_error",
                             "notification_attempt_count": 1,
                             "log_level": "error",
-                            "exc_info": exc,
+                            "exception": str(exc),
                         }
                     ],
                 )
@@ -266,7 +266,7 @@ class NotifCeleryTests(APITestCase):
                             "event": "notification_error",
                             "notification_attempt_count": 1,
                             "log_level": "error",
-                            "exc_info": exc,
+                            "exception": str(exc),
                         }
                     ],
                 )
@@ -681,7 +681,7 @@ class CloudEventCeleryTests(APITestCase):
                             "event": "cloudevent_error",
                             "cloudevent_attempt_count": 1,
                             "log_level": "error",
-                            "exc_info": exc,
+                            "exception": str(exc),
                         }
                     ],
                 )
@@ -728,7 +728,7 @@ class CloudEventCeleryTests(APITestCase):
                             "event": "cloudevent_error",
                             "cloudevent_attempt_count": 1,
                             "log_level": "error",
-                            "exc_info": exc,
+                            "exception": str(exc),
                         }
                     ],
                 )

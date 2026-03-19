@@ -486,7 +486,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                         "type": "nl.overheid.zaken.zaak.created",
                         "subject": subject_id,
                         "log_level": "error",
-                        "exc_info": exc,
+                        "exception": str(exc),
                         "cloudevent_attempt_count": 1,
                     },
                 },

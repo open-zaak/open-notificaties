@@ -3,11 +3,11 @@ import uuid
 from datetime import timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import CharField, F, Q, Value
 from django.utils import timezone
-from django.core.cache import cache
 from django.utils.translation import gettext_lazy as _
 
 import requests
