@@ -1,0 +1,14 @@
+services:
+  webhook:
+    build: python-webhook
+    ports:
+      - "8080:80"
+    environment:
+      PORT: 80
+    networks:
+      - open-notificaties-dev
+
+networks:
+  open-notificaties-dev:
+    name: open-notificaties-dev
+
