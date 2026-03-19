@@ -155,7 +155,7 @@ class Abonnement(models.Model):
         verbose_name_plural = _("abonnementen")
 
     def __str__(self) -> str:
-        return self.callback_url
+        return f"{str(self.uuid)[:8]}: {self.callback_url}"
 
     @property
     def kanalen(self):
@@ -353,6 +353,66 @@ class CloudEventResponse(models.Model):
 
     def __str__(self) -> str:
         return f"{self.abonnement} {self.response_status or self.exception}"
+
+
+class NotificationTypes(models.TextChoices):
+    notification = "notification", _("notification")
+    cloudevent = "cloudevent", _("cloudevent")
+
+
+class ScheduledNotification(models.Model):
+    id = models.BigAutoField(
+        primary_key=True,
+        serialize=False,
+        verbose_name="ID",
+    )
+    type = models.CharField(
+        _("type"),
+        max_length=255,
+        choices=NotificationTypes,
+        help_text=_("type of notification"),
+    )
+    task_args = models.JSONField(
+        _("task args"),
+        encoder=DjangoJSONEncoder,
+        help_text=_("the contents of the notification"),
+    )
+    execute_after = models.DateTimeField(
+        _("execute_after"),
+        help_text=_("the datetime after which the notification should be executed"),
+    )
+    attempt = models.PositiveSmallIntegerField(
+        _("attempt"),
+        help_text=_(
+            "the amount of attempts that have been made to send the notification"
+        ),
+    )
+    subs = models.ManyToManyField(
+        Abonnement,
+        related_name="scheduled_notifications",
+        help_text=_("the subscriptions that should receive the notification"),
+    )
+    in_progress = models.BooleanField(
+        _("in progress"),
+        default=False,
+        help_text=_("indicates whether the notification is currently in progress"),
+    )
+    notificatie = models.ForeignKey(
+        Notificatie,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+        help_text=_("the related notification"),
+    )
+    cloudevent = models.ForeignKey(
+        CloudEvent,
+        on_delete=models.CASCADE,
+        related_name="scheduled_notifications",
+        null=True,
+        blank=True,
+        help_text=_("the related cloudevent"),
+    )
 
 
 def match_pattern(

@@ -1,7 +1,8 @@
 from datetime import datetime
-from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
+
+from rest_framework.exceptions import ValidationError
 
 from nrc.datamodel.models import Abonnement
 from nrc.datamodel.tests.factories import (
@@ -16,9 +17,9 @@ from nrc.datamodel.tests.factories import (
 from ..serializers import CloudEventSerializer, MessageSerializer
 
 
-@patch("nrc.api.serializers.deliver_message.delay")
+@override_settings(LOG_NOTIFICATIONS_IN_DB=False)
 class MessageSerializerQueryTests(TestCase):
-    def test_create_queries(self, mock_deliver):
+    def test_create_queries(self):
         """
         Verify that the number of queries performed when running `MessageSerializer.create`
         is constant, regardless of the number of subscriptions in the database
@@ -44,7 +45,6 @@ class MessageSerializerQueryTests(TestCase):
 
         for num_subscriptions in (1, 10, 100):
             with self.subTest(num_subscriptions=num_subscriptions):
-                mock_deliver.reset_mock()
                 Abonnement.objects.all().delete()
 
                 AbonnementFactory.create_batch(num_subscriptions)
@@ -64,21 +64,72 @@ class MessageSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(2):
+                with self.assertNumQueries(1):
                     """
-                    Expected two queries:
-
-                    (1) SELECT datamodel_filtergroup based on kanaal
-                    (2) SELECT datamodel_filter for the results from query 1
+                    Expected one query:
+                    (1) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(msg)
 
-                self.assertEqual(mock_deliver.call_count, 11)
+    def test_create_queries_send_cloudevents_no_source(self):
+        """
+        Verify that the number of queries performed when running `MessageSerializer.create`
+        is constant, regardless of the number of subscriptions in the database
+        """
+        msg = {
+            "kanaal": "zaken",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": datetime(2025, 1, 1, 12, 0, 0),
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "zeer_geheim",
+            },
+        }
+        serializer = MessageSerializer()
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+
+        for num_subscriptions in (1, 10, 100):
+            with self.subTest(num_subscriptions=num_subscriptions):
+                Abonnement.objects.all().delete()
+
+                AbonnementFactory.create_batch(num_subscriptions)
+                # Should receive the event
+                FilterGroupFactory.create_batch(
+                    10, kanaal=kanaal, abonnement__send_cloudevents=True
+                )
+                # Should not receive the event
+                FilterGroupFactory.create_batch(30)
+
+                # Should receive the event
+                matching_sub = AbonnementFactory.create(send_cloudevents=True)
+                filter_group = FilterGroupFactory.create(
+                    abonnement=matching_sub, kanaal=kanaal
+                )
+                FilterFactory.create(
+                    filter_group=filter_group,
+                    key="vertrouwelijkheidaanduiding",
+                    value="zeer_geheim",
+                )
+
+                with self.assertNumQueries(2):
+                    """
+                    Expected two queries:
+                    (1) SELECT datamodel_filtergroup based on kanaal
+                    (2) SELECT datamodel_filter for the results from query 1
+                    """
+                    with self.assertRaises(ValidationError):
+                        serializer.create(msg)
 
 
-@patch("nrc.api.serializers.deliver_cloudevent.delay")
+@override_settings(LOG_NOTIFICATIONS_IN_DB=False)
 class CloudEventSerializerQueryTests(TestCase):
-    def test_create_queries(self, mock_deliver):
+    def test_create_queries(self):
         """
         Verify that the number of queries performed when running `CloudEventSerializer.create`
         is constant, regardless of the number of subscriptions in the database
@@ -89,7 +140,7 @@ class CloudEventSerializerQueryTests(TestCase):
             "source": "oz",
             "subject": "1234",
             "id": "1234",
-            "time": "2025-01-01T12:00:00Z",
+            "time": datetime(2025, 1, 1, 12, 0, 0),
             "datacontenttype": "application/json",
             "data": {
                 "vertrouwelijkheidaanduiding": "zeer_geheim",
@@ -100,7 +151,6 @@ class CloudEventSerializerQueryTests(TestCase):
 
         for num_subscriptions in (1, 10, 100):
             with self.subTest(num_subscriptions=num_subscriptions):
-                mock_deliver.reset_mock()
                 Abonnement.objects.all().delete()
 
                 AbonnementFactory.create_batch(num_subscriptions, send_cloudevents=True)
@@ -126,14 +176,10 @@ class CloudEventSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(2):
+                with self.assertNumQueries(1):
                     """
-                    Expected two queries:
+                    Expected one query:
 
-                    (1) SELECT datamodel_cloudeventfiltergroup based on type_substring
-                        and send_cloudevents=true for the related Abonnement
-                    (2) SELECT datamodel_cloudeventfilter for the results from query 1
+                    (1) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(event)
-
-                self.assertEqual(mock_deliver.call_count, 11)
