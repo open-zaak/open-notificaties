@@ -133,6 +133,11 @@ notifications_abonnementen_config:
       auth: Token bar
       kanalen:
         - naam: zaken
+    - uuid: a940ce6a-d54a-4200-a83a-288fc7806e89
+      callback_url: http://webhook/timeout
+      auth: Token bar
+      kanalen:
+        - naam: zaken
     - uuid: 0f616bfd-aacc-4d85-a140-2af17a56217b
       callback_url: http://webhook/204
       auth: Bearer foo

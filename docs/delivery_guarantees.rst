@@ -113,44 +113,18 @@ tasks schedule with the default configurations:
 So if the subscribed webhooks is up after 1 min of downtime the default configuration can handle it
 automatically.
 
-.. _delivery_guarantees_rabbitmq_config:
-
-Required RabbitMQ configuration
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In order to make sure RabbitMQ supports tasks with a long delay, ``consumer_timeout`` (`see documentation <https://www.rabbitmq.com/docs/consumers#acknowledgement-timeout>`_).
-must be set to a value greater than the longest expected delay in milliseconds. To support
-the default retry parameters, it is advised to set a timeout of at least ``52000000`` ms.
-
-The ``consumer_timeout`` cannot be set via an environment variable unfortunately, so the easiest
-way to override this in a containerized deployment is to mount a ``rabbitmq.conf`` file
-to ``/etc/rabbitmq/rabbitmq.conf:ro`` to make sure it is used by RabbitMQ.
-
-.. code-block::
-
-  consumer_timeout = 52000000
-
 Open Notificaties message broker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Under the hood, notifications are distributed by background workers to ensure API
-endpoint availability. For this we rely on RabbitMQ_ as internal message broker between
-the API and background workers.
+TODO
 
-RabbitMQ is excellent in terms of message guarantees and can survive restarts. However,
-configuring RabbitMQ for these kind of operation modes is in the scope of the infrastructure
-you are running Open Notificaties on. We advise you to configure the persistent storage
-appropriately for maximum robustness.
+Under the hood, notifications are distributed by background workers to ensure API
+endpoint availability.
 
 The *results* and metadata of the background tasks are stored in Redis, which is an
-in-memory key-value store. Redis *can* be used as a message broker too, but Open
-Notificaties only uses it as a cache and result store - RabbitMQ is the message broker.
-However, you can also configure Redis appropriately so that it saves snapshots to disk
-according to your reliability requirements. This also requires you to provide Redis with
-a suitable persistent storage.
+in-memory key-value store. Redis is also used as a message broker.
 
 Task metadata is important for keeping track of automatic delivery retries, so it is
 recommended to set up Redis as a highly-available and/or persistent storage.
 
-.. _RabbitMQ: https://www.rabbitmq.com/
 .. _Redis: https://redis.io/

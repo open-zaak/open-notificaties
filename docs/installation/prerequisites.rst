@@ -41,11 +41,5 @@ task queue broker.
 
 Supported versions: 5, 6, 7.
 
-RabbitMQ
---------
-
-Open Notificaties uses RabbitMQ as a message broker and has confirmed support for RabbitMQ
-version 4.x. Other versions may work, but it is not guaranteed.
-
 .. |check| unicode:: U+2705 .. ✅
 .. |cross| unicode:: U+274C .. ❌
