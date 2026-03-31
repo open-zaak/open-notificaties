@@ -43,6 +43,9 @@ if [ -n "${OPENNOTIFICATIES_SUPERUSER_USERNAME}" ]; then
     unset OPENNOTIFICATIES_SUPERUSER_USERNAME OPENNOTIFICATIES_SUPERUSER_EMAIL DJANGO_SUPERUSER_PASSWORD
 fi
 
+# Periodically recycle workers - recover memory in the event of memory leaks
+export UWSGI_MAX_REQUESTS=${UWSGI_MAX_REQUESTS:-1000}
+
 # Start server
 >&2 echo "Starting server"
 exec uwsgi \
