@@ -23,6 +23,7 @@ from .models import (
     Kanaal,
     Notificatie,
     NotificatieResponse,
+    ScheduledNotification,
 )
 
 
@@ -459,3 +460,13 @@ class CloudEventAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         send_cloudevent(obj)
+
+
+@admin.register(ScheduledNotification)
+class ScheduledNotificationAdmin(admin.ModelAdmin):
+    list_display = (
+        "type",
+        "in_progress",
+        "execute_after",
+        "attempt",
+    )
