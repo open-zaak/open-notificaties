@@ -65,7 +65,7 @@ Celery
 * ``CELERY_LOGLEVEL``: control the verbosity of logging output for celery, independent of ``LOG_LEVEL``. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``INFO``.
 * ``CELERY_RESULT_BACKEND``: the URL of the backend/broker that will be used by Celery to send the notifications. Defaults to: ``redis://localhost:6379/1``.
 * ``CELERY_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://127.0.0.1:5672//``.
-* ``CELERY_WORKER_CONCURRENCY``: the number of notification to be started at once, should be around CELERY_WORKER_CONCURRENCY. Defaults to: ``100``.
+* ``NOTIFICATION_LIMIT``: the number of notification to be started at once, should be around CELERY_WORKER_CONCURRENCY. Defaults to: ``100``.
 * ``NOTIFICATION_SEC_INTERVAL``: The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds). Defaults to: ``30``.
 * ``CELERY_RESULT_EXPIRES``: How long the results of tasks will be stored in Redis (in seconds), this can be set to a lower duration to lower memory usage for Redis. Defaults to: ``3600``.
 * ``CELERY_TASK_HARD_TIME_LIMIT``: If a celery task exceeds this time limit, the worker processing the task will be killed and replaced with a new one. Defaults to: ``900``.
