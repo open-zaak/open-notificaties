@@ -101,6 +101,13 @@ CELERY_BROKER_URL = config(
     group="Celery",
 )
 
+NOTIFICATION_LIMIT = config(
+    "CELERY_WORKER_CONCURRENCY",
+    100,
+    help_text="the number of notification to be started at once, should be around CELERY_WORKER_CONCURRENCY",
+    group="Celery",
+)
+
 NOTIFICATION_SEC_INTERVAL = max(
     5,
     config(

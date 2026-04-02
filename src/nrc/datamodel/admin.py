@@ -466,6 +466,7 @@ class CloudEventAdmin(admin.ModelAdmin):
 class ScheduledNotificationAdmin(admin.ModelAdmin):
     list_display = (
         "type",
+        "in_progress",
         "execute_after",
         "attempt",
     )
