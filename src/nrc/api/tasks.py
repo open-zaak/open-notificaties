@@ -439,12 +439,8 @@ def execute_notifications() -> None:
         in_prog=in_prog.count(),
     )
 
-    if in_prog.count() > settings.NOTIFICATION_LIMIT:
-        logger.error(
-            "executing_notifications_to_many_in_progress",
-            count=0,
-        )
-        return
+    in_progress_count = ScheduledNotification.objects.filter(in_progress=True).count()
+    limit = max(0, int(settings.NOTIFICATION_LIMIT - in_progress_count))
 
     # Fetches two types of scheduled notifications:
     # 1. Notifications that are not currently in progress and should be executed
@@ -459,12 +455,7 @@ def execute_notifications() -> None:
             execute_after__lte=timezone.now()
             - timedelta(seconds=settings.NOTIFICATION_REQUESTS_TIMEOUT * 10),
         )
-    ).order_by("-in_progress", "execute_after")[
-        : int(
-            settings.NOTIFICATION_LIMIT
-            - ScheduledNotification.objects.filter(in_progress=True).count()
-        )
-    ]
+    ).order_by("in_progress", "execute_after")[:limit]
 
     notification_ids = list(scheduled_notifications.values_list("id", flat=True))
 
