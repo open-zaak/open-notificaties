@@ -9,8 +9,6 @@ def settings(request):
         "PROJECT_NAME",
         "SITE_TITLE",
         "API_VERSION",
-        "GIT_SHA",
-        "RELEASE",
     )
 
     return {"settings": {k: getattr(django_settings, k, None) for k in public_settings}}
