@@ -232,7 +232,7 @@ def handle_result(subs: set[int | None], scheduled_notif_id: int):
     try:
         scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
     except ScheduledNotification.DoesNotExist:
-        logger.error("scheduled_notification_does_not_exist")
+        logger.error("scheduled_notification_does_not_exist_handle_result")
         return
 
     failed_subs = [sub for sub in subs if sub is not None]
@@ -418,61 +418,46 @@ def execute_notifications() -> None:
 
     config = NotificationsConfig.get_solo()
 
-    # TODO TEMP
-    happy_flow = ScheduledNotification.objects.filter(
+    cutoff = timezone.now() - timedelta(
+        seconds=settings.NOTIFICATION_REQUESTS_TIMEOUT * 10
+    )
+
+    waiting_count = ScheduledNotification.objects.filter(
         in_progress=False,
         execute_after__lte=timezone.now(),
-    )
+    ).count()
 
-    stuck = ScheduledNotification.objects.filter(
-        in_progress=True,
-        execute_after__lte=timezone.now()
-        - timedelta(seconds=settings.NOTIFICATION_REQUESTS_TIMEOUT * 10),
-    )
+    stuck_count = ScheduledNotification.objects.filter(
+        in_progress=True, execute_after__lte=cutoff
+    ).count()
 
-    in_prog = ScheduledNotification.objects.filter(in_progress=True)
+    in_progress_count = ScheduledNotification.objects.filter(
+        in_progress=True, execute_after__gt=cutoff
+    ).count()
 
-    logger.debug(
-        "test",
-        happy_flow=happy_flow.count(),
-        stuck=stuck.count(),
-        in_prog=in_prog.count(),
-    )
-
-    in_progress_count = ScheduledNotification.objects.filter(in_progress=True).count()
     limit = max(0, int(settings.NOTIFICATION_LIMIT - in_progress_count))
 
     # Fetches two types of scheduled notifications:
     # 1. Notifications that are not currently in progress and should be executed
     # 2. Notifications that are currently in progress but have been for a long time (10 * NOTIFICATION_REQUESTS_TIMEOUT) so task probably failed.
-    scheduled_notifications = ScheduledNotification.objects.filter(
-        Q(
-            in_progress=False,
-            execute_after__lte=timezone.now(),
+    scheduled_notifications = (
+        ScheduledNotification.objects.filter(
+            Q(
+                in_progress=False,
+                execute_after__lte=timezone.now(),
+            )
+            | Q(in_progress=True, execute_after__lte=cutoff)
         )
-        | Q(
-            in_progress=True,
-            execute_after__lte=timezone.now()
-            - timedelta(seconds=settings.NOTIFICATION_REQUESTS_TIMEOUT * 10),
-        )
-    ).order_by("in_progress", "execute_after")[:limit]
+        .order_by("execute_after", "attempt")[:limit]
+        .all()
+    )  # TODO attempt or not?
 
-    notification_ids = list(scheduled_notifications.values_list("id", flat=True))
+    sub_count = 0
+    execute_notifications = list()
+    for scheduled_notif in scheduled_notifications.all():
+        if sub_count > settings.SUB_LIMIT:
+            break
 
-    # execute_after is updated so that if the scheduled notification failed, the timeout gets added to the time it was actually executed and not when the scheduled notification was created.
-    # It is also necessary for scheduled notifications that were stuck (type 2) so that they will not get started again on the next run.
-    ScheduledNotification.objects.filter(
-        id__in=notification_ids,
-    ).update(in_progress=True, execute_after=timezone.now())
-
-    logger.debug(
-        "executing_notifications",
-        count=len(notification_ids),
-    )
-
-    for scheduled_notif in ScheduledNotification.objects.filter(
-        id__in=notification_ids
-    ).iterator():
         if scheduled_notif.attempt > config.notification_delivery_max_retries:
             logger.debug(
                 "execute_notifications_max_retries", scheduled_notif=scheduled_notif
@@ -488,11 +473,32 @@ def execute_notifications() -> None:
                 if scheduled_notif.type == NotificationTypes.notification
                 else _get_cloudevent_subs(scheduled_notif.task_args)
             )
+            if not subs:
+                scheduled_notif.delete()
+                continue
+
+        sub_count += len(subs)
+        execute_notifications.append(scheduled_notif.id)
+
+        # # execute_after is updated so that if the scheduled notification failed, the timeout gets added to the time it was actually executed and not when the scheduled notification was created.
+        # # It is also necessary for scheduled notifications that were stuck (type 2) so that they will not get started again on the next run.
+        scheduled_notif.in_progress = True
+        scheduled_notif.execute_after = timezone.now()
+        scheduled_notif.save()
 
         task_kwargs = _get_task_kwargs(scheduled_notif)
 
         chord(
             send_to_sub.s(sub.id, scheduled_notif.id, task_kwargs) for sub in list(subs)
         )(handle_result.s(scheduled_notif.id))
+
+    logger.debug(
+        "executed_notifications",
+        waiting=waiting_count,
+        stuck=stuck_count,
+        in_progress=in_progress_count,
+        sub_count=sub_count,
+        executed_count=len(execute_notifications),
+    )
 
     cache.delete(lock_key)
