@@ -104,7 +104,14 @@ CELERY_BROKER_URL = config(
 NOTIFICATION_LIMIT = config(
     "NOTIFICATION_LIMIT",
     100,
-    help_text="the number of notification to be started at once, should be around CELERY_WORKER_CONCURRENCY",
+    help_text="the number of notification to be executed at once, should be around CELERY_WORKER_CONCURRENCY",
+    group="Celery",
+)
+
+SUB_LIMIT = config(
+    "SUB_LIMIT",
+    300,
+    help_text="the number of subscriptions to be send notifications to at once, should be around 3 * CELERY_WORKER_CONCURRENCY",
     group="Celery",
 )
 

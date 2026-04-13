@@ -89,7 +89,7 @@ class TestScheduling(APITestCase):
             scheduled_notif_ids = [
                 call.args[1] for call in mock_send_to_sub.s.call_args_list
             ]
-            self.assertEqual(scheduled_notif_ids, [a.id, b.id])
+            self.assertCountEqual(scheduled_notif_ids, [a.id, b.id])
 
         with (
             patch("nrc.api.tasks.chord") as mock_chord,

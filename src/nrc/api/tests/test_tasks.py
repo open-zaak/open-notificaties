@@ -585,7 +585,9 @@ class NotifCeleryTests(APITestCase):
         with capture_logs() as cap_logs:
             handle_result.run([], 1)
 
-        self.assertEqual(cap_logs[0]["event"], "scheduled_notification_does_not_exist")
+        self.assertEqual(
+            cap_logs[0]["event"], "scheduled_notification_does_not_exist_handle_result"
+        )
 
 
 @temp_private_root()
