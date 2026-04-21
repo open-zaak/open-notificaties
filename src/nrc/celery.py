@@ -77,7 +77,7 @@ def receiver_setup_logging(
                 },
                 "nrc": {
                     "handlers": ["console"],
-                    "level": "INFO",
+                    "level": "DEBUG",
                 },
                 "django_structlog": {
                     "handlers": ["console"],
