@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from celery.schedules import crontab
 
@@ -92,15 +93,6 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # add entries from AUTHENTICATION_BACKENDS that already enforce their own two-factor
 # auth, avoiding having some set up MFA again in the project.
 
-# RabbitMQ
-# TODO is this actually used?
-BROKER_URL = config(
-    "PUBLISH_BROKER_URL",
-    "amqp://guest:guest@localhost:5672/%2F",
-    help_text="the URL of the broker that will be used to actually send the notifications",
-    group="Celery",
-)
-
 # Celery
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
@@ -108,11 +100,57 @@ CELERY_BROKER_URL = config(
     help_text="the URL of the broker that will be used to actually send the notifications",
     group="Celery",
 )
+
+NOTIFICATION_LIMIT = config(
+    "NOTIFICATION_LIMIT",
+    100,
+    help_text="the number of notification to be executed at once, should be around CELERY_WORKER_CONCURRENCY",
+    group="Celery",
+)
+
+SUB_LIMIT = config(
+    "SUB_LIMIT",
+    300,
+    help_text="the number of subscriptions to be send notifications to at once, should be around 3 * CELERY_WORKER_CONCURRENCY",
+    group="Celery",
+)
+
+NOTIFICATION_SEC_INTERVAL = max(
+    5,
+    config(
+        "NOTIFICATION_SEC_INTERVAL",
+        30,
+        help_text="The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds).",
+        group="Celery",
+    ),
+)
+
+CELERY_REDIS_SOCKET_TIMEOUT = config(
+    "CELERY_REDIS_SOCKET_TIMEOUT",
+    10,
+    help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
+    group="Celery",
+)
+CELERY_REDIS_SOCKET_CONNECT_TIMEOUT = config(
+    "CELERY_REDIS_SOCKET_CONNECT_TIMEOUT",
+    None,
+    help_text="Socket timeout for connections to Redis from the result backend in seconds (int/float)",
+    group="Celery",
+)
+
 CELERY_BEAT_SCHEDULE = {
     "clean-old-notifications": {
         "task": "nrc.api.tasks.clean_old_notifications",
         # https://docs.celeryproject.org/en/v4.4.7/userguide/periodic-tasks.html#crontab-schedules
         "schedule": crontab(0, 0, day_of_month="1"),
+    },
+    "execute-notifications": {
+        "task": "nrc.api.tasks.execute_notifications",
+        "schedule": timedelta(seconds=NOTIFICATION_SEC_INTERVAL),
+        "options": {
+            "expires": NOTIFICATION_SEC_INTERVAL
+            - 1,  # added for when worker is offline and queue gets filled with tasks
+        },
     },
 }
 CELERY_RESULT_EXPIRES = config(

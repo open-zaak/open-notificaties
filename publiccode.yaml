@@ -85,8 +85,6 @@ dependsOn:
     - name: Redis
       optional: true
       versionMin: '4.0'
-    - name: Rabbit MQ
-      versionMin: '3.8'
 
 inputTypes:
   - application/json

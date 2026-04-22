@@ -122,8 +122,7 @@ API
     * ``subscription_pk``
     * ``notification_id``
     * ``subscription_callback``
-    * ``notification_attempt_count`` the amount of times this task has been started for this notification
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``notification_attempt_count`` the amount of times this notification has been attempted
 
 * ``notification_failed``: a non success status code was returned while sending the notification to a subscribed callback URL. Additional context:
 
@@ -138,8 +137,7 @@ API
     * ``notification_id``
     * ``subscription_callback``
     * ``http_status_code``
-    * ``notification_attempt_count`` the amount of times this task has been started for this notification
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``notification_attempt_count`` the amount of times this notification has been attempted
 
 * ``notification_error``: an error occurred while trying to send the notification to a subscribed callback URL. Additional context:
 
@@ -154,8 +152,7 @@ API
     * ``notification_id``
     * ``subscription_callback``
     * ``exc_info``
-    * ``notification_attempt_count`` the amount of times this task has been started for this notification
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``notification_attempt_count`` the amount of times this notification has been attempted
 
 * ``subscription_does_not_exist``: could not retrieve an ``Abonnement`` for this pk and can therefore not deliver a message to this subscriber. Additional context:
 
@@ -193,8 +190,7 @@ API
     * ``subject``
     * ``subscription_pk``
     * ``subscription_callback``
-    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
 
 * ``cloudevent_failed``: a non success status code was returned while sending the cloudevent to a subscribed callback URL. Additional context:
 
@@ -205,8 +201,7 @@ API
     * ``subscription_pk``
     * ``subscription_callback``
     * ``http_status_code``
-    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
 
 
 * ``cloudevent_error``: an error occurred while trying to send the cloudevent to a subscribed callback URL. Additional context:
@@ -218,8 +213,7 @@ API
     * ``subscription_pk``
     * ``subscription_callback``
     * ``exc_info``
-    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
-    * ``task_attempt_count``: the number of times this specific task has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
 
 .. _manual_logging_exceptions:
 
