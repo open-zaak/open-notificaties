@@ -1,7 +1,8 @@
 import json
 import random
 import string
-from unittest.mock import patch
+from collections import deque
+from unittest.mock import MagicMock, patch
 
 from django.test import override_settings
 from django.utils import timezone
@@ -71,7 +72,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "warning"],
                     [
                         {
                             "http_status_code": 400,
@@ -144,7 +145,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "error"],
                     [
                         {
                             "event": "notification_error",
@@ -260,7 +261,7 @@ class NotifCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "error"],
                     [
                         {
                             "event": "notification_error",
@@ -589,6 +590,88 @@ class NotifCeleryTests(APITestCase):
             cap_logs[0]["event"], "scheduled_notification_does_not_exist_handle_result"
         )
 
+    @patch("nrc.api.tasks.chord")
+    def test_notif_without_subs(self, mock_chord):
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=request_data,
+            execute_after=timezone.now(),
+            attempt=0,
+        )
+
+        execute_notifications.run()
+
+        mock_chord.assert_not_called()
+        self.assertEqual(ScheduledNotification.objects.count(), 0)
+
+    @override_settings(SUB_LIMIT=1)
+    def test_sub_count(self):
+        abon1 = AbonnementFactory.create()
+        abon2 = AbonnementFactory.create()
+
+        request_data: SendNotificationTaskKwargs = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2018-01-01T17:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        a = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=request_data,
+            execute_after=timezone.now(),
+            attempt=0,
+        )
+        a.subs.set([abon1, abon2])
+
+        b = ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=request_data,
+            execute_after=timezone.now(),
+            attempt=0,
+        )
+        b.subs.set([abon1, abon2])
+
+        def capture_chord(generator):
+            deque(generator, 0)  # this consumes the generator, triggering .s() calls
+            return MagicMock()
+
+        with (
+            patch("nrc.api.tasks.chord") as mock_chord,
+            patch("nrc.api.tasks.handle_result") as mock_handle_result,
+            patch("nrc.api.tasks.send_to_sub"),
+        ):
+            mock_chord.side_effect = capture_chord
+            execute_notifications.run()
+
+            scheduled_notif_ids = [
+                call.args[0] for call in mock_handle_result.s.call_args_list
+            ]
+            self.assertEqual(scheduled_notif_ids, [a.id])
+
 
 @temp_private_root()
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
@@ -626,7 +709,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "warning"],
                     [
                         {
                             "http_status_code": 400,
@@ -677,7 +760,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "error"],
                     [
                         {
                             "event": "cloudevent_error",
@@ -724,7 +807,7 @@ class CloudEventCeleryTests(APITestCase):
                 execute_notifications.run()
 
                 self.assertEqual(
-                    [log for log in cap_logs if log["log_level"] != "debug"],
+                    [log for log in cap_logs if log["log_level"] == "error"],
                     [
                         {
                             "event": "cloudevent_error",

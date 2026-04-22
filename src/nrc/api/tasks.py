@@ -450,7 +450,7 @@ def execute_notifications() -> None:
         )
         .order_by("execute_after", "attempt")[:limit]
         .all()
-    )  # TODO attempt or not?
+    )
 
     sub_count = 0
     execute_notifications = list()
@@ -492,7 +492,7 @@ def execute_notifications() -> None:
             send_to_sub.s(sub.id, scheduled_notif.id, task_kwargs) for sub in list(subs)
         )(handle_result.s(scheduled_notif.id))
 
-    logger.debug(
+    logger.info(
         "executed_notifications",
         waiting=waiting_count,
         stuck=stuck_count,
