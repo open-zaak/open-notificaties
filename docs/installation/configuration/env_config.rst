@@ -68,6 +68,8 @@ Celery
 * ``NOTIFICATION_LIMIT``: the number of notification to be executed at once, should be around CELERY_WORKER_CONCURRENCY. Defaults to: ``100``.
 * ``SUB_LIMIT``: the number of subscriptions to be send notifications to at once, should be around 3 * CELERY_WORKER_CONCURRENCY. Defaults to: ``300``.
 * ``NOTIFICATION_SEC_INTERVAL``: The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds). Defaults to: ``30``.
+* ``CELERY_REDIS_SOCKET_TIMEOUT``: Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend. Defaults to: ``10``.
+* ``CELERY_REDIS_SOCKET_CONNECT_TIMEOUT``: Socket timeout for connections to Redis from the result backend in seconds (int/float). Defaults to: ``None``.
 * ``CELERY_RESULT_EXPIRES``: How long the results of tasks will be stored in Redis (in seconds), this can be set to a lower duration to lower memory usage for Redis. Defaults to: ``3600``.
 * ``CELERY_TASK_HARD_TIME_LIMIT``: If a celery task exceeds this time limit, the worker processing the task will be killed and replaced with a new one. Defaults to: ``900``.
 * ``CELERY_TASK_SOFT_TIME_LIMIT``: If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised. Defaults to: ``300``.

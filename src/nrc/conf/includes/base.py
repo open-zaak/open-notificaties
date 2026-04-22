@@ -125,6 +125,19 @@ NOTIFICATION_SEC_INTERVAL = max(
     ),
 )
 
+CELERY_REDIS_SOCKET_TIMEOUT = config(
+    "CELERY_REDIS_SOCKET_TIMEOUT",
+    10,
+    help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
+    group="Celery",
+)
+CELERY_REDIS_SOCKET_CONNECT_TIMEOUT = config(
+    "CELERY_REDIS_SOCKET_CONNECT_TIMEOUT",
+    None,
+    help_text="Socket timeout for connections to Redis from the result backend in seconds (int/float)",
+    group="Celery",
+)
+
 CELERY_BEAT_SCHEDULE = {
     "clean-old-notifications": {
         "task": "nrc.api.tasks.clean_old_notifications",
