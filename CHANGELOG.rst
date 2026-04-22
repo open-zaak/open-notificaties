@@ -2,6 +2,80 @@
 Changes
 =======
 
+1.16.0 (2026-05-01)
+===================
+
+**New features**
+
+.. warning::
+
+  This release drops RabbitMQ as a dependency and relies on Celery Beat (which was already
+  a dependency) and database persisted schedules to send notifications. RabbitMQ is no longer needed and can be removed
+  from deployment. If you do, it's important to make sure that ``CELERY_BROKER_URL`` and ``CELERY_RESULT_BACKEND``
+  point to Redis instead.
+
+  This change makes lost notifications less likely, because they are persisted in the database.
+  Additionally, scheduling of retries further into the future are no longer an issue.
+  Full rationale for this change (in Dutch) can be read `here <https://github.com/open-zaak/open-notificaties/wiki/Architectural-Decision-Records-(ADR)>`_.
+
+* [:open-notificaties:`336` / :open-notificaties:`340`] Use celery beat to run a task to send notifications/cloud events
+  to subscribers, instead of scheduling the tasks directly (for more information about these changes, see :ref:`notifications_flow`). The following
+  environment variables that affect this scheduling have been added:
+
+* Change concurrency mode for Celery worker from processes to threads and increase the default
+  ``CELERY_WORKER_CONCURRENCY`` from 4 to 100. This increases the speed with which Open Notificaties
+  can deliver notifications/cloud events to subscribers in parallel.
+
+.. note::
+
+  If you are using a low value for ``CELERY_WORKER_CONCURRENCY``, it is recommended to
+  either rely on the default (100) or increase this depending on the available resources
+  for the worker. Because of the switch to threads, increased concurrency consumes much
+  less resources than was previously the case with processes.
+
+**Bugfixes**
+
+* Add missing ``account_blocked.html`` template
+* Remove duplicate ``Abonnement`` client id field
+* Fix application version being shown on dashboard when not logged in as admin
+
+**Project maintenance**
+
+* [:open-api-framework:`211`] Optimize memory usage for uWSGI and celery-flower
+
+    * Make sure uWSGI workers restart after 1000 requests
+    * Set ``FLOWER_MAX_TASKS=1000`` and ``FLOWER_MAX_WORKERS=50``
+
+* Upgrade dependencies
+
+  * django to 5.2.13
+  * cbor2 to 5.9.0
+  * cryptography to 46.0.7
+  * pygments to 2.20.0
+  * python-dotenv to 1.2.2
+  * requests to 2.33.1
+  * lxml to 6.1.0
+  * cffi to 2.0.0
+  * pyopenssl to 25.3.0
+  * sqlparse to 0.5.5
+  * django-setup-configuration to 0.12.0
+  * pyjwt to 2.12.1
+  * tornado to 6.5.5
+  * mozilla-django-oidc to 5.0.2
+  * mozilla-django-oidc-db to 2.0.1
+
+* Upgrade NPM dependencies
+* Update base image from slim-bookworm to slim-trixie
+* Add notification webhook test container for local development
+* Add explicit CI action permissions
+
+**Documentation**
+
+* [:open-api-framework:`205`] Describe version policy in documentation (see :ref:`versioning_policy`)
+* Update docker compose example images
+* [:open-notificaties:`373`] Update configuration documentation for MijnOverheid cloudevent (see :ref:`cloud_events_configuration_mijn_overheid`)
+* [:open-api-framework:`213`] Change documentation styling to be in line with other Open Gegevenslaag documentation
+
 1.15.0 (2026-02-06)
 ===================
 
