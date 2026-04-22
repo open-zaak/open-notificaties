@@ -75,7 +75,7 @@ build==1.0.3
     # via pip-tools
 bump-my-version==0.32.1
     # via -r requirements/dev.in
-cbor2==5.8.0
+cbor2==5.9.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -152,7 +152,7 @@ coverage==6.3.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   codecov
-cryptography==46.0.5
+cryptography==46.0.7
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -167,7 +167,7 @@ cssselect==1.2.0
     #   pyquery
 distlib==0.3.9
     # via virtualenv
-django==5.2.12
+django==5.2.13
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -530,7 +530,7 @@ kombu==5.5.2
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   celery
-lxml==5.2.2
+lxml==6.1.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -752,7 +752,7 @@ pydantic-settings==2.6.1
     #   -r requirements/ci.txt
     #   bump-my-version
     #   django-setup-configuration
-pygments==2.18.0
+pygments==2.20.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -796,7 +796,7 @@ python-decouple==3.8
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-python-dotenv==1.0.1
+python-dotenv==1.2.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -844,7 +844,7 @@ referencing==0.35.1
     #   -r requirements/ci.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.33.1
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
