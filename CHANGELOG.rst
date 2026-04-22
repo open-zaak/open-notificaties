@@ -2,6 +2,51 @@
 Changes
 =======
 
+1.16.0 (2026-04-XX)
+===================
+
+**New features**
+
+**Bugfixes**
+
+    * Add missing ``account_blocked.html`` template
+    * Remove duplicate Abonnement client id field
+    * Fix application version being shown when not logged in as admin
+
+
+**Project maintenance**
+
+    * Upgrade dependencies
+
+        * django to 5.2.13
+        * cbor2 to 5.9.0
+        * cryptography to 46.0.7
+        * pygments to 2.20.0
+        * python-dotenv to 1.2.2
+        * requests to 2.33.1
+        * lxml to 6.1.0
+        * cffi to 2.0.0
+        * pyopenssl to 25.3.0
+        * sqlparse to 0.5.5
+        * django-setup-configuration to 0.12.0
+        * pyjwt to 2.12.1
+        * tornado to 6.5.5
+        * mozilla-django-oidc to 5.0.2
+        * mozilla-django-oidc-db to 2.0.1
+
+    * Upgrade NPM dependencies
+    * Add notification webhook test container
+    * Update base image from slim-bookworm to slim-trixie
+    * Add explicit CI action permissions
+    * [:open-api-framework:`211`] Optimize memory usage for uWSGI and celery-flower
+
+**Documentation**
+
+    * [:open-api-framework:`205`] Describe version policy in documentation (see :ref:`versioning_policy`)
+    * Update docker compose example images
+    * Update cloudevent docs
+    * Change docs styling
+
 1.15.0 (2026-02-06)
 ===================
 
