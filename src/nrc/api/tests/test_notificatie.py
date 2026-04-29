@@ -1012,8 +1012,8 @@ class NotificatieRetryTests(TestCase):
             task_args=msg,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             m.post(abon.callback_url, status_code=404)
@@ -1070,8 +1070,15 @@ class NotificatieRetryTests(TestCase):
             task_args=msg,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon1,
         )
-        scheduled_notif.subs.set([abon1, abon2])
+        ScheduledNotification.objects.create(
+            type=NotificationTypes.notification,
+            task_args=msg,
+            execute_after=timezone.now(),
+            attempt=0,
+            sub=abon2,
+        )
 
         with requests_mock.Mocker() as m:
             m.post(abon1.callback_url, status_code=404)
@@ -1090,6 +1097,5 @@ class NotificatieRetryTests(TestCase):
                 if i < 4:
                     scheduled_notif.refresh_from_db()
                     self.assertEqual(scheduled_notif.attempt, i + 1)
-                    self.assertEqual(scheduled_notif.subs.count(), 1)
                 else:
                     self.assertEqual(ScheduledNotification.objects.count(), 0)

@@ -14,7 +14,7 @@ from vng_api_common.conf.api import BASE_REST_FRAMEWORK
 from vng_api_common.tests import JWTAuthMixin
 
 from nrc.api.tasks import execute_notifications
-from nrc.datamodel.models import CloudEvent
+from nrc.datamodel.models import CloudEvent, ScheduledNotification
 from nrc.datamodel.tests.factories import (
     AbonnementFactory,
     CloudEventFilterFactory,
@@ -503,8 +503,8 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         )
         self.assertEqual(m.last_request.headers["Authorization"], abon.auth)
 
-    @patch("nrc.api.tasks.chord")
-    def test_correct_subs_get_cloudevent(self, mock_chord):
+    @patch("nrc.api.tasks.group")
+    def test_correct_subs_get_cloudevent(self, mock_group):
         event = {
             "specversion": "1.0",
             "type": "nl.overheid.zaken.zaak.created",
@@ -574,8 +574,11 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
 
-        signatures = list(mock_chord.call_args_list[0][0][0])
-        subs = [signature.args[0] for signature in signatures]
+        signatures = list(mock_group.call_args_list[0][0][0])
+        scheduled_notif_ids = [signature.args[0] for signature in signatures]
+        subs = ScheduledNotification.objects.filter(
+            pk__in=scheduled_notif_ids
+        ).values_list("sub_id", flat=True)
         self.assertCountEqual(subs, [abon1.id, abon2.id])
 
     def test_data(self):

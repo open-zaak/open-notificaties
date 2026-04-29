@@ -387,10 +387,11 @@ class ScheduledNotification(models.Model):
             "the amount of attempts that have been made to send the notification"
         ),
     )
-    subs = models.ManyToManyField(
+    sub = models.ForeignKey(
         Abonnement,
+        on_delete=models.CASCADE,
         related_name="scheduled_notifications",
-        help_text=_("the subscriptions that should receive the notification"),
+        help_text=_("the subscription that should receive the notification"),
     )
     in_progress = models.BooleanField(
         _("in progress"),

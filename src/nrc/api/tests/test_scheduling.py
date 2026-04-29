@@ -11,7 +11,7 @@ from rest_framework.test import APITestCase
 
 from nrc.api.tasks import execute_notifications
 from nrc.datamodel.models import NotificationTypes, ScheduledNotification
-from nrc.datamodel.tests.factories import FilterGroupFactory
+from nrc.datamodel.tests.factories import AbonnementFactory, FilterGroupFactory
 
 
 @temp_private_root()
@@ -42,12 +42,16 @@ class TestScheduling(APITestCase):
         3: in progress and recently executed
         4: in progress and executed a 'long' time ago
         """
+
+        sub = AbonnementFactory.create()
+
         a = ScheduledNotification.objects.create(
             in_progress=False,
             execute_after=timezone.now() - timedelta(seconds=5),
             task_args=self.data,
             attempt=0,
             type=NotificationTypes.notification,
+            sub=sub,
         )
 
         ScheduledNotification.objects.create(
@@ -56,6 +60,7 @@ class TestScheduling(APITestCase):
             task_args=self.data,
             attempt=0,
             type=NotificationTypes.notification,
+            sub=sub,
         )
 
         ScheduledNotification.objects.create(
@@ -64,6 +69,7 @@ class TestScheduling(APITestCase):
             task_args=self.data,
             attempt=0,
             type=NotificationTypes.notification,
+            sub=sub,
         )
 
         b = ScheduledNotification.objects.create(
@@ -72,30 +78,29 @@ class TestScheduling(APITestCase):
             task_args=self.data,
             attempt=0,
             type=NotificationTypes.notification,
+            sub=sub,
         )
 
-        def capture_chord(generator):
+        def capture_group(generator):
             deque(generator, 0)  # this consumes the generator, triggering .s() calls
             return MagicMock()
 
         with (
-            patch("nrc.api.tasks.chord") as mock_chord,
-            patch("nrc.api.tasks.handle_result"),
+            patch("nrc.api.tasks.group") as mock_group,
             patch("nrc.api.tasks.send_to_sub") as mock_send_to_sub,
         ):
-            mock_chord.side_effect = capture_chord
+            mock_group.side_effect = capture_group
             execute_notifications.run()
 
             scheduled_notif_ids = [
-                call.args[1] for call in mock_send_to_sub.s.call_args_list
+                call.args[0] for call in mock_send_to_sub.s.call_args_list
             ]
             self.assertCountEqual(scheduled_notif_ids, [a.id, b.id])
 
         with (
-            patch("nrc.api.tasks.chord") as mock_chord,
-            patch("nrc.api.tasks.handle_result"),
+            patch("nrc.api.tasks.group") as mock_group,
             patch("nrc.api.tasks.send_to_sub") as mock_send_to_sub,
         ):
-            mock_chord.side_effect = capture_chord
+            mock_group.side_effect = capture_group
             execute_notifications.run()
             self.assertEqual(mock_send_to_sub.s.call_count, 0)
