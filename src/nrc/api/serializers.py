@@ -1,6 +1,9 @@
+import uuid
+
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
+from django.db.models import CharField, F, Value
 from django.forms.models import model_to_dict
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -258,16 +261,13 @@ class MessageSerializer(NotificatieSerializer):
         # ensure we're still camelCasing
         return camelize(validated_attrs)
 
-    def _get_cloudevent_subs(self, msg) -> set[Abonnement]:
-        """
-        Fetches the notification subs that want cloudevents.
-        """
+    def _get_subs(self, msg) -> set[Abonnement]:
         # define subs
         msg_filters = msg["kenmerken"]
         subs = set()
         filter_groups = (
             FilterGroup.objects.filter(
-                kanaal__naam=msg["kanaal"], abonnement__send_cloudevents=True
+                kanaal__naam=msg["kanaal"],
             )
             .select_related("abonnement")
             .prefetch_related("filters")
@@ -280,20 +280,48 @@ class MessageSerializer(NotificatieSerializer):
 
     def _schedule_notification(
         self,
+        subs: set[Abonnement],
         msg: NotificationMessage,
         notificatie: Notificatie | None = None,
     ):
-        ScheduledNotification.objects.create(
-            type=NotificationTypes.notification,
-            task_args=msg,
-            execute_after=timezone.now(),
-            attempt=0,
-            notificatie=notificatie,
+        ScheduledNotification.objects.bulk_create(
+            [
+                ScheduledNotification(
+                    type=NotificationTypes.notification
+                    if not sub.send_cloudevents
+                    else NotificationTypes.cloudevent,
+                    task_args=msg
+                    if not sub.send_cloudevents
+                    else self._transform_to_cloudevent(msg),
+                    execute_after=timezone.now(),
+                    attempt=0,
+                    notificatie=notificatie,
+                    sub=sub,
+                )
+                for sub in subs
+            ]
         )
 
-    def _validate_source(self, validated_data) -> None:
+    def _transform_to_cloudevent(self, notif: NotificationMessage) -> CloudEventKwargs:
+        return {
+            "id": str(uuid.uuid4()),
+            "source": notif["source"],
+            "specversion": settings.CLOUDEVENT_SPECVERSION,
+            "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
+            "datacontenttype": "application/json",
+            "subject": notif["resourceUrl"].rsplit("/", 1)[
+                1
+            ],  # TODO the whole resourceUrl would make the location of the resource clearer.
+            "time": notif["aanmaakdatum"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "data": {
+                **notif["kenmerken"],
+                "hoofdObject": notif["hoofdObject"],
+            },
+        }
+
+    def _validate_source(self, validated_data, subs) -> None:
         if not validated_data.get("source"):
-            if any(self._get_cloudevent_subs(validated_data)):
+            if any({sub for sub in subs if sub.send_cloudevents}):
                 logger.error(
                     "no_notification_source",
                     action=validated_data["actie"],
@@ -317,7 +345,8 @@ class MessageSerializer(NotificatieSerializer):
                 forwarded_msg=validated_data, kanaal=kanaal
             )
 
-        self._validate_source(validated_data)
+        subs = self._get_subs(validated_data)
+        self._validate_source(validated_data, subs)
 
         with structlog.contextvars.bound_contextvars(
             channel_name=validated_data["kanaal"],
@@ -330,7 +359,7 @@ class MessageSerializer(NotificatieSerializer):
             additional_attributes=validated_data.get("kenmerken"),
         ):
             logger.info("notification_received")
-        self._schedule_notification(validated_data, notificatie)
+        self._schedule_notification(subs, validated_data, notificatie)
         return validated_data
 
     @classmethod
@@ -359,17 +388,40 @@ class CloudEventSerializer(serializers.ModelSerializer):
         model = CloudEvent
         fields = "__all__"
 
+    def _get_subs(self, msg: CloudEventKwargs) -> set[Abonnement]:
+        msg_filters = msg.get("data", {})
+        subs: set[Abonnement] = set()
+        filter_groups = (
+            CloudEventFilterGroup.objects.select_related("abonnement")
+            .prefetch_related("filters")
+            .annotate(type=Value(msg["type"], CharField()))
+            .filter(
+                type__contains=F("type_substring"), abonnement__send_cloudevents=True
+            )
+        )
+        for group in filter_groups:
+            if group.match_pattern(msg_filters):
+                subs.add(group.abonnement)
+        return subs
+
     def _schedule_cloudevent(
         self,
+        subs: set[Abonnement],
         msg: CloudEventKwargs,
         cloudevent: CloudEvent | None = None,
     ):
-        ScheduledNotification.objects.create(
-            type=NotificationTypes.cloudevent,
-            task_args=msg,
-            execute_after=timezone.now(),
-            attempt=0,
-            cloudevent=cloudevent,
+        ScheduledNotification.objects.bulk_create(
+            [
+                ScheduledNotification(
+                    type=NotificationTypes.cloudevent,
+                    task_args=msg,
+                    execute_after=timezone.now(),
+                    attempt=0,
+                    cloudevent=cloudevent,
+                    sub=sub,
+                )
+                for sub in subs
+            ]
         )
 
     def _log(self, validated_data: CloudEventKwargs) -> None:
@@ -388,12 +440,14 @@ class CloudEventSerializer(serializers.ModelSerializer):
             cloudevent = None
 
         self._log(validated_data)
-        self._schedule_cloudevent(validated_data, cloudevent)
+        subs = self._get_subs(validated_data)
+        self._schedule_cloudevent(subs, validated_data, cloudevent)
         return validated_data
 
     def update(self, instance, validated_data: CloudEventKwargs) -> CloudEventKwargs:
         self._log(validated_data)
-        self._schedule_cloudevent(validated_data, instance)
+        subs = self._get_subs(validated_data)
+        self._schedule_cloudevent(subs, validated_data, instance)
         return validated_data
 
     @classmethod

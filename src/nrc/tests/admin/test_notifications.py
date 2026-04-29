@@ -93,12 +93,12 @@ class NotificationAdminWebTest(WebTest):
         # Verify that only one Notificatie was created (via the admin)
         self.assertEqual(Notificatie.objects.count(), 1)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
 
-        scheduled_notif = ScheduledNotification.objects.get()
+        scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 0)
-        self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -131,14 +131,14 @@ class NotificationAdminWebTest(WebTest):
         # Verify that no new Notificatie was created
         self.assertEqual(Notificatie.objects.count(), 1)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
         # Verify that previous NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 1)
 
-        scheduled_notif = ScheduledNotification.objects.get()
+        scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 0)
-        self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -182,7 +182,8 @@ class NotificationAdminWebTest(WebTest):
         # Verify that no new Notificaties were created
         self.assertEqual(Notificatie.objects.count(), 3)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 2)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 4)
 
         # Verify that old NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 3)
@@ -208,12 +209,12 @@ class NotificationAdminWebTest(WebTest):
         # Verify that only one Notificatie was created (via the admin)
         self.assertEqual(Notificatie.objects.count(), 1)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
 
-        scheduled_notif = ScheduledNotification.objects.get()
+        scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 0)
-        self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -243,14 +244,15 @@ class NotificationAdminWebTest(WebTest):
         # Verify that no new Notificatie was created
         self.assertEqual(Notificatie.objects.count(), 1)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 1)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
 
-        self.assertEqual(NotificatieResponse.objects.count(), 1)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 2)
 
-        scheduled_notif = ScheduledNotification.objects.get()
+        scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 0)
-        self.assertEqual(scheduled_notif.subs.count(), 0)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -291,7 +293,8 @@ class NotificationAdminWebTest(WebTest):
         # Verify that no new Notificaties were created
         self.assertEqual(Notificatie.objects.count(), 3)
 
-        self.assertEqual(ScheduledNotification.objects.count(), 2)
+        # one scheduled for each sub
+        self.assertEqual(ScheduledNotification.objects.count(), 4)
 
         # Verify that old NotificatieResponses are not deleted
         self.assertEqual(NotificatieResponse.objects.count(), 3)

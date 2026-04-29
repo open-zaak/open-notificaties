@@ -1,8 +1,7 @@
 import json
 import random
 import string
-from collections import deque
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from django.test import override_settings
 from django.utils import timezone
@@ -16,7 +15,7 @@ from rest_framework.test import APITestCase
 from structlog.testing import capture_logs
 from zgw_consumers.constants import AuthTypes
 
-from nrc.api.tasks import execute_notifications, handle_result, send_to_sub
+from nrc.api.tasks import execute_notifications, send_to_sub
 from nrc.datamodel.models import (
     NotificatieResponse,
     NotificationTypes,
@@ -54,14 +53,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         error_msg = {"error": "Something went wrong"}
 
@@ -99,7 +98,7 @@ class NotifCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_notificatie_request_exception_retry(self):
         """
@@ -125,14 +124,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         exc = requests.exceptions.ConnectTimeout("Timeout exception")
         with requests_mock.mock() as m:
@@ -167,7 +166,7 @@ class NotifCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_too_long_exception_message(self):
         """
@@ -192,14 +191,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         str = "".join(random.choice(string.ascii_lowercase) for i in range(1502))
 
@@ -219,7 +218,7 @@ class NotifCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_notificatie_oauth2_exception_retry(self):
         """
@@ -244,14 +243,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         exc = OAuth2Error("invalid_client")
         with requests_mock.Mocker() as m:
@@ -280,7 +279,7 @@ class NotifCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_deliver_message_api_key_auth(self):
         abon = AbonnementFactory.create(
@@ -304,14 +303,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=204)
@@ -349,14 +348,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=204)
@@ -398,14 +397,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             token = m.post(
@@ -448,14 +447,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=204)
@@ -496,14 +495,14 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.mock() as m:
             m.post(abon.callback_url, status_code=204)
@@ -522,8 +521,8 @@ class NotifCeleryTests(APITestCase):
 
         self.assertEqual(ScheduledNotification.objects.count(), 0)
 
-    @patch("nrc.api.tasks.chord")
-    def test_delete_notif_if_max_attempts_is_reached(self, mock_chord):
+    @patch("nrc.api.tasks.group")
+    def test_delete_notif_if_max_attempts_is_reached(self, mock_group):
         abon = AbonnementFactory.create(
             with_server_cert=True,
             with_client_cert=True,
@@ -547,130 +546,24 @@ class NotifCeleryTests(APITestCase):
             },
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
             attempt=10,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
-
         execute_notifications.run()
 
-        mock_chord.assert_not_called()
+        mock_group.assert_not_called()
         self.assertEqual(ScheduledNotification.objects.count(), 0)
 
     def test_send_to_sub_with_unknown_scheduled_notif_id(self):
-        sub = AbonnementFactory.create()
-
         with capture_logs() as cap_logs:
-            send_to_sub.run(sub.id, 1, {})
+            send_to_sub.run(1, {})
 
         self.assertEqual(cap_logs[0]["event"], "scheduled_notification_does_not_exist")
-
-    def test_send_to_sub_with_unknown_sub_id(self):
-        scheduled_notif = ScheduledNotification.objects.create(
-            type=NotificationTypes.notification,
-            task_args={},
-            execute_after=timezone.now(),
-            attempt=0,
-        )
-
-        with capture_logs() as cap_logs:
-            send_to_sub.run(1, scheduled_notif.id, {})
-
-        self.assertEqual(cap_logs[0]["event"], "subscription_does_not_exist")
-
-    def test_handle_result_with_unknown_scheduled_notif_id(self):
-        with capture_logs() as cap_logs:
-            handle_result.run([], 1)
-
-        self.assertEqual(
-            cap_logs[0]["event"], "scheduled_notification_does_not_exist_handle_result"
-        )
-
-    @patch("nrc.api.tasks.chord")
-    def test_notif_without_subs(self, mock_chord):
-        request_data: SendNotificationTaskKwargs = {
-            "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
-            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
-            "resource": "status",
-            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
-            "actie": "create",
-            "aanmaakdatum": "2018-01-01T17:00:00Z",
-            "kenmerken": {
-                "bron": "082096752011",
-                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar",
-            },
-        }
-
-        ScheduledNotification.objects.create(
-            type=NotificationTypes.notification,
-            task_args=request_data,
-            execute_after=timezone.now(),
-            attempt=0,
-        )
-
-        execute_notifications.run()
-
-        mock_chord.assert_not_called()
-        self.assertEqual(ScheduledNotification.objects.count(), 0)
-
-    @override_settings(SUB_LIMIT=1)
-    def test_sub_count(self):
-        abon1 = AbonnementFactory.create()
-        abon2 = AbonnementFactory.create()
-
-        request_data: SendNotificationTaskKwargs = {
-            "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
-            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
-            "resource": "status",
-            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
-            "actie": "create",
-            "aanmaakdatum": "2018-01-01T17:00:00Z",
-            "kenmerken": {
-                "bron": "082096752011",
-                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
-                "vertrouwelijkheidaanduiding": "openbaar",
-            },
-        }
-
-        a = ScheduledNotification.objects.create(
-            type=NotificationTypes.notification,
-            task_args=request_data,
-            execute_after=timezone.now(),
-            attempt=0,
-        )
-        a.subs.set([abon1, abon2])
-
-        b = ScheduledNotification.objects.create(
-            type=NotificationTypes.notification,
-            task_args=request_data,
-            execute_after=timezone.now(),
-            attempt=0,
-        )
-        b.subs.set([abon1, abon2])
-
-        def capture_chord(generator):
-            deque(generator, 0)  # this consumes the generator, triggering .s() calls
-            return MagicMock()
-
-        with (
-            patch("nrc.api.tasks.chord") as mock_chord,
-            patch("nrc.api.tasks.handle_result") as mock_handle_result,
-            patch("nrc.api.tasks.send_to_sub"),
-        ):
-            mock_chord.side_effect = capture_chord
-            execute_notifications.run()
-
-            scheduled_notif_ids = [
-                call.args[0] for call in mock_handle_result.s.call_args_list
-            ]
-            self.assertEqual(scheduled_notif_ids, [a.id])
 
 
 @temp_private_root()
@@ -692,13 +585,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         error_msg = {"error": "Something went wrong"}
 
@@ -723,7 +616,7 @@ class CloudEventCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_cloudevent_request_exception_retry(self):
         """
@@ -741,13 +634,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         exc = requests.exceptions.ConnectTimeout("Timeout exception")
         with requests_mock.mock() as m:
@@ -773,7 +666,7 @@ class CloudEventCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_cloudevent_oauth2_exception_retry(self):
         """
@@ -790,13 +683,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         exc = OAuth2Error("invalid_client")
 
@@ -821,7 +714,7 @@ class CloudEventCeleryTests(APITestCase):
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(scheduled_notif.in_progress, False)
-        self.assertEqual(list(scheduled_notif.subs.all()), [abon])
+        self.assertEqual(scheduled_notif.sub, abon)
 
     def test_deliver_cloudevent_api_key_auth(self):
         abon = AbonnementFactory.create(
@@ -837,13 +730,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             callback = m.post(abon.callback_url, status_code=204)
@@ -875,13 +768,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             callback = m.post(abon.callback_url, status_code=204)
@@ -917,13 +810,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             token = m.post(
@@ -958,13 +851,13 @@ class CloudEventCeleryTests(APITestCase):
             "subject": "123",
         }
 
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             callback = m.post(abon.callback_url, status_code=204)
@@ -994,13 +887,13 @@ class CloudEventCeleryTests(APITestCase):
             "type": "nl.overheid.zaken.zaak.updated",
             "subject": "123",
         }
-        scheduled_notif = ScheduledNotification.objects.create(
+        ScheduledNotification.objects.create(
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
             attempt=0,
+            sub=abon,
         )
-        scheduled_notif.subs.add(abon)
 
         with requests_mock.Mocker() as m:
             callback = m.post(abon.callback_url, status_code=204)

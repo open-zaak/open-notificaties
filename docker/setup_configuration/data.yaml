@@ -142,21 +142,17 @@ notifications_abonnementen_config:
       callback_url: http://webhook/204
       auth: Bearer foo
       kanalen:
-        - naam: autorisaties
+        - naam: zaken
     - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
       callback_url: http://webhook/204
-      auth: Token bar
-      send_cloudevents: true
-      cloudevent_filters:
-        - zaak.created
-        - nl.overheid
+      auth: Bearer foo
+      kanalen:
+        - naam: zaken
     - uuid: 482a09ff-286b-4d0f-a1b8-9b99c1eac0f8
-      callback_url: http://webhook/400
-      auth: Token bar
-      send_cloudevents: true
-      cloudevent_filters:
-        - zaak.created
-        - nl.overheid
+      callback_url: http://webhook/204
+      auth: Bearer foo
+      kanalen:
+        - naam: zaken
 
 sites_config_enable: true
 sites_config:

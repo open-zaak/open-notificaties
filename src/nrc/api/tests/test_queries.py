@@ -64,7 +64,8 @@ class MessageSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(1):
+                with self.assertNumQueries(3):
+                    # TODO
                     """
                     Expected one query:
                     (1) INSERT INTO datamodel_schedulednotification
@@ -118,6 +119,7 @@ class MessageSerializerQueryTests(TestCase):
                 )
 
                 with self.assertNumQueries(2):
+                    # TODO
                     """
                     Expected two queries:
                     (1) SELECT datamodel_filtergroup based on kanaal
@@ -176,7 +178,8 @@ class CloudEventSerializerQueryTests(TestCase):
                     value="zeer_geheim",
                 )
 
-                with self.assertNumQueries(1):
+                with self.assertNumQueries(3):
+                    # TODO
                     """
                     Expected one query:
 
