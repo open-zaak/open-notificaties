@@ -92,10 +92,7 @@ services:
 
   celery:
     image: openzaak/open-notificaties:${TAG:-latest}
-    environment:
-      <<: *app-env
-      DB_CONN_MAX_AGE: "60"
-      DB_POOL_ENABLED: False
+    environment: *app-env
     command: /celery_worker.sh
     healthcheck:
       test: ["CMD", "python", "/app/bin/check_celery_worker_liveness.py"]
@@ -127,8 +124,6 @@ services:
     command: /celery_flower.sh
     ports:
       - 5555:5555
-    depends_on:
-      - rabbitmq
     networks:
       - open-notificaties-dev
 

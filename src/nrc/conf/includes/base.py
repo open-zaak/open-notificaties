@@ -103,16 +103,16 @@ CELERY_BROKER_URL = config(
 
 NOTIFICATION_LIMIT = config(
     "NOTIFICATION_LIMIT",
-    100,
+    500,
     help_text="the number of notification to be sent at once, should be around CELERY_WORKER_CONCURRENCY",
     group="Celery",
 )
 
 NOTIFICATION_SEC_INTERVAL = max(
-    5,
+    15,
     config(
         "NOTIFICATION_SEC_INTERVAL",
-        30,
+        20,
         help_text="The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds).",
         group="Celery",
     ),

@@ -35,6 +35,9 @@ export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-opennotificaties-worker-"${QUEUE}
 echo "Starting celery worker $WORKER_NAME with queue $QUEUE"
 # unset this if NOT using a process pool
 export _OTEL_DEFER_SETUP="true"
+
+# celery does not work with db pooling
+export DB_POOL_ENABLED="false"
 exec celery \
     --app nrc \
     --workdir src \
