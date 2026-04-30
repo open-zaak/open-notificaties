@@ -65,8 +65,7 @@ Celery
 * ``CELERY_LOGLEVEL``: control the verbosity of logging output for celery, independent of ``LOG_LEVEL``. Available values are ``CRITICAL``, ``ERROR``, ``WARNING``, ``INFO`` and ``DEBUG``. Defaults to: ``INFO``.
 * ``CELERY_RESULT_BACKEND``: the URL of the backend/broker that will be used by Celery to send the notifications. Defaults to: ``redis://localhost:6379/1``.
 * ``CELERY_BROKER_URL``: the URL of the broker that will be used to actually send the notifications. Defaults to: ``amqp://127.0.0.1:5672//``.
-* ``NOTIFICATION_LIMIT``: the number of notification to be executed at once, should be around CELERY_WORKER_CONCURRENCY. Defaults to: ``100``.
-* ``SUB_LIMIT``: the number of subscriptions to be send notifications to at once, should be around 3 * CELERY_WORKER_CONCURRENCY. Defaults to: ``300``.
+* ``NOTIFICATION_LIMIT``: the number of notification to be sent at once, should be around CELERY_WORKER_CONCURRENCY. Defaults to: ``100``.
 * ``NOTIFICATION_SEC_INTERVAL``: The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds). Defaults to: ``30``.
 * ``CELERY_REDIS_SOCKET_TIMEOUT``: Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend. Defaults to: ``10``.
 * ``CELERY_REDIS_SOCKET_CONNECT_TIMEOUT``: Socket timeout for connections to Redis from the result backend in seconds (int/float). Defaults to: ``None``.

@@ -65,10 +65,12 @@ class MessageSerializerQueryTests(TestCase):
                 )
 
                 with self.assertNumQueries(3):
-                    # TODO
                     """
-                    Expected one query:
-                    (1) INSERT INTO datamodel_schedulednotification
+                    Expected three queries:
+
+                    (1) SELECT datamodel_filtergroup based on kanaal
+                    (2) SELECT datamodel_filter for the results from query 1
+                    (3) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(msg)
 
@@ -119,9 +121,9 @@ class MessageSerializerQueryTests(TestCase):
                 )
 
                 with self.assertNumQueries(2):
-                    # TODO
                     """
                     Expected two queries:
+
                     (1) SELECT datamodel_filtergroup based on kanaal
                     (2) SELECT datamodel_filter for the results from query 1
                     """
@@ -179,10 +181,11 @@ class CloudEventSerializerQueryTests(TestCase):
                 )
 
                 with self.assertNumQueries(3):
-                    # TODO
                     """
-                    Expected one query:
-
-                    (1) INSERT INTO datamodel_schedulednotification
+                    Expected three queries:
+                    (1) SELECT datamodel_cloudeventfiltergroup based on type_substring
+                        and send_cloudevents=true for the related Abonnement
+                    (2) SELECT datamodel_cloudeventfilter for the results from query 1
+                    (3) INSERT INTO datamodel_schedulednotification
                     """
                     serializer.create(event)
