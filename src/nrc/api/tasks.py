@@ -288,39 +288,43 @@ def _fail_scheduled_notification(scheduled_notif: ScheduledNotification):
     scheduled_notif.execute_after += timedelta(
         seconds=get_exponential_backoff_interval(
             factor=config.notification_delivery_retry_backoff,
-            retries=scheduled_notif.attempt,
+            retries=scheduled_notif.task_attempt,
             maximum=config.notification_delivery_retry_backoff_max,
             base=config.notification_delivery_base_factor,
             full_jitter=False,
         )
     )
-    scheduled_notif.attempt += 1
-    if scheduled_notif.attempt > config.notification_delivery_max_retries:
+    scheduled_notif.task_attempt += 1
+    if scheduled_notif.task_attempt > config.notification_delivery_max_retries:
         logger.debug(
             "execute_notifications_max_retries", scheduled_notif=scheduled_notif
         )
         scheduled_notif.delete()
     else:
         scheduled_notif.in_progress = False
-        scheduled_notif.save(update_fields=["execute_after", "in_progress", "attempt"])
+        scheduled_notif.save(
+            update_fields=["execute_after", "in_progress", "task_attempt"]
+        )
 
 
 def _get_task_kwargs(scheduled_notif: ScheduledNotification) -> dict:
+    """
+    attempt is set once at creation (in serializer), task_attempt will increase when request has failed.
+    """
     task_kwargs: dict[str, str | int] = {
-        "task_attempt": scheduled_notif.attempt,
+        "task_attempt": scheduled_notif.task_attempt,
+        "attempt": scheduled_notif.attempt,
     }
     if scheduled_notif.cloudevent:
         task_kwargs.update(
             {
                 "cloudevent_id": scheduled_notif.cloudevent.id,
-                "attempt": scheduled_notif.cloudevent.last_attempt + 1,
             }
         )
     if scheduled_notif.notificatie:
         task_kwargs.update(
             {
                 "notificatie_id": scheduled_notif.notificatie.id,
-                "attempt": scheduled_notif.notificatie.last_attempt + 1,
             }
         )
 
@@ -387,7 +391,7 @@ def execute_notifications() -> None:
     for scheduled_notif in ScheduledNotification.objects.filter(
         id__in=notification_ids
     ).iterator():
-        if scheduled_notif.attempt > config.notification_delivery_max_retries:
+        if scheduled_notif.task_attempt > config.notification_delivery_max_retries:
             logger.debug(
                 "execute_notifications_max_retries", scheduled_notif=scheduled_notif
             )

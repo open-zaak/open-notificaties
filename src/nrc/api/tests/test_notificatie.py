@@ -245,7 +245,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_notification_failed["notification_attempt_count"], 2)
+            self.assertEqual(retry_notification_failed["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -356,7 +356,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_notification_error["notification_attempt_count"], 2)
+            self.assertEqual(retry_notification_error["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -863,7 +863,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_error["cloudevent_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -1014,7 +1014,7 @@ class NotificatieRetryTests(TestCase):
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -1072,14 +1072,14 @@ class NotificatieRetryTests(TestCase):
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon1,
         )
         ScheduledNotification.objects.create(
             type=NotificationTypes.notification,
             task_args=msg,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon2,
         )
 
@@ -1099,6 +1099,7 @@ class NotificatieRetryTests(TestCase):
                 )
                 if i < 4:
                     scheduled_notif.refresh_from_db()
-                    self.assertEqual(scheduled_notif.attempt, i + 1)
+                    self.assertEqual(scheduled_notif.attempt, 1)
+                    self.assertEqual(scheduled_notif.task_attempt, i + 1)
                 else:
                     self.assertEqual(ScheduledNotification.objects.count(), 0)

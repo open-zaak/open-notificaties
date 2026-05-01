@@ -102,7 +102,7 @@ CELERY_BROKER_URL = config(
 )
 
 NOTIFICATION_SEC_INTERVAL = max(
-    15,
+    5,
     config(
         "NOTIFICATION_SEC_INTERVAL",
         20,
@@ -121,7 +121,7 @@ NOTIFICATION_LIMIT = config(
 
 CELERY_REDIS_SOCKET_TIMEOUT = config(
     "CELERY_REDIS_SOCKET_TIMEOUT",
-    120,
+    10,
     help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
     group="Celery",
 )

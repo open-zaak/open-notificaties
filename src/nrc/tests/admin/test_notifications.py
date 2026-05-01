@@ -98,7 +98,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -138,7 +138,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 2)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -214,7 +214,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg
@@ -249,7 +249,7 @@ class NotificationAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 2)
         self.assertEqual(
             scheduled_notif.task_args,
             self.forwarded_msg

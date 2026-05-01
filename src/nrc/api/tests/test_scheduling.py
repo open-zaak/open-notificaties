@@ -49,7 +49,7 @@ class TestScheduling(APITestCase):
             in_progress=False,
             execute_after=timezone.now() - timedelta(seconds=5),
             task_args=self.data,
-            attempt=0,
+            attempt=1,
             type=NotificationTypes.notification,
             sub=sub,
         )
@@ -58,7 +58,7 @@ class TestScheduling(APITestCase):
             in_progress=False,
             execute_after=timezone.now() + timedelta(seconds=5),
             task_args=self.data,
-            attempt=0,
+            attempt=1,
             type=NotificationTypes.notification,
             sub=sub,
         )
@@ -67,7 +67,7 @@ class TestScheduling(APITestCase):
             in_progress=True,
             execute_after=timezone.now() - timedelta(seconds=5),
             task_args=self.data,
-            attempt=0,
+            attempt=1,
             type=NotificationTypes.notification,
             sub=sub,
         )
@@ -76,7 +76,7 @@ class TestScheduling(APITestCase):
             in_progress=True,
             execute_after=timezone.now() - timedelta(seconds=500),
             task_args=self.data,
-            attempt=0,
+            attempt=1,
             type=NotificationTypes.notification,
             sub=sub,
         )

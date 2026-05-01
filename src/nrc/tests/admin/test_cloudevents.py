@@ -79,7 +79,7 @@ class CloudEventAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 1)
         self.assertEqual(
             scheduled_notif.task_args,
             self.event
@@ -117,7 +117,7 @@ class CloudEventAdminWebTest(WebTest):
 
         scheduled_notif = ScheduledNotification.objects.get()
         self.assertEqual(scheduled_notif.type, NotificationTypes.cloudevent)
-        self.assertEqual(scheduled_notif.attempt, 0)
+        self.assertEqual(scheduled_notif.attempt, 2)
         self.assertEqual(
             scheduled_notif.task_args,
             self.event

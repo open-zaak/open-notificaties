@@ -383,9 +383,17 @@ class ScheduledNotification(models.Model):
     )
     attempt = models.PositiveSmallIntegerField(
         _("attempt"),
+        help_text=_("the amount of times the scheduled notification as been tried"),
+        default=0,
+        editable=False,
+    )
+    task_attempt = models.PositiveSmallIntegerField(
+        _("task attempt"),
         help_text=_(
-            "the amount of attempts that have been made to send the notification"
+            "the amount of times the underlying notification/cloudevent has been scheduled"
         ),
+        default=0,
+        editable=False,
     )
     sub = models.ForeignKey(
         Abonnement,

@@ -58,7 +58,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -130,7 +130,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -198,7 +198,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -250,7 +250,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -311,7 +311,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -356,7 +356,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -405,7 +405,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -455,7 +455,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -503,7 +503,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -554,7 +554,7 @@ class NotifCeleryTests(APITestCase):
             task_args=request_data,
             execute_after=timezone.now(),
             notificatie=notif,
-            attempt=10,
+            task_attempt=10,
             sub=abon,
         )
         execute_notifications.run()
@@ -592,7 +592,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -642,7 +642,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=request_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -692,7 +692,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -740,7 +740,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -778,7 +778,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -820,7 +820,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -861,7 +861,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 
@@ -897,7 +897,7 @@ class CloudEventCeleryTests(APITestCase):
             type=NotificationTypes.cloudevent,
             task_args=cloudevent_data,
             execute_after=timezone.now(),
-            attempt=0,
+            attempt=1,
             sub=abon,
         )
 

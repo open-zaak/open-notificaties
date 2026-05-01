@@ -294,7 +294,7 @@ class MessageSerializer(NotificatieSerializer):
                     if not sub.send_cloudevents
                     else self._transform_to_cloudevent(msg),
                     execute_after=timezone.now(),
-                    attempt=0,
+                    attempt=notificatie.last_attempt + 1 if notificatie else 0,
                     notificatie=notificatie,
                     sub=sub,
                 )
@@ -416,7 +416,7 @@ class CloudEventSerializer(serializers.ModelSerializer):
                     type=NotificationTypes.cloudevent,
                     task_args=msg,
                     execute_after=timezone.now(),
-                    attempt=0,
+                    attempt=cloudevent.last_attempt + 1 if cloudevent else 0,
                     cloudevent=cloudevent,
                     sub=sub,
                 )
