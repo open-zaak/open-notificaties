@@ -169,6 +169,10 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
+* ``scheduled_notification_does_not_exist``: could not retrieve a ``ScheduledNotification`` for the specified primary key
+  and can therefore not deliver its message.
+
+
 * ``no_notification_source``: notification did not have a source and cannot be transformed into a cloudevent. Additional context:
 
     * ``channel_name``
@@ -220,6 +224,14 @@ API
     * ``exc_info``
     * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
     * ``task_attempt_count``: the number of times this specific task has been attempted
+
+* ``executed_notifications``: the ``execute_notification`` task has run
+
+    * ``waiting`` the amount of scheduled notifications that can be started
+    * ``stuck`` the amount of scheduled notifications that are in progress for ``NOTIFICATION_REQUESTS_TIMEOUT`` * 10
+    * ``in_progress`` the amount of scheduled notifications that are in progress
+    * ``started`` the amount of scheduled notifications that got started
+
 
 .. _manual_logging_exceptions:
 

@@ -1,13 +1,22 @@
 import json
+from datetime import timedelta
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.management import call_command
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import requests
 import structlog
-from notifications_api_common.autoretry import add_autoretry_behaviour
+import urllib3.exceptions
+from celery import group
+from notifications_api_common.exponential_backoff import (
+    get_exponential_backoff_interval,
+)
+from notifications_api_common.models import NotificationsConfig
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
 from structlog.contextvars import bind_contextvars
 from zgw_consumers.client import build_client
@@ -19,9 +28,14 @@ from nrc.datamodel.models import (
     CloudEvent,
     CloudEventResponse,
     NotificatieResponse,
+    NotificationTypes,
+    ScheduledNotification,
 )
 
-from .types import CloudEventKwargs, SendNotificationTaskKwargs
+from .types import (
+    CloudEventKwargs,
+    SendNotificationTaskKwargs,
+)
 
 logger = structlog.stdlib.get_logger(__name__)
 
@@ -49,10 +63,7 @@ def service_from_abonnement(abonnement: Abonnement) -> Service:
     )
 
 
-@app.task(bind=True)
-def deliver_message(
-    self, sub_id: int, msg: SendNotificationTaskKwargs, **kwargs
-) -> None:
+def deliver_message(sub: Abonnement, msg: SendNotificationTaskKwargs, **kwargs) -> None:
     """
     send msg to subscriber
 
@@ -62,17 +73,13 @@ def deliver_message(
 
     # `task_attempt_count` is the number of times the same task was automatically retried
     # `notification_attempt_count` is the number of tasks that were started for this notification (without counting automatic retries)
-    task_attempt_count = self.request.retries + 1
+    task_attempt_count = kwargs.get("task_attempt", 0) + 1
     notification_attempt_count = kwargs.get("attempt", 1)
-    bind_contextvars(subscription_pk=sub_id, notification_id=notificatie_id)
-
-    try:
-        sub = Abonnement.objects.get(pk=sub_id)
-    except Abonnement.DoesNotExist:
-        logger.error("subscription_does_not_exist")
-        return
-
-    bind_contextvars(subscription_callback=sub.callback_url)
+    bind_contextvars(
+        subscription_pk=sub.id,
+        notification_id=notificatie_id,
+        subscription_callback=sub.callback_url,
+    )
 
     try:
         service = service_from_abonnement(sub)
@@ -106,7 +113,13 @@ def deliver_message(
                 notification_attempt_count=notification_attempt_count,
                 task_attempt_count=task_attempt_count,
             )
-    except (requests.RequestException, OAuth2Error) as e:
+    except (
+        requests.RequestException,
+        OAuth2Error,
+        urllib3.exceptions.MaxRetryError,
+        requests.exceptions.ConnectionError,
+        urllib3.exceptions.NameResolutionError,
+    ) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "notification_error",
@@ -126,10 +139,7 @@ def deliver_message(
             )
 
 
-@app.task(bind=True)
-def deliver_cloudevent(
-    self, sub_id: int, cloudevent: CloudEventKwargs, **kwargs
-) -> None:
+def deliver_cloudevent(sub: Abonnement, cloudevent: CloudEventKwargs, **kwargs) -> None:
     """
     send cloud event to subscriber
 
@@ -140,17 +150,9 @@ def deliver_cloudevent(
 
     # `task_attempt_count` is the number of times the same task was automatically retried
     # `cloudevent_attempt_count` is the number of tasks that were started for this cloud event (without counting automatic retries)
-    task_attempt_count = self.request.retries + 1
+    task_attempt_count = kwargs.get("task_attempt", 0) + 1
     cloudevent_attempt_count = kwargs.get("attempt", 1)
-    bind_contextvars(subscription_pk=sub_id)
-
-    try:
-        sub = Abonnement.objects.get(pk=sub_id)
-    except Abonnement.DoesNotExist:
-        logger.error("subscription_does_not_exist")
-        return
-
-    bind_contextvars(subscription_callback=sub.callback_url)
+    bind_contextvars(subscription_pk=sub.id, subscription_callback=sub.callback_url)
 
     try:
         service = service_from_abonnement(sub)
@@ -184,7 +186,13 @@ def deliver_cloudevent(
                 cloudevent_attempt_count=cloudevent_attempt_count,
                 task_attempt_count=task_attempt_count,
             )
-    except (requests.RequestException, OAuth2Error) as e:
+    except (
+        requests.RequestException,
+        OAuth2Error,
+        urllib3.exceptions.MaxRetryError,
+        requests.exceptions.ConnectionError,
+        urllib3.exceptions.NameResolutionError,
+    ) as e:
         response_init_kwargs = {"exception": str(e)}
         logger.exception(
             "cloudevent_error",
@@ -219,22 +227,190 @@ def clean_old_notifications() -> None:
     call_command("clean_old_notifications")
 
 
-add_autoretry_behaviour(
-    deliver_message,
-    autoretry_for=(
-        NotificationException,
-        requests.RequestException,
-        OAuth2Error,
-    ),
-    retry_jitter=False,
-)
+@app.task
+def send_to_sub(scheduled_notif_id: int, task_kwargs):
+    """
+    Sends a scheduled notification to a single subscription.
 
-add_autoretry_behaviour(
-    deliver_cloudevent,
-    autoretry_for=(
-        CloudEventException,
-        requests.RequestException,
-        OAuth2Error,
-    ),
-    retry_jitter=False,
-)
+    A cloudevent will always be sent as a cloudevent,
+    but a notification can be sent as itself or as a cloudevent
+    based on if the subscription is configured to receive cloudevents.
+
+    If the requests fails the scheduled notification will updated so that it can be run again.
+    After the notification_delivery_max_retries is reached or the request was successful
+    the ScheduledNotification will be deleted.
+    """
+    try:
+        scheduled_notif = ScheduledNotification.objects.get(id=scheduled_notif_id)
+    except ScheduledNotification.DoesNotExist:
+        logger.error("scheduled_notification_does_not_exist")
+        return None
+
+    msg = scheduled_notif.task_args
+
+    if scheduled_notif.type == NotificationTypes.notification:
+        bind_contextvars(
+            channel_name=msg["kanaal"],
+            resource=msg["resource"],
+            resource_url=msg["resourceUrl"],
+            main_object_url=msg["hoofdObject"],
+            creation_date=msg["aanmaakdatum"],
+            action=msg["actie"],
+            additional_attributes=msg.get("kenmerken"),
+        )
+
+    if scheduled_notif.sub.send_cloudevents:
+        bind_contextvars(
+            id=msg["id"],
+            source=msg["source"],
+            type=msg["type"],
+            subject=msg.get("subject"),
+        )
+
+    try:
+        if scheduled_notif.sub.send_cloudevents:
+            deliver_cloudevent(
+                scheduled_notif.sub,
+                msg,
+                **task_kwargs,
+            )
+        else:
+            deliver_message(scheduled_notif.sub, msg, **task_kwargs)
+    except Exception:
+        _fail_scheduled_notification(scheduled_notif)
+    else:
+        scheduled_notif.delete()
+
+
+def _fail_scheduled_notification(scheduled_notif: ScheduledNotification):
+    config = NotificationsConfig.get_solo()
+
+    scheduled_notif.execute_after += timedelta(
+        seconds=get_exponential_backoff_interval(
+            factor=config.notification_delivery_retry_backoff,
+            retries=scheduled_notif.task_attempt,
+            maximum=config.notification_delivery_retry_backoff_max,
+            base=config.notification_delivery_base_factor,
+            full_jitter=False,
+        )
+    )
+    scheduled_notif.task_attempt += 1
+    if scheduled_notif.task_attempt > config.notification_delivery_max_retries:
+        logger.debug(
+            "execute_notifications_max_retries", scheduled_notif=scheduled_notif
+        )
+        scheduled_notif.delete()
+    else:
+        scheduled_notif.in_progress = False
+        scheduled_notif.save(
+            update_fields=["execute_after", "in_progress", "task_attempt"]
+        )
+
+
+def _get_task_kwargs(scheduled_notif: ScheduledNotification) -> dict:
+    """
+    attempt is set once at creation (in serializer), task_attempt will increase when request has failed.
+    """
+    task_kwargs: dict[str, str | int] = {
+        "task_attempt": scheduled_notif.task_attempt,
+        "attempt": scheduled_notif.attempt,
+    }
+    if scheduled_notif.cloudevent:
+        task_kwargs.update(
+            {
+                "cloudevent_id": scheduled_notif.cloudevent.id,
+            }
+        )
+    if scheduled_notif.notificatie:
+        task_kwargs.update(
+            {
+                "notificatie_id": scheduled_notif.notificatie.id,
+            }
+        )
+
+    return task_kwargs
+
+
+@app.task
+def execute_notifications() -> None:
+    """
+    Starts a task for each queried schedulednotification based on NOTIFICATION_LIMIT and how many are still in progress.
+    """
+    # celery beat will create multiple execute_notifications if the queue is full (even with expire).
+    lock_key = "execute_notifications_lock"
+    acquired = cache.add(lock_key, "1", timeout=settings.NOTIFICATION_SEC_INTERVAL - 1)
+    if not acquired:
+        logger.debug("execute_notifications_blocked")
+        return
+
+    config = NotificationsConfig.get_solo()
+
+    cutoff = timezone.now() - timedelta(
+        seconds=settings.NOTIFICATION_REQUESTS_TIMEOUT * 10
+    )
+
+    waiting_count = ScheduledNotification.objects.filter(
+        in_progress=False,
+        execute_after__lte=timezone.now(),
+    ).count()
+
+    stuck_count = ScheduledNotification.objects.filter(
+        in_progress=True, execute_after__lte=cutoff
+    ).count()
+
+    in_progress_count = ScheduledNotification.objects.filter(
+        in_progress=True, execute_after__gt=cutoff
+    ).count()
+
+    limit = max(0, int(settings.NOTIFICATION_LIMIT - in_progress_count))
+
+    # Fetches two types of scheduled notifications:
+    # 1. Notifications that are not currently in progress and should be executed
+    # 2. Notifications that are currently in progress but have been for a long time (10 * NOTIFICATION_REQUESTS_TIMEOUT) so task probably failed.
+    scheduled_notifications = (
+        ScheduledNotification.objects.filter(
+            Q(
+                in_progress=False,
+                execute_after__lte=timezone.now(),
+            )
+            | Q(in_progress=True, execute_after__lte=cutoff)
+        )
+        .order_by("execute_after", "attempt")[:limit]
+        .all()
+    )
+
+    notification_ids = list(scheduled_notifications.values_list("id", flat=True))
+
+    # execute_after is updated so that if the scheduled notification failed, the timeout gets added to the time it was actually executed and not when the scheduled notification was created.
+    # It is also necessary for scheduled notifications that were stuck (type 2) so that they will not get started again on the next run.
+    ScheduledNotification.objects.filter(
+        id__in=notification_ids,
+    ).update(in_progress=True, execute_after=timezone.now())
+
+    tasks = list()
+    for scheduled_notif in ScheduledNotification.objects.filter(
+        id__in=notification_ids
+    ).iterator():
+        if scheduled_notif.task_attempt > config.notification_delivery_max_retries:
+            logger.debug(
+                "execute_notifications_max_retries", scheduled_notif=scheduled_notif
+            )
+            scheduled_notif.delete()
+            continue
+        else:
+            tasks.append(
+                send_to_sub.s(scheduled_notif.id, _get_task_kwargs(scheduled_notif))
+            )
+
+    if tasks:
+        group(tasks)()
+
+    logger.info(
+        "executed_notifications",
+        waiting=waiting_count,
+        stuck=stuck_count,
+        in_progress=in_progress_count,
+        started=len(tasks),
+    )
+
+    cache.delete(lock_key)

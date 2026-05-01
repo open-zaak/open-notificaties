@@ -169,8 +169,7 @@ Changes
 
   This version of Open Notificaties increases the default values of the notification retry
   parameters, leading to tasks that are scheduled further in the future. In order for this
-  to work correctly, it is required to increase the ``consumer_timeout`` in RabbitMQ,
-  see :ref:`delivery_guarantees_rabbitmq_config` for more information.
+  to work correctly, it is required to increase the ``consumer_timeout`` in RabbitMQ.
 
 **New features**
 
