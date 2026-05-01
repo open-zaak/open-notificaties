@@ -21,6 +21,12 @@ notification and forwards the message to the registered webhook.
 
 .. _webhooks: https://en.wikipedia.org/wiki/Webhook
 
+Flow
+~~~~
+After a notification (or cloudevent) is received all subscriptions that need to receive it are fetched and a ScheduledNotification is created for each subscription.
+A background task that runs every ``NOTIFICATION_SEC_INTERVAL`` seconds picks up ``NOTIFICATION_LIMIT`` of scheduled notifications and creates tasks that will send the notification to the subscription callback_urls.
+Successful scheduledNotifications are removed, failed ones get updated to be retried until they succeed or the retry limit is reached.
+
 Failure modes
 -------------
 
@@ -97,26 +103,38 @@ and also via the admin interface at **Configuratie > Notificatiescomponentconfig
   This can be increased or decreased to spread retries over a longer or shorter time period.
   Default is ``4``.
 
-With the assumption that the requests are done immediately we can model the notification
-tasks schedule with the default configurations:
+When using the default configuration, the following delay will be added to each retry of a failing request:
 
-1. At 0s the request to send a Notification to a subscriber is made, the notification task is scheduled, picked up
-   by worker and failed
-2. At 25s with 25s delay the first retry happens (``4^0`` * ``Notification delivery retry backoff``)
-3. At 2m5s with 100s delay - the second retry (``4^1`` * ``Notification delivery retry backoff``)
-4. At 8m45s with 400s delay - the third retry
-5. At 35m25s with 1600s delay - the fourth retry
-6. At 2h22m5s with 6400s delay - the fifth retry
-7. At 9h28m45s with 25600s delay - the sixth retry
-8. At 23h55m25s with 52000s delay - the seventh and final retry, capped by max delay.
++-------+--------------+---------------+
+| #     | Delay added  | Total elapsed |
++=======+==============+===============+
+| 0     | 0s           | 0s            |
++-------+--------------+---------------+
+| 1     | 25s          | 25s           |
++-------+--------------+---------------+
+| 2     | 100s         | 2m 5s         |
++-------+--------------+---------------+
+| 3     | 400s         | 8m 45s        |
++-------+--------------+---------------+
+| 4     | 1600s        | 35m 25s       |
++-------+--------------+---------------+
+| 5     | 6400s        | 2h 22m 5s     |
++-------+--------------+---------------+
+| 6     | 25600s       | 9h 28m 45s    |
++-------+--------------+---------------+
+| 7     | 52000s       | 23h 55m 25s   |
++-------+--------------+---------------+
 
 So if the subscribed webhooks is up after 1 min of downtime the default configuration can handle it
 automatically.
 
+.. note::
+
+    Because scheduled notification are started in batches on ``NOTIFICATION_SEC_INTERVAL`` the notification will not be executed on the exact delay. Scheduled notifications are ordered by their ``execute_after`` timestamp and ``attempt`` so that new notifications are prioritized.
+    Dependent on the amount of queued scheduled notification and ``NOTIFICATION_LIMIT`` it is possible that notifications are sent a few minutes later.
+
 Open Notificaties message broker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO
 
 Under the hood, notifications are distributed by background workers to ensure API
 endpoint availability.

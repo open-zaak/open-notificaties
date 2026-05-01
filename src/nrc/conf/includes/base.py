@@ -101,26 +101,27 @@ CELERY_BROKER_URL = config(
     group="Celery",
 )
 
-NOTIFICATION_LIMIT = config(
-    "NOTIFICATION_LIMIT",
-    500,
-    help_text="the number of notification to be sent at once, should be around CELERY_WORKER_CONCURRENCY",
-    group="Celery",
-)
-
 NOTIFICATION_SEC_INTERVAL = max(
     15,
     config(
         "NOTIFICATION_SEC_INTERVAL",
         20,
-        help_text="The amount of seconds between starting the task that sends scheduled notifications (minimum 5 seconds).",
+        help_text="The amount of seconds between starting the ``execute_notifications`` task that creates the actual notification request tasks (minimum 15 seconds).",
         group="Celery",
     ),
 )
 
+NOTIFICATION_LIMIT = config(
+    "NOTIFICATION_LIMIT",
+    500,
+    help_text="the maximum of scheduled notifications to be handled during ``execute_notifications``.",
+    group="Celery",
+)
+
+
 CELERY_REDIS_SOCKET_TIMEOUT = config(
     "CELERY_REDIS_SOCKET_TIMEOUT",
-    10,
+    120,
     help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
     group="Celery",
 )

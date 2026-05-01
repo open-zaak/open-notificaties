@@ -122,7 +122,8 @@ API
     * ``subscription_pk``
     * ``notification_id``
     * ``subscription_callback``
-    * ``notification_attempt_count`` the amount of times this notification has been attempted
+    * ``notification_attempt_count`` the amount of times this task has been started for this notification
+    * ``task_attempt_count``: the number of times this specific task has been attempted
 
 * ``notification_failed``: a non success status code was returned while sending the notification to a subscribed callback URL. Additional context:
 
@@ -137,7 +138,8 @@ API
     * ``notification_id``
     * ``subscription_callback``
     * ``http_status_code``
-    * ``notification_attempt_count`` the amount of times this notification has been attempted
+    * ``notification_attempt_count`` the amount of times this task has been started for this notification
+    * ``task_attempt_count``: the number of times this specific task has been attempted
 
 * ``notification_error``: an error occurred while trying to send the notification to a subscribed callback URL. Additional context:
 
@@ -152,7 +154,8 @@ API
     * ``notification_id``
     * ``subscription_callback``
     * ``exc_info``
-    * ``notification_attempt_count`` the amount of times this notification has been attempted
+    * ``notification_attempt_count`` the amount of times this task has been started for this notification
+    * ``task_attempt_count``: the number of times this specific task has been attempted
 
 * ``subscription_does_not_exist``: could not retrieve an ``Abonnement`` for this pk and can therefore not deliver a message to this subscriber. Additional context:
 
@@ -165,6 +168,9 @@ API
     * ``additional_attributes``
     * ``subscription_pk``
     * ``notification_id``
+
+* ``scheduled_notification_does_not_exist``: could not retrieve an ``ScheduledNotification`` for this pk and can therefore not deliver it's message.
+
 
 * ``no_notification_source``: notification did not have a source and cannot be transformed into a cloudevent. Additional context:
 
@@ -190,7 +196,8 @@ API
     * ``subject``
     * ``subscription_pk``
     * ``subscription_callback``
-    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
 
 * ``cloudevent_failed``: a non success status code was returned while sending the cloudevent to a subscribed callback URL. Additional context:
 
@@ -201,7 +208,8 @@ API
     * ``subscription_pk``
     * ``subscription_callback``
     * ``http_status_code``
-    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
 
 
 * ``cloudevent_error``: an error occurred while trying to send the cloudevent to a subscribed callback URL. Additional context:
@@ -213,7 +221,16 @@ API
     * ``subscription_pk``
     * ``subscription_callback``
     * ``exc_info``
-    * ``cloudevent_attempt_count`` the amount of times this cloudevent has been attempted
+    * ``cloudevent_attempt_count`` the amount of times this task has been started for this cloudevent
+    * ``task_attempt_count``: the number of times this specific task has been attempted
+
+* ``executed_notifications``: the ``execute_notification`` task has run
+
+    * ``waiting`` the amount of scheduled notifications that can be started
+    * ``stuck`` the amount of scheduled notifications that are in progress for ``NOTIFICATION_REQUESTS_TIMEOUT`` * 10
+    * ``in_progress`` the amount of scheduled notificatiosn that are in progress
+    * ``started`` the amount of scheduled notifications that got started
+
 
 .. _manual_logging_exceptions:
 
