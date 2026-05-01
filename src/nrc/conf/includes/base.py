@@ -106,7 +106,7 @@ NOTIFICATION_SEC_INTERVAL = max(
     config(
         "NOTIFICATION_SEC_INTERVAL",
         20,
-        help_text="The amount of seconds between starting the ``execute_notifications`` task that creates the actual notification request tasks (minimum 15 seconds).",
+        help_text="The amount of seconds between starting the ``execute_notifications`` task that creates the actual notification request tasks (minimum 5 seconds).",
         group="Celery",
     ),
 )

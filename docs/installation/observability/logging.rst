@@ -169,7 +169,8 @@ API
     * ``subscription_pk``
     * ``notification_id``
 
-* ``scheduled_notification_does_not_exist``: could not retrieve an ``ScheduledNotification`` for this pk and can therefore not deliver it's message.
+* ``scheduled_notification_does_not_exist``: could not retrieve a ``ScheduledNotification`` for the specified primary key
+  and can therefore not deliver its message.
 
 
 * ``no_notification_source``: notification did not have a source and cannot be transformed into a cloudevent. Additional context:
@@ -228,7 +229,7 @@ API
 
     * ``waiting`` the amount of scheduled notifications that can be started
     * ``stuck`` the amount of scheduled notifications that are in progress for ``NOTIFICATION_REQUESTS_TIMEOUT`` * 10
-    * ``in_progress`` the amount of scheduled notificatiosn that are in progress
+    * ``in_progress`` the amount of scheduled notifications that are in progress
     * ``started`` the amount of scheduled notifications that got started
 
 

@@ -21,11 +21,18 @@ notification and forwards the message to the registered webhook.
 
 .. _webhooks: https://en.wikipedia.org/wiki/Webhook
 
+.. _notifications_flow:
+
 Flow
 ~~~~
-After a notification (or cloudevent) is received all subscriptions that need to receive it are fetched and a ScheduledNotification is created for each subscription.
-A background task that runs every ``NOTIFICATION_SEC_INTERVAL`` seconds picks up ``NOTIFICATION_LIMIT`` of scheduled notifications and creates tasks that will send the notification to the subscription callback_urls.
-Successful scheduledNotifications are removed, failed ones get updated to be retried until they succeed or the retry limit is reached.
+
+After a notification (or cloudevent) is received via the API, all subscriptions that need to receive it are fetched
+and a ScheduledNotification is created in the database for each subscription.
+A background task that runs every ``NOTIFICATION_SEC_INTERVAL`` seconds picks up ``NOTIFICATION_LIMIT``
+(see :ref:`installation_env_config` > Celery) of scheduled notifications and creates tasks that will send the
+notification to the subscription callback_urls. Successful ScheduledNotifications are removed,
+failed ones get updated with an ``execute_after`` timestamp to be retried (according to exponential backoff)
+until they succeed or the retry limit is reached.
 
 Failure modes
 -------------
@@ -130,8 +137,11 @@ automatically.
 
 .. note::
 
-    Because scheduled notification are started in batches on ``NOTIFICATION_SEC_INTERVAL`` the notification will not be executed on the exact delay. Scheduled notifications are ordered by their ``execute_after`` timestamp and ``attempt`` so that new notifications are prioritized.
-    Dependent on the amount of queued scheduled notification and ``NOTIFICATION_LIMIT`` it is possible that notifications are sent a few minutes later.
+    Because scheduled notifications are started in batches every X seconds (based on ``NOTIFICATION_SEC_INTERVAL``, 20s by default)
+    the notifications will not be executed on the exact delay. Scheduled notifications are
+    ordered by their ``execute_after`` timestamp and ``attempt`` so that new notifications are prioritized.
+    Under high load, dependent on the amount of queued scheduled notifications and ``NOTIFICATION_LIMIT`` it is
+    possible that notifications are sent a few minutes later.
 
 Open Notificaties message broker
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
