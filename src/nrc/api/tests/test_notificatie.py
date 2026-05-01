@@ -234,6 +234,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "event": "notification_failed",
                         "http_status_code": 400,
                         "notification_attempt_count": 1,
+                        "task_attempt_count": 1,
                         "log_level": "warning",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -342,8 +343,9 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "channel_name": "zaken",
                         "creation_date": "2025-01-01T12:00:00Z",
                         "event": "notification_error",
-                        "exception": str(exc),
+                        "exc_info": exc,
                         "notification_attempt_count": 1,
+                        "task_attempt_count": 1,
                         "log_level": "error",
                         "main_object_url": "https://example.com/zrc/api/v1/zaken/d7a22",
                         "notification_id": notification_id,
@@ -753,7 +755,7 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_failed["cloudevent_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Notificatie.objects.count(), 1)
@@ -855,8 +857,9 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                         "type": "nl.overheid.zaken.status.create",
                         "subject": "721c9",
                         "log_level": "error",
-                        "exception": str(exc),
+                        "exc_info": exc,
                         "cloudevent_attempt_count": 1,
+                        "task_attempt_count": 1,
                     },
                 },
             )

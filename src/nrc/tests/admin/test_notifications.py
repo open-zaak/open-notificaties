@@ -247,9 +247,6 @@ class NotificationAdminWebTest(WebTest):
         # one scheduled for each sub
         self.assertEqual(ScheduledNotification.objects.count(), 2)
 
-        # one scheduled for each sub
-        self.assertEqual(ScheduledNotification.objects.count(), 2)
-
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 0)

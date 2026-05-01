@@ -403,7 +403,7 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_failed["cloudevent_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_failed["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
@@ -486,12 +486,13 @@ class CloudEventTests(JWTAuthMixin, APITestCase):
                         "type": "nl.overheid.zaken.zaak.created",
                         "subject": subject_id,
                         "log_level": "error",
-                        "exception": str(exc),
+                        "exc_info": exc,
                         "cloudevent_attempt_count": 1,
+                        "task_attempt_count": 1,
                     },
                 },
             )
-            self.assertEqual(retry_cloudevent_error["cloudevent_attempt_count"], 2)
+            self.assertEqual(retry_cloudevent_error["task_attempt_count"], 2)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(CloudEvent.objects.count(), 1)
