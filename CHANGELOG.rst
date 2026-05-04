@@ -9,8 +9,9 @@ Changes
 
 .. warning::
 
-  This release drops RabbitMQ as a dependency and relies on Celery Beat (which was already
-  a dependency) and database persisted schedules to send notifications. RabbitMQ is no longer needed and can be removed
+  This release drops RabbitMQ as a dependency and relies on a container/pod running Celery Beat (which was already
+  a dependency) and database persisted schedules to send notifications. Celery beat can be run
+  using the ``./bin/celery_beat.sh`` command. RabbitMQ is no longer needed and can be removed
   from deployment. If you do, it's important to make sure that ``CELERY_BROKER_URL`` and ``CELERY_RESULT_BACKEND``
   point to Redis instead.
 
