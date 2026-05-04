@@ -28,7 +28,8 @@ Flow
 
 After a notification (or cloudevent) is received via the API, all subscriptions that need to receive it are fetched
 and a ScheduledNotification is created in the database for each subscription.
-A background task that runs every ``NOTIFICATION_SEC_INTERVAL`` seconds picks up ``NOTIFICATION_LIMIT``
+A container/pod running Celery Beat (with the ``./bin/celery_beat.sh`` command) runs a
+background task that runs every ``NOTIFICATION_SEC_INTERVAL`` seconds picks up ``NOTIFICATION_LIMIT``
 (see :ref:`installation_env_config` > Celery) of scheduled notifications and creates tasks that will send the
 notification to the subscription callback_urls. Successful ScheduledNotifications are removed,
 failed ones get updated with an ``execute_after`` timestamp to be retried (according to exponential backoff)
