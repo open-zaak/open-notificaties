@@ -45,13 +45,16 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: "3.12"
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
         with:
           node-version: "24"
+          package-manager-cache: false
 
       - name: Start CI docker compose
         run: docker compose --file docker-compose.ssl.yml up --detach mock
@@ -72,7 +75,7 @@ jobs:
           DB_POOL_ENABLED: ${{ matrix.use_pooling }}
 
       - name: Publish coverage report
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -81,9 +84,11 @@ jobs:
     name: Documentation build
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Set up backend environment
-        uses: maykinmedia/setup-django-backend@v1.3
+        uses: maykinmedia/setup-django-backend@a9abe0987130ed667fa09ce177a5ae0bd153aed1 # v1.3
         with:
           python-version: "3.12"
           setup-node: false
@@ -112,7 +117,7 @@ jobs:
         id: image-name
 
   open-api-ci:
-    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@v6
+    uses: maykinmedia/open-api-workflows/.github/workflows/ci.yml@79102b911003d75203ca2fed7df01ad79d9b6bba  # v6.4.0
     needs:
       - store-reusable-workflow-vars
     permissions:
@@ -127,7 +132,7 @@ jobs:
       django-settings-module: nrc.conf.ci
 
   open-api-publish:
-    uses: maykinmedia/open-api-workflows/.github/workflows/publish.yml@v6
+    uses: maykinmedia/open-api-workflows/.github/workflows/publish.yml@79102b911003d75203ca2fed7df01ad79d9b6bba  # v6.4.0
     needs:
       - store-reusable-workflow-vars
       - open-api-ci

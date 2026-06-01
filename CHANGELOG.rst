@@ -941,10 +941,8 @@ Features:
 * Tested with Open Zaak integration
 * Admin interface to view data created via the APIs
 * Scalable notification delivery workers
-* `NLX`_ ready (can be used with NLX)
+* NLX ready (can be used with NLX)
 * Documentation on https://open-notificaties.readthedocs.io/
 * Deployable on Kubernetes, single server and as VMware appliance
 * Automated test suite
 * Automated deployment
-
-.. _NLX: https://nlx.io/
