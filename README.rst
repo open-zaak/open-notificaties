@@ -56,7 +56,7 @@ Licentie
 Licensed under the EUPL_
 
 .. _EUPL: LICENSE.md
-.. _Maykin B.V.: https://www.maykinmedia.nl
+.. _Maykin B.V.: https://www.maykin.nl
 
 .. |build-status| image:: https://github.com/open-zaak/open-notificaties/workflows/Run%20CI/badge.svg
     :alt: Build status
