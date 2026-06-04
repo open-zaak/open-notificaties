@@ -5,8 +5,12 @@
         <title>{% block title %}{% if title %}{{ title }}{% else %}{{ settings.SITE_TITLE }}{% endif %} | {{ settings.PROJECT_NAME }}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <link rel="icon" type="image/png" href="{% static 'ico/favicon.png' %}">
         <link rel="stylesheet" href="{% static 'css/screen.css' %}">
+        <link href="{% static 'maykin_common/ico/favicon.svg' %}" sizes="any" rel="icon" type="image/svg+xml" />
+        <link href="{% static 'maykin_common/ico/favicon-96x96.png' %}" sizes="96x96" rel="icon" type="image/png" />
+        <link href="{% static 'maykin_common/ico/favicon-32x32.png' %}" sizes="32x32" rel="icon" type="image/png" />
+        <link href="{% static 'maykin_common/ico/favicon.png' %}" sizes="16x16" rel="icon" type="image/png" />
+        <link href="{% static 'maykin_common/ico/favicon.png' %}" rel="shortcut icon">
         {% block extra_css %}{% endblock %}
     </head>
 
@@ -20,7 +24,7 @@
             {% endblock %}
         </main>
 
-        {% include "includes/footer.html" with logo='img/logo.png' %}
+        {% include "includes/footer.html" with logo='img/open-notificaties-logo.svg' %}
         {% block scripts %}{% endblock scripts %}
     </body>
 </html>
