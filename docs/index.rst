@@ -1,3 +1,8 @@
+.. image:: https://raw.githubusercontent.com/open-zaak/open-notificaties/refs/heads/main/.github/assets/open-notificaties-logo.svg
+    :height: 100px
+    :alt: Open Notificaties
+    :class: no-scaled-link product-logo
+
 Open Notificaties Documentation
 ===============================
 

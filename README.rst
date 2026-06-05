@@ -2,6 +2,10 @@
 Open Notificaties
 =================
 
+.. image:: https://raw.githubusercontent.com/open-zaak/open-notificaties/refs/heads/main/.github/assets/open-notificaties-logo.svg
+    :height: 100px
+    :alt: Open Notificaties
+
 :Version: 1.16.0
 :Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
@@ -32,7 +36,7 @@ geimplementeerd in `Open Zaak`_.
 .. _`Autorisaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/autorisaties/
 
 **Open Notificaties** is gebaseerd op de broncode van de
-`referentie implementatie van VNG Realisatie`_ om stabiele API te realiseren die in 
+`referentie implementatie van VNG Realisatie`_ om stabiele API te realiseren die in
 productie gebruikt kan worden bij gemeenten.
 
 .. _`referentie implementatie van VNG Realisatie`: https://github.com/VNG-Realisatie/gemma-zaken
@@ -52,7 +56,7 @@ Licentie
 Licensed under the EUPL_
 
 .. _EUPL: LICENSE.md
-.. _Maykin B.V.: https://www.maykinmedia.nl
+.. _Maykin B.V.: https://www.maykin.nl
 
 .. |build-status| image:: https://github.com/open-zaak/open-notificaties/workflows/Run%20CI/badge.svg
     :alt: Build status

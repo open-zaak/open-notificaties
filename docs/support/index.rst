@@ -18,7 +18,7 @@ Service providers
 
 Below is a list of service providers.
 
-* `Maykin Media <https://www.maykinmedia.nl/>`_
+* `Maykin <https://www.maykin.nl/>`_
 
 Want to be mentioned here? Please create a Pull Request on `Github`_ to add your
 company.
