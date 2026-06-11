@@ -137,7 +137,7 @@ django-jsonform==2.22.0
     # via
     #   mozilla-django-oidc-db
     #   open-api-framework
-django-log-outgoing-requests==0.6.1
+django-log-outgoing-requests==0.9.1
     # via open-api-framework
 django-markup==1.10
     # via open-api-framework
@@ -148,7 +148,9 @@ django-otp==1.5.1
 django-phonenumber-field==7.3.0
     # via django-two-factor-auth
 django-privates==3.1.1
-    # via django-simple-certmanager
+    # via
+    #   django-simple-certmanager
+    #   open-api-framework
 django-redis==6.0.0
     # via open-api-framework
 django-relativedelta==2.0.0
@@ -167,7 +169,9 @@ django-setup-configuration==0.12.0
     #   open-api-framework
     #   zgw-consumers
 django-simple-certmanager==2.3.0
-    # via zgw-consumers
+    # via
+    #   open-api-framework
+    #   zgw-consumers
 django-solo==2.3.0
     # via
     #   commonground-api-common
@@ -251,7 +255,9 @@ maykin-2fa==1.0.1
     #   maykin-common
     #   open-api-framework
 maykin-common==0.19.0
-    # via -r requirements/base.in
+    # via
+    #   -r requirements/base.in
+    #   open-api-framework
 mozilla-django-oidc==5.0.2
     # via mozilla-django-oidc-db
 mozilla-django-oidc-db==2.0.1
@@ -264,7 +270,7 @@ notifications-api-common==0.10.0
     #   commonground-api-common
 oauthlib==3.3.1
     # via requests-oauthlib
-open-api-framework==0.13.4
+open-api-framework==0.14.0
     # via -r requirements/base.in
 opentelemetry-api==1.38.0
     # via
@@ -378,6 +384,8 @@ pydantic-core==2.27.1
     # via pydantic
 pydantic-settings==2.6.1
     # via django-setup-configuration
+pygments==2.20.0
+    # via django-log-outgoing-requests
 pyjwt==2.12.1
     # via
     #   commonground-api-common
@@ -392,9 +400,7 @@ python-dateutil==2.9.0.post0
     #   celery
     #   django-relativedelta
 python-decouple==3.8
-    # via
-    #   maykin-common
-    #   open-api-framework
+    # via maykin-common
 python-dotenv==1.2.2
     # via
     #   open-api-framework
@@ -459,6 +465,7 @@ tornado==6.5.5
     # via flower
 typing-extensions==4.12.2
     # via
+    #   django-log-outgoing-requests
     #   grpcio
     #   mozilla-django-oidc-db
     #   opentelemetry-api
