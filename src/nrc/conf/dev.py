@@ -22,6 +22,8 @@ os.environ.setdefault("OTEL_EXPORTER_OTLP_METRICS_INSECURE", "true")
 
 from .includes.base import *  # noqa isort:skip
 
+from maykin_common.config import no_doc
+
 #
 # Standard Django settings.
 #
@@ -88,4 +90,4 @@ except ImportError:
 
 TEST_CALLBACK_AUTH = False
 
-ELASTIC_APM["DEBUG"] = config("DISABLE_APM_IN_DEV", default=True, add_to_docs=False)
+ELASTIC_APM["DEBUG"] = config("DISABLE_APM_IN_DEV", default=True, documentation=no_doc)

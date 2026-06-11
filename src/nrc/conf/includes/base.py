@@ -53,15 +53,18 @@ SITE_TITLE = "API dashboard"
 LOG_NOTIFICATIONS_IN_DB = config(
     "LOG_NOTIFICATIONS_IN_DB",
     default=False,
-    help_text="indicates whether or not sent notifications should be saved to the database.",
-    group="Notifications",
+    documentation=DocumentationParams(
+        help_text="indicates whether or not sent notifications should be saved to the database.",
+        group="Notifications",
+    ),
 )
 
 NOTIFICATION_REQUESTS_TIMEOUT = config(
     "NOTIFICATION_REQUESTS_TIMEOUT",
     default=10,
-    help_text="Timeout in seconds for HTTP requests.",
-    group="Notifications",
+    documentation=DocumentationParams(
+        help_text="Timeout in seconds for HTTP requests.", group="Notifications"
+    ),
 )
 
 
@@ -96,40 +99,50 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # Celery
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
-    "amqp://127.0.0.1:5672//",
-    help_text="the URL of the broker that will be used to actually send the notifications",
-    group="Celery",
+    default="amqp://127.0.0.1:5672//",
+    documentation=DocumentationParams(
+        help_text="the URL of the broker that will be used to actually send the notifications",
+        group="Celery",
+    ),
 )
 
 NOTIFICATION_SEC_INTERVAL = max(
     5,
     config(
         "NOTIFICATION_SEC_INTERVAL",
-        20,
-        help_text="The amount of seconds between starting the ``execute_notifications`` task that creates the actual notification request tasks (minimum 5 seconds).",
-        group="Celery",
+        default=20,
+        documentation=DocumentationParams(
+            help_text="The amount of seconds between starting the ``execute_notifications`` task that creates the actual notification request tasks (minimum 5 seconds).",
+            group="Celery",
+        ),
     ),
 )
 
 NOTIFICATION_LIMIT = config(
     "NOTIFICATION_LIMIT",
-    500,
-    help_text="the maximum of scheduled notifications to be handled during ``execute_notifications``.",
-    group="Celery",
+    default=500,
+    documentation=DocumentationParams(
+        help_text="the maximum of scheduled notifications to be handled during ``execute_notifications``.",
+        group="Celery",
+    ),
 )
 
 
 CELERY_REDIS_SOCKET_TIMEOUT = config(
     "CELERY_REDIS_SOCKET_TIMEOUT",
-    10,
-    help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
-    group="Celery",
+    default=10,
+    documentation=DocumentationParams(
+        help_text="Socket timeout for reading/writing operations to the Redis server in seconds (int/float), used by the redis result backend.",
+        group="Celery",
+    ),
 )
 CELERY_REDIS_SOCKET_CONNECT_TIMEOUT = config(
     "CELERY_REDIS_SOCKET_CONNECT_TIMEOUT",
-    None,
-    help_text="Socket timeout for connections to Redis from the result backend in seconds (int/float)",
-    group="Celery",
+    default=None,
+    documentation=DocumentationParams(
+        help_text="Socket timeout for connections to Redis from the result backend in seconds (int/float)",
+        group="Celery",
+    ),
 )
 
 CELERY_BEAT_SCHEDULE = {
@@ -149,31 +162,37 @@ CELERY_BEAT_SCHEDULE = {
 }
 CELERY_RESULT_EXPIRES = config(
     "CELERY_RESULT_EXPIRES",
-    3600,
-    help_text=(
-        "How long the results of tasks will be stored in Redis (in seconds),"
-        " this can be set to a lower duration to lower memory usage for Redis."
+    default=3600,
+    documentation=DocumentationParams(
+        help_text=(
+            "How long the results of tasks will be stored in Redis (in seconds),"
+            " this can be set to a lower duration to lower memory usage for Redis."
+        ),
+        group="Celery",
     ),
-    group="Celery",
 )
 
 # Add (by default) 5 (soft), 15 (hard) minute timeouts to all Celery tasks.
 CELERY_TASK_TIME_LIMIT = config(
     "CELERY_TASK_HARD_TIME_LIMIT",
     default=15 * 60,
-    help_text=(
-        "If a celery task exceeds this time limit, the worker processing the task will "
-        "be killed and replaced with a new one."
+    documentation=DocumentationParams(
+        help_text=(
+            "If a celery task exceeds this time limit, the worker processing the task will "
+            "be killed and replaced with a new one."
+        ),
+        group="Celery",
     ),
-    group="Celery",
 )  # hard
 CELERY_TASK_SOFT_TIME_LIMIT = config(
     "CELERY_TASK_SOFT_TIME_LIMIT",
     default=5 * 60,
-    help_text=(
-        "If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised."
+    documentation=DocumentationParams(
+        help_text=(
+            "If a celery task exceeds this time limit, the ``SoftTimeLimitExceeded`` exception will be raised."
+        ),
+        group="Celery",
     ),
-    group="Celery",
 )  # soft
 
 #
@@ -181,9 +200,11 @@ CELERY_TASK_SOFT_TIME_LIMIT = config(
 #
 NOTIFICATION_NUMBER_OF_DAYS_RETAINED = config(
     "NOTIFICATION_NUMBER_OF_DAYS_RETAINED",
-    30,
-    help_text="the number of days for which you wish to keep notifications",
-    group="Notifications",
+    default=30,
+    documentation=DocumentationParams(
+        help_text="the number of days for which you wish to keep notifications",
+        group="Notifications",
+    ),
 )
 
 #
@@ -214,13 +235,15 @@ SETUP_CONFIGURATION_STEPS = [
 # To make sure this variable appears in the documentation
 config(
     "EXTRA_VERIFY_CERTS",
-    "",
-    help_text=(
-        "a comma-separated list of paths to certificates to trust, "
-        "If you're using self-signed certificates for the services that Open Notificaties "
-        "communicates with, specify the path to those (root) certificates here, rather than "
-        "disabling SSL certificate verification. Example: "
-        "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
+    default="",
+    documentation=DocumentationParams(
+        help_text=(
+            "a comma-separated list of paths to certificates to trust, "
+            "If you're using self-signed certificates for the services that Open Notificaties "
+            "communicates with, specify the path to those (root) certificates here, rather than "
+            "disabling SSL certificate verification. Example: "
+            "``EXTRA_VERIFY_CERTS=/etc/ssl/root1.crt,/etc/ssl/root2.crt``."
+        )
     ),
 )
 
@@ -239,18 +262,22 @@ DJANGO_STRUCTLOG_CELERY_ENABLED = True
 TIME_LEEWAY = config(
     "TIME_LEEWAY",
     default=0,
-    help_text=(
-        "Some validation & JWT validation has a time aspect (usually in the form of the ``iat`` and "
-        "``nbf`` claims). Clock drift between server and client can occur. This setting allows "
-        "specifying the leeway in seconds, and defaults to ``0`` (no leeway). It is advised to "
-        "not make this larger than a couple of minutes."
+    documentation=DocumentationParams(
+        help_text=(
+            "Some validation & JWT validation has a time aspect (usually in the form of the ``iat`` and "
+            "``nbf`` claims). Clock drift between server and client can occur. This setting allows "
+            "specifying the leeway in seconds, and defaults to ``0`` (no leeway). It is advised to "
+            "not make this larger than a couple of minutes."
+        )
     ),
 )
 
 JWT_EXPIRY = config(
     "JWT_EXPIRY",
     default=3600,
-    help_text="duration a JWT is considered to be valid, in seconds.",
+    documentation=DocumentationParams(
+        help_text="duration a JWT is considered to be valid, in seconds."
+    ),
 )
 
 #
