@@ -6,7 +6,7 @@ Open Notificaties
     :height: 100px
     :alt: Open Notificaties
 
-:Version: 1.16.0
+:Version: 1.16.1
 :Source: https://github.com/open-zaak/open-notificaties
 :Keywords: zaken, zaakgericht werken, GEMMA, notificaties
 :PythonVersion: 3.12

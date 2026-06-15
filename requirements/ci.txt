@@ -131,7 +131,7 @@ cryptography==46.0.7
     #   webauthn
 cssselect==1.2.0
     # via pyquery
-django==5.2.13
+django==5.2.15
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -418,7 +418,7 @@ humanize==4.12.3
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   flower
-idna==3.7
+idna==3.18
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -874,7 +874,7 @@ structlog==25.4.0
     #   django-structlog
 tblib==1.7.0
     # via -r requirements/test-tools.in
-tornado==6.5.5
+tornado==6.5.7
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
@@ -911,7 +911,7 @@ uritemplate==4.1.1
     #   -c requirements/base.txt
     #   -r requirements/base.txt
     #   drf-spectacular
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -c requirements/base.txt
     #   -r requirements/base.txt
