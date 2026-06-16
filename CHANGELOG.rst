@@ -2,6 +2,55 @@
 Changes
 =======
 
+1.16.1 (2026-06-15)
+===================
+
+.. note::
+
+  The defaults for several environment variables for the ``django-log-outgoing-requests``
+  configuration have changed (see :ref:`installation_env_config` > Logging)
+
+  * ``LOG_REQUESTS`` is now ``True`` by default, instead of ``False``
+  * ``LOG_OUTGOING_REQUESTS_DB_SAVE_BODY`` is now ``False`` by default, instead of ``True``
+  * ``LOG_OUTGOING_REQUESTS_RESET_DB_SAVE_AFTER`` (previously not configurable) has a default of ``60`` minutes
+
+**Project maintenance**
+
+* Upgrade dependencies
+
+  * ``open-api-framework`` to ``0.14.0``
+  * ``maykin-common`` to ``0.19.0``
+  * ``django-log-outgoing-requests`` to ``0.9.1``
+  * ``Django`` to ``5.2.15``
+  * ``urllib3`` to ``2.7.0``
+  * ``idna`` to ``3.18``
+  * ``tornado`` to ``6.5.7``
+  * ``GitPython`` to ``3.1.50``
+  * ``pip`` to ``26.1.2``
+
+* [:open-api-framework:`83`] Replace generated environment variable documentation
+  with reusable directives from ``maykin-common``.
+
+* [:open-api-framework:`83`] Use configuration helpers from ``maykin-common``.
+
+* [:open-api-framework:`218`] Harden GitHub Actions workflows
+
+  * Pin GitHub Actions to immutable SHAs
+  * Disable credential persistence for checkout actions
+  * Add explicit workflow permissions
+  * Upgrade ``open-api-workflows`` to ``v6.4.0``
+
+**Documentation**
+
+* [:open-api-framework:`217`] Update branding assets and documentation
+
+  * Replace ``maykinmedia.nl`` with ``maykin.nl``
+  * Use new Open Notificaties logos and icons
+
+* Add PR checklist item for Architectural Decision Records (ADR).
+
+* Remove references to the defunct ``nlx.io`` website.
+
 1.16.0 (2026-05-01)
 ===================
 

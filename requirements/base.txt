@@ -68,7 +68,7 @@ cryptography==46.0.7
     #   mozilla-django-oidc
     #   pyopenssl
     #   webauthn
-django==5.2.13
+django==5.2.15
     # via
     #   commonground-api-common
     #   django-admin-index
@@ -234,7 +234,7 @@ grpcio==1.76.0
     # via opentelemetry-exporter-otlp-proto-grpc
 humanize==4.12.3
     # via flower
-idna==3.7
+idna==3.18
     # via requests
 importlib-metadata==8.7.0
     # via opentelemetry-api
@@ -461,7 +461,7 @@ structlog==25.4.0
     # via
     #   django-structlog
     #   open-api-framework
-tornado==6.5.5
+tornado==6.5.7
     # via flower
 typing-extensions==4.12.2
     # via
@@ -484,7 +484,7 @@ tzdata==2025.2
     # via kombu
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   elastic-apm
     #   requests

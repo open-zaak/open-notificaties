@@ -167,7 +167,7 @@ cssselect==1.2.0
     #   pyquery
 distlib==0.3.9
     # via virtualenv
-django==5.2.13
+django==5.2.15
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -453,7 +453,7 @@ furl==2.1.3
     #   ape-pie
 gitdb==4.0.9
     # via gitpython
-gitpython==3.1.47
+gitpython==3.1.50
     # via -r requirements/dev.in
 glom==23.5.0
     # via
@@ -484,7 +484,7 @@ humanize==4.12.3
     #   flower
 identify==2.6.10
     # via pre-commit
-idna==3.7
+idna==3.18
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -729,7 +729,7 @@ phonenumberslite==8.13.43
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-two-factor-auth
-pip==26.0.1
+pip==26.1.2
     # via pip-tools
 pip-tools==7.3.0
     # via -r requirements/dev.in
@@ -1044,7 +1044,7 @@ tblib==1.7.0
     #   -r requirements/ci.txt
 tomlkit==0.13.2
     # via bump-my-version
-tornado==6.5.5
+tornado==6.5.7
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -1083,7 +1083,7 @@ uritemplate==4.1.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   drf-spectacular
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
