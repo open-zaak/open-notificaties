@@ -4,7 +4,7 @@ set -ex
 
 fixtures_dir=${FIXTURES_DIR:-/app/fixtures}
 
-uwsgi_port=${UWSGI_PORT:-8000}
+uwsgi_port=${OPENNOTIFICATIES_PORT:-8000}
 uwsgi_processes=${UWSGI_PROCESSES:-4}
 uwsgi_threads=${UWSGI_THREADS:-4}
 
