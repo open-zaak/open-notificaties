@@ -94,7 +94,14 @@ Add notification consumers
 
 In order to add new consumer webhooks that are subscribed to specific channels, follow these steps:
 
-1. Ensure your consumer webhook can handle the notification body (see `API specification`_)
+1. Ensure your consumer webhook can handle the notification body.
+
+   See the following specifications:
+
+   - `API specification`_ for the Open Notificaties API.
+   - `Consumer API specification`_ to view the example consumer webhook API in ReDoc.
+   - `Consumer API specification (GitHub)`_ for the OpenAPI document.
+
 2. Ensure your consumer webhook responds to notifications with a status code in the range 200-209
 3. (Optional) If no **Kanaal** exists for the resource, create it via the admin interface
 
@@ -124,3 +131,7 @@ All done!
 .. _`configuration of Open Zaak`: https://open-zaak.readthedocs.io/en/stable/installation/config/openzaak_config_cli.html#open-zaak-configuration-cli
 .. _`manual`: https://open-notificaties.readthedocs.io/en/stable/manual/subscriptions.html#aanmaken-abonnement
 .. _`API specification`: https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/1.0.0/src/openapi.yaml#tag/notificaties
+.. _`Consumer API specification`:
+   https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/main/src/consumer-openapi.yaml
+.. _`Consumer API specification (GitHub)`:
+   https://github.com/open-zaak/open-notificaties/blob/main/src/consumer-openapi.yaml

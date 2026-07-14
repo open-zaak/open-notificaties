@@ -20,19 +20,27 @@ API                     Specification version(s)
 `Notificaties API`_     `1.0 <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/1.0.0/src/openapi.yaml>`__
 ======================  ==========================================
 
-.. _`Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/
+Consumer webhook API specifications
+===================================
 
+Examples of how consumer webhooks should be implemented to receive notifications or cloud events from
+Open Notificaties are documented `here`_ (see also in `ReDoc`_).
+
+.. _`Notificaties API`: https://vng-realisatie.github.io/gemma-zaken/standaard/notificaties/
+.. _`here`:
+   https://github.com/open-zaak/open-notificaties/blob/main/src/consumer-openapi.yaml
+.. _`ReDoc`: https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/main/src/consumer-openapi.yaml
 
 Deviation from the standards
 ----------------------------
- 
+
 While Open Notificaties supports above mentioned standard it also provides extra features, which can enrich
 the client experience. The full list of them is documented :ref:`here <api_experimental>`.
- 
+
 Reference
 ---------
 
 .. toctree::
    :maxdepth: 1
-   
+
    experimental
