@@ -9,3 +9,9 @@ docker run --rm \
     -w /project \
     usabillabv/openapi3-validator \
     src/openapi.yaml
+
+docker run --rm \
+    -v $(pwd):/project \
+    -w /project \
+    usabillabv/openapi3-validator \
+    src/consumer-openapi.yaml
