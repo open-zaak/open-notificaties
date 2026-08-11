@@ -15,9 +15,10 @@ class HandleAuthNotifTestCase(JWTAuthMixin, APITestCase):
     heeft_alle_autorisaties = True
 
     def test_handle_create_auth(self):
-        service = ServiceFactory(api_root="https://autorisaties-api.vng.cloud/api/v1")
+        service = ServiceFactory(
+            api_root="https://autorisaties-api.vng.cloud/api/v1",
+        )
         config = AuthorizationsConfig.get_solo()
-
         config.authorizations_api_service = service
         config.save(update_fields=("authorizations_api_service",))
 

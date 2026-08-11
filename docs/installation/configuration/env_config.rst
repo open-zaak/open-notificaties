@@ -15,6 +15,12 @@ Available environment variables
 
 .. config-all-params::
 
+.. Environment variables that are not defined in Python code and therefore not automatically
+.. picked up by the documentation generation directive
+
+* ``OPENNOTIFICATIES_PORT``: The port the uWSGI (web server) process binds to in the Docker
+  entrypoint (``bin/docker_start.sh``). Defaults to ``8000``.
+
 
 Initial configuration
 ---------------------

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.test import override_settings
 from django.urls import reverse_lazy
 
@@ -8,6 +9,14 @@ from maykin_common.vcr import VCRMixin
 class ViewConfigTestCase(VCRMixin, WebTest):
     url = reverse_lazy("view-config")
     api_root = "http://notifications.local/api/v1/"
+
+    def setUp(self):
+        super().setUp()
+
+        # django-solo caches the singleton (and its resolved FK) in SOLO_CACHE,
+        # which is process-wide and outlives this test's DB transaction, so
+        # stale, pre-mutation Service objects can leak in from earlier tests.
+        cache.clear()
 
     def test_get_domain(self):
         """

@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.4
     method: GET
-    uri: https://autorisaties-api.vng.cloud/api/v1/applicaties?clientIds=
+    uri: https://autorisaties-api.vng.cloud/api/v1/applicaties?clientIds=not-configured
   response:
     body:
       string: '{"type":"https://autorisaties-api.vng.cloud/ref/fouten/PermissionDenied/","code":"invalid-client-identifier","title":"Je
@@ -113,7 +113,7 @@ interactions:
       User-Agent:
       - python-requests/2.32.4
     method: GET
-    uri: https://autorisaties-api.vng.cloud/api/v1/applicaties?clientIds=
+    uri: https://autorisaties-api.vng.cloud/api/v1/applicaties?clientIds=not-configured
   response:
     body:
       string: '{"type":"https://autorisaties-api.vng.cloud/ref/fouten/PermissionDenied/","code":"invalid-client-identifier","title":"Je

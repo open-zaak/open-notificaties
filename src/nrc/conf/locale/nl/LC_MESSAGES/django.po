@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-15 12:45+0000\n"
+"POT-Creation-Date: 2026-08-11 10:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -202,8 +202,8 @@ msgstr "callback URL bereikbaar?"
 msgid "kanalen"
 msgstr ""
 
-#: nrc/datamodel/admin.py:263 nrc/datamodel/admin.py:377
-#: nrc/datamodel/admin_filters.py:42
+#: nrc/datamodel/admin.py:263 nrc/datamodel/admin.py:371
+#: nrc/datamodel/admin_filters.py:41
 msgid "result"
 msgstr "resultaat"
 
@@ -220,46 +220,46 @@ msgid "Selected notifications have been scheduled."
 msgstr ""
 "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: nrc/datamodel/admin.py:336 nrc/datamodel/admin.py:449
+#: nrc/datamodel/admin.py:330 nrc/datamodel/admin.py:443
 msgid "Result"
 msgstr "Resultaat"
 
-#: nrc/datamodel/admin.py:342
+#: nrc/datamodel/admin.py:336
 msgid "Action"
 msgstr "Actie"
 
-#: nrc/datamodel/admin.py:346
+#: nrc/datamodel/admin.py:340
 msgid "Resource"
 msgstr "Resource"
 
-#: nrc/datamodel/admin.py:381
+#: nrc/datamodel/admin.py:375
 msgid "Cloud Event time"
 msgstr ""
 
-#: nrc/datamodel/admin.py:390
+#: nrc/datamodel/admin.py:384
 msgid "Re-send the selected cloudevents to all subscriptions"
 msgstr "Verstuur de geselecteerde cloudevents opnieuw naar alle abonnees"
 
-#: nrc/datamodel/admin.py:398
+#: nrc/datamodel/admin.py:392
 #, fuzzy
 #| msgid "Selected notifications have been scheduled."
 msgid "Selected cloudevents have been scheduled."
 msgstr ""
 "De geselecteerde notificaties staan in de wachtrij om verstuurd te worden."
 
-#: nrc/datamodel/admin_filters.py:30
+#: nrc/datamodel/admin_filters.py:29
 msgid "action"
 msgstr "actie"
 
-#: nrc/datamodel/admin_filters.py:36
+#: nrc/datamodel/admin_filters.py:35
 msgid "resource"
 msgstr "resource"
 
-#: nrc/datamodel/admin_filters.py:47
+#: nrc/datamodel/admin_filters.py:46
 msgid "Success"
 msgstr "Succes"
 
-#: nrc/datamodel/admin_filters.py:48
+#: nrc/datamodel/admin_filters.py:47
 msgid "Failure"
 msgstr "Mislukt"
 
