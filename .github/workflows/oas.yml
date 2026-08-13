@@ -28,7 +28,7 @@ jobs:
       oas-artifact-name: nrc-api-oas
       node-version-file: '.nvmrc'
       openapi-to-postman-version: '^5.0.0'
-      postman-artifact-name: ${{ matrix.component }}-api-postman-collection
+      postman-artifact-name: nrc-api-postman-collection
       openapi-generator-version: '^2.20.0'
       spectral-ruleset: ruleset.yaml
       vacuum-custom-functions: vacuum_functions
