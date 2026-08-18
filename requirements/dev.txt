@@ -10,6 +10,11 @@ amqp==5.2.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   kombu
+annotated-doc==0.0.5
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   typer
 annotated-types==0.7.0
     # via
     #   -c requirements/ci.txt
@@ -181,6 +186,7 @@ django==5.2.16
     #   django-extensions
     #   django-filter
     #   django-formtools
+    #   django-health-check
     #   django-jsonform
     #   django-log-outgoing-requests
     #   django-markup
@@ -255,6 +261,10 @@ django-formtools==2.5.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   django-two-factor-auth
+django-health-check==4.5.0
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
 django-ipware==7.0.1
     # via
     #   -c requirements/ci.txt
@@ -387,6 +397,11 @@ djangorestframework-inclusions==1.2.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
+dnspython==2.8.0
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   django-health-check
 docutils==0.21.2
     # via
     #   -c requirements/ci.txt
@@ -541,8 +556,11 @@ markdown==3.10.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-markdown-it-py==3.0.0
-    # via rich
+markdown-it-py==4.2.0
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   rich
 markupsafe==2.1.5
     # via
     #   -c requirements/ci.txt
@@ -559,7 +577,10 @@ maykin-common==0.20.1
     #   -r requirements/ci.txt
     #   open-api-framework
 mdurl==0.1.2
-    # via markdown-it-py
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   markdown-it-py
 mozilla-django-oidc==5.0.2
     # via
     #   -c requirements/ci.txt
@@ -902,10 +923,13 @@ requests-oauthlib==2.0.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
-rich==13.9.4
+rich==15.0.0
     # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
     #   bump-my-version
     #   rich-click
+    #   typer
 rich-click==1.8.5
     # via bump-my-version
 roman-numerals==4.1.0
@@ -950,6 +974,11 @@ sentry-sdk==2.12.0
     #   open-api-framework
 setuptools==83.0.0
     # via pip-tools
+shellingham==1.5.4
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   typer
 six==1.16.0
     # via
     #   -c requirements/ci.txt
@@ -1045,6 +1074,10 @@ tornado==6.5.7
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   flower
+typer==0.27.1
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
 typing-extensions==4.12.2
     # via
     #   -c requirements/ci.txt

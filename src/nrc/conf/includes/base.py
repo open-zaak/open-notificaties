@@ -1,14 +1,15 @@
 import os
 from datetime import timedelta
-from maykin_common.branding import ProductDefinition
+
 from celery.schedules import crontab
+from maykin_common.branding import ProductDefinition
 from maykin_common.config import DocumentationParams
 
 os.environ["_USE_STRUCTLOG"] = "True"
 
 from open_api_framework.conf.base import *  # noqa
 from open_api_framework.conf.utils import config
-
+from maykin_common.health_checks import default_health_check_apps
 from .api import *  # noqa
 
 #
@@ -20,6 +21,8 @@ from .api import *  # noqa
 #
 INSTALLED_APPS = INSTALLED_APPS + [
     "maykin_common",
+    # health check + plugins
+    *default_health_check_apps,
     "capture_tag",
     # `django.contrib.sites` added at the project level because it has been removed at the packages level.
     # This component is deprecated and should be completely removed.

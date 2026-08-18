@@ -58,6 +58,8 @@ urlpatterns = [
         name="password_reset_complete",
     ),
     path("api/", include("nrc.api.urls")),
+    # health_checks urls
+    path("", include("maykin_common.health_checks.urls")),
     # Simply show the master template.
     path(
         "",
