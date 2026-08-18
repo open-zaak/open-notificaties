@@ -2,6 +2,45 @@
 Changes
 =======
 
+1.16.2 (2026-08-18)
+===================
+
+.. note::
+
+  The environment variable used to configure the uWSGI port in the Docker
+  entrypoint has been renamed from ``UWSGI_PORT`` to ``OPENNOTIFICATIES_PORT``
+  (see :ref:`installation_env_config`). Deployments that override the uWSGI
+  port need to update their configuration accordingly.
+
+**Bugfixes**
+
+* [:open-notificaties:`261`] Fix timeouts in the notification admin by optimizing the underlying result queries.
+* Fix a crash caused by ``uwsgi`` running in strict mode by renaming the ``UWSGI_PORT`` environment variable to
+  ``OPENNOTIFICATIES_PORT``.
+
+**Project maintenance**
+
+* [:open-api-workflows:`60`] Upgrade ``open-api-workflows`` to ``v7.0.0`` and reenable OAS workflow and replace spectral-cli with vacuum.
+* Configure Dependabot to keep GitHub Actions up to date, group these updates into a single PR and move the
+  configuration to the ``.github`` directory.
+* Configure ``actions/stale`` to automatically close stale issues and PRs.
+* Upgrade the ReadTheDocs build image OS to Ubuntu 24.04.
+* [:open-api-framework:`222`] Use ``PreventPrivilegeEscalationMixin`` in the user admin.
+* Prevent npm post-install scripts from running via ``.npmrc``.
+
+* Upgrade dependencies
+
+  * ``maykin-common`` to ``0.19.1``
+  * ``bleach`` to ``6.4.0``
+  * ``cryptography`` to ``50.0.0``
+  * ``Django`` to ``5.2.16``
+  * ``pyopenssl`` to ``26.4.0``
+  * ``pyjwt`` to ``2.13.0``
+
+**Documentation**
+
+* [:open-notificaties:`390`] Add Consumer API description for notifications and cloud events.
+
 1.16.1 (2026-06-15)
 ===================
 
@@ -18,8 +57,9 @@ Changes
 
 * Upgrade dependencies
 
-  * ``open-api-framework`` to ``0.14.0``
+  * ``open-api-framework`` to ``0.14.1``
   * ``maykin-common`` to ``0.19.0``
+  * ``commonground-api-common`` to ``2.14.0``
   * ``django-log-outgoing-requests`` to ``0.9.1``
   * ``Django`` to ``5.2.15``
   * ``urllib3`` to ``2.7.0``
@@ -27,6 +67,7 @@ Changes
   * ``tornado`` to ``6.5.7``
   * ``GitPython`` to ``3.1.50``
   * ``pip`` to ``26.1.2``
+  * ``zgw-consumers`` to ``2.0.3``
 
 * [:open-api-framework:`83`] Replace generated environment variable documentation
   with reusable directives from ``maykin-common``.

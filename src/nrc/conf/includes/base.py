@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 
 from celery.schedules import crontab
+from maykin_common.config import DocumentationParams
 
 os.environ["_USE_STRUCTLOG"] = "True"
 
@@ -47,6 +48,7 @@ SESSION_COOKIE_NAME = "opennotificaties_sessionid"
 #
 # Custom settings
 #
+
 PROJECT_NAME = "Open Notificaties"
 SITE_TITLE = "API dashboard"
 
