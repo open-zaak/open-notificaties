@@ -1,0 +1,19 @@
+{
+    "supportedTags": [
+        {
+            "gitRef": "main",
+            "tag": "latest"
+        },
+        {
+            "gitRef": "1.16.1",
+            "tag": "1.16.1"
+        }
+    ],
+    "dockerOrg": "openzaak",
+    "dockerRepo": "open-notificaties",
+    "githubOrg": "open-zaak",
+    "githubRepo": "open-notificaties",
+    "projectName": "Open Notificaties",
+    "projectDocumentation": "https://open-notificaties.readthedocs.io/en/latest/",
+    "projectDescription": "Open Notificaties is a modern, open-source messaging service that implements the VNG API standard for the “Notificaties API” in line with the Common Ground model. Among others, it can be used in combination with Open Zaak which implements the VNG standards for “API’s voor Zaakgericht werken” that require a Notificaties API."
+}
