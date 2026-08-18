@@ -29,6 +29,7 @@ if [[ -v CELERY_WORKER_CONCURRENCY ]]; then
     # of the Celery worker (which does happen when you run with prefork)
     worker_options+=( "-c${CELERY_WORKER_CONCURRENCY}" "--pool=threads" )
 fi
+
 # Set defaults for OTEL
 export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-opennotificaties-worker-"${QUEUE}"}"
 
@@ -39,7 +40,7 @@ export _OTEL_DEFER_SETUP="true"
 # celery does not work with db pooling
 export DB_POOL_ENABLED="false"
 exec celery \
-    --app nrc \
+    --app nrc.celery \
     --workdir src \
     worker "${worker_options[@]}" \
     -E \
