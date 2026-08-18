@@ -26,8 +26,14 @@ _certs_initialized = False
 
 logger = structlog.stdlib.get_logger(__name__)
 
+_env_setup_done = False
+
 
 def setup_env():
+    global _env_setup_done
+    if _env_setup_done:
+        return
+
     # load the environment variables containing the secrets/config
     dotenv_path = Path(__file__).parents[2] / ".env"
     load_dotenv(dotenv_path)
@@ -49,6 +55,8 @@ def setup_env():
     load_self_signed_certs()
 
     monkeypatch_requests()
+
+    _env_setup_done = True
 
 
 def load_self_signed_certs() -> None:
