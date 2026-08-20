@@ -23,6 +23,7 @@ INSTALLED_APPS = INSTALLED_APPS + [
     "maykin_common",
     # health check + plugins
     *default_health_check_apps,
+    "maykin_common.health_checks.celery",
     "capture_tag",
     # `django.contrib.sites` added at the project level because it has been removed at the packages level.
     # This component is deprecated and should be completely removed.
