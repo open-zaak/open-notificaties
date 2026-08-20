@@ -213,6 +213,7 @@ services:
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
       - CELERY_LOGLEVEL=DEBUG
       - CELERY_WORKER_CONCURRENCY=${CELERY_WORKER_CONCURRENCY:-4}
+      - CELERY_WORKER_NAME=celery@docker-openzaak
       - ENVIRONMENT=dev
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - DISABLE_2FA=${DISABLE_2FA:-yes}
@@ -244,7 +245,7 @@ services:
         "--liveness-file=/app/tmp/celery_worker_event_loop.live",
         "--max-age=70",
         "--broker=redis://redis:6379/2",
-        "--worker-name=celery@docker",
+        "--worker-name=celery@docker-openzaak",
       ]
       interval: 60s
       timeout: 5s

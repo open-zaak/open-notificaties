@@ -39,6 +39,7 @@ Guides
    deployment/kubernetes
    configuration/index
    observability/index
+   health_checks
    self_signed
 
 Post-install checklist
