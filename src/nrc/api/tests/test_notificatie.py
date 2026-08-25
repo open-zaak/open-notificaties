@@ -58,7 +58,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -161,7 +160,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -275,7 +273,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -468,7 +465,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "zaken",
-            "source": "zaken.maykin.nl",
             "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
             "resource": "status",
             "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
@@ -530,7 +526,6 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
         )
         msg = {
             "kanaal": "objecten",
-            "source": "objecten.maykin.nl",
             "hoofdObject": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
             "resource": "object",
             "resourceUrl": "http://example.com/objects/api/v2/objects/4523c63b-daaf-4fd1-8ae4-bf9239d05769",
@@ -967,6 +962,50 @@ class NotificatieTests(JWTAuthMixin, APITestCase):
                 self.assertEqual(
                     response.status_code, status.HTTP_400_BAD_REQUEST, response.data
                 )
+
+    def test_source_kept_only_for_cloudevents(self):
+        kanaal = KanaalFactory.create(
+            naam="zaken", filters=["bron", "zaaktype", "vertrouwelijkheidaanduiding"]
+        )
+        cloudevents_abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback1", send_cloudevents=True
+        )
+        vng_notificatie_abon = AbonnementFactory.create(
+            callback_url="https://example.local/callback2", send_cloudevents=False
+        )
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=cloudevents_abon)
+        FilterGroupFactory.create(kanaal=kanaal, abonnement=vng_notificatie_abon)
+
+        notificatie_url = reverse(
+            "notificaties-list",
+            kwargs={"version": BASE_REST_FRAMEWORK["DEFAULT_VERSION"]},
+        )
+
+        msg = {
+            "kanaal": "zaken",
+            "source": "zaken.maykin.nl",
+            "hoofdObject": "https://example.com/zrc/api/v1/zaken/d7a22",
+            "resource": "status",
+            "resourceUrl": "https://example.com/zrc/api/v1/statussen/d7a22/721c9",
+            "actie": "create",
+            "aanmaakdatum": "2025-01-01T12:00:00Z",
+            "kenmerken": {
+                "bron": "082096752011",
+                "zaaktype": "example.com/api/v1/zaaktypen/5aa5c",
+                "vertrouwelijkheidaanduiding": "openbaar",
+            },
+        }
+
+        response = self.client.post(notificatie_url, msg)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertIn(
+            "source", ScheduledNotification.objects.get(sub=cloudevents_abon).task_args
+        )
+        self.assertNotIn(
+            "source",
+            ScheduledNotification.objects.get(sub=vng_notificatie_abon).task_args,
+        )
 
 
 @patch("nrc.api.tasks.get_exponential_backoff_interval")
