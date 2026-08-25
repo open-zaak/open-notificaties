@@ -73,6 +73,14 @@ class NotificationAdminWebTest(WebTest):
             },
         }
 
+    def _expected_vng_task_args(self):
+        expected = {**self.forwarded_msg}
+        expected.pop("source", None)
+        expected["aanmaakdatum"] = expected["aanmaakdatum"].strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        return expected
+
     def test_create_notification(self):
         """
         Verify that a notification is sent when it is created via the admin
@@ -99,15 +107,7 @@ class NotificationAdminWebTest(WebTest):
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 1)
-        self.assertEqual(
-            scheduled_notif.task_args,
-            self.forwarded_msg
-            | {
-                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
-            },
-        )
+        self.assertEqual(scheduled_notif.task_args, self._expected_vng_task_args())
 
     def test_resend_notification(self):
         """
@@ -139,15 +139,7 @@ class NotificationAdminWebTest(WebTest):
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 2)
-        self.assertEqual(
-            scheduled_notif.task_args,
-            self.forwarded_msg
-            | {
-                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
-            },
-        )
+        self.assertEqual(scheduled_notif.task_args, self._expected_vng_task_args())
 
     def test_resend_notification_action(self):
         """
@@ -215,15 +207,7 @@ class NotificationAdminWebTest(WebTest):
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 1)
-        self.assertEqual(
-            scheduled_notif.task_args,
-            self.forwarded_msg
-            | {
-                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
-            },
-        )
+        self.assertEqual(scheduled_notif.task_args, self._expected_vng_task_args())
 
     def test_resend_notification_as_cloudevent(self):
         notificatie = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
@@ -250,15 +234,7 @@ class NotificationAdminWebTest(WebTest):
         scheduled_notif = ScheduledNotification.objects.first()
         self.assertEqual(scheduled_notif.type, NotificationTypes.notification)
         self.assertEqual(scheduled_notif.attempt, 2)
-        self.assertEqual(
-            scheduled_notif.task_args,
-            self.forwarded_msg
-            | {
-                "aanmaakdatum": self.forwarded_msg["aanmaakdatum"].strftime(
-                    "%Y-%m-%dT%H:%M:%SZ"
-                ),
-            },
-        )
+        self.assertEqual(scheduled_notif.task_args, self._expected_vng_task_args())
 
     def test_resend_notification_action_as_cloudevent(self):
         notificatie1 = NotificatieFactory.create(forwarded_msg=self.forwarded_msg)
