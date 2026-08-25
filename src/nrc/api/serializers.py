@@ -284,13 +284,16 @@ class MessageSerializer(NotificatieSerializer):
         msg: NotificationMessage,
         notificatie: Notificatie | None = None,
     ):
+        # Omit the source field for normal notifications, as it is only relevant for cloudevents
+        vng_schema_msg = {**msg}
+        vng_schema_msg.pop("source", None)
         ScheduledNotification.objects.bulk_create(
             [
                 ScheduledNotification(
                     type=NotificationTypes.notification
                     if not sub.send_cloudevents
                     else NotificationTypes.cloudevent,
-                    task_args=msg
+                    task_args=vng_schema_msg
                     if not sub.send_cloudevents
                     else self._transform_to_cloudevent(msg),
                     execute_after=timezone.now(),
