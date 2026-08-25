@@ -53,6 +53,7 @@ RUN pip install pip "setuptools>=70.0.0"
 COPY --from=build /usr/local/lib/python3.12 /usr/local/lib/python3.12
 COPY --from=build /usr/local/bin/uwsgi /usr/local/bin/uwsgi
 COPY --from=build /usr/local/bin/celery /usr/local/bin/celery
+COPY --from=build /usr/local/bin/maykin-common /usr/local/bin/maykin-common
 
 # Stage 3.2 - Copy source code
 WORKDIR /app
@@ -61,8 +62,8 @@ COPY ./bin/docker_start.sh /start.sh
 COPY ./bin/celery_worker.sh /celery_worker.sh
 COPY ./bin/celery_flower.sh /celery_flower.sh
 COPY ./bin/celery_beat.sh /celery_beat.sh
+COPY ./bin/celery_worker_liveness_probe.sh /celery_worker_liveness_probe.sh
 COPY ./bin/uninstall_adfs.sh ./bin/uninstall_django_auth_adfs_db.sql /app/bin/
-COPY ./bin/check_celery_worker_liveness.py ./bin/
 COPY ./bin/setup_configuration.sh /setup_configuration.sh
 COPY ./bin/uwsgi.ini /
 RUN mkdir /app/log /app/config /app/tmp

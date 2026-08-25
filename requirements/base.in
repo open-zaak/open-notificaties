@@ -14,4 +14,4 @@ mozilla-django-oidc-db[setup-configuration]
 
 psycopg[pool]
 
-maykin-common[axes,mfa,otel]
+maykin-common[axes,mfa,otel,cli,health-checks]
