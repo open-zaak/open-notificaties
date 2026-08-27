@@ -3,7 +3,8 @@ from django.utils.translation import gettext_lazy as _
 
 import structlog
 from drf_spectacular.openapi import AutoSchema as _AutoSchema
-from drf_spectacular.utils import OpenApiParameter, OpenApiTypes
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter
 from rest_framework import exceptions, mixins, serializers
 from vng_api_common.constants import VERSION_HEADER
 from vng_api_common.exception_handling import ERROR_CONTENT_TYPE
@@ -42,8 +43,8 @@ class AutoSchema(_AutoSchema):
         Use view basename as a base for operation_id
         """
         if hasattr(self.view, "basename"):
-            basename = self.view.basename
-            action = self.view.action
+            basename = getattr(self.view, "basename")
+            action = getattr(self.view, "action")
             # make compatible with old OAS
             if action == "destroy":
                 action = "delete"
@@ -94,7 +95,7 @@ class AutoSchema(_AutoSchema):
 
         return responses
 
-    def get_response_serializers(
+    def get_response_serializers(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
     ) -> dict[int, type[serializers.Serializer] | None]:
         """append error serializers"""
@@ -135,7 +136,7 @@ class AutoSchema(_AutoSchema):
             response["description"] = HTTP_STATUS_CODE_TITLES.get(int(status_code), "")
         return response
 
-    def get_override_parameters(self):
+    def get_override_parameters(self):  # pyright: ignore[reportIncompatibleMethodOverride]
         """Add request and response headers"""
         version_headers = self.get_version_headers()
         content_type_headers = self.get_content_type_headers()
