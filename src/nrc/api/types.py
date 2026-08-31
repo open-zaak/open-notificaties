@@ -6,7 +6,7 @@ from nrc.datamodel.models import Notificatie
 
 class _BaseNotificationMessage(TypedDict):
     aanmaakdatum: datetime | str
-    source: str
+    source: NotRequired[str | None]
     actie: str
     hoofdObject: str
     kanaal: str
