@@ -30,7 +30,7 @@ from nrc.datamodel.models import (
 )
 
 from ..utils.help_text import mark_experimental
-from .fields import JSONOrStringField, URIField, URIRefField
+from .fields import JSONField, JSONOrStringField, URIField, URIRefField
 from .types import CloudEventKwargs, NotificationMessage
 from .validators import CallbackURLAuthValidator, CallbackURLValidator
 
@@ -239,6 +239,15 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MessageSerializer(NotificatieSerializer):
+    kenmerken = JSONField(
+        label=_("kenmerken"),
+        required=False,
+        help_text=_(
+            "Mapping van kenmerken (sleutel/waarde) van de notificatie. De "
+            "publicerende API specificeert de toegestane kenmerken."
+        ),
+    )
+
     def validate(self, attrs):
         validated_attrs = super().validate(attrs)
         # check if exchange exists

@@ -593,7 +593,7 @@ mozilla-django-oidc-db==2.0.1
     #   open-api-framework
 nodeenv==1.9.1
     # via pre-commit
-notifications-api-common==0.10.0
+notifications-api-common==0.13.0
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -1063,6 +1063,7 @@ structlog==25.4.0
     #   -r requirements/ci.txt
     #   commonground-api-common
     #   django-structlog
+    #   notifications-api-common
 tblib==1.7.0
     # via
     #   -c requirements/ci.txt

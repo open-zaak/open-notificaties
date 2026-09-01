@@ -33,3 +33,8 @@ class JSONOrStringField(serializers.Field):
             except ValueError:
                 pass
         return value
+
+
+@extend_schema_field({"type": "object", "additionalProperties": True})
+class JSONField(serializers.JSONField):
+    pass

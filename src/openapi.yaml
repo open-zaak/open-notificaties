@@ -2305,6 +2305,7 @@ components:
           maxLength: 50
         source:
           type: string
+          title: bron
           description: De identifier van de oorsprong van de notificatie, een systeem
             of organisatie.
           maxLength: 100
@@ -2333,11 +2334,7 @@ components:
           description: Datum en tijd waarop de actie heeft plaatsgevonden.
         kenmerken:
           type: object
-          additionalProperties:
-            type: string
-            title: kenmerk
-            description: Een waarde behorende bij de sleutel.
-            maxLength: 1000
+          additionalProperties: true
           description: Mapping van kenmerken (sleutel/waarde) van de notificatie.
             De publicerende API specificeert de toegestane kenmerken.
       required:
