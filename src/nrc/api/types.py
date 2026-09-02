@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, NotRequired, TypedDict
+from typing import Any, NotRequired, TypedDict  # noqa: TID251
 
 from nrc.datamodel.models import Notificatie
 
