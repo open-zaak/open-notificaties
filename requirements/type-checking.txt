@@ -335,10 +335,15 @@ django-structlog==9.1.1
     #   -r requirements/ci.txt
 django-stubs==6.1.0
     # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
     #   -r requirements/type-checking.in
     #   djangorestframework-stubs
 django-stubs-ext==6.1.0
-    # via django-stubs
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   django-stubs
 django-test-migrations==1.5.0
     # via
     #   -c requirements/ci.txt
@@ -383,7 +388,10 @@ djangorestframework-inclusions==1.2.0
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
 djangorestframework-stubs==3.18.1
-    # via -r requirements/type-checking.in
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+    #   -r requirements/type-checking.in
 dnspython==2.8.0
     # via
     #   -c requirements/ci.txt
@@ -1016,6 +1024,8 @@ typer==0.27.1
     #   -r requirements/ci.txt
 types-pyyaml==6.0.12.20260815
     # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
     #   django-stubs
     #   djangorestframework-stubs
 typing-extensions==4.12.2
