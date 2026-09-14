@@ -105,7 +105,7 @@ TWO_FACTOR_WEBAUTHN_RP_NAME = "Open Notificaties - admin"
 # Celery
 CELERY_BROKER_URL = config(
     "CELERY_BROKER_URL",
-    default="amqp://127.0.0.1:5672//",
+    default="redis://localhost:6379/1",
     documentation=DocumentationParams(
         help_text="the URL of the broker that will be used to actually send the notifications",
         group="Celery",
