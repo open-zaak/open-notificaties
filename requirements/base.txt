@@ -185,7 +185,9 @@ django-solo==2.3.0
     #   notifications-api-common
     #   zgw-consumers
 django-structlog==9.1.1
-    # via open-api-framework
+    # via
+    #   maykin-common
+    #   open-api-framework
 django-two-factor-auth==1.16.0
     # via maykin-2fa
 django-upgrade-check==1.1.0
@@ -264,7 +266,7 @@ maykin-2fa==1.0.1
     # via
     #   maykin-common
     #   open-api-framework
-maykin-common==0.20.1
+maykin-common==0.22.0
     # via
     #   -r requirements/base.in
     #   open-api-framework
@@ -276,13 +278,14 @@ mozilla-django-oidc-db==2.0.1
     # via
     #   -r requirements/base.in
     #   open-api-framework
-notifications-api-common==0.10.0
+notifications-api-common==0.13.1
     # via
     #   -r requirements/base.in
     #   commonground-api-common
+    #   open-api-framework
 oauthlib==3.3.1
     # via requests-oauthlib
-open-api-framework==0.14.1
+open-api-framework==0.16.0
     # via -r requirements/base.in
 opentelemetry-api==1.38.0
     # via
@@ -480,6 +483,8 @@ structlog==25.4.0
     # via
     #   commonground-api-common
     #   django-structlog
+    #   maykin-common
+    #   notifications-api-common
     #   open-api-framework
 tornado==6.5.7
     # via flower

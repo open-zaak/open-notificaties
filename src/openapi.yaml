@@ -2305,6 +2305,7 @@ components:
           maxLength: 50
         source:
           type: string
+          title: bron
           description: De identifier van de oorsprong van de notificatie, een systeem
             of organisatie.
           maxLength: 100

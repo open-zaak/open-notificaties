@@ -2,6 +2,10 @@
 
 set -ex
 
+# Figure out abspath of this script
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+
 fixtures_dir=${FIXTURES_DIR:-/app/fixtures}
 
 uwsgi_port=${OPENNOTIFICATIES_PORT:-8000}
