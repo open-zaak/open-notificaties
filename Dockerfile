@@ -18,17 +18,17 @@ RUN pip install -r requirements/production.txt
 
 
 # Stage 2 - build frontend
-FROM node:24-trixie-slim AS frontend-build
+FROM node:26-trixie-slim AS frontend-build
 
 WORKDIR /app
 
 COPY ./*.json /app/
 RUN npm ci --legacy-peer-deps
 
-COPY ./Gulpfile.js /app/
-COPY ./build /app/build/
+COPY ./*.js /app/
 
 COPY src/nrc/sass/ /app/src/nrc/sass/
+COPY src/nrc/js/ /app/src/nrc/js/
 RUN npm run build
 
 
@@ -69,7 +69,7 @@ COPY ./bin/uwsgi.ini /
 RUN mkdir /app/log /app/config /app/tmp
 
 # copy frontend build statics
-COPY --from=frontend-build /app/src/nrc/static/css /app/src/nrc/static/css
+COPY --from=frontend-build /app/src/nrc/static /app/src/nrc/static
 COPY --from=frontend-build /app/node_modules/@fortawesome/fontawesome-free/webfonts /app/node_modules/@fortawesome/fontawesome-free/webfonts
 
 # copy source code

@@ -70,7 +70,7 @@ cryptography==50.0.0
     #   mozilla-django-oidc
     #   pyopenssl
     #   webauthn
-django==5.2.16
+django==5.2.17
     # via
     #   commonground-api-common
     #   django-admin-index
@@ -403,7 +403,7 @@ pygments==2.20.0
     # via
     #   django-log-outgoing-requests
     #   rich
-pyjwt==2.13.0
+pyjwt==2.15.1
     # via
     #   commonground-api-common
     #   mozilla-django-oidc
@@ -477,7 +477,7 @@ six==1.16.0
     #   furl
     #   orderedmultidict
     #   python-dateutil
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via django
 structlog==25.4.0
     # via
@@ -486,7 +486,7 @@ structlog==25.4.0
     #   maykin-common
     #   notifications-api-common
     #   open-api-framework
-tornado==6.5.7
+tornado==6.5.10
     # via flower
 typer==0.27.1
     # via maykin-common
@@ -511,7 +511,7 @@ tzdata==2025.2
     # via kombu
 uritemplate==4.1.1
     # via drf-spectacular
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   elastic-apm
     #   requests

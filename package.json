@@ -7,9 +7,9 @@
     "doc": "doc"
   },
   "scripts": {
-    "convert": "swagger2openapi src/swagger2.0.json -o src/openapi.yaml",
-    "build": "gulp build",
-    "watch": "gulp watch",
+    "build": "node build.js",
+    "test": "echo 'no tests defined' && exit 1",
+    "watch": "node build.js --watch",
     "appliance:serve-config": "http-server deployment/appliance/debian-config"
   },
   "repository": {
@@ -24,21 +24,10 @@
     "autoprefixer": "^10.4.16"
   },
   "devDependencies": {
-    "cssnano": "^7.1.1",
-    "gulp": "^5.0.1",
-    "gulp-dart-sass": "^1.1.0",
-    "gulp-file": "^0.4.0",
-    "gulp-hub": "^4.2.0",
-    "gulp-if": "^3.0.0",
-    "gulp-postcss": "^10.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "http-server": "^14.1.1",
+    "esbuild": "latest",
+    "esbuild-sass-plugin": "latest",
+    "sass-embedded": "latest",
     "microscope-sass": "^2.0.0",
-    "postcss": "^8.5.6",
-    "postcss-loader": "^8.2.0",
-    "postcss-selector-lint": "^1.0.2",
-    "sass-loader": "^16.0.6",
-    "swagger2openapi": "^7.0.8",
-    "yargs": "^16.2.0"
+    "http-server": "^14.1.1"
   }
 }
