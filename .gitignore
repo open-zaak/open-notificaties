@@ -31,10 +31,11 @@ local.py
 .env
 /private-media/
 
-# Static files build by gulp
+# Static files build by esbuild
 src/nrc/static/css/
 src/nrc/static/fonts/
 src/nrc/static/js/
+src/nrc/static/bundles/
 
 # Documentation artifacts
 docs/_build
