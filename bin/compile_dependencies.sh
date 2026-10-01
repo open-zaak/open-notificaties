@@ -28,7 +28,7 @@ uv pip compile \
 uv pip compile \
     --output-file requirements/type-checking.txt \
     "$@" \
-    requirements/type-checking.in
+    "$root_dir/requirements/base.in"
 
 # Dependencies for testing
 uv pip compile \
