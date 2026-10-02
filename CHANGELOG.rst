@@ -2,6 +2,55 @@
 Changes
 =======
 
+1.17.0 (2026-10-02)
+===================
+
+**New features**
+
+* [:open-notificaties:`424`] Implement container health checks from ``maykin-common`` (see :ref:`installation_health_checks`).
+
+**Bugfixes**
+
+* [:open-zaak:`2581`] Fix crashing view configuration page in case of services that are missing JWT secrets
+* [:open-notificaties:`420`] Omit ``source`` attribute when sending notifications to subscriptions
+
+**Project maintenance**
+
+* [:open-api-framework:`224`] Migrate frontend toolchain from webpack to esbuild
+* [:open-notificaties:`433`] Upgrade python deps to fix security warnings
+
+  * ``anyio`` to 4.14.2
+  * ``commonground-api-common`` to 3.0.0
+  * ``django`` to 5.2.17
+  * ``django-health-check`` to 4.5.0
+  * ``django-setup-configuration`` to 0.13.0
+  * ``djangorestframework`` to 3.18.1
+  * ``djangorestframework-gis`` to 1.3.0
+  * ``filelock`` to 4.0.8
+  * ``gitpython`` to 3.2.0
+  * ``markdown-it-py`` to 4.2.0
+  * ``maykin-common`` to 0.22.0
+  * ``notifications-api-common`` to 0.13.1
+  * ``oauthlib`` to 4.0.0
+  * ``open-api-framework`` to 0.16.0
+  * ``pip`` to 26.2.1
+  * ``pyjwt`` to 2.15.1
+  * ``rich`` to 15.0.0
+  * ``soupsieve`` to 2.10
+  * ``sqlparse`` to 0.6.0
+  * ``tornado`` to 6.5.10
+  * ``urllib3`` to 2.8.0
+  * ``virtualenv`` to 21.14.2
+  * ``webob`` to 1.8.11
+  * ``zgw-consumers`` to 2.1.0
+
+* Upgrade nodejs to 26
+* [:open-notificaties:`433`] Upgrade NPM packages
+* [:open-api-framework:`237`] Rely on structlog machinery from maykin-common
+* [:open-api-workflows:`64`] Add action to generate and update Docker Hub description
+* Ensure python dependencies are compiled in the correct order
+* [:open-notificaties:`400`] Configure type checking for python code
+
 1.16.2 (2026-08-18)
 ===================
 

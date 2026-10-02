@@ -5,8 +5,12 @@
             "tag": "latest"
         },
         {
-            "gitRef": "1.16.1",
-            "tag": "1.16.1"
+            "gitRef": "1.17.0",
+            "tag": "1.17.0"
+        },
+        {
+            "gitRef": "1.16.2",
+            "tag": "1.16.2"
         }
     ],
     "dockerOrg": "openzaak",
