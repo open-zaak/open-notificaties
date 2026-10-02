@@ -62,7 +62,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==2.14.0
+commonground-api-common==3.0.0
     # via open-api-framework
 cryptography==50.0.0
     # via
@@ -167,7 +167,7 @@ django-sendfile2==0.7.1
     # via django-privates
 django-sessionprofile==3.0.0
     # via open-api-framework
-django-setup-configuration==0.12.0
+django-setup-configuration==0.13.0
     # via
     #   -r requirements/base.in
     #   mozilla-django-oidc-db
@@ -535,7 +535,7 @@ wrapt==1.16.0
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-dbapi
     #   opentelemetry-instrumentation-redis
-zgw-consumers==2.0.3
+zgw-consumers==2.1.0
     # via
     #   -r requirements/base.in
     #   commonground-api-common
