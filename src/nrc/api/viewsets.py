@@ -69,10 +69,8 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
 @extend_schema_view(
     list=extend_schema(summary="Alle KANAALen opvragen."),
     retrieve=extend_schema(summary="Een specifiek KANAAL opvragen."),
-    update=extend_schema(summary=mark_experimental("Een specifiek KANAAL bewerken.")),
-    partial_update=extend_schema(
-        summary=mark_experimental("Een specifiek KANAAL deels bewerken.")
-    ),
+    update=extend_schema(summary="Een specifiek KANAAL bewerken."),
+    partial_update=extend_schema(summary="Een specifiek KANAAL deels bewerken."),
     create=extend_schema(summary="Maak een KANAAL aan."),
 )
 class KanaalViewSet(
