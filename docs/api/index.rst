@@ -17,7 +17,7 @@ The following API's are available in Open Notificaties:
 ======================  ==========================================
 API                     Specification version(s)
 ======================  ==========================================
-`Notificaties API`_     `1.0 <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/1.0.0/src/openapi.yaml>`__
+`Notificaties API`_     `1.1.0 <https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/open-zaak/open-notificaties/1.1.0/src/openapi.yaml>`__
 ======================  ==========================================
 
 Consumer webhook API specifications
