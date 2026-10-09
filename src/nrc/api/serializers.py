@@ -123,6 +123,10 @@ class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
 
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
+    callback_url = serializers.URLField(
+        help_text=Abonnement._meta.get_field("callback_url").help_text,
+        validators=[CallbackURLAuthValidator()],
+    )
     kanalen = FilterGroupSerializer(
         source="filter_groups",
         many=True,
@@ -153,7 +157,6 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         )
         extra_kwargs = {
             "url": {"lookup_field": "uuid"},
-            "callback_url": {"validators": [CallbackURLAuthValidator()]},
             "auth": {"write_only": True, "required": True},
         }
         validators = [CallbackURLValidator("callback_url", "auth")]
