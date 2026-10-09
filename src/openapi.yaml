@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Notificaties API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Een API om een notificatierouteringscomponent te benaderen.
 
@@ -239,7 +239,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       tags:
       - abonnement
@@ -393,7 +393,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - abonnement
@@ -536,14 +536,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - abonnement
@@ -704,14 +704,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - abonnement
@@ -870,7 +870,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - abonnement
@@ -1005,8 +1005,8 @@ paths:
           type: string
           enum:
           - application/cloudevents+json
-        description: Inhoudstype van de request body. Alleen ``application/cloudevents+json``
-          wordt ondersteund.
+        description: Content type of the request body. Only ``application/cloudevents+json``
+          is supported.
         required: true
       tags:
       - cloudevents
@@ -1161,8 +1161,8 @@ paths:
         name: naam
         schema:
           type: string
-        description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron
-          vertegenwoordigd.
+        description: Name of the KANAAL (also called "Exchange") that represents the
+          source.
       tags:
       - kanaal
       security:
@@ -1308,7 +1308,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       tags:
       - kanaal
@@ -1464,7 +1464,7 @@ paths:
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - kanaal
@@ -1601,7 +1601,7 @@ paths:
         componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
         maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
         abonneren.
-      summary: '**EXPERIMENTEEL** Een specifiek KANAAL bewerken.'
+      summary: Een specifiek KANAAL bewerken.
       parameters:
       - in: header
         name: Content-Type
@@ -1609,14 +1609,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - kanaal
@@ -1771,7 +1771,7 @@ paths:
         componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
         maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
         abonneren.
-      summary: '**EXPERIMENTEEL** Een specifiek KANAAL deels bewerken.'
+      summary: Een specifiek KANAAL deels bewerken.
       parameters:
       - in: header
         name: Content-Type
@@ -1779,14 +1779,14 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       - in: path
         name: uuid
         schema:
           type: string
           format: uuid
-          description: Unieke resource identificatie (UUID4)
+          description: Unique resource identifier (UUID4)
         required: true
       tags:
       - kanaal
@@ -1947,7 +1947,7 @@ paths:
           type: string
           enum:
           - application/json
-        description: Inhoudstype van de request body.
+        description: Content type van de verzoekinhoud.
         required: true
       tags:
       - notificaties
@@ -2097,17 +2097,14 @@ components:
         callbackUrl:
           type: string
           format: uri
-          description: De URL waar notificaties naar toe gestuurd dienen te worden.
-            Deze URL dient uit te komen bij een API die geschikt is om notificaties
-            op te ontvangen.
-          maxLength: 200
+          description: The URL to which notifications should be sent. This URL should
+            point to an API that is suitable to receive notifications.
         auth:
           type: string
           writeOnly: true
-          title: Autorisatie header
-          description: 'Autorisatie header invulling voor het vesturen naar de "Callback
-            URL". Voorbeeld: Bearer a4daa31...'
-          maxLength: 1000
+          title: Authorisation header
+          description: 'Content of the Authorization header when sending notifications
+            to the "Callback URL", for example: Bearer a4daa31...'
         kanalen:
           type: array
           items:
@@ -2116,7 +2113,6 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          title: Verstuur cloudevents
           description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
             to the subscribed callback (default: `false`).'
         cloudeventFilters:
@@ -2278,21 +2274,22 @@ components:
             en locatie van dit object.
         naam:
           type: string
-          description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron
-            vertegenwoordigd.
+          description: Name of the KANAAL (also called "Exchange") that represents
+            the source.
           maxLength: 50
         documentatieLink:
           type: string
           format: uri
-          description: URL naar documentatie.
+          title: Documentation link
+          description: URL to documentation.
           maxLength: 200
         filters:
           type: array
           items:
             type: string
             maxLength: 100
-          description: Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter
-            kenmerken kunnen worden gebruikt bij het aanmaken van een ABONNEMENT.
+          description: List of possible filter attributes for a KANAAL. These filter
+            attributes can be used when creating an ABONNEMENT
       required:
       - naam
     Message:
@@ -2362,17 +2359,14 @@ components:
         callbackUrl:
           type: string
           format: uri
-          description: De URL waar notificaties naar toe gestuurd dienen te worden.
-            Deze URL dient uit te komen bij een API die geschikt is om notificaties
-            op te ontvangen.
-          maxLength: 200
+          description: The URL to which notifications should be sent. This URL should
+            point to an API that is suitable to receive notifications.
         auth:
           type: string
           writeOnly: true
-          title: Autorisatie header
-          description: 'Autorisatie header invulling voor het vesturen naar de "Callback
-            URL". Voorbeeld: Bearer a4daa31...'
-          maxLength: 1000
+          title: Authorisation header
+          description: 'Content of the Authorization header when sending notifications
+            to the "Callback URL", for example: Bearer a4daa31...'
         kanalen:
           type: array
           items:
@@ -2381,7 +2375,6 @@ components:
             afgenomen.
         sendCloudevents:
           type: boolean
-          title: Verstuur cloudevents
           description: '**EXPERIMENTEEL** Whether to send notifications as cloudevents
             to the subscribed callback (default: `false`).'
         cloudeventFilters:
@@ -2403,21 +2396,22 @@ components:
             en locatie van dit object.
         naam:
           type: string
-          description: Naam van het KANAAL (ook wel "Exchange" genoemd) dat de bron
-            vertegenwoordigd.
+          description: Name of the KANAAL (also called "Exchange") that represents
+            the source.
           maxLength: 50
         documentatieLink:
           type: string
           format: uri
-          description: URL naar documentatie.
+          title: Documentation link
+          description: URL to documentation.
           maxLength: 200
         filters:
           type: array
           items:
             type: string
             maxLength: 100
-          description: Lijst van mogelijke filter kenmerken van een KANAAL. Deze filter
-            kenmerken kunnen worden gebruikt bij het aanmaken van een ABONNEMENT.
+          description: List of possible filter attributes for a KANAAL. These filter
+            attributes can be used when creating an ABONNEMENT
     ValidatieFout:
       type: object
       description: Formaat van HTTP 4xx en 5xx fouten.
