@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Open Notificaties API
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Een API om een notificatierouteringscomponent te benaderen.
 
@@ -1601,7 +1601,7 @@ paths:
         componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
         maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
         abonneren.
-      summary: '**EXPERIMENTEEL** Een specifiek KANAAL bewerken.'
+      summary: Een specifiek KANAAL bewerken.
       parameters:
       - in: header
         name: Content-Type
@@ -1771,7 +1771,7 @@ paths:
         componenten die NOTIFICATIEs willen publiceren dienen een KANAAL aan te
         maken. Dit KANAAL kan vervolgens aan consumers worden gegeven om zich op te
         abonneren.
-      summary: '**EXPERIMENTEEL** Een specifiek KANAAL deels bewerken.'
+      summary: Een specifiek KANAAL deels bewerken.
       parameters:
       - in: header
         name: Content-Type
@@ -2100,14 +2100,12 @@ components:
           description: De URL waar notificaties naar toe gestuurd dienen te worden.
             Deze URL dient uit te komen bij een API die geschikt is om notificaties
             op te ontvangen.
-          maxLength: 200
         auth:
           type: string
           writeOnly: true
           title: Autorisatie header
           description: 'Autorisatie header invulling voor het vesturen naar de "Callback
             URL". Voorbeeld: Bearer a4daa31...'
-          maxLength: 1000
         kanalen:
           type: array
           items:
@@ -2365,14 +2363,12 @@ components:
           description: De URL waar notificaties naar toe gestuurd dienen te worden.
             Deze URL dient uit te komen bij een API die geschikt is om notificaties
             op te ontvangen.
-          maxLength: 200
         auth:
           type: string
           writeOnly: true
           title: Autorisatie header
           description: 'Autorisatie header invulling voor het vesturen naar de "Callback
             URL". Voorbeeld: Bearer a4daa31...'
-          maxLength: 1000
         kanalen:
           type: array
           items:
