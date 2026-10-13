@@ -62,7 +62,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-commonground-api-common==3.0.0
+commonground-api-common==3.0.1
     # via open-api-framework
 cryptography==50.0.0
     # via
