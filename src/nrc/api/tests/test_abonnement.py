@@ -89,6 +89,21 @@ class AbonnementenTests(JWTAuthMixin, APITestCase):
             ],
         )
 
+    def test_abonnementen_create_long_callback_and_auth(self):
+        callback_url = "https://example.com/" + "a" * 1000
+        auth = "Bearer " + "a" * 2000
+        self.m.post(callback_url, status_code=204)
+
+        response = self.client.post(
+            get_operation_url("abonnement_create"),
+            {"callbackUrl": callback_url, "auth": auth},
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        abonnement = Abonnement.objects.get()
+        self.assertEqual(abonnement.callback_url, callback_url)
+        self.assertEqual(abonnement.auth, auth)
+
     def test_abonnementen_create_nonexistent_kanaal(self):
         """
         test /abonnementen POST:

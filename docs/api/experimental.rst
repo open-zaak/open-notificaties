@@ -19,21 +19,6 @@ New Fields are added:
 * ``send_cloudevents`` Whether to send cloudevents to the ``abonnement``.
 * ``cloudevent_filters`` A list of cloudevent type substrings to filter what cloudevents will be send to the ``abonnement``.
 
-Kanaal
-======
-
-Endpoints
----------
-
-New endpoints are added:
-
-* PUT ``/api/v1/kanaal/{uuid}``
-* PATCH ``/api/v1/kanaal/{uuid}``
-
-These endpoints allow updating existing ``Kanaal`` objects.
-Only components that publish notifications should create or modify ``Kanaal``.
-The updated ``Kanaal`` can then be shared with consumers to subscribe to notifications.
-
 Notificaties
 ============
 

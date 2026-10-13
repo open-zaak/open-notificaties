@@ -2,7 +2,7 @@ import uuid as _uuid
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, URLValidator
 from django.db import models
 from django.db.models import Max, QuerySet
 from django.utils.translation import gettext_lazy as _
@@ -65,8 +65,9 @@ class Abonnement(models.Model):
         default=_uuid.uuid4,
         help_text=_("Unique resource identifier (UUID4)"),
     )
-    callback_url = models.URLField(
+    callback_url = models.CharField(
         _("Callback URL"),
+        validators=[URLValidator()],
         help_text=_(
             "The URL to which notifications should be sent. This URL should point to an "
             "API that is suitable to receive notifications."
@@ -74,7 +75,6 @@ class Abonnement(models.Model):
     )
     auth = models.CharField(
         _("Authorisation header"),
-        max_length=1000,
         blank=True,
         help_text=_(
             "Content of the Authorization header when sending notifications to "
