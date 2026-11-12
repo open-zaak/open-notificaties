@@ -1,13 +1,17 @@
 from django.utils.translation import gettext_lazy as _
 
 from drf_spectacular.extensions import OpenApiSerializerFieldExtension
+from drf_spectacular.openapi import AutoSchema
+from drf_spectacular.utils import Direction
 
 
 class HyperlinkedIdentityFieldExtension(OpenApiSerializerFieldExtension):
     target_class = "rest_framework.relations.HyperlinkedIdentityField"
     match_subclasses = True
 
-    def map_serializer_field(self, auto_schema, direction):
+    def map_serializer_field(
+        self, auto_schema: AutoSchema, direction: Direction
+    ) -> dict[str, object]:
         default_schema = auto_schema._map_serializer_field(
             self.target, direction, bypass_extensions=True
         )
