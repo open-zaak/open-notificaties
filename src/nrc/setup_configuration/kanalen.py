@@ -28,7 +28,7 @@ class KanaalConfigurationStep(BaseConfigurationStep[KanaalConfigurationModel]):
     namespace = "notifications_kanalen_config"
     enable_setting = "notifications_kanalen_config_enable"
 
-    def execute(self, model: KanaalConfigurationModel):
+    def execute(self, model: KanaalConfigurationModel) -> None:
         if len(model.items) == 0:
             raise ConfigurationRunFailed("You must configure at least one Kanaal")
 

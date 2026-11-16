@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from django_setup_configuration.fields import DjangoModelRef
 from django_setup_configuration.models import ConfigurationModel
@@ -27,6 +27,10 @@ class AuthorizationsConfigModel(ConfigurationModel):
 
 
 class KanaalConfigurationItem(ConfigurationModel):
+    if TYPE_CHECKING:
+        naam: str
+        documentatie_link: str
+
     filters: list[str] = DjangoModelRef(
         Kanaal,
         "filters",
@@ -82,6 +86,15 @@ class CloudEventFilterConfigurationModel(ConfigurationModel):
 
 
 class AbonnementConfigurationItem(ConfigurationModel):
+    if TYPE_CHECKING:
+        callback_url: str
+        auth_type: str
+        auth: str
+        secret: str
+        oauth2_token_url: str
+        oauth2_scope: str
+        send_cloudevents: bool
+
     uuid: UUID4 = Field(description="The UUID for this Abonnement.")
     kanalen: Optional[list[KanalenFilterConfigurationModel]] = Field(
         default=[], description="A list of channels which are subscribed to"
@@ -97,7 +110,9 @@ class AbonnementConfigurationItem(ConfigurationModel):
             "type substrings with additional filters."
         ),
     )
-    auth_client_id = DjangoModelRef(Abonnement, "client_id", examples=["client-id"])
+    auth_client_id: str = DjangoModelRef(
+        Abonnement, "client_id", examples=["client-id"]
+    )
 
     class Meta:
         django_model_refs = {
@@ -127,7 +142,7 @@ class AbonnementConfigurationModel(ConfigurationModel):
 
 
 class NotificationConfigurationModel(_NotificationConfigurationModel):
-    notifications_api_service_identifier: Optional[str] = Field(
+    notifications_api_service_identifier: Optional[str] = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=None, examples=["notificaties-api"]
     )
 

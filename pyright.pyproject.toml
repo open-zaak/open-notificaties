@@ -6,6 +6,7 @@ include = [
     "src/nrc/utils",
     "src/nrc/accounts",
     "src/nrc/datamodel",
+    "src/nrc/setup_configuration",
 ]
 exclude = [
     "src/nrc/**/migrations",
