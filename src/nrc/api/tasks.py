@@ -135,7 +135,7 @@ def deliver_message(sub: Abonnement, msg: SendNotificationTaskKwargs, **kwargs) 
                 notificatie_id=notificatie_id,
                 abonnement=sub,
                 attempt=notification_attempt_count,
-                **response_init_kwargs,
+                **response_init_kwargs,  # pyright: ignore[reportPossiblyUnboundVariable]
             )
 
 
@@ -208,14 +208,14 @@ def deliver_cloudevent(sub: Abonnement, cloudevent: CloudEventKwargs, **kwargs) 
                 cloudevent=CloudEvent.objects.get(id=cloudevent_id),
                 abonnement=sub,
                 attempt=cloudevent_attempt_count,
-                **response_init_kwargs,
+                **response_init_kwargs,  # pyright: ignore[reportPossiblyUnboundVariable]
             )
         elif notificatie_id:
             NotificatieResponse.objects.create(
                 notificatie_id=notificatie_id,
                 abonnement=sub,
                 attempt=cloudevent_attempt_count,
-                **response_init_kwargs,
+                **response_init_kwargs,  # pyright: ignore[reportPossiblyUnboundVariable]
             )
 
 
@@ -399,7 +399,7 @@ def execute_notifications() -> None:
             continue
         else:
             tasks.append(
-                send_to_sub.s(scheduled_notif.id, _get_task_kwargs(scheduled_notif))
+                send_to_sub.s(scheduled_notif.id, _get_task_kwargs(scheduled_notif))  # pyright: ignore[reportFunctionMemberAccess]
             )
 
     if tasks:

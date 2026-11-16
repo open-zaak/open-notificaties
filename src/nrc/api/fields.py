@@ -23,10 +23,10 @@ class URIRefField(serializers.CharField):
 
 @extend_schema_field(OpenApiTypes.ANY)
 class JSONOrStringField(serializers.Field):
-    def to_internal_value(self, data):
+    def to_internal_value(self, data: object) -> object:
         return data
 
-    def to_representation(self, value):
+    def to_representation(self, value: object) -> object:
         if isinstance(value, str):
             try:
                 return json.loads(value)

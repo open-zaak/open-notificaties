@@ -61,7 +61,7 @@ class AbonnementViewSet(CheckQueryParamsMixin, viewsets.ModelViewSet):
     }
 
     def perform_create(self, serializer):
-        client_id = self.request.jwt_auth.client_id
+        client_id = self.request.jwt_auth.client_id  # pyright: ignore[reportAttributeAccessIssue]
         serializer.save(client_id=client_id)
         abonnement_create_counter.add(1)
 
