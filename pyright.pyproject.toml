@@ -5,6 +5,7 @@ reportUnnecessaryTypeIgnoreComment = "error"
 include = [
     "src/nrc/utils",
     "src/nrc/accounts",
+    "src/nrc/datamodel",
 ]
 exclude = [
     "src/nrc/**/migrations",
