@@ -6,11 +6,16 @@ from maykin_common.branding import ProductDefinition
 from maykin_common.config import DocumentationParams
 
 os.environ["_USE_STRUCTLOG"] = "True"
-
+import django_stubs_ext
+from maykin_common.health_checks import default_health_check_apps
 from open_api_framework.conf.base import *  # noqa
 from open_api_framework.conf.utils import config
-from maykin_common.health_checks import default_health_check_apps
+
 from .api import *  # noqa
+
+# Make the generic classes of django-stubs (e.g. ``ModelAdmin[User]``) subscriptable
+# at runtime.
+django_stubs_ext.monkeypatch()
 
 #
 # Core Django settings
