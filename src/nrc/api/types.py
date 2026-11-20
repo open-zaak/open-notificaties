@@ -17,11 +17,11 @@ class _BaseNotificationMessage(TypedDict):
 
 
 class NotificationMessage(_BaseNotificationMessage):
-    aanmaakdatum: datetime
+    aanmaakdatum: datetime  # pyright: ignore[reportIncompatibleVariableOverride]
 
 
 class NotificationMessageKwargs(_BaseNotificationMessage):
-    aanmaakdatum: str
+    aanmaakdatum: str  # pyright: ignore[reportIncompatibleVariableOverride]
 
 
 class SendNotificationTaskKwargs(NotificationMessage):

@@ -3,8 +3,14 @@ pythonVersion = "3.12"
 pythonPlatform = "Linux"
 reportUnnecessaryTypeIgnoreComment = "error"
 include = [
-    "src/nrc/utils"
+    "src/nrc/utils",
+    "src/nrc/accounts",
+    "src/nrc/datamodel",
+    "src/nrc/setup_configuration",
+    "src/nrc/api",
 ]
 exclude = [
-    "src/nrc/conf/dev.py"
+    "src/nrc/**/migrations",
+    "src/nrc/**/tests",
+    "src/nrc/**/management",
 ]

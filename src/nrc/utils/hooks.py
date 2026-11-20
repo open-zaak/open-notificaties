@@ -1,4 +1,13 @@
-def preprocess_exclude_endpoints(endpoints, **kwargs):
+from collections.abc import Callable, Iterable
+
+from django.http import HttpResponseBase
+
+type Endpoint = tuple[str, str, str, Callable[..., HttpResponseBase]]
+
+
+def preprocess_exclude_endpoints(
+    endpoints: Iterable[Endpoint], **kwargs: object
+) -> list[Endpoint]:
     """
     preprocessing hook that filters out endpoints from OAS
 

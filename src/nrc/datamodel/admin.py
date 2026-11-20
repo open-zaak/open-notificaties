@@ -197,7 +197,7 @@ class AbonnementAdmin(admin.ModelAdmin):
             return callback_statuses.get(str((obj.callback_url, obj.auth)), None)
         return None
 
-    get_callback_url_reachable.boolean = True
+    get_callback_url_reachable.boolean = True  # pyright: ignore[reportFunctionMemberAccess]
 
     @admin.display(description=_("kanalen"))
     def get_kanalen_display(self, obj):

@@ -9,7 +9,7 @@ class BaseFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         qs = model_admin.get_queryset(request)
-        choices = qs.values_list(self.field_name, flat=True).distinct()
+        choices = qs.values_list(self.field_name, flat=True).distinct()  # pyright: ignore[reportArgumentType]
         return (
             (
                 choice,
@@ -22,7 +22,7 @@ class BaseFilter(admin.SimpleListFilter):
         if not self.value():
             return queryset
 
-        return queryset.filter(**{self.field_name: self.value()})
+        return queryset.filter(**{self.field_name: self.value()})  # pyright: ignore[reportCallIssue]
 
 
 class ActionFilter(BaseFilter):

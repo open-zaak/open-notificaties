@@ -38,7 +38,7 @@ class AutoSchema(_AutoSchema):
 
         return [{settings.SECURITY_DEFINITION_NAME: [str(scopes)]}]
 
-    def get_operation_id(self):
+    def get_operation_id(self) -> str:
         """
         Use view basename as a base for operation_id
         """
@@ -118,8 +118,12 @@ class AutoSchema(_AutoSchema):
         return responses
 
     def _get_response_for_code(
-        self, serializer, status_code, media_types=None, direction="response"
-    ):
+        self,
+        serializer: object,
+        status_code: str | int,
+        media_types: list[str] | None = None,
+        direction: str = "response",
+    ) -> dict[str, object]:
         """
         choose media types and set descriptions
         """
@@ -136,12 +140,14 @@ class AutoSchema(_AutoSchema):
             response["description"] = HTTP_STATUS_CODE_TITLES.get(int(status_code), "")
         return response
 
-    def get_override_parameters(self):  # pyright: ignore[reportIncompatibleMethodOverride]
+    def get_override_parameters(
+        self,
+    ) -> list[OpenApiParameter | serializers.Serializer | type[serializers.Serializer]]:
         """Add request and response headers"""
         version_headers = self.get_version_headers()
         content_type_headers = self.get_content_type_headers()
         location_headers = self.get_location_headers()
-        return version_headers + content_type_headers + location_headers
+        return [*version_headers, *content_type_headers, *location_headers]
 
     def get_version_headers(self) -> list[OpenApiParameter]:
         return [
