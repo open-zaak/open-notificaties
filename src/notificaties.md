@@ -6,6 +6,6 @@ consumers ontvangen deze. Consumers abonneren zich via een notificatiecomponent 
 
 Hieronder staan de kanalen beschreven die door deze component gebruikt worden, met de kenmerken bij elk bericht.
 
-De architectuur van de notificaties staat beschreven op <a href="https://github.com/VNG-Realisatie/notificaties-api" rel="nofollow">https://github.com/VNG-Realisatie/notificaties-api</a>.
+De architectuur van de notificaties staat beschreven op <a href="https://github.com/VNG-Realisatie/gemma-zaken/blob/master/docs/standaard/notificaties" rel="nofollow">https://github.com/VNG-Realisatie/gemma-zaken/blob/master/docs/standaard/notificaties</a>.
 
 

@@ -3,7 +3,7 @@
 ## Scopes voor Open Notificaties API
 
 Scopes worden typisch per component gedefinieerd en geven aan welke rechten er zijn.
-Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/autorisaties-api)
+Zie de repository van de [Autorisaties API](https://github.com/VNG-Realisatie/gemma-zaken/blob/master/docs/standaard/autorisaties)
 
 
 ### notificaties.consumeren
