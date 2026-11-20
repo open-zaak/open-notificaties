@@ -11,6 +11,7 @@ django-setup-configuration>=0.7.0
 zgw-consumers[setup-configuration,oauth2]
 notifications-api-common[setup-configuration]
 mozilla-django-oidc-db[setup-configuration]
+django-stubs-ext
 
 psycopg[pool]
 
