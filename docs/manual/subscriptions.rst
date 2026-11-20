@@ -70,7 +70,7 @@ Filters instellen
 
 Per abonnement kunnen filteropties ingesteld worden, waarmee gefilterd kan worden op waardes van kenmerken
 die meegegeven worden met de notificaties. De kenmerken waarop gefilterd kan worden zijn gedefinieerd per
-kanaal, bijvoorbeeld: `kenmerken <https://github.com/VNG-Realisatie/zaken-api/blob/stable/1.0.x/src/notificaties.md>`_ voor het kanaal ``zaken``.
+kanaal, bijvoorbeeld: `kenmerken <https://github.com/VNG-Realisatie/gemma-zaken/blob/master/docs/standaard/zaken/notificaties.md>`_ voor het kanaal ``zaken``.
 
 Filters kunnen toegevoegd worden aan abonnementen door in de admininterface van Open Notificaties
 te navigeren naar **Notificaties > Abonnementen**.
