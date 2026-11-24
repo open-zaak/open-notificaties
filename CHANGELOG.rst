@@ -2,6 +2,15 @@
 Changes
 =======
 
+1.18.0 (Unreleased)
+===================
+
+**Project maintenance**
+
+* [:open-api-framework:`236`] Upgrade postgres support in CI
+    * Drop support for postgres 14 (EOL)
+    * Add support for postgres 18
+
 1.17.0 (2026-10-02)
 ===================
 
