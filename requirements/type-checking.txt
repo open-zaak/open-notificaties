@@ -557,7 +557,7 @@ mozilla-django-oidc-db==2.0.1
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
     #   open-api-framework
-notifications-api-common==0.13.1
+notifications-api-common==0.13.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
