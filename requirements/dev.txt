@@ -202,6 +202,7 @@ django==5.2.19
     #   django-simple-certmanager
     #   django-solo
     #   django-structlog
+    #   django-stubs-ext
     #   django-two-factor-auth
     #   django-upgrade-check
     #   djangorestframework
@@ -351,6 +352,10 @@ django-solo==2.3.0
     #   notifications-api-common
     #   zgw-consumers
 django-structlog==9.1.1
+    # via
+    #   -c requirements/ci.txt
+    #   -r requirements/ci.txt
+django-stubs-ext==6.1.2
     # via
     #   -c requirements/ci.txt
     #   -r requirements/ci.txt
@@ -826,7 +831,7 @@ pygments==2.20.0
     #   rich
     #   sphinx
     #   sphinx-tabs
-pygraphviz==1.14
+pygraphviz==2.0.4
     # via -r requirements/dev.in
 pyjwt==2.15.1
     # via
@@ -1097,6 +1102,7 @@ typing-extensions==4.12.2
     #   -r requirements/ci.txt
     #   anyio
     #   django-log-outgoing-requests
+    #   django-stubs-ext
     #   django-test-migrations
     #   grpcio
     #   mozilla-django-oidc-db

@@ -31,7 +31,7 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
     namespace = "notifications_abonnementen_config"
     enable_setting = "notifications_abonnementen_config_enable"
 
-    def execute(self, model: AbonnementConfigurationModel):
+    def execute(self, model: AbonnementConfigurationModel) -> None:
         if len(model.items) == 0:
             raise ConfigurationRunFailed("You must configure at least one Abonnement")
 
@@ -56,7 +56,7 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                 )
 
             # TODO should we apply the same validation as in the serializer here?
-            for abonnement_filter in item.kanalen:
+            for abonnement_filter in item.kanalen:  # pyright: ignore[reportOptionalIterable]
                 try:
                     kanaal = Kanaal.objects.get(naam=abonnement_filter.naam)
                 except Kanaal.DoesNotExist:
@@ -74,7 +74,7 @@ class AbonnementConfigurationStep(BaseConfigurationStep[AbonnementConfigurationM
                         key=key, filter_group=filter_group, defaults={"value": value}
                     )
 
-            for cloudevent_filter in item.cloudevent_filters:
+            for cloudevent_filter in item.cloudevent_filters:  # pyright: ignore[reportOptionalIterable]
                 if isinstance(cloudevent_filter, CloudEventFilterConfigurationModel):
                     type_substring = cloudevent_filter.type_substring
                 else:

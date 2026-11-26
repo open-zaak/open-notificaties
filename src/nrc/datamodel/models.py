@@ -1,4 +1,7 @@
 import uuid as _uuid
+from collections.abc import Mapping
+from datetime import datetime
+from typing import TYPE_CHECKING
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
@@ -13,6 +16,9 @@ from simple_certmanager.models import Certificate
 from zgw_consumers.constants import AuthTypes
 
 from nrc.utils.help_text import mark_experimental
+
+if TYPE_CHECKING:
+    from django.db.models.fields.related_descriptors import RelatedManager
 
 
 class Kanaal(models.Model):
@@ -50,7 +56,7 @@ class Kanaal(models.Model):
     def __str__(self) -> str:
         return f"{self.naam}"
 
-    def match_filter_names(self, obj_filters: list) -> bool:
+    def match_filter_names(self, obj_filters: list[str]) -> bool:
         set_kanaal_filters = set(self.filters)
         set_obj_filters = set(obj_filters)
         return (
@@ -157,8 +163,14 @@ class Abonnement(models.Model):
     def __str__(self) -> str:
         return f"{str(self.uuid)[:8]}: {self.callback_url}"
 
+    if TYPE_CHECKING:
+        id: int
+        filter_groups: RelatedManager["FilterGroup"]
+        cloudevent_filtergroups: RelatedManager["CloudEventFilterGroup"]
+        scheduled_notifications: RelatedManager["ScheduledNotification"]
+
     @property
-    def kanalen(self):
+    def kanalen(self) -> set[Kanaal]:
         return {f.kanaal for f in self.filter_groups.all()}
 
 
@@ -178,8 +190,11 @@ class FilterGroup(models.Model):
         verbose_name = _("filter")
         verbose_name_plural = _("filters")
 
-    def match_pattern(self, msg_filters: dict) -> bool:
-        return match_pattern(self.filters, msg_filters)
+    if TYPE_CHECKING:
+        filters: RelatedManager["Filter"]
+
+    def match_pattern(self, msg_filters: Mapping[str, object] | str) -> bool:
+        return match_pattern(self.filters, msg_filters)  # pyright: ignore[reportArgumentType]
 
 
 class Filter(models.Model):
@@ -203,14 +218,19 @@ class Notificatie(models.Model):
     forwarded_msg = models.JSONField(encoder=DjangoJSONEncoder)
     kanaal = models.ForeignKey(Kanaal, on_delete=models.CASCADE)
 
+    if TYPE_CHECKING:
+        id: int
+        scheduled_notifications: RelatedManager["ScheduledNotification"]
+        notificatieresponse_set: RelatedManager["NotificatieResponse"]
+
     @property
-    def last_attempt(self):
+    def last_attempt(self) -> int:
         return (
             self.notificatieresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
         )
 
     @property
-    def created_date(self):
+    def created_date(self) -> datetime | None:
         aanmaakdatum = self.forwarded_msg.get("aanmaakdatum")
         if not aanmaakdatum:
             return None
@@ -290,8 +310,11 @@ class CloudEvent(models.Model):
         help_text=_("extra data using the format defined in datacontentype"),
     )
 
+    if TYPE_CHECKING:
+        cloudeventresponse_set: RelatedManager["CloudEventResponse"]
+
     @property
-    def last_attempt(self):
+    def last_attempt(self) -> int:
         return (
             self.cloudeventresponse_set.aggregate(Max("attempt"))["attempt__max"] or 0
         )
@@ -316,11 +339,14 @@ class CloudEventFilterGroup(models.Model):
         ),
     )
 
-    def __str__(self):
+    if TYPE_CHECKING:
+        filters: RelatedManager["CloudEventFilter"]
+
+    def __str__(self) -> str:
         return self.type_substring
 
-    def match_pattern(self, msg_filters: dict) -> bool:
-        return match_pattern(self.filters, msg_filters)
+    def match_pattern(self, msg_filters: Mapping[str, object] | str) -> bool:
+        return match_pattern(self.filters, msg_filters)  # pyright: ignore[reportArgumentType]
 
 
 class CloudEventFilter(models.Model):

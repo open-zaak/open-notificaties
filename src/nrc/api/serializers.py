@@ -3,7 +3,7 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
-from django.db.models import CharField, F, Value
+from django.db.models import CharField, F, Manager, Value
 from django.forms.models import model_to_dict
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -44,24 +44,25 @@ class FiltersField(fields.DictField):
         help_text=_("Een waarde behorende bij de sleutel."),
     )
 
-    def to_representation(self, instance):
-        qs = instance.all()
+    def to_representation(self, value: object) -> dict[str, str]:
+        assert isinstance(value, Manager)
+        qs = value.all()
         return dict(qs.values_list("key", "value"))
 
-    def to_internal_value(self, data):
+    def to_internal_value(self, data):  # pyright: ignore[reportIncompatibleMethodOverride]
         return [self.Meta.model(key=k, value=v) for k, v in data.items()]
 
     class Meta:
-        model = Filter
+        model: type[Filter] | type[CloudEventFilter] = Filter
 
 
 class CloudEventFiltersField(FiltersField):
-    class Meta:
+    class Meta(FiltersField.Meta):
         model = CloudEventFilter
 
 
 class KanaalSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         model = Kanaal
         fields = ("url", "naam", "documentatie_link", "filters")
         extra_kwargs = {
@@ -95,7 +96,7 @@ class FilterGroupSerializer(serializers.ModelSerializer):
         ),
     )
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         model = FilterGroup
         fields = ("filters", "naam")
 
@@ -114,7 +115,7 @@ class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
         ),
     )
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         model = CloudEventFilterGroup
         fields = (
             "type_substring",
@@ -124,7 +125,7 @@ class CloudEventFilterGroupSerializer(serializers.ModelSerializer):
 
 class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
     callback_url = serializers.URLField(
-        help_text=Abonnement._meta.get_field("callback_url").help_text,
+        help_text=get_help_text("datamodel.Abonnement", "callback_url"),
         validators=[CallbackURLAuthValidator()],
     )
     kanalen = FilterGroupSerializer(
@@ -145,7 +146,7 @@ class AbonnementSerializer(serializers.HyperlinkedModelSerializer):
         required=False,
     )
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         model = Abonnement
         fields = (
             "url",
@@ -310,9 +311,11 @@ class MessageSerializer(NotificatieSerializer):
         )
 
     def _transform_to_cloudevent(self, notif: NotificationMessage) -> CloudEventKwargs:
+        source = notif.get("source")
+        assert source is not None
         return {
             "id": str(uuid.uuid4()),
-            "source": notif["source"],
+            "source": source,
             "specversion": settings.CLOUDEVENT_SPECVERSION,
             "type": f"nl.overheid.{notif['kanaal']}.{notif['resource']}.{notif['actie']}",
             "datacontenttype": "application/json",
@@ -372,6 +375,7 @@ class MessageSerializer(NotificatieSerializer):
     @classmethod
     def send_notification(cls, obj: Notificatie):
         transformed = underscoreize(obj.forwarded_msg)
+        assert isinstance(transformed, dict)
         serializer = cls(data={"kanaal": obj.kanaal, **transformed})
         if serializer.is_valid():
             # Save the serializer to send the messages to the subscriptions
@@ -379,19 +383,19 @@ class MessageSerializer(NotificatieSerializer):
 
 
 class CloudEventSerializer(serializers.ModelSerializer):
-    source = URIRefField(help_text=get_help_text("datamodel.CloudEvent", "source"))
+    source = URIRefField(help_text=get_help_text("datamodel.CloudEvent", "source"))  # pyright: ignore[reportAssignmentType]
     dataschema = URIField(
         help_text=get_help_text("datamodel.CloudEvent", "dataschema"),
         required=False,
         allow_blank=True,
     )
-    data = JSONOrStringField(
+    data = JSONOrStringField(  # pyright: ignore[reportIncompatibleMethodOverride, reportAssignmentType]
         help_text=get_help_text("datamodel.CloudEvent", "data"),
         required=False,
         allow_null=True,
     )
 
-    class Meta:
+    class Meta:  # pyright: ignore[reportIncompatibleVariableOverride]
         model = CloudEvent
         fields = "__all__"
 

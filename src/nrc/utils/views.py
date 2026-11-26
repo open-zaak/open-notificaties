@@ -1,3 +1,4 @@
+from django.http import HttpRequest, HttpResponseBase
 from django.views.generic import RedirectView
 
 import structlog
@@ -10,7 +11,9 @@ logger = structlog.stdlib.get_logger(__name__)
 
 
 class AllowAllOriginsMixin:
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+        self, request: HttpRequest, *args: object, **kwargs: object
+    ) -> HttpResponseBase:
         response = super().dispatch(request, *args, **kwargs)  # pyright: ignore[reportAttributeAccessIssue]
         response["Access-Control-Allow-Origin"] = "*"
         return response
@@ -25,7 +28,9 @@ class SpectacularJSONAPIView(AllowAllOriginsMixin, _SpectacularJSONAPIView):
 
 
 class DeprecationRedirectView(RedirectView):  # pragma: no cover
-    def get(self, request, *args, **kwargs):
+    def get(
+        self, request: HttpRequest, *args: object, **kwargs: object
+    ) -> HttpResponseBase:
         logger.warning(
             "deprecated_endpoint_called",
             endpoint=request.path,
@@ -34,10 +39,12 @@ class DeprecationRedirectView(RedirectView):  # pragma: no cover
 
 
 class SchemaDeprecationRedirectView(DeprecationRedirectView):  # pragma: no cover
-    yaml_pattern = None
-    json_pattern = None
+    yaml_pattern: str | None = None
+    json_pattern: str | None = None
 
-    def get(self, request, *args, **kwargs):
+    def get(
+        self, request: HttpRequest, *args: object, **kwargs: object
+    ) -> HttpResponseBase:
         if request.GET.get("format") == "json":
             self.pattern_name = self.json_pattern
         else:

@@ -4,5 +4,5 @@ from maykin_2fa.views import QRGeneratorView as _QRGeneratorView
 
 
 class QRGeneratorView(_QRGeneratorView):
-    def get_issuer(self):
+    def get_issuer(self) -> str:
         return RequestSite(self.request).name
